@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <doc>
   <assembly>
-    <name>gemstone.gemtem</name>
+    <name>gemstone.data</name>
   </assembly>
   <members>
-    <member name="T:gemstone.gemtem.Class">
+    <member name="T:gemstone.data.Class">
       <summary>
-            Sample class for new GemTem library.
+            Sample class for new Data library.
             </summary>
     </member>
-    <member name="M:gemstone.gemtem.Class.#ctor">
+    <member name="M:gemstone.data.Class.#ctor">
       <summary>
         <markup>
           <include item="SMCAutoDocConstructor">
-            <parameter>gemstone.gemtem.Class</parameter>
+            <parameter>gemstone.data.Class</parameter>
           </include>
         </markup>
       </summary>

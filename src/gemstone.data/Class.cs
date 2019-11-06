@@ -21,10 +21,10 @@
 //
 //******************************************************************************************************
 
-namespace gemstone.gemtem
+namespace gemstone.data
 {
     /// <summary>
-    /// Sample class for new GemTem library.
+    /// Sample class for new Data library.
     /// </summary>
     public class Class
     {

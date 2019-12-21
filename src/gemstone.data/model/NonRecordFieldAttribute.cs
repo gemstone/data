@@ -1,7 +1,7 @@
 ﻿//******************************************************************************************************
-//  Class.cs - Gbtc
+//  NonRecordFieldAttribute.cs - Gbtc
 //
-//  Copyright © 2019, Grid Protection Alliance.  All Rights Reserved.
+//  Copyright © 2017, Grid Protection Alliance.  All Rights Reserved.
 //
 //  Licensed to the Grid Protection Alliance (GPA) under one or more contributor license agreements. See
 //  the NOTICE file distributed with this work for additional information regarding copyright ownership.
@@ -16,17 +16,22 @@
 //
 //  Code Modification History:
 //  ----------------------------------------------------------------------------------------------------
-//  11/04/2019 - J. Ritchie Carroll
+//  04/09/2017 - J. Ritchie Carroll
 //       Generated original version of source code.
+//  12/13/2019 - J. Ritchie Carroll
+//      Migrated to Gemstone libraries.
 //
 //******************************************************************************************************
 
-namespace gemstone.data
+using System;
+
+namespace gemstone.data.model
 {
     /// <summary>
-    /// Sample class for new Data library.
+    /// Defines an attribute that will mark a property to not be serialized as a record field.
     /// </summary>
-    public class Class
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class NonRecordFieldAttribute : Attribute
     {
     }
 }

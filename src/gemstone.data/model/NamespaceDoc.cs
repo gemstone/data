@@ -16,10 +16,8 @@
 //
 //  Code Modification History:
 //  ----------------------------------------------------------------------------------------------------
-//  09/29/2009 - Pinal C. Patel
+//  03/13/2016 - J. Ritchie Carroll
 //       Generated original version of source code.
-//  12/14/2012 - Starlynn Danyelle Gilliam
-//       Modified Header.
 //  12/13/2019 - J. Ritchie Carroll
 //      Migrated to Gemstone libraries.
 //
@@ -27,12 +25,10 @@
 
 using System.Runtime.CompilerServices;
 
-namespace gemstone.data
+namespace gemstone.data.model
 {
     /// <summary>
-    /// The <see cref="gemstone.data"/> namespace organizes all Gemstone library functionality
-    /// related to database operations. The root data namespace also includes common data operations
-    /// classes, e.g., <see cref="AdoDataConnection"/> and <see cref="DataSetExtensions"/>.
+    /// Contains classes and attributes used for model based database access.
     /// </summary>
     [CompilerGenerated]
     class NamespaceDoc

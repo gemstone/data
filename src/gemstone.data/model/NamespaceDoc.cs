@@ -25,7 +25,7 @@
 
 using System.Runtime.CompilerServices;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Contains classes and attributes used for model based database access.

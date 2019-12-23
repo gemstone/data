@@ -25,7 +25,7 @@
 
 using System;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Record operations for modeled tables.

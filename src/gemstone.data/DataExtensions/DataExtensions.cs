@@ -77,7 +77,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Data.SqlClient;
 
-namespace gemstone.data
+namespace Gemstone.Data.DataExtensions
 {
     // ReSharper disable UnusedVariable
 

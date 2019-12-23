@@ -25,7 +25,7 @@
 
 using System;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Defines an attribute that will allow a custom field name for a modeled table instead of using

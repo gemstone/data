@@ -25,7 +25,7 @@
 
 using System;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Represents types of searches available for <see cref="SearchableAttribute"/>.
@@ -59,10 +59,10 @@ namespace gemstone.data.model
         /// </summary>
         /// <remarks>
         /// Database query functions executed against modeled fields marked with both <see cref="SearchableAttribute"/> and
-        /// <see cref="EncryptDataAttribute"/> will only be searched using <see cref="model.SearchType.FullValueMatch"/>,
+        /// <see cref="EncryptDataAttribute"/> will only be searched using <see cref="Model.SearchType.FullValueMatch"/>,
         /// regardless of specified value as encryption is handled locally by <see cref="TableOperations{T}"/>. However, the
         /// <see cref="TableOperations{T}.SearchRecords"/> function can be used to find data in encrypted fields that are
-        /// marked for search with a <see cref="model.SearchType.LikeExpression"/>.
+        /// marked for search with a <see cref="Model.SearchType.LikeExpression"/>.
         /// </remarks>
         public SearchType SearchType { get; }
 
@@ -77,10 +77,10 @@ namespace gemstone.data.model
         /// <param name="searchType">Type of search that should be used for field queried.</param>
         /// <remarks>
         /// Database query functions executed against modeled fields marked with both <see cref="SearchableAttribute"/> and
-        /// <see cref="EncryptDataAttribute"/> will only be searched using <see cref="model.SearchType.FullValueMatch"/>,
+        /// <see cref="EncryptDataAttribute"/> will only be searched using <see cref="Model.SearchType.FullValueMatch"/>,
         /// regardless of specified <paramref name="searchType"/> as encryption is handled locally by instances of the
         /// <see cref="TableOperations{T}"/>. However, the <see cref="TableOperations{T}.SearchRecords"/> function can be used
-        /// to find data in encrypted fields that are marked for search with a <see cref="model.SearchType.LikeExpression"/>.
+        /// to find data in encrypted fields that are marked for search with a <see cref="Model.SearchType.LikeExpression"/>.
         /// </remarks>
         public SearchableAttribute(SearchType searchType) => SearchType = searchType;
     }

@@ -26,7 +26,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     #region [ Enumerations ]
 
@@ -142,17 +142,17 @@ namespace gemstone.data.model
         public string AmendmentText { get; }
 
         /// <summary>
-        /// Gets or sets target expression for amendment application; defaults to <see cref="model.TargetExpression.TableName"/>.
+        /// Gets or sets target expression for amendment application; defaults to <see cref="Model.TargetExpression.TableName"/>.
         /// </summary>
         public TargetExpression TargetExpression { get; set; }
 
         /// <summary>
-        /// Gets or sets location for amendment application; defaults to <see cref="model.AffixPosition.Suffix"/>.
+        /// Gets or sets location for amendment application; defaults to <see cref="Model.AffixPosition.Suffix"/>.
         /// </summary>
         public AffixPosition AffixPosition { get; set; }
 
         /// <summary>
-        /// Gets or sets statement types for amendment application; defaults to <see cref="model.StatementTypes.Select"/>.
+        /// Gets or sets statement types for amendment application; defaults to <see cref="Model.StatementTypes.Select"/>.
         /// </summary>
         public StatementTypes StatementTypes { get; set; }
 

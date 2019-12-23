@@ -26,7 +26,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Defines an attribute that will request use of the escaped name of a modeled identifier, i.e.,

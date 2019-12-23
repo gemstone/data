@@ -23,7 +23,7 @@
 
 using System;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Defines an attribute that will mark a property as a primary key field for a modeled table.

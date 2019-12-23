@@ -37,11 +37,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
+using Gemstone.Data.DataExtensions;
 
-namespace gemstone.data
+namespace Gemstone.Data
 {
     // James Ritchie Carroll - 2003
 
@@ -2253,9 +2253,7 @@ namespace gemstone.data
         /// <summary>
         /// <see cref="IDbConnection"/> state change event will fire if it unexpectedly close connection while processing.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SchemaConnection_StateChange(object sender, StateChangeEventArgs e)
+        private void SchemaConnection_StateChange(object _, StateChangeEventArgs e)
         {
             // The connection may have been closed prematurely so we reopen it.
             if (m_schemaConnection.State == ConnectionState.Closed)
@@ -2295,7 +2293,7 @@ namespace gemstone.data
         /// <returns>Opened connection.</returns>
         public static IDbConnection OpenConnection(string connectionString)
         {
-            return OpenConnection(connectionString, out DatabaseType databaseType, out Schema schema, out bool isAdoConnection);
+            return OpenConnection(connectionString, out DatabaseType _, out Schema _, out bool _);
         }
 
         /// <summary>

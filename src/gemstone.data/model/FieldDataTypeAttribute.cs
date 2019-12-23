@@ -27,7 +27,7 @@ using System;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Defines an attribute that will request use of a specific data type on a modeled table field.

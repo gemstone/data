@@ -27,10 +27,10 @@
 
 using System.Runtime.CompilerServices;
 
-namespace gemstone.data
+namespace Gemstone.Data
 {
     /// <summary>
-    /// The <see cref="gemstone.data"/> namespace organizes all Gemstone library functionality
+    /// The <see cref="Gemstone.Data"/> namespace organizes all Gemstone library functionality
     /// related to database operations. The root data namespace also includes common data operations
     /// classes, e.g., <see cref="AdoDataConnection"/> and <see cref="DataSetExtensions"/>.
     /// </summary>

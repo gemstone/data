@@ -28,9 +28,9 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using gemstone.expressions.model;
+using Gemstone.Expressions.Model;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Defines a common interface for implementations of <see cref="TableOperations{T}"/>.

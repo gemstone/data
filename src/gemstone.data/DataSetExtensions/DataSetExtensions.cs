@@ -28,9 +28,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using gemstone.io;
+using Gemstone.IO;
 
-namespace gemstone.data
+namespace Gemstone.Data.DataSetExtensions
 {
     /// <summary>
     /// Data types available to a <see cref="DataSet"/> object.

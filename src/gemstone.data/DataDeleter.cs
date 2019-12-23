@@ -27,8 +27,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using Gemstone.Data.DataExtensions;
 
-namespace gemstone.data
+namespace Gemstone.Data
 {
     //  Note: user must define primary key fields in the database or through code to be used for deletes from each table
     //  in the table collection in order for the deletes to occur, hence any tables which have no key fields defined

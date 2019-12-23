@@ -37,9 +37,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-//using gemstone.Configuration;
+using Gemstone.Data.DataExtensions;
+using Gemstone.StringExtensions;
+//using Gemstone.Configuration;
 
-namespace gemstone.data
+namespace Gemstone.Data
 {
     /// <summary>
     /// Specifies the database type underlying an <see cref="AdoDataConnection"/>.
@@ -390,7 +392,7 @@ namespace gemstone.data
         /// </summary>
         /// <remarks>
         /// This value is automatically assigned based on the adapter type specified in the data provider string, however,
-        /// if the database type cannot be determined it will be set to <see cref="data.DatabaseType.Other"/>. In this
+        /// if the database type cannot be determined it will be set to <see cref="Data.DatabaseType.Other"/>. In this
         /// case, if you know the behavior of your custom ADO database connection matches that of another defined database
         /// type, you can manually assign the database type to allow for database interaction interoperability.
         /// </remarks>
@@ -399,7 +401,7 @@ namespace gemstone.data
         /// <summary>
         /// Gets or sets default timeout for <see cref="AdoDataConnection"/> data operations.
         /// </summary>
-        public int DefaultTimeout { get; set; } = DataExtensions.DefaultTimeoutDuration;
+        public int DefaultTimeout { get; set; } = DataExtensions.DataExtensions.DefaultTimeoutDuration;
 
         /// <summary>
         /// Gets current UTC date-time in an implementation that is proper for the connected <see cref="AdoDataConnection"/> database type.

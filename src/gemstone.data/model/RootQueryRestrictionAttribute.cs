@@ -27,7 +27,7 @@ using System;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Defines an attribute that will mark a modeled table with a record restriction that applies

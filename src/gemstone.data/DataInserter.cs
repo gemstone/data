@@ -39,10 +39,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
-using gemstone.io;
-using gemstone.reflection;
+using Gemstone.Data.DataExtensions;
+using Gemstone.IO;
+using Gemstone.Reflection;
 
-namespace gemstone.data
+namespace Gemstone.Data
 {
     // Note: if you have triggers that insert records into other tables automatically that have defined records to
     // be inserted, this class will check for this occurrence and do SQL updates instead of SQL inserts.  However,
@@ -716,15 +717,15 @@ namespace gemstone.data
                         // Added check to preserve ID number for auto-inc fields
                         if (!usingIdentityInsert && !skipKeyValuePreservation && PreserveAutoIncValues && autoIncField != null)
                         {
-                            int toTableRowCount = int.Parse(Common.ToNonNullString(toTable.Connection.ExecuteScalar($"SELECT MAX({autoIncField.SQLEscapedName}) FROM {toTable.SQLEscapedName}", Timeout), "0")) + 1;
-                            int sourceTablePrimaryFieldValue = int.Parse(Common.ToNonNullString(autoIncField.Value, "0"));
+                            int toTableRowCount = int.Parse(ToNonNullString(toTable.Connection.ExecuteScalar($"SELECT MAX({autoIncField.SQLEscapedName}) FROM {toTable.SQLEscapedName}", Timeout), "0")) + 1;
+                            int sourceTablePrimaryFieldValue = int.Parse(ToNonNullString(autoIncField.Value, "0"));
                             int synchronizations = 0;
 
                             for (int i = toTableRowCount; i < sourceTablePrimaryFieldValue; i++)
                             {
                                 // Insert record into destination table up to identity field value
                                 toTable.Connection.ExecuteNonQuery(insertSQL.ToString(), Timeout);
-                                int currentIdentityValue = int.Parse(Common.ToNonNullString(toTable.Connection.ExecuteScalar(toTable.IdentitySQL, Timeout), "0"));
+                                int currentIdentityValue = int.Parse(ToNonNullString(toTable.Connection.ExecuteScalar(toTable.IdentitySQL, Timeout), "0"));
 
                                 // Delete record which was just inserted
                                 toTable.Connection.ExecuteNonQuery($"DELETE FROM {toTable.SQLEscapedName} WHERE {autoIncField.SQLEscapedName} = {currentIdentityValue}", Timeout);
@@ -778,7 +779,7 @@ namespace gemstone.data
             try
             {
                 // If record already exists due to triggers or other means we must update it instead of inserting it
-                if (int.Parse(Common.ToNonNullString(toTable.Connection.ExecuteScalar(countSql.ToString(), Timeout), "0")) > 0)
+                if (int.Parse(ToNonNullString(toTable.Connection.ExecuteScalar(countSql.ToString(), Timeout), "0")) > 0)
                 {
                     // Add where criteria to SQL update statement
                     updateSql.Append(whereSql);
@@ -887,7 +888,7 @@ namespace gemstone.data
                 commonField.Value = DereferenceValue(sourceTable, commonField.Name, commonField.Value);
 
                 // Get field value
-                value = Convert.ToString(Common.ToNonNullString(commonField.Value)).Trim();
+                value = Convert.ToString(ToNonNullString(commonField.Value)).Trim();
 
                 // We manually parse data type here instead of using SqlEncodedValue because data inserted
                 // into bulk insert file doesn't need SQL encoding...
@@ -1147,6 +1148,8 @@ namespace gemstone.data
 
             return value;
         }
+
+        private string ToNonNullString(object value, string nonNullValue = "") => StringExtensions.StringExtensions.ToNonNullString(value, nonNullValue);
 
         #endregion
     }

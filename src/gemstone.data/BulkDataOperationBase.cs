@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace gemstone.data
+namespace Gemstone.Data
 {
     #region [ IBulkDataOperation ]
 

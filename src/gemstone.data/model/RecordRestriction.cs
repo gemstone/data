@@ -27,9 +27,10 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using gemstone.collections;
+using Gemstone.ArrayExtensions;
+using Gemstone.Collections.CollectionExtensions;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Defines a parameterized record restriction that can be applied to queries.
@@ -164,7 +165,7 @@ namespace gemstone.data.model
                 return true;
 
             if (FilterExpression.Equals(other?.FilterExpression, StringComparison.Ordinal))
-                return Parameters.CompareTo(other?.Parameters, true) == 0;
+                return Parameters.CompareTo(other?.Parameters) == 0;
 
             return false;
         }
@@ -377,6 +378,7 @@ namespace gemstone.data.model
 
             object[] parameters = leftLength == 0 ? right.Parameters : rightLength == 0 ? left.Parameters : left.Parameters.Combine(right.Parameters);
 
+            // ReSharper disable once CoVariantArrayConversion
             object[] offsetArgs = Enumerable.Range(leftLength, rightLength).Select(index => $"{{{index}}}").ToArray();
 
             return new RecordRestriction($"({left.FilterExpression}) {operation} ({string.Format(right.FilterExpression, offsetArgs)})", parameters);

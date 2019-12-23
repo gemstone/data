@@ -25,7 +25,7 @@
 
 using System;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Defines an attribute that will mark a property to not be serialized as a record field.

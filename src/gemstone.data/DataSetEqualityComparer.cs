@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
-namespace gemstone.data
+namespace Gemstone.Data
 {
     /// <summary>
     /// Equality comparer for <see cref="T:System.Data.DataSet"/> objects.

@@ -34,17 +34,19 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using gemstone.collections;
-using gemstone.expressions.evaluator;
-using gemstone.expressions.model;
-using gemstone.reflection;
+using Gemstone.Collections.CollectionExtensions;
+using Gemstone.Data.DataExtensions;
+using Gemstone.Expressions.Evaluator;
+using Gemstone.Expressions.Model;
+using Gemstone.Reflection.MemberInfoExtensions;
+using Gemstone.StringExtensions;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable StaticMemberInGenericType
 // ReSharper disable UnusedMember.Local
 // ReSharper disable AssignNullToNotNullAttribute
 // ReSharper disable NotAccessedField.Local
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Defines database operations for a modeled table.
@@ -2464,7 +2466,7 @@ namespace gemstone.data.model
         // Static Properties
 
         /// <summary>
-        /// Gets or sets <see cref="expressions.evaluator.TypeRegistry"/> instance used for evaluating encountered instances
+        /// Gets or sets <see cref="Gemstone.Expressions.Evaluator.TypeRegistry"/> instance used for evaluating encountered instances
         /// of the <see cref="ValueExpressionAttributeBase"/> on modeled table properties.
         /// </summary>
         /// <remarks>

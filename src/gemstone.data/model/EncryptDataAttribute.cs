@@ -25,7 +25,7 @@
 
 using System;
 
-namespace gemstone.data.model
+namespace Gemstone.Data.Model
 {
     /// <summary>
     /// Defines an attribute that provides encryption of text field contents for a modeled table.

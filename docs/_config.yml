@@ -1,7 +1,9 @@
 theme: jekyll-theme-cayman
-title: gemstone.data
+title: Gemstone.Data
 description: GPA Gemstone Data Library
 github:
-  repository_name: gemstone.data
+  repository_name: Gemstone.Data
   owner_url: https://www.gridprotectionalliance.org
   owner_name: Grid Protection Alliance
+plugins:
+  - jemoji

@@ -31,7 +31,7 @@ namespace Gemstone.Data.Model
     /// Defines an attribute that provides encryption of text field contents for a modeled table.
     /// </summary>
     /// <remarks>
-    /// Application of attribute is only valid on <see cref="String"/> properties; attribute will be
+    /// Application of attribute is only valid on <see cref="string"/> properties; attribute will be
     /// ignored if applied to properties of other types.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Property)]

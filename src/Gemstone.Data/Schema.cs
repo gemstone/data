@@ -1340,7 +1340,7 @@ namespace Gemstone.Data
         public override string ToString() => MapName;
 
         /// <summary>
-        /// Compare <see cref="Object"/> type of <paramref name="obj"/> with <see cref="Table"/> object <see cref="Priority"/>
+        /// Compare <see cref="object"/> type of <paramref name="obj"/> with <see cref="Table"/> object <see cref="Priority"/>
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>

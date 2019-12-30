@@ -1313,8 +1313,8 @@ namespace Gemstone.Data.DataExtensions
 
             // If the value is an instance of the given type,
             // no type conversion is necessary
-            if (value is T)
-                return (T)value;
+            if (value is T typeValue)
+                return typeValue;
 
             Type type = typeof(T);
 
@@ -1412,8 +1412,8 @@ namespace Gemstone.Data.DataExtensions
             if (value == null || value == DBNull.Value)
                 return defaultValue ?? Guid.Empty;
 
-            if (value is Guid)
-                return (Guid)value;
+            if (value is Guid guidValue)
+                return guidValue;
 
             return Guid.Parse(value.ToString());
         }
@@ -1688,18 +1688,14 @@ namespace Gemstone.Data.DataExtensions
             {
                 // Uses the first row as header row.
                 for (int i = 0; i < headers.Length; i++)
-                {
                     table.Columns.Add(new DataColumn(headers[i].Trim('\"'))); //Remove any leading and trailing quotes from the column name.
-                }
 
                 cursor++;
             }
             else
             {
                 for (int i = 0; i < headers.Length; i++)
-                {
                     table.Columns.Add(new DataColumn());
-                }
             }
 
             // Populates the data table with csv data.
@@ -1711,11 +1707,9 @@ namespace Gemstone.Data.DataExtensions
                 // Populates the new row.
                 string[] fields = Regex.Split(lines[cursor], pattern);
 
+                // Removes any leading and trailing quotes from the data.
                 for (int i = 0; i < fields.Length; i++)
-                {
-                    // Removes any leading and trailing quotes from the data.
                     row[i] = fields[i].Trim('\"');
-                }
 
                 // Adds the new row.
                 table.Rows.Add(row);
@@ -1744,9 +1738,7 @@ namespace Gemstone.Data.DataExtensions
                     data.Append((quoted ? "\"" : "") + table.Columns[i].ColumnName + (quoted ? "\"" : ""));
 
                     if (i < table.Columns.Count - 1)
-                    {
                         data.Append(delimiter);
-                    }
                 }
 
                 data.Append("\r\n");
@@ -1760,9 +1752,7 @@ namespace Gemstone.Data.DataExtensions
                     data.Append((quoted ? "\"" : "") + table.Rows[i][j] + (quoted ? "\"" : ""));
 
                     if (j < table.Columns.Count - 1)
-                    {
                         data.Append(delimiter);
-                    }
                 }
 
                 data.Append("\r\n");

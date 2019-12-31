@@ -274,7 +274,7 @@ namespace Gemstone.Data.Model
                 }
 
                 // Remove any remaining tokens from instance expressions
-                string removeRemainingTokens(string sql) => sql
+                static string removeRemainingTokens(string sql) => sql
                     .Replace(TableNamePrefixToken, "")
                     .Replace(TableNameSuffixToken, "")
                     .Replace(FieldListPrefixToken, "")
@@ -2236,6 +2236,7 @@ namespace Gemstone.Data.Model
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
+        [SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline")]
         static TableOperations()
         {
             StringBuilder addNewFields = new StringBuilder();

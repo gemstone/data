@@ -95,16 +95,9 @@ namespace Gemstone.Data.DataExtensions
         // Defines a list of keywords used to identify PL/SQL blocks.
         private static readonly string[] s_plsqlIdentifiers = { "CREATE FUNCTION", "CREATE OR REPLACE FUNCTION", "CREATE PROCEDURE", "CREATE OR REPLACE PROCEDURE", "CREATE PACKAGE", "CREATE OR REPLACE PACKAGE", "DECLARE", "BEGIN" };
 
-        private static readonly Regex s_sqlParameterRegex;
-        private static readonly Regex s_sqlCommentRegex;
-        private static readonly Regex s_sqlIdentifierRegex;
-
-        static DataExtensions()
-        {
-            s_sqlParameterRegex = new Regex(@"^[:@][a-zA-Z]\w*$", RegexOptions.Compiled);
-            s_sqlCommentRegex = new Regex(@"/\*.*\*/|--.*(?=\n)", RegexOptions.Multiline);
-            s_sqlIdentifierRegex = new Regex(@"^(\S+|(\S+|\[.+\])(\.\S+|\.\[.+\])*|(\S+|\`.+\`)(\.\S+|\.\`.+\`)*|(\S+|\"".+\"")(\.\S+|\.\"".+\"")*)$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture);
-        }
+        private static readonly Regex s_sqlParameterRegex = new Regex(@"^[:@][a-zA-Z]\w*$", RegexOptions.Compiled);
+        private static readonly Regex s_sqlCommentRegex = new Regex(@"/\*.*\*/|--.*(?=\n)", RegexOptions.Multiline);
+        private static readonly Regex s_sqlIdentifierRegex = new Regex(@"^(\S+|(\S+|\[.+\])(\.\S+|\.\[.+\])*|(\S+|\`.+\`)(\.\S+|\.\`.+\`)*|(\S+|\"".+\"")(\.\S+|\.\"".+\"")*)$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture);
 
         #region [ SQL Encoding String Extension ]
 
@@ -239,6 +232,9 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>The number of rows affected.</returns>
         public static int ExecuteNonQuery(this SqlCommand command, int timeout, string sql, params object[] parameters)
         {
+            if (!string.IsNullOrWhiteSpace(sql))
+                command.CommandText = sql;
+
             command.CommandTimeout = timeout;
             command.Parameters.Clear();
             command.PopulateParameters(parameters);
@@ -394,6 +390,9 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>A <see cref="SqlDataReader"/> object.</returns>
         public static SqlDataReader ExecuteReader(this SqlCommand command, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
         {
+            if (!string.IsNullOrWhiteSpace(sql))
+                command.CommandText = sql;
+
             command.CommandTimeout = timeout;
             command.Parameters.Clear();
             command.PopulateParameters(parameters);
@@ -526,6 +525,9 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>Value in the first column of the first row in the result set.</returns>
         public static object ExecuteScalar(this SqlCommand command, int timeout, string sql, params object[] parameters)
         {
+            if (!string.IsNullOrWhiteSpace(sql))
+                command.CommandText = sql;
+
             command.CommandTimeout = timeout;
             command.Parameters.Clear();
             command.PopulateParameters(parameters);
@@ -1219,6 +1221,9 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>A <see cref="DataSet"/> object.</returns>
         public static DataSet RetrieveDataSet(this SqlCommand command, int timeout, int startRow, int maxRows, string sql, params object[] parameters)
         {
+            if (!string.IsNullOrWhiteSpace(sql))
+                command.CommandText = sql;
+
             command.CommandTimeout = timeout;
             command.Parameters.Clear();
             command.PopulateParameters(parameters);
@@ -1417,11 +1422,13 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="sourceSql">The SQL statement used initially to populate the <see cref="DataTable"/>.</param>
         /// <param name="connection">The <see cref="SqlConnection"/> to use for updating the underlying data source.</param>
         /// <returns>The number of rows successfully updated from the <see cref="DataTable"/>.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "commandBuilder"), SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults"), SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "commandBuilder")]
+        [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static int UpdateData(this SqlConnection connection, DataTable sourceData, string sourceSql)
         {
             SqlDataAdapter dataAdapter = new SqlDataAdapter(sourceSql, connection);
-            SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter);
+            SqlCommandBuilder _ = new SqlCommandBuilder(dataAdapter);
 
             return dataAdapter.Update(sourceData);
         }

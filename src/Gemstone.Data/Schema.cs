@@ -41,6 +41,12 @@ using System.Linq;
 using System.Text;
 using Gemstone.Data.DataExtensions;
 
+#pragma warning disable CA2235
+#pragma warning disable CS8603
+#pragma warning disable CS8604
+#pragma warning disable CS8618
+#pragma warning disable CS8625
+
 namespace Gemstone.Data
 {
     // James Ritchie Carroll - 2003

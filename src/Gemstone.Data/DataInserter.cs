@@ -43,6 +43,14 @@ using Gemstone.Data.DataExtensions;
 using Gemstone.IO;
 using Gemstone.Reflection;
 
+#pragma warning disable CA2235
+#pragma warning disable CS8600
+#pragma warning disable CS8601
+#pragma warning disable CS8603
+#pragma warning disable CS8604
+#pragma warning disable CS8618
+#pragma warning disable CS8625
+
 namespace Gemstone.Data
 {
     // Note: if you have triggers that insert records into other tables automatically that have defined records to

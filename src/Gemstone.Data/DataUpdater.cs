@@ -30,6 +30,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Gemstone.Data.DataExtensions;
 
+#pragma warning disable CA2235
+#pragma warning disable CS8603
+#pragma warning disable CS8604
+#pragma warning disable CS8618
+#pragma warning disable CS8625
+
 namespace Gemstone.Data
 {
     // Note: user must define primary key fields in the database or through code to be used for updates for each table

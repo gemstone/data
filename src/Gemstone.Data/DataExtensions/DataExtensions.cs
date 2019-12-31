@@ -67,6 +67,7 @@
 //******************************************************************************************************
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
@@ -149,12 +150,11 @@ namespace Gemstone.Data.DataExtensions
         /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
         public static int ExecuteNonQuery<TConnection>(this TConnection connection, int timeout, string sql, params object[] parameters) where TConnection : IDbConnection
         {
-            using (IDbCommand command = connection.CreateParameterizedCommand(sql, parameters))
-            {
-                command.CommandTimeout = timeout;
+            using IDbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
-                return command.ExecuteNonQuery();
-            }
+            command.CommandTimeout = timeout;
+
+            return command.ExecuteNonQuery();
         }
 
         /// <summary>
@@ -180,13 +180,12 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static int ExecuteNonQuery(this SqlConnection connection, int timeout, string sql, params object[] parameters)
         {
-            using (SqlCommand command = new SqlCommand(sql, connection))
-            {
-                command.CommandTimeout = timeout;
-                command.PopulateParameters(parameters);
+            using SqlCommand command = new SqlCommand(sql, connection);
 
-                return command.ExecuteNonQuery();
-            }
+            command.CommandTimeout = timeout;
+            command.PopulateParameters(parameters);
+
+            return command.ExecuteNonQuery();
         }
 
         /// <summary>
@@ -290,12 +289,11 @@ namespace Gemstone.Data.DataExtensions
         /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
         public static IDataReader ExecuteReader<TConnection>(this TConnection connection, int timeout, string sql, CommandBehavior behavior, params object[] parameters) where TConnection : IDbConnection
         {
-            using (IDbCommand command = connection.CreateParameterizedCommand(sql, parameters))
-            {
-                command.CommandTimeout = timeout;
+            using IDbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
-                return command.ExecuteReader(behavior);
-            }
+            command.CommandTimeout = timeout;
+
+            return command.ExecuteReader(behavior);
         }
 
         /// <summary>
@@ -322,13 +320,12 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static SqlDataReader ExecuteReader(this SqlConnection connection, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
         {
-            using (SqlCommand command = new SqlCommand(sql, connection))
-            {
-                command.CommandTimeout = timeout;
-                command.PopulateParameters(parameters);
+            using SqlCommand command = new SqlCommand(sql, connection);
 
-                return command.ExecuteReader(behavior);
-            }
+            command.CommandTimeout = timeout;
+            command.PopulateParameters(parameters);
+
+            return command.ExecuteReader(behavior);
         }
 
         /// <summary>
@@ -434,12 +431,11 @@ namespace Gemstone.Data.DataExtensions
         /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
         public static object ExecuteScalar<TConnection>(this TConnection connection, int timeout, string sql, params object[] parameters) where TConnection : IDbConnection
         {
-            using (IDbCommand command = connection.CreateParameterizedCommand(sql, parameters))
-            {
-                command.CommandTimeout = timeout;
+            using IDbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
-                return command.ExecuteScalar();
-            }
+            command.CommandTimeout = timeout;
+
+            return command.ExecuteScalar();
         }
 
         /// <summary>
@@ -467,13 +463,12 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static object ExecuteScalar(this SqlConnection connection, int timeout, string sql, params object[] parameters)
         {
-            using (SqlCommand command = new SqlCommand(sql, connection))
-            {
-                command.CommandTimeout = timeout;
-                command.PopulateParameters(parameters);
+            using SqlCommand command = new SqlCommand(sql, connection);
 
-                return command.ExecuteScalar();
-            }
+            command.CommandTimeout = timeout;
+            command.PopulateParameters(parameters);
+
+            return command.ExecuteScalar();
         }
 
         /// <summary>
@@ -549,10 +544,9 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="scriptPath">The path to the SQL script.</param>
         public static void ExecuteTSQLScript(this IDbConnection connection, string scriptPath)
         {
-            using (TextReader scriptReader = File.OpenText(scriptPath))
-            {
-                ExecuteTSQLScript(connection, scriptReader);
-            }
+            using TextReader scriptReader = File.OpenText(scriptPath);
+
+            ExecuteTSQLScript(connection, scriptReader);
         }
 
         /// <summary>
@@ -565,33 +559,32 @@ namespace Gemstone.Data.DataExtensions
         {
             string line = scriptReader.ReadLine();
 
-            using (IDbCommand command = connection.CreateCommand())
+            using IDbCommand command = connection.CreateCommand();
+
+            StringBuilder statementBuilder = new StringBuilder();
+
+            while (line != null)
             {
-                StringBuilder statementBuilder = new StringBuilder();
+                string trimLine = line.Trim();
+                string statement;
 
-                while (line != null)
+                if (trimLine == "GO")
                 {
-                    string trimLine = line.Trim();
-                    string statement;
-
-                    if (trimLine == "GO")
-                    {
-                        // Remove comments and execute the statement.
-                        statement = statementBuilder.ToString();
-                        command.CommandText = s_sqlCommentRegex.Replace(statement, " ").Trim();
-                        command.ExecuteNonQuery();
-                        statementBuilder.Clear();
-                    }
-                    else
-                    {
-                        // Append this line to the statement
-                        statementBuilder.Append(line);
-                        statementBuilder.Append('\n');
-                    }
-
-                    // Read the next line from the file.
-                    line = scriptReader.ReadLine();
+                    // Remove comments and execute the statement.
+                    statement = statementBuilder.ToString();
+                    command.CommandText = s_sqlCommentRegex.Replace(statement, " ").Trim();
+                    command.ExecuteNonQuery();
+                    statementBuilder.Clear();
                 }
+                else
+                {
+                    // Append this line to the statement
+                    statementBuilder.Append(line);
+                    statementBuilder.Append('\n');
+                }
+
+                // Read the next line from the file.
+                line = scriptReader.ReadLine();
             }
         }
 
@@ -602,10 +595,9 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="scriptPath">The path to the SQL script.</param>
         public static void ExecuteMySQLScript(this IDbConnection connection, string scriptPath)
         {
-            using (TextReader scriptReader = File.OpenText(scriptPath))
-            {
-                ExecuteMySQLScript(connection, scriptReader);
-            }
+            using TextReader scriptReader = File.OpenText(scriptPath);
+
+            ExecuteMySQLScript(connection, scriptReader);
         }
 
         /// <summary>
@@ -622,40 +614,39 @@ namespace Gemstone.Data.DataExtensions
             line = scriptReader.ReadLine();
             delimiter = ";";
 
-            using (IDbCommand command = connection.CreateCommand())
+            using IDbCommand command = connection.CreateCommand();
+
+            StringBuilder statementBuilder = new StringBuilder();
+
+            while (line != null)
             {
-                StringBuilder statementBuilder = new StringBuilder();
+                string statement;
 
-                while (line != null)
+                if (line.StartsWith("DELIMITER ", StringComparison.OrdinalIgnoreCase))
                 {
-                    string statement;
-
-                    if (line.StartsWith("DELIMITER ", StringComparison.OrdinalIgnoreCase))
-                    {
-                        delimiter = line.Split(' ')[1].Trim();
-                    }
-                    else
-                    {
-                        statementBuilder.Append(line);
-                        statementBuilder.Append('\n');
-                        statement = statementBuilder.ToString();
-                        statement = s_sqlCommentRegex.Replace(statement, " ").Trim();
-
-                        if (statement.EndsWith(delimiter, StringComparison.Ordinal))
-                        {
-                            // Remove trailing delimiter.
-                            statement = statement.Remove(statement.Length - delimiter.Length);
-
-                            // Remove comments and execute the statement.
-                            command.CommandText = statement;
-                            command.ExecuteNonQuery();
-                            statementBuilder.Clear();
-                        }
-                    }
-
-                    // Read the next line from the file.
-                    line = scriptReader.ReadLine();
+                    delimiter = line.Split(' ')[1].Trim();
                 }
+                else
+                {
+                    statementBuilder.Append(line);
+                    statementBuilder.Append('\n');
+                    statement = statementBuilder.ToString();
+                    statement = s_sqlCommentRegex.Replace(statement, " ").Trim();
+
+                    if (statement.EndsWith(delimiter, StringComparison.Ordinal))
+                    {
+                        // Remove trailing delimiter.
+                        statement = statement.Remove(statement.Length - delimiter.Length);
+
+                        // Remove comments and execute the statement.
+                        command.CommandText = statement;
+                        command.ExecuteNonQuery();
+                        statementBuilder.Clear();
+                    }
+                }
+
+                // Read the next line from the file.
+                line = scriptReader.ReadLine();
             }
         }
 
@@ -666,10 +657,9 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="scriptPath">The path to the SQL script.</param>
         public static void ExecuteOracleScript(this IDbConnection connection, string scriptPath)
         {
-            using (TextReader scriptReader = File.OpenText(scriptPath))
-            {
-                ExecuteOracleScript(connection, scriptReader);
-            }
+            using TextReader scriptReader = File.OpenText(scriptPath);
+
+            ExecuteOracleScript(connection, scriptReader);
         }
 
         /// <summary>
@@ -684,43 +674,42 @@ namespace Gemstone.Data.DataExtensions
 
             line = scriptReader.ReadLine();
 
-            using (IDbCommand command = connection.CreateCommand())
+            using IDbCommand command = connection.CreateCommand();
+
+            StringBuilder statementBuilder = new StringBuilder();
+
+            while (line != null)
             {
-                StringBuilder statementBuilder = new StringBuilder();
+                string trimLine = line.Trim();
+                string statement;
+                bool isPlsqlBlock;
 
-                while (line != null)
+                statementBuilder.Append(line);
+                statementBuilder.Append('\n');
+                statement = statementBuilder.ToString();
+                statement = s_sqlCommentRegex.Replace(statement, " ").Trim();
+
+                // Determine whether the statement is a PL/SQL block.
+                // If the statement is a PL/SQL block, the delimiter
+                // is a forward slash. Otherwise, it is a semicolon.
+                isPlsqlBlock = s_plsqlIdentifiers.Any(ident => statement.IndexOf(ident, StringComparison.CurrentCultureIgnoreCase) >= 0);
+
+                // If the statement is a PL/SQL block and the current line is a forward slash,
+                // or if the statement is not a PL/SQL block and the statement in a semicolon,
+                // then execute and flush the statement so that the next statement can be executed.
+                if (isPlsqlBlock && trimLine == "/" || !isPlsqlBlock && statement.EndsWith(";", StringComparison.Ordinal))
                 {
-                    string trimLine = line.Trim();
-                    string statement;
-                    bool isPlsqlBlock;
+                    // Remove trailing delimiter and newlines.
+                    statement = statement.Remove(statement.Length - 1);
 
-                    statementBuilder.Append(line);
-                    statementBuilder.Append('\n');
-                    statement = statementBuilder.ToString();
-                    statement = s_sqlCommentRegex.Replace(statement, " ").Trim();
-
-                    // Determine whether the statement is a PL/SQL block.
-                    // If the statement is a PL/SQL block, the delimiter
-                    // is a forward slash. Otherwise, it is a semicolon.
-                    isPlsqlBlock = s_plsqlIdentifiers.Any(ident => statement.IndexOf(ident, StringComparison.CurrentCultureIgnoreCase) >= 0);
-
-                    // If the statement is a PL/SQL block and the current line is a forward slash,
-                    // or if the statement is not a PL/SQL block and the statement in a semicolon,
-                    // then execute and flush the statement so that the next statement can be executed.
-                    if (isPlsqlBlock && trimLine == "/" || !isPlsqlBlock && statement.EndsWith(";", StringComparison.Ordinal))
-                    {
-                        // Remove trailing delimiter and newlines.
-                        statement = statement.Remove(statement.Length - 1);
-
-                        // Remove comments and execute the statement.
-                        command.CommandText = statement;
-                        command.ExecuteNonQuery();
-                        statementBuilder.Clear();
-                    }
-
-                    // Read the next line from the file.
-                    line = scriptReader.ReadLine();
+                    // Remove comments and execute the statement.
+                    command.CommandText = statement;
+                    command.ExecuteNonQuery();
+                    statementBuilder.Clear();
                 }
+
+                // Read the next line from the file.
+                line = scriptReader.ReadLine();
             }
         }
 
@@ -748,7 +737,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
         public static DataRow RetrieveRow(this SqlConnection connection, int timeout, string sql)
         {
-            return connection.RetrieveRow(sql, timeout, null);
+            return connection.RetrieveRow(timeout, sql, Array.Empty<object>());
         }
 
         /// <summary>
@@ -833,7 +822,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
         public static DataRow RetrieveRow(this SqlCommand command, int timeout, string sql)
         {
-            return command.RetrieveRow(sql, timeout, null);
+            return command.RetrieveRow(timeout, sql, Array.Empty<object>());
         }
 
         /// <summary>
@@ -926,7 +915,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>A <see cref="DataTable"/> object.</returns>
         public static DataTable RetrieveData(this SqlConnection connection, int timeout, int startRow, int maxRows, string sql)
         {
-            return connection.RetrieveData(sql, startRow, maxRows, timeout, null);
+            return connection.RetrieveData(timeout, startRow, maxRows, sql, Array.Empty<object>());
         }
 
         /// <summary>
@@ -1011,7 +1000,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>A <see cref="DataTable"/> object.</returns>
         public static DataTable RetrieveData(this SqlCommand command, int timeout, int startRow, int maxRows, string sql)
         {
-            return command.RetrieveData(sql, startRow, maxRows, timeout, null);
+            return command.RetrieveData(timeout, startRow, maxRows, sql, Array.Empty<object>());
         }
 
         /// <summary>
@@ -1100,7 +1089,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>A <see cref="DataSet"/> object.</returns>
         public static DataSet RetrieveDataSet(this SqlConnection connection, int timeout, int startRow, int maxRows, string sql)
         {
-            return connection.RetrieveDataSet(sql, startRow, maxRows, timeout, null);
+            return connection.RetrieveDataSet(timeout, startRow, maxRows, sql, Array.Empty<object>());
         }
 
         /// <summary>
@@ -1130,16 +1119,15 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static DataSet RetrieveDataSet(this SqlConnection connection, int timeout, int startRow, int maxRows, string sql, params object[] parameters)
         {
-            using (SqlCommand command = new SqlCommand(sql, connection))
-            {
-                command.CommandTimeout = timeout;
-                command.PopulateParameters(parameters);
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
-                DataSet data = new DataSet("Temp");
-                dataAdapter.Fill(data, startRow, maxRows, "Table1");
+            using SqlCommand command = new SqlCommand(sql, connection);
 
-                return data;
-            }
+            command.CommandTimeout = timeout;
+            command.PopulateParameters(parameters);
+            SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
+            DataSet data = new DataSet("Temp");
+            dataAdapter.Fill(data, startRow, maxRows, "Table1");
+
+            return data;
         }
 
         /// <summary>
@@ -1168,15 +1156,14 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>A <see cref="DataSet"/> object.</returns>
         public static DataSet RetrieveDataSet(this IDbConnection connection, Type dataAdapterType, int timeout, string sql, params object[] parameters)
         {
-            using (IDbCommand command = connection.CreateParameterizedCommand(sql, parameters))
-            {
-                command.CommandTimeout = timeout;
-                IDataAdapter dataAdapter = (IDataAdapter)Activator.CreateInstance(dataAdapterType, command);
-                DataSet data = new DataSet("Temp");
-                dataAdapter.Fill(data);
+            using IDbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
-                return data;
-            }
+            command.CommandTimeout = timeout;
+            IDataAdapter dataAdapter = (IDataAdapter)Activator.CreateInstance(dataAdapterType, command);
+            DataSet data = new DataSet("Temp");
+            dataAdapter.Fill(data);
+
+            return data;
         }
 
         /// <summary>
@@ -1203,7 +1190,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>A <see cref="DataSet"/> object.</returns>
         public static DataSet RetrieveDataSet(this SqlCommand command, int timeout, int startRow, int maxRows, string sql)
         {
-            return command.RetrieveDataSet(sql, startRow, maxRows, timeout, null);
+            return command.RetrieveDataSet(timeout, startRow, maxRows, sql, Array.Empty<object>());
         }
 
         /// <summary>
@@ -1292,7 +1279,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>The value, of type T, of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
         public static T ConvertField<T>(this DataRow row, string field)
         {
-            return ConvertField(row, field, default(T));
+            return ConvertField(row, field, default(T)!);
         }
 
         /// <summary>
@@ -1340,9 +1327,9 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="field">The name of the column to return the value of.</param>
         /// <param name="type">Type of the column.</param>
         /// <returns>The value of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
-        public static object ConvertField(this DataRow row, string field, Type type)
+        public static object? ConvertField(this DataRow row, string field, Type type)
         {
-            return ConvertField(row, field, type, null);
+            return ConvertField(row, field, type, default!);
         }
 
         /// <summary>
@@ -1353,7 +1340,7 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="type">Type of the column.</param>
         /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved.</param>
         /// <returns>The value of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
-        public static object ConvertField(this DataRow row, string field, Type type, object defaultValue)
+        public static object? ConvertField(this DataRow row, string field, Type type, object? defaultValue)
         {
             object value = row.Field<object>(field);
 
@@ -1449,9 +1436,9 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="command">The <see cref="SqlCommand"/> whose parameters are to be populated.</param>
         /// <param name="parameter1">The first parameter value to populate the <see cref="SqlCommand"/> parameters with.</param>
         /// <param name="parameters">The remaining parameter values to populate the <see cref="SqlCommand"/> parameters with.</param>
-        public static void PopulateParameters(this SqlCommand command, object parameter1, params object[] parameters)
+        public static void PopulateParameters(this SqlCommand command, object? parameter1, params object[] parameters)
         {
-            command.PopulateParameters(new[] { parameter1 }.Concat(parameters).ToArray());
+            command.PopulateParameters(new[] { parameter1 }.Concat(parameters).NullAsDBNull());
         }
 
         /// <summary>
@@ -1653,6 +1640,13 @@ namespace Gemstone.Data.DataExtensions
 
             return command;
         }
+
+        /// <summary>
+        /// Gets any <c>null</c> parameter values as <see cref="DBNull"/>.
+        /// </summary>
+        /// <param name="values">Source parameter values.</param>
+        /// <returns>Parameter values with <c>null</c> replaced with <see cref="DBNull"/>.</returns>
+        public static object[] NullAsDBNull(this IEnumerable<object?> values) => values.Select(value => value ?? DBNull.Value).ToArray();
 
         #endregion
 

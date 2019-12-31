@@ -62,7 +62,7 @@ namespace Gemstone.Data.Model
         /// <summary>
         /// Defines restriction parameter values.
         /// </summary>
-        public readonly object[] Parameters;
+        public readonly object?[] Parameters;
 
         /// <summary>
         /// Gets or sets flag that determines if root query restriction should be applied to update operations.
@@ -109,10 +109,10 @@ namespace Gemstone.Data.Model
         /// will be updated to reflect what is defined in the user model.
         /// </para>
         /// </remarks>
-        public RootQueryRestrictionAttribute(string filterExpression, params object[] parameters)
+        public RootQueryRestrictionAttribute(string filterExpression, params object?[]? parameters)
         {
-            FilterExpression = filterExpression;
-            Parameters = parameters;
+            FilterExpression = filterExpression ?? throw new ArgumentNullException(nameof(filterExpression));
+            Parameters = parameters ?? Array.Empty<object>();
         }
 
         #endregion

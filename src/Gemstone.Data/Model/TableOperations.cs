@@ -61,38 +61,25 @@ namespace Gemstone.Data.Model
         private class CurrentScope : ValueExpressionScopeBase<T>
         {
             // Define instance variables exposed to ValueExpressionAttributeBase expressions
-        #pragma warning disable 169, 414, 649
+            #pragma warning disable 169, 414, 649, CS8618
             public TableOperations<T> TableOperations;
             public AdoDataConnection Connection;
-        #pragma warning restore 169, 414, 649
+            #pragma warning restore 169, 414, 649, CS8618
         }
 
         private class NullConnection : IDbConnection
         {
-            public string ConnectionString { get; set; }
-            public int ConnectionTimeout { get; } = 0;
-            public string Database { get; } = null;
+            public string? ConnectionString { get; set; }
+            public int ConnectionTimeout { get; } = default;
+            public string? Database { get; } = default;
             public ConnectionState State { get; } = ConnectionState.Open;
-
-            public void Open()
-            {
-            }
-
-            public void Close()
-            {
-            }
-
-            public void Dispose()
-            {
-            }
-
-            public void ChangeDatabase(string databaseName)
-            {
-            }
-
-            public IDbCommand CreateCommand() => null;
-            public IDbTransaction BeginTransaction() => null;
-            public IDbTransaction BeginTransaction(IsolationLevel il) => null;
+            public void Open() {}
+            public void Close() {}
+            public void Dispose() {}
+            public void ChangeDatabase(string databaseName) {}
+            public IDbCommand? CreateCommand() => default;
+            public IDbTransaction? BeginTransaction() => default;
+            public IDbTransaction? BeginTransaction(IsolationLevel il) => default;
         }
 
         private class IntermediateParameter : IDbDataParameter
@@ -100,10 +87,10 @@ namespace Gemstone.Data.Model
             public DbType DbType { get; set; }
             public ParameterDirection Direction { get; set; }
             public bool IsNullable { get; } = false;
-            public string ParameterName { get; set; }
-            public string SourceColumn { get; set; }
+            public string? ParameterName { get; set; }
+            public string? SourceColumn { get; set; }
             public DataRowVersion SourceVersion { get; set; }
-            public object Value { get; set; }
+            public object? Value { get; set; }
             public byte Precision { get; set; }
             public byte Scale { get; set; }
             public int Size { get; set; }
@@ -135,8 +122,8 @@ namespace Gemstone.Data.Model
         private readonly string m_deleteSql;
         private readonly string m_deleteWhereSql;
         private readonly string m_searchFilterSql;
-        private string m_lastSortField;
-        private RecordRestriction m_lastRestriction;
+        private string? m_lastSortField;
+        private RecordRestriction? m_lastRestriction;
 
         #endregion
 
@@ -164,7 +151,7 @@ namespace Gemstone.Data.Model
         /// </code>
         /// </remarks>
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        public TableOperations(AdoDataConnection connection, IEnumerable<KeyValuePair<string, string>> customTokens = null)
+        public TableOperations(AdoDataConnection connection, IEnumerable<KeyValuePair<string, string>>? customTokens = default)
         {
             Connection = connection ?? throw new ArgumentNullException(nameof(connection));
             m_selectCountSql = s_selectCountSql;
@@ -216,7 +203,7 @@ namespace Gemstone.Data.Model
 
             if (s_escapedFieldNameTargets != null)
             {
-                foreach (KeyValuePair<string, Dictionary<DatabaseType, bool>> escapedFieldNameTarget in s_escapedFieldNameTargets)
+                foreach (KeyValuePair<string, Dictionary<DatabaseType, bool>?> escapedFieldNameTarget in s_escapedFieldNameTargets)
                 {
                     string fieldName = escapedFieldNameTarget.Key;
                     string derivedFieldName = GetEscapedFieldName(fieldName, escapedFieldNameTarget.Value);
@@ -287,12 +274,11 @@ namespace Gemstone.Data.Model
                 }
 
                 // Remove any remaining tokens from instance expressions
-                string removeRemainingTokens(string sql) =>
-                    sql
-                        .Replace(TableNamePrefixToken, "")
-                        .Replace(TableNameSuffixToken, "")
-                        .Replace(FieldListPrefixToken, "")
-                        .Replace(FieldListSuffixToken, "");
+                string removeRemainingTokens(string sql) => sql
+                    .Replace(TableNamePrefixToken, "")
+                    .Replace(TableNameSuffixToken, "")
+                    .Replace(FieldListPrefixToken, "")
+                    .Replace(FieldListSuffixToken, "");
 
                 m_selectCountSql = removeRemainingTokens(m_selectCountSql);
                 m_selectSetSql = removeRemainingTokens(m_selectSetSql);
@@ -355,9 +341,8 @@ namespace Gemstone.Data.Model
         /// </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="connection"/> cannot be <c>null</c>.</exception>
-        public TableOperations(AdoDataConnection connection, Action<Exception> exceptionHandler, IEnumerable<KeyValuePair<string, string>> customTokens = null)
-            : this(connection, customTokens) =>
-            ExceptionHandler = exceptionHandler;
+        public TableOperations(AdoDataConnection connection, Action<Exception> exceptionHandler, IEnumerable<KeyValuePair<string, string>>? customTokens = default)
+            : this(connection, customTokens) => ExceptionHandler = exceptionHandler;
 
         #endregion
 
@@ -394,7 +379,7 @@ namespace Gemstone.Data.Model
         /// encountered exceptions will be passed to handler for processing. Otherwise, exceptions will be thrown
         /// on the call stack.
         /// </remarks>
-        public Action<Exception> ExceptionHandler { get; set; }
+        public Action<Exception>? ExceptionHandler { get; set; }
 
         /// <summary>
         /// Gets or sets flag that determines if field names should be treated as case sensitive. Defaults to <c>false</c>.
@@ -429,7 +414,7 @@ namespace Gemstone.Data.Model
         /// are marked with the <see cref="EncryptDataAttribute"/>
         /// </para>
         /// </remarks>
-        public DataTable PrimaryKeyCache { get; set; }
+        public DataTable? PrimaryKeyCache { get; set; }
 
         /// <summary>
         /// Gets or sets root record restriction that applies to query table operations.
@@ -456,7 +441,7 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        public RecordRestriction RootQueryRestriction { get; set; }
+        public RecordRestriction? RootQueryRestriction { get; set; }
 
         /// <summary>
         /// Gets or sets flag that determines if <see cref="RootQueryRestriction"/> should be applied to update operations.
@@ -500,7 +485,7 @@ namespace Gemstone.Data.Model
         /// model properties.
         /// </summary>
         /// <returns>New modeled record instance with any defined default values applied.</returns>
-        public T NewRecord()
+        public T? NewRecord()
         {
             try
             {
@@ -517,7 +502,7 @@ namespace Gemstone.Data.Model
             }
         }
 
-        object ITableOperations.NewRecord() => NewRecord();
+        object? ITableOperations.NewRecord() => NewRecord();
 
         /// <summary>
         /// Applies the default values on the specified modeled table <paramref name="record"/>
@@ -596,9 +581,9 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        public T QueryRecord(RecordRestriction restriction) => QueryRecord(null, restriction);
+        public T? QueryRecord(RecordRestriction? restriction) => QueryRecord(null, restriction);
 
-        object ITableOperations.QueryRecord(RecordRestriction restriction) => QueryRecord(restriction);
+        object? ITableOperations.QueryRecord(RecordRestriction? restriction) => QueryRecord(restriction);
 
         /// <summary>
         /// Queries database and returns a single modeled table record for the specified <paramref name="restriction"/>,
@@ -622,9 +607,9 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        public T QueryRecord(string orderByExpression, RecordRestriction restriction) => QueryRecords(orderByExpression, restriction, 1).FirstOrDefault();
+        public T? QueryRecord(string? orderByExpression, RecordRestriction? restriction) => QueryRecords(orderByExpression, restriction, 1).FirstOrDefault();
 
-        object ITableOperations.QueryRecord(string orderByExpression, RecordRestriction restriction) => QueryRecord(orderByExpression, restriction);
+        object? ITableOperations.QueryRecord(string? orderByExpression, RecordRestriction? restriction) => QueryRecord(orderByExpression, restriction);
 
         /// <summary>
         /// Queries database and returns a single modeled table record for the specified SQL filter
@@ -661,9 +646,9 @@ namespace Gemstone.Data.Model
         /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
         /// </para>
         /// </remarks>
-        public T QueryRecordWhere(string filterExpression, params object[] parameters) => QueryRecord(new RecordRestriction(filterExpression, parameters));
+        public T? QueryRecordWhere(string? filterExpression, params object?[] parameters) => QueryRecord(new RecordRestriction(filterExpression, parameters));
 
-        object ITableOperations.QueryRecordWhere(string filterExpression, params object[] parameters) => QueryRecordWhere(filterExpression, parameters);
+        object? ITableOperations.QueryRecordWhere(string? filterExpression, params object?[] parameters) => QueryRecordWhere(filterExpression, parameters);
 
         /// <summary>
         /// Queries database and returns modeled table records for the specified parameters.
@@ -683,22 +668,22 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        public IEnumerable<T> QueryRecords(string orderByExpression = null, RecordRestriction restriction = null, int limit = -1)
+        public IEnumerable<T?> QueryRecords(string? orderByExpression = null, RecordRestriction? restriction = null, int limit = -1)
         {
             if (string.IsNullOrWhiteSpace(orderByExpression))
                 orderByExpression = UpdateFieldNames(s_primaryKeyFields);
 
-            string sqlExpression = null;
+            string? sqlExpression = null;
 
             try
             {
                 if (RootQueryRestriction != null)
-                    restriction = RootQueryRestriction + restriction;
+                    restriction = (RootQueryRestriction + restriction)!;
 
                 if (limit < 1)
                 {
                     // No record limit specified
-                    if (restriction == null)
+                    if (restriction is null)
                     {
                         sqlExpression = string.Format(m_selectSetSql, orderByExpression);
 
@@ -710,7 +695,7 @@ namespace Gemstone.Data.Model
                     return Connection.RetrieveData(sqlExpression, restriction.Parameters).AsEnumerable().Select(LoadRecord);
                 }
 
-                if (restriction == null)
+                if (restriction is null)
                 {
                     sqlExpression = string.Format(m_selectSetSql, orderByExpression);
 
@@ -734,7 +719,7 @@ namespace Gemstone.Data.Model
             }
         }
 
-        IEnumerable ITableOperations.QueryRecords(string orderByExpression, RecordRestriction restriction, int limit) => QueryRecords(orderByExpression, restriction, limit);
+        IEnumerable ITableOperations.QueryRecords(string? orderByExpression, RecordRestriction? restriction, int limit) => QueryRecords(orderByExpression, restriction, limit);
 
         /// <summary>
         /// Queries database and returns modeled table records for the specified <paramref name="restriction"/>.
@@ -753,9 +738,9 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        public IEnumerable<T> QueryRecords(RecordRestriction restriction) => QueryRecords(null, restriction);
+        public IEnumerable<T?> QueryRecords(RecordRestriction? restriction) => QueryRecords(null, restriction);
 
-        IEnumerable ITableOperations.QueryRecords(RecordRestriction restriction) => QueryRecords(restriction);
+        IEnumerable ITableOperations.QueryRecords(RecordRestriction? restriction) => QueryRecords(restriction);
 
         /// <summary>
         /// Queries database and returns modeled table records for the specified SQL filter expression
@@ -789,9 +774,9 @@ namespace Gemstone.Data.Model
         /// specifying the <see cref="RecordRestriction"/> parameter.
         /// </para>
         /// </remarks>
-        public IEnumerable<T> QueryRecordsWhere(string filterExpression, params object[] parameters) => QueryRecords(new RecordRestriction(filterExpression, parameters));
+        public IEnumerable<T?> QueryRecordsWhere(string? filterExpression, params object?[] parameters) => QueryRecords(new RecordRestriction(filterExpression, parameters));
 
-        IEnumerable ITableOperations.QueryRecordsWhere(string filterExpression, params object[] parameters) => QueryRecordsWhere(filterExpression, parameters);
+        IEnumerable ITableOperations.QueryRecordsWhere(string? filterExpression, params object?[] parameters) => QueryRecordsWhere(filterExpression, parameters);
 
         /// <summary>
         /// Queries database and returns modeled table records for the specified sorting, paging and search parameters.
@@ -819,9 +804,9 @@ namespace Gemstone.Data.Model
         /// is generated by <see cref="GetSearchRestriction(string)"/> using <paramref name="searchText"/>.
         /// </para>
         /// </remarks>
-        public IEnumerable<T> QueryRecords(string sortField, bool ascending, int page, int pageSize, string searchText) => QueryRecords(sortField, ascending, page, pageSize, GetSearchRestriction(searchText));
+        public IEnumerable<T> QueryRecords(string? sortField, bool ascending, int page, int pageSize, string? searchText) => QueryRecords(sortField, ascending, page, pageSize, GetSearchRestriction(searchText));
 
-        IEnumerable ITableOperations.QueryRecords(string sortField, bool ascending, int page, int pageSize, string searchText) => QueryRecords(sortField, ascending, page, pageSize, searchText);
+        IEnumerable ITableOperations.QueryRecords(string? sortField, bool ascending, int page, int pageSize, string? searchText) => QueryRecords(sortField, ascending, page, pageSize, searchText);
 
         /// <summary>
         /// Queries database and returns modeled table records for the specified sorting and paging parameters.
@@ -851,10 +836,13 @@ namespace Gemstone.Data.Model
         /// </para>
         /// </remarks>
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        public IEnumerable<T> QueryRecords(string sortField, bool ascending, int page, int pageSize, RecordRestriction restriction = null)
+        public IEnumerable<T> QueryRecords(string? sortField, bool ascending, int page, int pageSize, RecordRestriction? restriction = null)
         {
             if (string.IsNullOrWhiteSpace(sortField))
                 sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
+
+            if (sortField is null)
+                throw new ArgumentNullException(nameof(sortField));
 
             bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
 
@@ -865,14 +853,14 @@ namespace Gemstone.Data.Model
             if (PrimaryKeyCache == null || !sortField.Equals(m_lastSortField, StringComparison.OrdinalIgnoreCase) || restriction != m_lastRestriction)
             {
                 string orderByExpression = sortFieldIsEncrypted ? s_fieldNames[s_primaryKeyProperties[0].Name] : $"{sortField}{(ascending ? "" : " DESC")}";
-                string sqlExpression = null;
+                string? sqlExpression = null;
 
                 try
                 {
                     if (RootQueryRestriction != null)
-                        restriction = RootQueryRestriction + restriction;
+                        restriction = (RootQueryRestriction + restriction)!;
 
-                    if (restriction == null)
+                    if (restriction is null)
                     {
                         sqlExpression = string.Format(m_selectKeysSql, orderByExpression);
                         PrimaryKeyCache = Connection.RetrieveData(sqlExpression);
@@ -888,7 +876,7 @@ namespace Gemstone.Data.Model
                     {
                         // Reduce properties to load only primary key fields and sort field
                         HashSet<PropertyInfo> properties = new HashSet<PropertyInfo>(s_primaryKeyProperties) { sortFieldProperty };
-                        IEnumerable<T> sortResult = LocalOrderBy(PrimaryKeyCache.AsEnumerable().Select(row => LoadRecordFromCachedKeys(row.ItemArray, properties)).Where(record => record != null), sortField, ascending);
+                        IEnumerable<T> sortResult = LocalOrderBy(PrimaryKeyCache.AsEnumerable().Select(row => LoadRecordFromCachedKeys(row.ItemArray, properties)).Where(record => record != null), sortField, ascending)!;
                         DataTable sortedKeyCache = new DataTable(s_tableName);
 
                         foreach (DataColumn column in PrimaryKeyCache.Columns)
@@ -917,10 +905,10 @@ namespace Gemstone.Data.Model
             }
 
             // Paginate on cached data rows so paging does no work except to skip through records, then only load records for a given page of data 
-            return PrimaryKeyCache.AsEnumerable().ToPagedList(page, pageSize, PrimaryKeyCache.Rows.Count).Select(row => LoadRecordFromCachedKeys(row.ItemArray)).Where(record => record != null);
+            return PrimaryKeyCache.AsEnumerable().ToPagedList(page, pageSize, PrimaryKeyCache.Rows.Count).Select(row => LoadRecordFromCachedKeys(row.ItemArray)).Where(record => record != null)!;
         }
 
-        IEnumerable ITableOperations.QueryRecords(string sortField, bool ascending, int page, int pageSize, RecordRestriction restriction) => QueryRecords(sortField, ascending, page, pageSize, restriction);
+        IEnumerable ITableOperations.QueryRecords(string? sortField, bool ascending, int page, int pageSize, RecordRestriction? restriction) => QueryRecords(sortField, ascending, page, pageSize, restriction);
 
         /// <summary>
         /// Gets the record count for the modeled table based on search parameter.
@@ -932,7 +920,7 @@ namespace Gemstone.Data.Model
         /// This is a convenience call to <see cref="QueryRecordCount(RecordRestriction)"/> where restriction
         /// is generated by <see cref="GetSearchRestriction(string)"/>
         /// </remarks>
-        public int QueryRecordCount(string searchText) => QueryRecordCount(GetSearchRestriction(searchText));
+        public int QueryRecordCount(string? searchText) => QueryRecordCount(GetSearchRestriction(searchText));
 
         /// <summary>
         /// Gets the record count for the specified <paramref name="restriction"/> - or - total record
@@ -949,16 +937,16 @@ namespace Gemstone.Data.Model
         /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </remarks>
-        public int QueryRecordCount(RecordRestriction restriction = null)
+        public int QueryRecordCount(RecordRestriction? restriction = null)
         {
-            string sqlExpression = null;
+            string? sqlExpression = null;
 
             try
             {
                 if (RootQueryRestriction != null)
-                    restriction = RootQueryRestriction + restriction;
+                    restriction = (RootQueryRestriction + restriction)!;
 
-                if (restriction == null)
+                if (restriction is null)
                 {
                     sqlExpression = m_selectCountSql;
 
@@ -1012,7 +1000,7 @@ namespace Gemstone.Data.Model
         /// This is a convenience call to <see cref="QueryRecordCount(RecordRestriction)"/>.
         /// </para>
         /// </remarks>
-        public int QueryRecordCountWhere(string filterExpression, params object[] parameters) => QueryRecordCount(new RecordRestriction(filterExpression, parameters));
+        public int QueryRecordCountWhere(string? filterExpression, params object?[] parameters) => QueryRecordCount(new RecordRestriction(filterExpression, parameters));
 
         /// <summary>
         /// Locally searches retrieved table records after queried from database for the specified sorting and search parameters.
@@ -1037,7 +1025,7 @@ namespace Gemstone.Data.Model
         /// through them using the <see cref="GetPageOfRecords"/> function. As a result, usage should be restricted to smaller data sets. 
         /// </para>
         /// </remarks>
-        public T[] SearchRecords(string sortField, bool ascending, string searchText, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        public T?[]? SearchRecords(string sortField, bool ascending, string searchText, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
             if (string.IsNullOrWhiteSpace(m_searchFilterSql) || string.IsNullOrWhiteSpace(searchText))
                 return null;
@@ -1049,9 +1037,9 @@ namespace Gemstone.Data.Model
 
             string[] searchValues = searchText.RemoveDuplicateWhiteSpace().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
-            string orderByExpression = sortFieldIsEncrypted ? null : $"{sortField}{(ascending ? "" : " DESC")}";
+            string? orderByExpression = sortFieldIsEncrypted ? null : $"{sortField}{(ascending ? "" : " DESC")}";
 
-            IEnumerable<T> queryResult = QueryRecords(orderByExpression).Where(record => IsSearchMatch(record, comparison, searchValues));
+            IEnumerable<T?> queryResult = QueryRecords(orderByExpression).Where(record => IsSearchMatch(record, comparison, searchValues));
 
             if (sortFieldIsEncrypted)
                 queryResult = LocalOrderBy(queryResult, sortField, ascending, comparison.GetComparer());
@@ -1060,7 +1048,7 @@ namespace Gemstone.Data.Model
         }
 
         // ReSharper disable once CoVariantArrayConversion
-        object[] ITableOperations.SearchRecords(string sortField, bool ascending, string searchText, StringComparison comparison) => SearchRecords(sortField, ascending, searchText, comparison);
+        object?[]? ITableOperations.SearchRecords(string sortField, bool ascending, string searchText, StringComparison comparison) => SearchRecords(sortField, ascending, searchText, comparison);
 
         /// <summary>
         /// Determines if any <paramref name="record"/> fields modeled with the <see cref="SearchableAttribute"/> match any of the
@@ -1090,7 +1078,7 @@ namespace Gemstone.Data.Model
         /// <c>true</c> if any <paramref name="record"/> fields modeled with <see cref="SearchableAttribute"/> match any of the
         /// specified <paramref name="searchValues"/>; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsSearchMatch(T record, StringComparison comparison, params string[] searchValues)
+        public bool IsSearchMatch(T? record, StringComparison comparison, params string[] searchValues)
         {
             if (s_searchTargets == null)
                 return false;
@@ -1157,7 +1145,7 @@ namespace Gemstone.Data.Model
         /// </summary>
         /// <param name="primaryKeys">Primary keys values of the record to load.</param>
         /// <returns>New modeled table record queried from the specified <paramref name="primaryKeys"/>.</returns>
-        public T LoadRecord(params object[] primaryKeys)
+        public T? LoadRecord(params object[] primaryKeys)
         {
             try
             {
@@ -1176,11 +1164,11 @@ namespace Gemstone.Data.Model
             }
         }
 
-        object ITableOperations.LoadRecord(params object[] primaryKeys) => LoadRecord(primaryKeys);
+        object? ITableOperations.LoadRecord(params object[] primaryKeys) => LoadRecord(primaryKeys);
 
         // Cached keys are not decrypted, so any needed record interpretation steps should skip encryption
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private T LoadRecordFromCachedKeys(object[] primaryKeys, IEnumerable<PropertyInfo> properties = null)
+        private T? LoadRecordFromCachedKeys(object[] primaryKeys, IEnumerable<PropertyInfo>? properties = null)
         {
             try
             {
@@ -1204,25 +1192,27 @@ namespace Gemstone.Data.Model
         /// </summary>
         /// <param name="row"><see cref="DataRow"/> of queried data to be loaded.</param>
         /// <returns>New modeled table record queried from the specified <paramref name="row"/>.</returns>
-        public T LoadRecord(DataRow row) => LoadRecord(row, s_properties.Values);
+        public T? LoadRecord(DataRow row) => LoadRecord(row, s_properties.Values);
+
+        private T LoadRecordWithKeys(DataRow row) => LoadRecord(row, s_properties.Values, true)!;
 
         // This is the primary function where records are loaded from a DataRow into a modeled record of type T
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private T LoadRecord(DataRow row, IEnumerable<PropertyInfo> properties)
+        private T? LoadRecord(DataRow row, IEnumerable<PropertyInfo> properties, bool skipPrimaryKeyValidation = false)
         {
             try
             {
                 T record = new T();
 
                 // Make sure record exists, if not return null instead of a blank record
-                if (s_hasPrimaryKeyIdentityField && GetPrimaryKeys(row).All(Common.IsDefaultValue))
+                if (s_hasPrimaryKeyIdentityField && !skipPrimaryKeyValidation && GetPrimaryKeys(row).All(Common.IsDefaultValue))
                     return null;
 
                 foreach (PropertyInfo property in properties)
                 {
                     try
                     {
-                        object value = row.ConvertField(s_fieldNames[property.Name], property.PropertyType);
+                        object? value = row.ConvertField(s_fieldNames[property.Name], property.PropertyType);
 
                         // TODO: Fix encryption
                         //if (s_encryptDataTargets != null && value != null && s_encryptDataTargets.TryGetValue(property, out string keyReference))
@@ -1256,7 +1246,7 @@ namespace Gemstone.Data.Model
             }
         }
 
-        object ITableOperations.LoadRecord(DataRow row) => LoadRecord(row);
+        object? ITableOperations.LoadRecord(DataRow row) => LoadRecord(row);
 
         /// <summary>
         /// Converts the given collection of <paramref name="records"/> into a <see cref="DataTable"/>.
@@ -1362,17 +1352,17 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="restriction"/> cannot be <c>null</c>.</exception>
-        public int DeleteRecord(RecordRestriction restriction, bool? applyRootQueryRestriction = null)
+        public int DeleteRecord(RecordRestriction? restriction, bool? applyRootQueryRestriction = null)
         {
             if (restriction == null)
                 throw new ArgumentNullException(nameof(restriction));
 
-            string sqlExpression = null;
+            string? sqlExpression = null;
 
             try
             {
                 if (RootQueryRestriction != null && (applyRootQueryRestriction ?? ApplyRootQueryRestrictionToDeletes))
-                    restriction = RootQueryRestriction + restriction;
+                    restriction = (RootQueryRestriction + restriction)!;
 
                 sqlExpression = $"{m_deleteWhereSql}{UpdateFieldNames(restriction.FilterExpression)}";
                 int affectedRecords = Connection.ExecuteNonQuery(sqlExpression, restriction.Parameters);
@@ -1425,7 +1415,7 @@ namespace Gemstone.Data.Model
         /// This is a convenience call to <see cref="DeleteRecord(RecordRestriction, bool?)"/>.
         /// </para>
         /// </remarks>
-        public int DeleteRecordWhere(string filterExpression, params object[] parameters) => DeleteRecord(new RecordRestriction(filterExpression, parameters));
+        public int DeleteRecordWhere(string filterExpression, params object?[] parameters) => DeleteRecord(new RecordRestriction(filterExpression, parameters));
 
         /// <summary>
         /// Updates the database with the specified modeled table <paramref name="record"/>,
@@ -1451,16 +1441,16 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        public int UpdateRecord(T record, RecordRestriction restriction = null, bool? applyRootQueryRestriction = null)
+        public int UpdateRecord(T record, RecordRestriction? restriction = null, bool? applyRootQueryRestriction = null)
         {
-            List<object> values = new List<object>();
+            List<object?> values = new List<object?>();
 
             try
             {
                 s_updateRecordInstance(new CurrentScope { Instance = record, TableOperations = this, Connection = Connection });
 
                 if (RootQueryRestriction != null && (applyRootQueryRestriction ?? ApplyRootQueryRestrictionToUpdates))
-                    restriction = RootQueryRestriction + restriction;
+                    restriction = (RootQueryRestriction + restriction)!;
             }
             catch (Exception ex)
             {
@@ -1497,7 +1487,7 @@ namespace Gemstone.Data.Model
                 }
             }
 
-            string sqlExpression = null;
+            string? sqlExpression = null;
 
             try
             {
@@ -1529,7 +1519,7 @@ namespace Gemstone.Data.Model
             }
         }
 
-        int ITableOperations.UpdateRecord(object value, RecordRestriction restriction, bool? applyRootQueryRestriction)
+        int ITableOperations.UpdateRecord(object value, RecordRestriction? restriction, bool? applyRootQueryRestriction)
         {
             if (!(value is T record))
                 throw new ArgumentException($"Cannot update record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
@@ -1575,9 +1565,9 @@ namespace Gemstone.Data.Model
         /// This is a convenience call to <see cref="UpdateRecord(T, RecordRestriction, bool?)"/>.
         /// </para>
         /// </remarks>
-        public int UpdateRecordWhere(T record, string filterExpression, params object[] parameters) => UpdateRecord(record, new RecordRestriction(filterExpression, parameters));
+        public int UpdateRecordWhere(T record, string filterExpression, params object?[] parameters) => UpdateRecord(record, new RecordRestriction(filterExpression, parameters));
 
-        int ITableOperations.UpdateRecordWhere(object value, string filterExpression, params object[] parameters)
+        int ITableOperations.UpdateRecordWhere(object value, string filterExpression, params object?[] parameters)
         {
             if (!(value is T record))
                 throw new ArgumentException($"Cannot update record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
@@ -1605,7 +1595,7 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        public int UpdateRecord(DataRow row, RecordRestriction restriction = null) => UpdateRecord(LoadRecord(row), restriction);
+        public int UpdateRecord(DataRow row, RecordRestriction? restriction = null) => UpdateRecord(LoadRecordWithKeys(row), restriction);
 
         /// <summary>
         /// Updates the database with the specified <paramref name="row"/> referenced by the
@@ -1645,7 +1635,7 @@ namespace Gemstone.Data.Model
         /// This is a convenience call to <see cref="UpdateRecord(DataRow, RecordRestriction)"/>.
         /// </para>
         /// </remarks>
-        public int UpdateRecordWhere(DataRow row, string filterExpression, params object[] parameters) => UpdateRecord(row, new RecordRestriction(filterExpression, parameters));
+        public int UpdateRecordWhere(DataRow row, string filterExpression, params object?[] parameters) => UpdateRecord(row, new RecordRestriction(filterExpression, parameters));
 
         /// <summary>
         /// Adds the specified modeled table <paramref name="record"/> to the database.
@@ -1654,7 +1644,7 @@ namespace Gemstone.Data.Model
         /// <returns>Number of rows affected.</returns>
         public int AddNewRecord(T record)
         {
-            List<object> values = new List<object>();
+            List<object?> values = new List<object?>();
 
             try
             {
@@ -1694,7 +1684,7 @@ namespace Gemstone.Data.Model
         /// </summary>
         /// <param name="row"><see cref="DataRow"/> of queried data to be added.</param>
         /// <returns>Number of rows affected.</returns>
-        public int AddNewRecord(DataRow row) => AddNewRecord(LoadRecord(row));
+        public int AddNewRecord(DataRow row) => AddNewRecord(LoadRecordWithKeys(row));
 
         /// <summary>
         /// Adds the specified modeled table <paramref name="record"/> to the database if the
@@ -1828,7 +1818,7 @@ namespace Gemstone.Data.Model
             if (s_propertyNames.TryGetValue(fieldName, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo property) && property.TryGetAttribute(out attribute))
                 return true;
 
-            attribute = default;
+            attribute = default!;
 
             return false;
         }
@@ -1841,7 +1831,7 @@ namespace Gemstone.Data.Model
         /// <param name="attribute">Attribute that was found, if any.</param>
         /// <returns><c>true</c> if attribute was found; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentException"><paramref name="attributeType"/> is not an <see cref="Attribute"/>.</exception>
-        public bool TryGetFieldAttribute(string fieldName, Type attributeType, out Attribute attribute)
+        public bool TryGetFieldAttribute(string fieldName, Type attributeType, out Attribute? attribute)
         {
             if (!attributeType.IsInstanceOfType(typeof(Attribute)))
                 throw new ArgumentException($"The specified type \"{attributeType.Name}\" is not an Attribute.", nameof(attributeType));
@@ -1849,7 +1839,7 @@ namespace Gemstone.Data.Model
             if (s_propertyNames.TryGetValue(fieldName, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo property) && property.TryGetAttribute(attributeType, out attribute))
                 return true;
 
-            attribute = null;
+            attribute = default;
 
             return false;
         }
@@ -1887,7 +1877,7 @@ namespace Gemstone.Data.Model
         /// <param name="record">Modeled table record.</param>
         /// <param name="fieldName">Field name to retrieve.</param>
         /// <returns>Field value or <c>null</c> if field is not found.</returns>
-        public object GetFieldValue(T record, string fieldName)
+        public object? GetFieldValue(T? record, string fieldName)
         {
             if (s_propertyNames.TryGetValue(fieldName, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo property))
                 return property.GetValue(record);
@@ -1895,7 +1885,7 @@ namespace Gemstone.Data.Model
             return typeof(T).GetProperty(fieldName)?.GetValue(record);
         }
 
-        object ITableOperations.GetFieldValue(object value, string fieldName)
+        object? ITableOperations.GetFieldValue(object? value, string fieldName)
         {
             if (!(value is T record))
                 throw new ArgumentException($"Cannot get \"{fieldName}\" field value for record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
@@ -1934,7 +1924,7 @@ namespace Gemstone.Data.Model
         /// type will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        public object GetInterpretedFieldValue(string fieldName, object value)
+        public object? GetInterpretedFieldValue(string fieldName, object? value)
         {
             if (s_fieldDataTypeTargets == null && s_encryptDataTargets == null)
                 return value;
@@ -1950,12 +1940,12 @@ namespace Gemstone.Data.Model
         /// </summary>
         /// <param name="fieldName">Field name to retrieve.</param>
         /// <returns>Field <see cref="Type"/> or <c>null</c> if field is not found.</returns>
-        public Type GetFieldType(string fieldName)
+        public Type? GetFieldType(string fieldName)
         {
             if (s_propertyNames.TryGetValue(fieldName, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo property))
                 return property.PropertyType;
 
-            return null;
+            return default;
         }
 
         /// <summary>
@@ -1970,12 +1960,15 @@ namespace Gemstone.Data.Model
         /// specified value in the <see cref="SearchableAttribute"/> as encryption is handled locally. However, the <see cref="SearchRecords"/> function
         /// can be used to find data in encrypted fields that are marked for search with a <see cref="SearchType.LikeExpression"/>.
         /// </remarks>
-        public RecordRestriction GetSearchRestriction(string searchText)
+        public RecordRestriction? GetSearchRestriction(string? searchText)
         {
-            if (string.IsNullOrWhiteSpace(m_searchFilterSql) || string.IsNullOrWhiteSpace(searchText))
+            if (string.IsNullOrWhiteSpace(m_searchFilterSql) || searchText is null)
                 return null;
 
             searchText = searchText.Trim();
+
+            if (searchText.Length == 0)
+                return null;
 
             string[] searchValues = searchText.RemoveDuplicateWhiteSpace().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -2025,7 +2018,7 @@ namespace Gemstone.Data.Model
                     //if (s_encryptDataTargets.TryGetValue(property, out string keyReference))
                     //    parameters.Add(searchValues[i].Encrypt(keyReference, CipherStrength.Aes256));
                     //else
-                        parameters.Add(null);
+                        parameters.Add(default!);
                 }
 
                 searchValueFilter.AppendFormat(m_searchFilterSql, offsets.ToArray());
@@ -2060,12 +2053,12 @@ namespace Gemstone.Data.Model
         // Derive raw or encrypted field values or IDbCommandParameter values with specific DbType if
         // a primary key field data type has been targeted for specific database type
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private object[] GetInterpretedPrimaryKeys(object[] primaryKeys, bool skipEncryption = false)
+        private object?[] GetInterpretedPrimaryKeys(object[] primaryKeys, bool skipEncryption = false)
         {
             if (s_fieldDataTypeTargets == null && s_encryptDataTargets == null)
                 return primaryKeys;
 
-            object[] interpretedKeys = new object[s_primaryKeyProperties.Length];
+            object?[] interpretedKeys = new object[s_primaryKeyProperties.Length];
 
             for (int i = 0; i < interpretedKeys.Length; i++)
                 interpretedKeys[i] = GetInterpretedValue(s_primaryKeyProperties[i], primaryKeys[i], skipEncryption);
@@ -2076,7 +2069,7 @@ namespace Gemstone.Data.Model
         // Derive raw or encrypted field values or IDbCommandParameter values with specific DbType if
         // a primary key field data type has been targeted for specific database type
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private object GetInterpretedPropertyValue(PropertyInfo property, T record)
+        private object? GetInterpretedPropertyValue(PropertyInfo property, T record)
         {
             object value = property.GetValue(record);
 
@@ -2090,15 +2083,19 @@ namespace Gemstone.Data.Model
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private object GetInterpretedValue(PropertyInfo property, object value, bool skipEncryption = false)
+        private object? GetInterpretedValue(PropertyInfo property, object? value, bool skipEncryption = false)
         {
             // TODO: Fix encryption
             //if (!skipEncryption && s_encryptDataTargets != null && value != null && s_encryptDataTargets.TryGetValue(property, out string keyReference))
             //    value = value.ToString().Encrypt(keyReference, CipherStrength.Aes256);
 
-            if (s_fieldDataTypeTargets != null && s_fieldDataTypeTargets.TryGetValue(property, out Dictionary<DatabaseType, DbType> fieldDataTypeTargets) && fieldDataTypeTargets != null && fieldDataTypeTargets.TryGetValue(Connection.DatabaseType, out DbType fieldDataType))
+            if (s_fieldDataTypeTargets != null && s_fieldDataTypeTargets.TryGetValue(property, out Dictionary<DatabaseType, DbType>? fieldDataTypeTargets) && fieldDataTypeTargets != null && fieldDataTypeTargets.TryGetValue(Connection.DatabaseType, out DbType fieldDataType))
             {
-                return new IntermediateParameter { Value = value, DbType = fieldDataType };
+                return new IntermediateParameter
+                {
+                    Value = value, 
+                    DbType = fieldDataType
+                };
             }
 
             return value;
@@ -2119,12 +2116,12 @@ namespace Gemstone.Data.Model
 
         // Derive field name, escaping it if requested by model
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private string GetEscapedFieldName(string fieldName, Dictionary<DatabaseType, bool> escapedFieldNameTargets = null)
+        private string GetEscapedFieldName(string fieldName, Dictionary<DatabaseType, bool>? escapedFieldNameTargets = null)
         {
             if (s_escapedFieldNameTargets == null)
                 return fieldName;
 
-            if (escapedFieldNameTargets == null && !s_escapedFieldNameTargets.TryGetValue(fieldName, out escapedFieldNameTargets))
+            if (escapedFieldNameTargets == null && !s_escapedFieldNameTargets.TryGetValue(fieldName, out escapedFieldNameTargets) || escapedFieldNameTargets == null)
                 return fieldName;
 
             if (escapedFieldNameTargets.TryGetValue(Connection.DatabaseType, out bool useAnsiQuotes))
@@ -2148,11 +2145,14 @@ namespace Gemstone.Data.Model
 
         // Update field names in expression, escaping or unescaping as needed as defined by model
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private string UpdateFieldNames(string filterExpression)
+        private string? UpdateFieldNames(string? filterExpression)
         {
+            if (filterExpression is null)
+                return default;
+
             if (s_escapedFieldNameTargets != null)
             {
-                foreach (KeyValuePair<string, Dictionary<DatabaseType, bool>> escapedFieldNameTarget in s_escapedFieldNameTargets)
+                foreach (KeyValuePair<string, Dictionary<DatabaseType, bool>?> escapedFieldNameTarget in s_escapedFieldNameTargets)
                 {
                     string fieldName = escapedFieldNameTarget.Key;
                     string derivedFieldName = GetEscapedFieldName(fieldName, escapedFieldNameTarget.Value);
@@ -2184,7 +2184,7 @@ namespace Gemstone.Data.Model
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private IEnumerable<T> LocalOrderBy(IEnumerable<T> queryResults, string sortField, bool ascending, StringComparer comparer = null)
+        private IEnumerable<T?> LocalOrderBy(IEnumerable<T?> queryResults, string sortField, bool ascending, StringComparer? comparer = default)
         {
             // Execute order-by locally on unencrypted data
             return ascending ?
@@ -2205,13 +2205,13 @@ namespace Gemstone.Data.Model
         private static readonly PropertyInfo[] s_addNewProperties;
         private static readonly PropertyInfo[] s_updateProperties;
         private static readonly PropertyInfo[] s_primaryKeyProperties;
-        private static readonly Dictionary<PropertyInfo, Dictionary<DatabaseType, DbType>> s_fieldDataTypeTargets;
-        private static readonly Dictionary<PropertyInfo, string> s_encryptDataTargets;
-        private static readonly Dictionary<PropertyInfo, SearchType> s_searchTargets;
-        private static readonly List<PropertyInfo> s_encryptedSearchTargets;
-        private static readonly Dictionary<DatabaseType, bool> s_escapedTableNameTargets;
-        private static readonly Dictionary<string, Dictionary<DatabaseType, bool>> s_escapedFieldNameTargets;
-        private static readonly List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> s_expressionAmendments;
+        private static readonly Dictionary<PropertyInfo, Dictionary<DatabaseType, DbType>?>? s_fieldDataTypeTargets;
+        private static readonly Dictionary<PropertyInfo, string>? s_encryptDataTargets;
+        private static readonly Dictionary<PropertyInfo, SearchType>? s_searchTargets;
+        private static readonly List<PropertyInfo>? s_encryptedSearchTargets;
+        private static readonly Dictionary<DatabaseType, bool>? s_escapedTableNameTargets;
+        private static readonly Dictionary<string, Dictionary<DatabaseType, bool>?>? s_escapedFieldNameTargets;
+        private static readonly List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>? s_expressionAmendments;
         private static readonly RootQueryRestrictionAttribute s_rootQueryRestrictionAttribute;
         private static readonly string s_selectCountSql;
         private static readonly string s_selectSetSql;
@@ -2230,7 +2230,7 @@ namespace Gemstone.Data.Model
         private static readonly Func<CurrentScope, T> s_createRecordInstance;
         private static readonly Action<CurrentScope> s_updateRecordInstance;
         private static readonly Action<CurrentScope> s_applyRecordDefaults;
-        private static TypeRegistry s_typeRegistry;
+        private static TypeRegistry? s_typeRegistry;
 
         // Static Constructor
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
@@ -2300,7 +2300,7 @@ namespace Gemstone.Data.Model
                 if (property.TryGetAttributes(out FieldDataTypeAttribute[] fieldDataTypeAttributes))
                 {
                     if (s_fieldDataTypeTargets == null)
-                        s_fieldDataTypeTargets = new Dictionary<PropertyInfo, Dictionary<DatabaseType, DbType>>();
+                        s_fieldDataTypeTargets = new Dictionary<PropertyInfo, Dictionary<DatabaseType, DbType>?>();
 
                     s_fieldDataTypeTargets[property] = DeriveFieldDataTypeTargets(fieldDataTypeAttributes);
                 }
@@ -2308,7 +2308,7 @@ namespace Gemstone.Data.Model
                 if (property.TryGetAttributes(out useEscapedNameAttributes))
                 {
                     if (s_escapedFieldNameTargets == null)
-                        s_escapedFieldNameTargets = new Dictionary<string, Dictionary<DatabaseType, bool>>(StringComparer.OrdinalIgnoreCase);
+                        s_escapedFieldNameTargets = new Dictionary<string, Dictionary<DatabaseType, bool>?>(StringComparer.OrdinalIgnoreCase);
 
                     s_escapedFieldNameTargets[fieldName] = DeriveEscapedNameTargets(useEscapedNameAttributes);
 
@@ -2477,7 +2477,7 @@ namespace Gemstone.Data.Model
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public static TypeRegistry TypeRegistry
         {
-            get => s_typeRegistry ?? (s_typeRegistry = ValueExpressionParser.DefaultTypeRegistry.Clone());
+            get => s_typeRegistry ??= ValueExpressionParser.DefaultTypeRegistry.Clone();
             set => s_typeRegistry = value;
         }
 
@@ -2491,10 +2491,11 @@ namespace Gemstone.Data.Model
         /// This method is useful to deserialize a <see cref="DataRow"/> into a type <typeparamref name="T"/> instance
         /// when no data connection is available, e.g., when using a deserialized <see cref="DataSet"/>.
         /// </remarks>
-        public static Func<DataRow, T> LoadRecordFunction()
+        public static Func<DataRow, T?> LoadRecordFunction()
         {
-            using (AdoDataConnection connection = new AdoDataConnection(null, typeof(NullConnection), typeof(DbDataAdapter)))
-                return new TableOperations<T>(connection).LoadRecord;
+            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection), typeof(DbDataAdapter));
+
+            return new TableOperations<T>(connection).LoadRecord;
         }
 
         /// <summary>
@@ -2506,10 +2507,11 @@ namespace Gemstone.Data.Model
         /// is available, applying any modeled default values as specified by a <see cref="DefaultValueAttribute"/>
         /// or <see cref="DefaultValueExpressionAttribute"/> on the model properties.
         /// </remarks>
-        public static Func<T> NewRecordFunction()
+        public static Func<T?> NewRecordFunction()
         {
-            using (AdoDataConnection connection = new AdoDataConnection(null, typeof(NullConnection), typeof(DbDataAdapter)))
-                return new TableOperations<T>(connection).NewRecord;
+            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection), typeof(DbDataAdapter));
+
+            return new TableOperations<T>(connection).NewRecord;
         }
 
         /// <summary>
@@ -2523,8 +2525,9 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public static Action<T> ApplyRecordDefaultsFunction()
         {
-            using (AdoDataConnection connection = new AdoDataConnection(null, typeof(NullConnection), typeof(DbDataAdapter)))
-                return new TableOperations<T>(connection).ApplyRecordDefaults;
+            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection), typeof(DbDataAdapter));
+
+            return new TableOperations<T>(connection).ApplyRecordDefaults;
         }
 
         /// <summary>
@@ -2538,19 +2541,20 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public static Action<T> ApplyRecordUpdatesFunction()
         {
-            using (AdoDataConnection connection = new AdoDataConnection(null, typeof(NullConnection), typeof(DbDataAdapter)))
-                return new TableOperations<T>(connection).ApplyRecordUpdates;
+            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection), typeof(DbDataAdapter));
+
+            return new TableOperations<T>(connection).ApplyRecordUpdates;
         }
 
         private static string GetFieldName(PropertyInfo property)
         {
-            if (property.TryGetAttribute(out FieldNameAttribute fieldNameAttribute) && !string.IsNullOrEmpty(fieldNameAttribute?.FieldName))
+            if (property.TryGetAttribute(out FieldNameAttribute fieldNameAttribute) && fieldNameAttribute != null && !string.IsNullOrEmpty(fieldNameAttribute.FieldName))
                 return fieldNameAttribute.FieldName;
 
             return property.Name;
         }
 
-        private static Dictionary<DatabaseType, DbType> DeriveFieldDataTypeTargets(FieldDataTypeAttribute[] fieldDataTypeAttributes)
+        private static Dictionary<DatabaseType, DbType>? DeriveFieldDataTypeTargets(FieldDataTypeAttribute[] fieldDataTypeAttributes)
         {
             if (fieldDataTypeAttributes == null || fieldDataTypeAttributes.Length == 0)
                 return null;
@@ -2581,7 +2585,7 @@ namespace Gemstone.Data.Model
             return fieldDataTypes;
         }
 
-        private static Dictionary<DatabaseType, bool> DeriveEscapedNameTargets(UseEscapedNameAttribute[] useEscapedNameAttributes)
+        private static Dictionary<DatabaseType, bool>? DeriveEscapedNameTargets(UseEscapedNameAttribute[] useEscapedNameAttributes)
         {
             if (useEscapedNameAttributes == null || useEscapedNameAttributes.Length == 0)
                 return null;
@@ -2612,7 +2616,7 @@ namespace Gemstone.Data.Model
             return escapedNameTargets;
         }
 
-        private static List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> DeriveExpressionAmendments(AmendExpressionAttribute[] amendExpressionAttributes)
+        private static List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>? DeriveExpressionAmendments(AmendExpressionAttribute[] amendExpressionAttributes)
         {
             if (amendExpressionAttributes == null || amendExpressionAttributes.Length == 0)
                 return null;
@@ -2655,10 +2659,10 @@ namespace Gemstone.Data.Model
             return expressionAmendments.Count > 0 ? expressionAmendments : null; //-V3022
         }
 
-        private static string ValueList(IReadOnlyList<object> values)
+        private static string ValueList(IReadOnlyList<object?>? values)
         {
             if (values == null)
-                return "";
+                return string.Empty;
 
             StringBuilder delimitedString = new StringBuilder();
 
@@ -2667,7 +2671,7 @@ namespace Gemstone.Data.Model
                 if (delimitedString.Length > 0)
                     delimitedString.Append(", ");
 
-                delimitedString.AppendFormat("{0}:{1}", i, values[i]);
+                delimitedString.AppendFormat("{0}:{1}", i, values[i]?.ToString() ?? "null");
             }
 
             return delimitedString.ToString();

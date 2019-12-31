@@ -30,6 +30,7 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using Gemstone.Expressions.Model;
 
+// ReSharper disable UnusedMemberInSuper.Global
 namespace Gemstone.Data.Model
 {
     /// <summary>
@@ -63,7 +64,7 @@ namespace Gemstone.Data.Model
         /// encountered exceptions will be passed to handler for processing. Otherwise, exceptions will be thrown
         /// on the call stack.
         /// </remarks>
-        Action<Exception> ExceptionHandler { get; set; }
+        Action<Exception>? ExceptionHandler { get; set; }
 
         /// <summary>
         /// Gets or sets flag that determines if field names should be treated as case sensitive. Defaults to <c>false</c>.
@@ -98,7 +99,7 @@ namespace Gemstone.Data.Model
         /// are marked with the <see cref="EncryptDataAttribute"/>
         /// </para>
         /// </remarks>
-        DataTable PrimaryKeyCache { get; set; }
+        DataTable? PrimaryKeyCache { get; set; }
 
         /// <summary>
         /// Gets or sets root record restriction that applies to query table operations.
@@ -125,7 +126,7 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        RecordRestriction RootQueryRestriction { get; set; }
+        RecordRestriction? RootQueryRestriction { get; set; }
 
         /// <summary>
         /// Gets or sets flag that determines if <see cref="RootQueryRestriction"/> should be applied to update operations.
@@ -165,7 +166,7 @@ namespace Gemstone.Data.Model
         /// model properties.
         /// </summary>
         /// <returns>New modeled record instance with any defined default values applied.</returns>
-        object NewRecord();
+        object? NewRecord();
 
         /// <summary>
         /// Applies the default values on the specified modeled table <paramref name="record"/>
@@ -202,7 +203,7 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        object QueryRecord(RecordRestriction restriction);
+        object? QueryRecord(RecordRestriction? restriction);
 
         /// <summary>
         /// Queries database and returns a single modeled table record for the specified <paramref name="restriction"/>,
@@ -226,7 +227,7 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        object QueryRecord(string orderByExpression, RecordRestriction restriction);
+        object? QueryRecord(string? orderByExpression, RecordRestriction? restriction);
 
         /// <summary>
         /// Queries database and returns a single modeled table record for the specified SQL filter
@@ -263,7 +264,7 @@ namespace Gemstone.Data.Model
         /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
         /// </para>
         /// </remarks>
-        object QueryRecordWhere(string filterExpression, params object[] parameters);
+        object? QueryRecordWhere(string? filterExpression, params object?[] parameters);
 
         /// <summary>
         /// Queries database and returns modeled table records for the specified parameters.
@@ -283,7 +284,7 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        IEnumerable QueryRecords(string orderByExpression = null, RecordRestriction restriction = null, int limit = -1);
+        IEnumerable QueryRecords(string? orderByExpression = null, RecordRestriction? restriction = null, int limit = -1);
 
         /// <summary>
         /// Queries database and returns modeled table records for the specified <paramref name="restriction"/>.
@@ -302,7 +303,7 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        IEnumerable QueryRecords(RecordRestriction restriction);
+        IEnumerable QueryRecords(RecordRestriction? restriction);
 
         /// <summary>
         /// Queries database and returns modeled table records for the specified SQL filter expression
@@ -336,7 +337,7 @@ namespace Gemstone.Data.Model
         /// specifying the <see cref="RecordRestriction"/> parameter.
         /// </para>
         /// </remarks>
-        IEnumerable QueryRecordsWhere(string filterExpression, params object[] parameters);
+        IEnumerable QueryRecordsWhere(string? filterExpression, params object?[] parameters);
 
         /// <summary>
         /// Queries database and returns modeled table records for the specified sorting, paging and search parameters.
@@ -364,7 +365,7 @@ namespace Gemstone.Data.Model
         /// is generated by <see cref="GetSearchRestriction(string)"/> using <paramref name="searchText"/>.
         /// </para>
         /// </remarks>
-        IEnumerable QueryRecords(string sortField, bool ascending, int page, int pageSize, string searchText);
+        IEnumerable QueryRecords(string? sortField, bool ascending, int page, int pageSize, string? searchText);
 
         /// <summary>
         /// Queries database and returns modeled table records for the specified sorting and paging parameters.
@@ -393,7 +394,7 @@ namespace Gemstone.Data.Model
         /// be downloaded locally and decrypted so the proper sort order can be determined.
         /// </para>
         /// </remarks>
-        IEnumerable QueryRecords(string sortField, bool ascending, int page, int pageSize, RecordRestriction restriction = null);
+        IEnumerable QueryRecords(string? sortField, bool ascending, int page, int pageSize, RecordRestriction? restriction = null);
 
         /// <summary>
         /// Gets the record count for the modeled table based on search parameter.
@@ -405,7 +406,7 @@ namespace Gemstone.Data.Model
         /// This is a convenience call to <see cref="QueryRecordCount(RecordRestriction)"/> where restriction
         /// is generated by <see cref="GetSearchRestriction(string)"/>
         /// </remarks>
-        int QueryRecordCount(string searchText);
+        int QueryRecordCount(string? searchText);
 
         /// <summary>
         /// Gets the record count for the specified <paramref name="restriction"/> - or - total record
@@ -422,7 +423,7 @@ namespace Gemstone.Data.Model
         /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </remarks>
-        int QueryRecordCount(RecordRestriction restriction = null);
+        int QueryRecordCount(RecordRestriction? restriction = null);
 
         /// <summary>
         /// Gets the record count for the modeled table for the specified SQL filter expression and parameters.
@@ -454,7 +455,7 @@ namespace Gemstone.Data.Model
         /// This is a convenience call to <see cref="QueryRecordCount(RecordRestriction)"/>.
         /// </para>
         /// </remarks>
-        int QueryRecordCountWhere(string filterExpression, params object[] parameters);
+        int QueryRecordCountWhere(string? filterExpression, params object?[] parameters);
 
         /// <summary>
         /// Locally searches retrieved table records after queried from database for the specified sorting and search parameters.
@@ -479,7 +480,7 @@ namespace Gemstone.Data.Model
         /// through them using the <see cref="GetPageOfRecords"/> function. As a result, usage should be restricted to smaller data sets. 
         /// </para>
         /// </remarks>
-        object[] SearchRecords(string sortField, bool ascending, string searchText, StringComparison comparison = StringComparison.OrdinalIgnoreCase);
+        object?[]? SearchRecords(string sortField, bool ascending, string searchText, StringComparison comparison = StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Determines if any <paramref name="record"/> fields modeled with the <see cref="SearchableAttribute"/> match any of the
@@ -523,14 +524,14 @@ namespace Gemstone.Data.Model
         /// </summary>
         /// <param name="primaryKeys">Primary keys values of the record to load.</param>
         /// <returns>New modeled table record queried from the specified <paramref name="primaryKeys"/>.</returns>
-        object LoadRecord(params object[] primaryKeys);
+        object? LoadRecord(params object[] primaryKeys);
 
         /// <summary>
         /// Creates a new modeled table record queried from the specified <paramref name="row"/>.
         /// </summary>
         /// <param name="row"><see cref="DataRow"/> of queried data to be loaded.</param>
         /// <returns>New modeled table record queried from the specified <paramref name="row"/>.</returns>
-        object LoadRecord(DataRow row);
+        object? LoadRecord(DataRow row);
 
         /// <summary>
         /// Converts the given collection of <paramref name="records"/> into a <see cref="DataTable"/>.
@@ -576,7 +577,7 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="restriction"/> cannot be <c>null</c>.</exception>
-        int DeleteRecord(RecordRestriction restriction, bool? applyRootQueryRestriction = null);
+        int DeleteRecord(RecordRestriction? restriction, bool? applyRootQueryRestriction = null);
 
         /// <summary>
         /// Deletes the records referenced by the specified SQL filter expression and parameters.
@@ -608,7 +609,7 @@ namespace Gemstone.Data.Model
         /// This is a convenience call to <see cref="DeleteRecord(RecordRestriction, bool?)"/>.
         /// </para>
         /// </remarks>
-        int DeleteRecordWhere(string filterExpression, params object[] parameters);
+        int DeleteRecordWhere(string filterExpression, params object?[] parameters);
 
         /// <summary>
         /// Updates the database with the specified modeled table <paramref name="record"/>,
@@ -634,7 +635,7 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        int UpdateRecord(object record, RecordRestriction restriction = null, bool? applyRootQueryRestriction = null);
+        int UpdateRecord(object record, RecordRestriction? restriction = null, bool? applyRootQueryRestriction = null);
 
         /// <summary>
         /// Updates the database with the specified modeled table <paramref name="record"/>
@@ -674,7 +675,7 @@ namespace Gemstone.Data.Model
         /// This is a convenience call to <see cref="UpdateRecord(object, RecordRestriction, bool?)"/>.
         /// </para>
         /// </remarks>
-        int UpdateRecordWhere(object record, string filterExpression, params object[] parameters);
+        int UpdateRecordWhere(object record, string filterExpression, params object?[] parameters);
 
         /// <summary>
         /// Updates the database with the specified <paramref name="row"/>, any model properties
@@ -696,7 +697,7 @@ namespace Gemstone.Data.Model
         /// returned value so that the field value will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        int UpdateRecord(DataRow row, RecordRestriction restriction = null);
+        int UpdateRecord(DataRow row, RecordRestriction? restriction = null);
 
         /// <summary>
         /// Updates the database with the specified <paramref name="row"/> referenced by the
@@ -736,7 +737,7 @@ namespace Gemstone.Data.Model
         /// This is a convenience call to <see cref="UpdateRecord(DataRow, RecordRestriction)"/>.
         /// </para>
         /// </remarks>
-        int UpdateRecordWhere(DataRow row, string filterExpression, params object[] parameters);
+        int UpdateRecordWhere(DataRow row, string filterExpression, params object?[] parameters);
 
         /// <summary>
         /// Adds the specified modeled table <paramref name="record"/> to the database.
@@ -818,7 +819,7 @@ namespace Gemstone.Data.Model
         /// <param name="attribute">Attribute that was found, if any.</param>
         /// <returns><c>true</c> if attribute was found; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentException"><paramref name="attributeType"/> is not an <see cref="Attribute"/>.</exception>
-        bool TryGetFieldAttribute(string fieldName, Type attributeType, out Attribute attribute);
+        bool TryGetFieldAttribute(string fieldName, Type attributeType, out Attribute? attribute);
 
         /// <summary>
         /// Determines if the specified field has an associated attribute.
@@ -844,7 +845,7 @@ namespace Gemstone.Data.Model
         /// <param name="record">Modeled table record.</param>
         /// <param name="fieldName">Field name to retrieve.</param>
         /// <returns>Field value or <c>null</c> if field is not found.</returns>
-        object GetFieldValue(object record, string fieldName);
+        object? GetFieldValue(object? record, string fieldName);
 
         /// <summary>
         /// Gets the interpreted value for the specified field, encrypting or returning any intermediate <see cref="IDbDataParameter"/>
@@ -877,14 +878,14 @@ namespace Gemstone.Data.Model
         /// type will be properly set prior to executing the database function.
         /// </para>
         /// </remarks>
-        object GetInterpretedFieldValue(string fieldName, object value);
+        object? GetInterpretedFieldValue(string fieldName, object? value);
 
         /// <summary>
         /// Gets the <see cref="Type"/> for the specified field.
         /// </summary>
         /// <param name="fieldName">Field name to retrieve.</param>
         /// <returns>Field <see cref="Type"/> or <c>null</c> if field is not found.</returns>
-        Type GetFieldType(string fieldName);
+        Type? GetFieldType(string fieldName);
 
         /// <summary>
         /// Generates a <see cref="RecordRestriction"/> based on fields marked with <see cref="SearchableAttribute"/> and specified <paramref name="searchText"/>.
@@ -898,7 +899,7 @@ namespace Gemstone.Data.Model
         /// specified value in the <see cref="SearchableAttribute"/> as encryption is handled locally. However, the <see cref="SearchRecords"/> function
         /// can be used to find data in encrypted fields that are marked for search with a <see cref="SearchType.LikeExpression"/>.
         /// </remarks>
-        RecordRestriction GetSearchRestriction(string searchText);
+        RecordRestriction? GetSearchRestriction(string? searchText);
 
         /// <summary>
         /// Calculates the size of the current primary key cache, in number of records.

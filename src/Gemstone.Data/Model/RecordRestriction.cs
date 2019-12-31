@@ -63,7 +63,7 @@ namespace Gemstone.Data.Model
         /// will be updated to reflect what is defined in the user model.
         /// </para>
         /// </remarks>
-        public readonly string FilterExpression;
+        public readonly string? FilterExpression;
 
         /// <summary>
         /// Defines restriction parameter values.
@@ -75,7 +75,7 @@ namespace Gemstone.Data.Model
         /// target parameter with the returned value so that the field value will be properly set prior
         /// to executing any database function.
         /// </remarks>
-        public readonly object[] Parameters;
+        public readonly object?[] Parameters;
 
         #endregion
 
@@ -109,10 +109,10 @@ namespace Gemstone.Data.Model
         /// will be updated to reflect what is defined in the user model.
         /// </para>
         /// </remarks>
-        public RecordRestriction(string filterExpression, params object[] parameters)
+        public RecordRestriction(string? filterExpression, params object?[]? parameters)
         {
             FilterExpression = filterExpression;
-            Parameters = parameters;
+            Parameters = parameters ?? Array.Empty<object>();
         }
 
         #endregion
@@ -124,7 +124,7 @@ namespace Gemstone.Data.Model
         /// </summary>
         /// <param name="index">Index into <see cref="Parameters"/> field array.</param>
         /// <returns><see cref="Parameters"/> field value for the specified <paramref name="index"/>.</returns>
-        public object this[int index]
+        public object? this[int index]
         {
             get => Parameters[index];
             set => Parameters[index] = value;
@@ -138,33 +138,26 @@ namespace Gemstone.Data.Model
         /// Creates a deep copy of this record restriction.
         /// </summary>
         /// <returns>Deep copy of this record restriction.</returns>
-        public RecordRestriction Clone()
-        {
-            return Clone(this);
-        }
+        public RecordRestriction Clone() => Clone(this)!;
 
         /// <summary>
         /// Determines whether the specified object is equal to the current object.
         /// </summary>
         /// <param name="obj">An object to compare with this object.</param>
         /// <returns><c>true</c> if the current object is equal to the <paramref name="obj" /> parameter; otherwise, <c>false</c>.</returns>
-        public override bool Equals(object obj)
-        {
-            RecordRestriction other = obj as RecordRestriction;
-            return other != null && Equals(other);
-        }
+        public override bool Equals(object? obj) => obj is RecordRestriction other && Equals(other);
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns><c>true</c> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <c>false</c>.</returns>
-        public bool Equals(RecordRestriction other)
+        public bool Equals(RecordRestriction? other)
         {
             if (ReferenceEquals(this, other))
                 return true;
 
-            if (FilterExpression.Equals(other?.FilterExpression, StringComparison.Ordinal))
+            if (string.Equals(FilterExpression, other?.FilterExpression, StringComparison.Ordinal))
                 return Parameters.CompareTo(other?.Parameters) == 0;
 
             return false;
@@ -191,7 +184,7 @@ namespace Gemstone.Data.Model
         /// </summary>
         /// <param name="value">Operand.</param>
         /// <returns>Record operation representing the specified filter expression.</returns>
-        public static implicit operator RecordRestriction(string value) => new RecordRestriction(value);
+        public static implicit operator RecordRestriction(string? value) => new RecordRestriction(value);
 
         /// <summary>
         /// Compares to record restrictions for equality.
@@ -199,9 +192,9 @@ namespace Gemstone.Data.Model
         /// <param name="left"><see cref="RecordRestriction"/> left operand.</param>
         /// <param name="right"><see cref="RecordRestriction"/> right operand.</param>
         /// <returns><c>true</c> if record restrictions are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(RecordRestriction left, RecordRestriction right)
+        public static bool operator ==(RecordRestriction? left, RecordRestriction? right)
         {
-            if (left == null && right == null)
+            if (left is null && right is null)
                 return true;
 
             return left?.Equals(right) ?? false;
@@ -213,9 +206,9 @@ namespace Gemstone.Data.Model
         /// <param name="left"><see cref="RecordRestriction"/> left operand.</param>
         /// <param name="right"><see cref="RecordRestriction"/> right operand.</param>
         /// <returns><c>true</c> if record restrictions are not equal; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(RecordRestriction left, RecordRestriction right)
+        public static bool operator !=(RecordRestriction? left, RecordRestriction? right)
         {
-            if (left == null && right == null)
+            if (left is null && right is null)
                 return false;
 
             return !left?.Equals(right) ?? true;
@@ -235,10 +228,7 @@ namespace Gemstone.Data.Model
         /// <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
         /// the parameter that has a filter expression will be returned.
         /// </remarks>
-        public static RecordRestriction operator +(RecordRestriction left, RecordRestriction right)
-        {
-            return CombineAnd(left, right);
-        }
+        public static RecordRestriction? operator +(RecordRestriction? left, RecordRestriction? right) => CombineAnd(left, right);
 
         /// <summary>
         /// Combines two record restrictions with an AND condition.
@@ -254,10 +244,7 @@ namespace Gemstone.Data.Model
         /// <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
         /// the parameter that has a filter expression will be returned.
         /// </remarks>
-        public static RecordRestriction operator &(RecordRestriction left, RecordRestriction right)
-        {
-            return CombineAnd(left, right);
-        }
+        public static RecordRestriction? operator &(RecordRestriction? left, RecordRestriction? right) => CombineAnd(left, right);
 
         /// <summary>
         /// Combines two record restrictions with an OR condition.
@@ -273,10 +260,7 @@ namespace Gemstone.Data.Model
         /// <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
         /// the parameter that has a filter expression will be returned.
         /// </remarks>
-        public static RecordRestriction operator |(RecordRestriction left, RecordRestriction right)
-        {
-            return CombineOr(left, right);
-        }
+        public static RecordRestriction? operator |(RecordRestriction? left, RecordRestriction? right) => CombineOr(left, right);
 
         #endregion
 
@@ -289,14 +273,14 @@ namespace Gemstone.Data.Model
         /// </summary>
         /// <param name="source">Record restriction to clone.</param>
         /// <returns>Deep copy of the <paramref name="source"/> record restriction.</returns>
-        public static RecordRestriction Clone(RecordRestriction source)
+        public static RecordRestriction? Clone(RecordRestriction? source)
         {
-            if (source == null)
-                return null;
+            if (source is null)
+                return default;
 
-            object[] parameters = source.Parameters;
+            object?[] parameters = source.Parameters;
 
-            if (parameters != null && parameters.Length > 0)
+            if (parameters.Length > 0)
             {
                 parameters = new object[source.Parameters.Length];
                 Array.Copy(source.Parameters, parameters, source.Parameters.Length);
@@ -319,10 +303,7 @@ namespace Gemstone.Data.Model
         /// <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
         /// the parameter that has a filter expression will be returned.
         /// </remarks>
-        public static RecordRestriction CombineAnd(RecordRestriction left, RecordRestriction right)
-        {
-            return Combine(left, right, "AND");
-        }
+        public static RecordRestriction? CombineAnd(RecordRestriction? left, RecordRestriction? right) => Combine(left, right, "AND");
 
         /// <summary>
         /// Combines two record restrictions with an OR condition.
@@ -338,22 +319,19 @@ namespace Gemstone.Data.Model
         /// <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
         /// the parameter that has a filter expression will be returned.
         /// </remarks>
-        public static RecordRestriction CombineOr(RecordRestriction left, RecordRestriction right)
-        {
-            return Combine(left, right, "OR");
-        }
+        public static RecordRestriction? CombineOr(RecordRestriction? left, RecordRestriction? right) => Combine(left, right, "OR");
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static RecordRestriction Combine(RecordRestriction left, RecordRestriction right, string operation)
+        private static RecordRestriction? Combine(RecordRestriction? left, RecordRestriction? right, string operation)
         {
             // Check for null operands
-            if (left == null && right == null)
-                return null;
+            if (left is null && right is null)
+                return default;
 
-            if (left == null)
+            if (left is null)
                 return right;
 
-            if (right == null)
+            if (right is null)
                 return left;
 
             // Check for empty filter expressions
@@ -370,13 +348,13 @@ namespace Gemstone.Data.Model
                 return left;
 
             // Check for missing parameters
-            int leftLength = left.Parameters?.Length ?? 0;
-            int rightLength = right.Parameters?.Length ?? 0;
+            int leftLength = left.Parameters.Length;
+            int rightLength = right.Parameters.Length;
 
             if (leftLength == 0 && rightLength == 0)
                 return new RecordRestriction($"({left.FilterExpression}) {operation} ({right.FilterExpression})");
 
-            object[] parameters = leftLength == 0 ? right.Parameters : rightLength == 0 ? left.Parameters : left.Parameters.Combine(right.Parameters);
+            object?[] parameters = leftLength == 0 ? right.Parameters : rightLength == 0 ? left.Parameters : left.Parameters.Combine(right.Parameters);
 
             // ReSharper disable once CoVariantArrayConversion
             object[] offsetArgs = Enumerable.Range(leftLength, rightLength).Select(index => $"{{{index}}}").ToArray();

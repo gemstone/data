@@ -193,7 +193,6 @@ namespace Gemstone.Data.DataSetExtensions
             {
                 List<int> columnIndices = new List<int>();
                 List<DataType> columnDataTypes = new List<DataType>();
-                DataType dataType;
 
                 // Serialize column metadata
                 using (BlockAllocatedMemoryStream columnMetaDataStream = new BlockAllocatedMemoryStream())
@@ -203,24 +202,24 @@ namespace Gemstone.Data.DataSetExtensions
                     foreach (DataColumn column in table.Columns)
                     {
                         // Get column data type, unknown types will be represented as object
-                        dataType = GetDataType(column.DataType, assumeStringForUnknownTypes);
+                        DataType dataType = GetDataType(column.DataType, assumeStringForUnknownTypes);
 
                         // Only objects of a known type can be properly serialized
-                        if (dataType != DataType.Object)
-                        {
-                            byte dtByte = (byte)dataType;
+                        if (dataType == DataType.Object)
+                            continue;
 
-                            if (useNullableDataTypes)
-                                dtByte |= 0x80;
+                        byte dtByte = (byte)dataType;
 
-                            // Serialize column name and type
-                            columnMetaData.Write(column.ColumnName);
-                            columnMetaData.Write(dtByte);
+                        if (useNullableDataTypes)
+                            dtByte |= 0x80;
 
-                            // Track data types and column indices in parallel lists for faster DataRow serialization
-                            columnIndices.Add(column.Ordinal);
-                            columnDataTypes.Add(dataType);
-                        }
+                        // Serialize column name and type
+                        columnMetaData.Write(column.ColumnName);
+                        columnMetaData.Write(dtByte);
+
+                        // Track data types and column indices in parallel lists for faster DataRow serialization
+                        columnIndices.Add(column.Ordinal);
+                        columnDataTypes.Add(dataType);
                     }
 
                     // Serialize table name and column count
@@ -237,12 +236,10 @@ namespace Gemstone.Data.DataSetExtensions
                 // Serialize rows
                 foreach (DataRow row in table.Rows)
                 {
-                    object value;
-
                     // Serialize column data
                     for (int i = 0; i < columnIndices.Count; i++)
                     {
-                        value = row[columnIndices[i]];
+                        object value = row[columnIndices[i]];
 
                         if (useNullableDataTypes)
                         {
@@ -356,15 +353,12 @@ namespace Gemstone.Data.DataSetExtensions
                 throw new InvalidOperationException("Cannot read from a write-only stream");
 
             DataSet dataset = new DataSet();
-            DataRow row;
-            object value;
 
             BinaryReader input = new BinaryReader(source);
-            int tableCount;
 
             // Deserialize dataset name and table count
             dataset.DataSetName = input.ReadString();
-            tableCount = input.ReadInt32();
+            int tableCount = input.ReadInt32();
 
             // Deserialize tables
             for (int i = 0; i < tableCount; i++)
@@ -372,15 +366,12 @@ namespace Gemstone.Data.DataSetExtensions
                 List<int> columnIndices = new List<int>();
                 List<DataType> columnDataTypes = new List<DataType>();
                 List<bool> columnNullable = new List<bool>();
-                DataType dataType;
-                byte dtByte;
-                int columnCount, rowCount;
 
                 DataTable table = dataset.Tables.Add();
 
                 // Deserialize table name and column count
                 table.TableName = input.ReadString();
-                columnCount = input.ReadInt32();
+                int columnCount = input.ReadInt32();
 
                 // Deserialize column metadata
                 for (int j = 0; j < columnCount; j++)
@@ -390,8 +381,8 @@ namespace Gemstone.Data.DataSetExtensions
                     // Deserialize column name and type
                     column.ColumnName = input.ReadString();
 
-                    dtByte = input.ReadByte();
-                    dataType = (DataType)(dtByte & 0x7F);
+                    byte dtByte = input.ReadByte();
+                    DataType dataType = (DataType)(dtByte & 0x7F);
                     column.DataType = dataType.DeriveColumnType();
                     columnNullable.Add((dtByte & 0x80) != 0);
 
@@ -401,17 +392,17 @@ namespace Gemstone.Data.DataSetExtensions
                 }
 
                 // Deserialize row count
-                rowCount = input.ReadInt32();
+                int rowCount = input.ReadInt32();
 
                 // Deserialize rows
                 for (int j = 0; j < rowCount; j++)
                 {
-                    row = table.NewRow();
+                    DataRow row = table.NewRow();
 
                     // Deserialize column data
                     for (int k = 0; k < columnIndices.Count; k++)
                     {
-                        value = null;
+                        object? value = null;
 
                         if (columnNullable[k] && input.ReadByte() != 0)
                         {
@@ -542,6 +533,6 @@ namespace Gemstone.Data.DataSetExtensions
 
         private static T NotDBNull<T>(this object value, T defaultValue) => value == DBNull.Value ? defaultValue : (T)value;
 
-        private static T NotDBNull<T>(this object value) => value.NotDBNull(default(T));
+        private static T NotDBNull<T>(this object value) => value.NotDBNull(default(T)!);
     }
 }

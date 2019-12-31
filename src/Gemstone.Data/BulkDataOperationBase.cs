@@ -33,6 +33,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
+#pragma warning disable CA2235
+#pragma warning disable CS8603
+#pragma warning disable CS8604
+#pragma warning disable CS8618
+#pragma warning disable CS8625
+
 namespace Gemstone.Data
 {
     #region [ IBulkDataOperation ]

@@ -29,7 +29,6 @@
 //******************************************************************************************************
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
@@ -39,7 +38,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Gemstone.Data.DataExtensions;
 using Gemstone.StringExtensions;
-//using Gemstone.Configuration;
 
 namespace Gemstone.Data
 {
@@ -170,79 +168,12 @@ namespace Gemstone.Data
         #region [ Members ]
 
         // Fields
-        private readonly string m_connectionString;
-        private readonly Type m_connectionType;
         private readonly bool m_disposeConnection;
         private bool m_disposed;
 
         #endregion
 
         #region [ Constructors ]
-
-        /// <summary>
-        /// Creates and opens a new <see cref="AdoDataConnection"/> based on connection settings in configuration file.
-        /// </summary>
-        /// <param name="settingsCategory">Settings category to use for connection settings.</param>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public AdoDataConnection(string settingsCategory)
-        {
-            if (string.IsNullOrWhiteSpace(settingsCategory))
-                throw new ArgumentNullException(nameof(settingsCategory), "Parameter cannot be null or empty");
-
-            // Only need to establish data types and load settings once per defined section since they are being loaded from config file
-
-            if (!s_configuredConnections.TryGetValue(settingsCategory, out AdoDataConnection configuredConnection))
-            {
-                string connectionString, dataProviderString;
-
-                try
-                {
-                    // TODO: Establish configuration options and correct:
-                    connectionString = null;
-                    dataProviderString = null;
-
-                    // Load connection settings from the system settings category				
-                    //ConfigurationFile config = ConfigurationFile.Current;
-                    //CategorizedSettingsElementCollection configSettings = config.Settings[settingsCategory];
-
-                    //connectionString = configSettings["ConnectionString"].Value;
-                    //dataProviderString = configSettings["DataProviderString"].Value;
-
-                    if (string.IsNullOrWhiteSpace(connectionString))
-                        throw new NullReferenceException("ConnectionString setting is not defined in the configuration file.");
-
-                    if (string.IsNullOrWhiteSpace(dataProviderString))
-                        throw new NullReferenceException("DataProviderString setting is not defined in the configuration file.");
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException($"Failed to load ADO database connection settings from configuration file: {ex.Message}", ex);
-                }
-
-                // Define connection settings without opening a connection
-                configuredConnection = new AdoDataConnection(connectionString, dataProviderString, false);
-                s_configuredConnections.TryAdd(settingsCategory, configuredConnection);
-            }
-
-            try
-            {
-                // Copy static instance data to member variables
-                DatabaseType = configuredConnection.DatabaseType;
-                m_connectionString = configuredConnection.m_connectionString;
-                m_connectionType = configuredConnection.m_connectionType;
-                AdapterType = configuredConnection.AdapterType;
-                m_disposeConnection = true;
-
-                // Open ADO.NET provider connection
-                Connection = (IDbConnection)Activator.CreateInstance(m_connectionType);
-                Connection.ConnectionString = m_connectionString;
-                Connection.Open();
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"Failed to open ADO data connection, verify \"ConnectionString\" in configuration file: {ex.Message}", ex);
-            }
-        }
 
         /// <summary>
         /// Creates and opens a new <see cref="AdoDataConnection"/> from specified <paramref name="connectionString"/> and <paramref name="dataProviderString"/>.
@@ -269,8 +200,6 @@ namespace Gemstone.Data
             if (!typeof(IDbDataAdapter).IsAssignableFrom(adapterType))
                 throw new ArgumentException("Adapter type must implement the IDbDataAdapter interface", nameof(adapterType));
 
-            m_connectionString = connectionString;
-            m_connectionType = connectionType;
             AdapterType = adapterType;
             DatabaseType = GetDatabaseType();
             m_disposeConnection = true;
@@ -278,8 +207,8 @@ namespace Gemstone.Data
             try
             {
                 // Open ADO.NET provider connection
-                Connection = (IDbConnection)Activator.CreateInstance(m_connectionType);
-                Connection.ConnectionString = m_connectionString;
+                Connection = (IDbConnection)Activator.CreateInstance(connectionType);
+                Connection.ConnectionString = connectionString;
                 Connection.Open();
             }
             catch (Exception ex)
@@ -301,36 +230,31 @@ namespace Gemstone.Data
                 throw new ArgumentException("Adapter type must implement the IDbDataAdapter interface", nameof(adapterType));
 
             Connection = connection;
-            m_connectionString = connection.ConnectionString;
-            m_connectionType = connection.GetType();
             AdapterType = adapterType;
             DatabaseType = GetDatabaseType();
             m_disposeConnection = disposeConnection;
         }
 
         // Creates a new AdoDataConnection, optionally opening connection.
+        #pragma warning disable CS8618 // Connection gets initialized regardless
         private AdoDataConnection(string connectionString, string dataProviderString, bool openConnection)
+        #pragma warning restore CS8618
         {
+            Type connectionType;
+
             if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentNullException(nameof(connectionString), "Parameter cannot be null or empty");
 
             if (string.IsNullOrWhiteSpace(dataProviderString))
                 throw new ArgumentNullException(nameof(dataProviderString), "Parameter cannot be null or empty");
 
-            // Cache connection string as member level variable
-            m_connectionString = connectionString;
-
             try
             {
                 // Attempt to load configuration from an ADO.NET database connection
-                Dictionary<string, string> settings;
-                string assemblyName, connectionTypeName, adapterTypeName;
-                Assembly assembly;
-
-                settings = dataProviderString.ParseKeyValuePairs();
-                assemblyName = settings["AssemblyName"].ToNonNullString();
-                connectionTypeName = settings["ConnectionType"].ToNonNullString();
-                adapterTypeName = settings["AdapterType"].ToNonNullString();
+                Dictionary<string, string> settings = dataProviderString.ParseKeyValuePairs();
+                string assemblyName = settings["AssemblyName"].ToNonNullString();
+                string connectionTypeName = settings["ConnectionType"].ToNonNullString();
+                string adapterTypeName = settings["AdapterType"].ToNonNullString();
 
                 if (string.IsNullOrEmpty(connectionTypeName))
                     throw new NullReferenceException("ADO database connection type was undefined.");
@@ -338,8 +262,8 @@ namespace Gemstone.Data
                 if (string.IsNullOrEmpty(adapterTypeName))
                     throw new NullReferenceException("ADO database adapter type was undefined.");
 
-                assembly = Assembly.Load(new AssemblyName(assemblyName));
-                m_connectionType = assembly.GetType(connectionTypeName);
+                Assembly assembly = Assembly.Load(new AssemblyName(assemblyName));
+                connectionType = assembly.GetType(connectionTypeName);
                 AdapterType = assembly.GetType(adapterTypeName);
                 DatabaseType = GetDatabaseType();
                 m_disposeConnection = true;
@@ -355,8 +279,8 @@ namespace Gemstone.Data
             try
             {
                 // Open ADO.NET provider connection
-                Connection = (IDbConnection)Activator.CreateInstance(m_connectionType);
-                Connection.ConnectionString = m_connectionString;
+                Connection = (IDbConnection)Activator.CreateInstance(connectionType);
+                Connection.ConnectionString = connectionString;
                 Connection.Open();
             }
             catch (Exception ex)
@@ -368,10 +292,7 @@ namespace Gemstone.Data
         /// <summary>
         /// Releases the unmanaged resources before the <see cref="AdoDataConnection"/> object is reclaimed by <see cref="GC"/>.
         /// </summary>
-        ~AdoDataConnection()
-        {
-            Dispose(false);
-        }
+        ~AdoDataConnection() => Dispose(false);
 
         #endregion
 
@@ -380,7 +301,7 @@ namespace Gemstone.Data
         /// <summary>
         /// Gets an open <see cref="IDbConnection"/> to configured ADO.NET data source.
         /// </summary>
-        public IDbConnection Connection { get; private set; }
+        public IDbConnection Connection { get; }
 
         /// <summary>
         /// Gets the type of data adapter for configured ADO.NET data source.
@@ -465,10 +386,8 @@ namespace Gemstone.Data
         /// <param name="scriptPath">The path to the SQL script.</param>
         public void ExecuteScript(string scriptPath)
         {
-            using (TextReader scriptReader = File.OpenText(scriptPath))
-            {
-                ExecuteScript(scriptReader);
-            }
+            using TextReader scriptReader = File.OpenText(scriptPath);
+            ExecuteScript(scriptReader);
         }
 
         /// <summary>
@@ -529,10 +448,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>The number of rows affected.</returns>
-        public int ExecuteNonQuery(string sqlFormat, params object[] parameters)
-        {
-            return ExecuteNonQuery(DefaultTimeout, sqlFormat, parameters);
-        }
+        public int ExecuteNonQuery(string sqlFormat, params object?[] parameters) => ExecuteNonQuery(DefaultTimeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and returns the number of rows affected.
@@ -541,7 +457,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>The number of rows affected.</returns>
-        public int ExecuteNonQuery(int timeout, string sqlFormat, params object[] parameters)
+        public int ExecuteNonQuery(int timeout, string sqlFormat, params object?[] parameters)
         {
             string sql = GenericParameterizedQueryString(sqlFormat, parameters);
 
@@ -554,10 +470,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>A <see cref="IDataReader"/> object.</returns>
-        public IDataReader ExecuteReader(string sqlFormat, params object[] parameters)
-        {
-            return ExecuteReader(DefaultTimeout, sqlFormat, parameters);
-        }
+        public IDataReader ExecuteReader(string sqlFormat, params object?[] parameters) => ExecuteReader(DefaultTimeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and builds a <see cref="IDataReader"/>.
@@ -566,10 +479,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>A <see cref="IDataReader"/> object.</returns>
-        public IDataReader ExecuteReader(int timeout, string sqlFormat, params object[] parameters)
-        {
-            return ExecuteReader(CommandBehavior.Default, timeout, sqlFormat, parameters);
-        }
+        public IDataReader ExecuteReader(int timeout, string sqlFormat, params object?[] parameters) => ExecuteReader(CommandBehavior.Default, timeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and builds a <see cref="IDataReader"/>.
@@ -579,7 +489,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>A <see cref="IDataReader"/> object.</returns>
-        public IDataReader ExecuteReader(CommandBehavior behavior, int timeout, string sqlFormat, params object[] parameters)
+        public IDataReader ExecuteReader(CommandBehavior behavior, int timeout, string sqlFormat, params object?[] parameters)
         {
             string sql = GenericParameterizedQueryString(sqlFormat, parameters);
 
@@ -593,10 +503,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public T ExecuteScalar<T>(string sqlFormat, params object[] parameters)
-        {
-            return ExecuteScalar<T>(DefaultTimeout, sqlFormat, parameters);
-        }
+        public T ExecuteScalar<T>(string sqlFormat, params object?[] parameters) => ExecuteScalar<T>(DefaultTimeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -606,10 +513,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public T ExecuteScalar<T>(int timeout, string sqlFormat, params object[] parameters)
-        {
-            return ExecuteScalar(default(T), timeout, sqlFormat, parameters);
-        }
+        public T ExecuteScalar<T>(int timeout, string sqlFormat, params object?[] parameters) => ExecuteScalar(default(T)!, timeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -620,10 +524,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public T ExecuteScalar<T>(T defaultValue, string sqlFormat, params object[] parameters)
-        {
-            return ExecuteScalar(defaultValue, DefaultTimeout, sqlFormat, parameters);
-        }
+        public T ExecuteScalar<T>(T defaultValue, string sqlFormat, params object?[] parameters) => ExecuteScalar(defaultValue, DefaultTimeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -635,10 +536,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public T ExecuteScalar<T>(T defaultValue, int timeout, string sqlFormat, params object[] parameters)
-        {
-            return (T)ExecuteScalar(typeof(T), defaultValue, timeout, sqlFormat, parameters);
-        }
+        public T ExecuteScalar<T>(T defaultValue, int timeout, string sqlFormat, params object?[] parameters) => (T)ExecuteScalar(typeof(T), defaultValue, timeout, sqlFormat, parameters)!;
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -648,10 +546,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public object ExecuteScalar(Type returnType, string sqlFormat, params object[] parameters)
-        {
-            return ExecuteScalar(returnType, DefaultTimeout, sqlFormat, parameters);
-        }
+        public object? ExecuteScalar(Type returnType, string sqlFormat, params object?[] parameters) => ExecuteScalar(returnType, DefaultTimeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -662,12 +557,12 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public object ExecuteScalar(Type returnType, int timeout, string sqlFormat, params object[] parameters)
+        public object? ExecuteScalar(Type returnType, int timeout, string sqlFormat, params object?[] parameters)
         {
             if (returnType.IsValueType)
                 return ExecuteScalar(returnType, Activator.CreateInstance(returnType), timeout, sqlFormat, parameters);
 
-            return ExecuteScalar(returnType, (object)null, timeout, sqlFormat, parameters);
+            return ExecuteScalar(returnType, (object)default!, timeout, sqlFormat, parameters);
         }
 
         /// <summary>
@@ -680,10 +575,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public object ExecuteScalar(Type returnType, object defaultValue, string sqlFormat, params object[] parameters)
-        {
-            return ExecuteScalar(returnType, defaultValue, DefaultTimeout, sqlFormat, parameters);
-        }
+        public object? ExecuteScalar(Type returnType, object? defaultValue, string sqlFormat, params object?[] parameters) => ExecuteScalar(returnType, defaultValue, DefaultTimeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -696,9 +588,9 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public object ExecuteScalar(Type returnType, object defaultValue, int timeout, string sqlFormat, params object[] parameters)
+        public object? ExecuteScalar(Type returnType, object? defaultValue, int timeout, string sqlFormat, params object?[] parameters)
         {
-            object value = ExecuteScalar(timeout, sqlFormat, parameters);
+            object? value = ExecuteScalar(timeout, sqlFormat, parameters);
 
             // It's important that we do not validate the default value to determine
             // whether it is assignable to the return type because this method is
@@ -733,10 +625,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public object ExecuteScalar(string sqlFormat, params object[] parameters)
-        {
-            return ExecuteScalar(DefaultTimeout, sqlFormat, parameters);
-        }
+        public object? ExecuteScalar(string sqlFormat, params object?[] parameters) => ExecuteScalar(DefaultTimeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -746,7 +635,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public object ExecuteScalar(int timeout, string sqlFormat, params object[] parameters)
+        public object? ExecuteScalar(int timeout, string sqlFormat, params object?[] parameters)
         {
             string sql = GenericParameterizedQueryString(sqlFormat, parameters);
 
@@ -759,10 +648,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-        public DataRow RetrieveRow(string sqlFormat, params object[] parameters)
-        {
-            return RetrieveRow(DefaultTimeout, sqlFormat, parameters);
-        }
+        public DataRow RetrieveRow(string sqlFormat, params object?[] parameters) => RetrieveRow(DefaultTimeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataRow"/> in the result set.
@@ -771,7 +657,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-        public DataRow RetrieveRow(int timeout, string sqlFormat, params object[] parameters)
+        public DataRow RetrieveRow(int timeout, string sqlFormat, params object?[] parameters)
         {
             string sql = GenericParameterizedQueryString(sqlFormat, parameters);
 
@@ -785,10 +671,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>A <see cref="DataTable"/> object.</returns>
-        public DataTable RetrieveData(string sqlFormat, params object[] parameters)
-        {
-            return RetrieveData(DefaultTimeout, sqlFormat, parameters);
-        }
+        public DataTable RetrieveData(string sqlFormat, params object?[] parameters) => RetrieveData(DefaultTimeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataTable"/> 
@@ -798,7 +681,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>A <see cref="DataTable"/> object.</returns>
-        public DataTable RetrieveData(int timeout, string sqlFormat, params object[] parameters)
+        public DataTable RetrieveData(int timeout, string sqlFormat, params object?[] parameters)
         {
             string sql = GenericParameterizedQueryString(sqlFormat, parameters);
 
@@ -812,10 +695,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>A <see cref="DataSet"/> object.</returns>
-        public DataSet RetrieveDataSet(string sqlFormat, params object[] parameters)
-        {
-            return RetrieveDataSet(DefaultTimeout, sqlFormat, parameters);
-        }
+        public DataSet RetrieveDataSet(string sqlFormat, params object?[] parameters) => RetrieveDataSet(DefaultTimeout, sqlFormat, parameters);
 
         /// <summary>
         /// Executes the SQL statement using <see cref="Connection"/>, and returns the <see cref="DataSet"/> that 
@@ -825,7 +705,7 @@ namespace Gemstone.Data
         /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
         /// <returns>A <see cref="DataSet"/> object.</returns>
-        public DataSet RetrieveDataSet(int timeout, string sqlFormat, params object[] parameters)
+        public DataSet RetrieveDataSet(int timeout, string sqlFormat, params object?[] parameters)
         {
             string sql = GenericParameterizedQueryString(sqlFormat, parameters);
 
@@ -847,23 +727,20 @@ namespace Gemstone.Data
         /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!m_disposed)
+            if (m_disposed)
+                return;
+
+            try
             {
-                try
-                {
-                    if (disposing)
-                    {
-                        if (m_disposeConnection && Connection != null)
-                        {
-                            Connection.Dispose();
-                            Connection = null;
-                        }
-                    }
-                }
-                finally
-                {
-                    m_disposed = true; // Prevent duplicate dispose.
-                }
+                if (!disposing)
+                    return;
+
+                if (m_disposeConnection)
+                    Connection.Dispose();
+            }
+            finally
+            {
+                m_disposed = true; // Prevent duplicate dispose.
             }
         }
 
@@ -987,7 +864,7 @@ namespace Gemstone.Data
 
                         break;
                     case "oledbdataadapter":
-                        if (m_connectionString != null && m_connectionString.ToLowerInvariant().Contains("microsoft.jet.oledb"))
+                        if (Connection.ConnectionString?.ToLowerInvariant().Contains("microsoft.jet.oledb") ?? false)
                             type = DatabaseType.Access;
 
                         break;
@@ -998,55 +875,54 @@ namespace Gemstone.Data
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private string GenericParameterizedQueryString(string sqlFormat, object[] parameters)
+        private string GenericParameterizedQueryString(string sqlFormat, object?[] parameters)
         {
-            string[] parameterNames = parameters.Select((parameter, index) => $"p{index}").ToArray();
+            string[] parameterNames = parameters.Select((_, index) => $"p{index}").ToArray();
 
             return ParameterizedQueryString(sqlFormat, parameterNames);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private object[] ResolveParameters(object[] parameters)
+        private object[] ResolveParameters(object?[] parameters)
         {
             IDbDataParameter[] dataParameters = new IDbDataParameter[parameters.Length];
 
             if (parameters.Length > 0)
             {
-                using (IDbCommand command = Connection.CreateCommand())
+                using IDbCommand command = Connection.CreateCommand();
+
+                for (int i = 0; i < parameters.Length; i++)
                 {
-                    for (int i = 0; i < parameters.Length; i++)
+                    object? value = parameters[i];
+                    DbType? type = null;
+
+                    if (value is IDbDataParameter dataParameter)
                     {
-                        object value = parameters[i];
-                        DbType? type = null;
-
-                        if (value is IDbDataParameter dataParameter)
-                        {
-                            type = dataParameter.DbType;
-                            value = dataParameter.Value;
-                        }
-
-                        switch (value)
-                        {
-                            case null:
-                                value = DBNull.Value;
-                                break;
-                            case bool boolVal:
-                                value = Bool(boolVal);
-                                break;
-                            case Guid guidVal:
-                                value = Guid(guidVal);
-                                break;
-                        }
-
-                        IDbDataParameter parameter = command.CreateParameter();
-
-                        if (type.HasValue)
-                            parameter.DbType = type.Value;
-
-                        parameter.ParameterName = $"@p{i}";
-                        parameter.Value = value;
-                        dataParameters[i] = parameter;
+                        type = dataParameter.DbType;
+                        value = dataParameter.Value;
                     }
+
+                    switch (value)
+                    {
+                        case null:
+                            value = DBNull.Value;
+                            break;
+                        case bool boolVal:
+                            value = Bool(boolVal);
+                            break;
+                        case Guid guidVal:
+                            value = Guid(guidVal);
+                            break;
+                    }
+
+                    IDbDataParameter parameter = command.CreateParameter();
+
+                    if (type.HasValue)
+                        parameter.DbType = type.Value;
+
+                    parameter.ParameterName = $"@p{i}";
+                    parameter.Value = value;
+                    dataParameters[i] = parameter;
                 }
             }
 
@@ -1057,17 +933,6 @@ namespace Gemstone.Data
         #endregion
 
         #region [ Static ]
-
-        // Static Fields
-        private static readonly ConcurrentDictionary<string, AdoDataConnection> s_configuredConnections = new ConcurrentDictionary<string, AdoDataConnection>(StringComparer.OrdinalIgnoreCase);
-
-
-        // Static Methods
-
-        /// <summary>
-        /// Forces a reload of cached configuration connection settings.
-        /// </summary>
-        public static void ReloadConfigurationSettings() => s_configuredConnections?.Clear();
 
         /// <summary>
         /// Generates a data provider string for the given connection type and adapter type.

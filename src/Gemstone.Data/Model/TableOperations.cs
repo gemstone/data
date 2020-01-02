@@ -46,6 +46,7 @@ using Gemstone.StringExtensions;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable AssignNullToNotNullAttribute
 // ReSharper disable NotAccessedField.Local
+// ReSharper disable ArrangeRedundantParentheses
 
 // TODO: This is a temporary workaround as message should not be displayed, see: https://github.com/dotnet/roslyn/issues/35936
 #pragma warning disable IDE0057 // Use range operator
@@ -682,7 +683,7 @@ namespace Gemstone.Data.Model
             try
             {
                 if (RootQueryRestriction != null)
-                    restriction = RootQueryRestriction + restriction!;
+                    restriction = (RootQueryRestriction + restriction)!;
 
                 if (limit < 1)
                 {
@@ -862,7 +863,7 @@ namespace Gemstone.Data.Model
                 try
                 {
                     if (RootQueryRestriction != null)
-                        restriction = RootQueryRestriction + restriction!;
+                        restriction = (RootQueryRestriction + restriction)!;
 
                     if (restriction is null)
                     {
@@ -948,7 +949,7 @@ namespace Gemstone.Data.Model
             try
             {
                 if (RootQueryRestriction != null)
-                    restriction = RootQueryRestriction + restriction!;
+                    restriction = (RootQueryRestriction + restriction)!;
 
                 if (restriction is null)
                 {
@@ -1366,7 +1367,7 @@ namespace Gemstone.Data.Model
             try
             {
                 if (RootQueryRestriction != null && (applyRootQueryRestriction ?? ApplyRootQueryRestrictionToDeletes))
-                    restriction = RootQueryRestriction + restriction!;
+                    restriction = (RootQueryRestriction + restriction)!;
 
                 sqlExpression = $"{m_deleteWhereSql}{UpdateFieldNames(restriction.FilterExpression)}";
                 int affectedRecords = Connection.ExecuteNonQuery(sqlExpression, restriction.Parameters);
@@ -1454,7 +1455,7 @@ namespace Gemstone.Data.Model
                 s_updateRecordInstance(new CurrentScope { Instance = record, TableOperations = this, Connection = Connection });
 
                 if (RootQueryRestriction != null && (applyRootQueryRestriction ?? ApplyRootQueryRestrictionToUpdates))
-                    restriction = RootQueryRestriction + restriction!;
+                    restriction = (RootQueryRestriction + restriction)!;
             }
             catch (Exception ex)
             {

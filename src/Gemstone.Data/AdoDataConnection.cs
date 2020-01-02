@@ -235,10 +235,12 @@ namespace Gemstone.Data
             m_disposeConnection = disposeConnection;
         }
 
+        // TODO: This is a temporary workaround as suppress message attribute should be enough, see: https://github.com/dotnet/roslyn/issues/39094
+        #pragma warning disable CS8618
+
         // Creates a new AdoDataConnection, optionally opening connection.
-        #pragma warning disable CS8618 // Connection gets initialized regardless
+        [SuppressMessage("Code Quality", "CS8618:Non-nullable field is uninitialized. Consider declaring as nullable.", Justification = "Connection is properly initialized")]
         private AdoDataConnection(string connectionString, string dataProviderString, bool openConnection)
-        #pragma warning restore CS8618
         {
             Type connectionType;
 

@@ -1,14 +1,1279 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <HelpKI>
-  <HelpKINode Title="Class class">
-    <HelpKINode Title="Class Class" Url="html/T_gemstone_data_Class.htm" />
-    <HelpKINode Title="constructor" Url="html/M_gemstone_data_Class__ctor.htm" />
-    <HelpKINode Title="methods" Url="html/Methods_T_gemstone_data_Class.htm" />
+  <HelpKINode Title="Access enumeration member" Url="html/T_Gemstone_Data_DatabaseType.htm" />
+  <HelpKINode Title="AdapterType property" Url="html/P_Gemstone_Data_AdoDataConnection_AdapterType.htm" />
+  <HelpKINode Title="Add method">
+    <HelpKINode Title="Fields.Add Method " Url="html/M_Gemstone_Data_Fields_Add.htm" />
+    <HelpKINode Title="Tables.Add Method " Url="html/M_Gemstone_Data_Tables_Add.htm" />
   </HelpKINode>
-  <HelpKINode Title="Class.Class constructor" Url="html/M_gemstone_data_Class__ctor.htm" />
-  <HelpKINode Title="gemstone.data namespace" Url="html/N_gemstone_data.htm" />
-  <HelpKINode Title="gemstone.data.Class class" Url="html/T_gemstone_data_Class.htm" />
+  <HelpKINode Title="Addition operator" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_Addition.htm" />
+  <HelpKINode Title="AddNewOrUpdateRecord method">
+    <HelpKINode Title="ITableOperations.AddNewOrUpdateRecord Method " Url="html/M_Gemstone_Data_Model_ITableOperations_AddNewOrUpdateRecord.htm" />
+    <HelpKINode Title="TableOperations(T).AddNewOrUpdateRecord Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_AddNewOrUpdateRecord.htm" />
+  </HelpKINode>
+  <HelpKINode Title="AddNewRecord enumeration member" Url="html/T_Gemstone_Data_Model_RecordOperation.htm" />
+  <HelpKINode Title="AddNewRecord method">
+    <HelpKINode Title="ITableOperations.AddNewRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_AddNewRecord.htm" />
+    <HelpKINode Title="TableOperations(T).AddNewRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_AddNewRecord.htm" />
+  </HelpKINode>
+  <HelpKINode Title="AddParametersWithValues method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_AddParametersWithValues.htm" />
+  <HelpKINode Title="AddParameterWithValue method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_AddParameterWithValue.htm" />
+  <HelpKINode Title="AdoDataConnection class">
+    <HelpKINode Title="AdoDataConnection Class" Url="html/T_Gemstone_Data_AdoDataConnection.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_AdoDataConnection__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_AdoDataConnection.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_AdoDataConnection.htm" />
+  </HelpKINode>
+  <HelpKINode Title="AdoDataConnection.AdapterType property" Url="html/P_Gemstone_Data_AdoDataConnection_AdapterType.htm" />
+  <HelpKINode Title="AdoDataConnection.AdoDataConnection constructor" Url="html/Overload_Gemstone_Data_AdoDataConnection__ctor.htm" />
+  <HelpKINode Title="AdoDataConnection.Bool method" Url="html/M_Gemstone_Data_AdoDataConnection_Bool.htm" />
+  <HelpKINode Title="AdoDataConnection.Connection property" Url="html/P_Gemstone_Data_AdoDataConnection_Connection.htm" />
+  <HelpKINode Title="AdoDataConnection.DatabaseType property" Url="html/P_Gemstone_Data_AdoDataConnection_DatabaseType.htm" />
+  <HelpKINode Title="AdoDataConnection.DefaultIsloationLevel property" Url="html/P_Gemstone_Data_AdoDataConnection_DefaultIsloationLevel.htm" />
+  <HelpKINode Title="AdoDataConnection.DefaultTimeout property" Url="html/P_Gemstone_Data_AdoDataConnection_DefaultTimeout.htm" />
+  <HelpKINode Title="AdoDataConnection.Dispose method" Url="html/Overload_Gemstone_Data_AdoDataConnection_Dispose.htm" />
+  <HelpKINode Title="AdoDataConnection.EscapeIdentifier method" Url="html/M_Gemstone_Data_AdoDataConnection_EscapeIdentifier.htm" />
+  <HelpKINode Title="AdoDataConnection.ExecuteNonQuery method" Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteNonQuery.htm" />
+  <HelpKINode Title="AdoDataConnection.ExecuteReader method" Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteReader.htm" />
+  <HelpKINode Title="AdoDataConnection.ExecuteScalar method" Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteScalar.htm" />
+  <HelpKINode Title="AdoDataConnection.ExecuteScript method" Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteScript.htm" />
+  <HelpKINode Title="AdoDataConnection.Finalize method" Url="html/M_Gemstone_Data_AdoDataConnection_Finalize.htm" />
+  <HelpKINode Title="AdoDataConnection.Guid method" Url="html/Overload_Gemstone_Data_AdoDataConnection_Guid.htm" />
+  <HelpKINode Title="AdoDataConnection.IsJetEngine property" Url="html/P_Gemstone_Data_AdoDataConnection_IsJetEngine.htm" />
+  <HelpKINode Title="AdoDataConnection.IsMySQL property" Url="html/P_Gemstone_Data_AdoDataConnection_IsMySQL.htm" />
+  <HelpKINode Title="AdoDataConnection.IsOracle property" Url="html/P_Gemstone_Data_AdoDataConnection_IsOracle.htm" />
+  <HelpKINode Title="AdoDataConnection.IsPostgreSQL property" Url="html/P_Gemstone_Data_AdoDataConnection_IsPostgreSQL.htm" />
+  <HelpKINode Title="AdoDataConnection.IsSqlite property" Url="html/P_Gemstone_Data_AdoDataConnection_IsSqlite.htm" />
+  <HelpKINode Title="AdoDataConnection.IsSQLServer property" Url="html/P_Gemstone_Data_AdoDataConnection_IsSQLServer.htm" />
+  <HelpKINode Title="AdoDataConnection.ParameterizedQueryString method" Url="html/M_Gemstone_Data_AdoDataConnection_ParameterizedQueryString.htm" />
+  <HelpKINode Title="AdoDataConnection.RetrieveData method" Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveData.htm" />
+  <HelpKINode Title="AdoDataConnection.RetrieveDataSet method" Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveDataSet.htm" />
+  <HelpKINode Title="AdoDataConnection.RetrieveRow method" Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveRow.htm" />
+  <HelpKINode Title="AdoDataConnection.ToDataProviderString method" Url="html/M_Gemstone_Data_AdoDataConnection_ToDataProviderString.htm" />
+  <HelpKINode Title="AdoDataConnection.UtcNow property" Url="html/P_Gemstone_Data_AdoDataConnection_UtcNow.htm" />
+  <HelpKINode Title="AffixPosition enumeration" Url="html/T_Gemstone_Data_Model_AffixPosition.htm" />
+  <HelpKINode Title="AffixPosition property" Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_AffixPosition.htm" />
+  <HelpKINode Title="Alias enumeration member" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="AllowNumericNulls property" Url="html/P_Gemstone_Data_Schema_AllowNumericNulls.htm" />
+  <HelpKINode Title="AllowsNulls property" Url="html/P_Gemstone_Data_Field_AllowsNulls.htm" />
+  <HelpKINode Title="AllowTextNulls property" Url="html/P_Gemstone_Data_Schema_AllowTextNulls.htm" />
+  <HelpKINode Title="AmendExpressionAttribute class">
+    <HelpKINode Title="AmendExpressionAttribute Class" Url="html/T_Gemstone_Data_Model_AmendExpressionAttribute.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_Model_AmendExpressionAttribute__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_AmendExpressionAttribute.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_AmendExpressionAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="AmendExpressionAttribute.AffixPosition property" Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_AffixPosition.htm" />
+  <HelpKINode Title="AmendExpressionAttribute.AmendExpressionAttribute constructor" Url="html/Overload_Gemstone_Data_Model_AmendExpressionAttribute__ctor.htm" />
+  <HelpKINode Title="AmendExpressionAttribute.AmendmentText property" Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_AmendmentText.htm" />
+  <HelpKINode Title="AmendExpressionAttribute.StatementTypes property" Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_StatementTypes.htm" />
+  <HelpKINode Title="AmendExpressionAttribute.TargetDatabaseType property" Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_TargetDatabaseType.htm" />
+  <HelpKINode Title="AmendExpressionAttribute.TargetExpression property" Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_TargetExpression.htm" />
+  <HelpKINode Title="AmendmentText property" Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_AmendmentText.htm" />
+  <HelpKINode Title="Analyze method">
+    <HelpKINode Title="BulkDataOperationBase.Analyze Method " Url="html/M_Gemstone_Data_BulkDataOperationBase_Analyze.htm" />
+    <HelpKINode Title="Schema.Analyze Method " Url="html/M_Gemstone_Data_Schema_Analyze.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ApplyRecordDefaults method">
+    <HelpKINode Title="ITableOperations.ApplyRecordDefaults Method " Url="html/M_Gemstone_Data_Model_ITableOperations_ApplyRecordDefaults.htm" />
+    <HelpKINode Title="TableOperations(T).ApplyRecordDefaults Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordDefaults.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ApplyRecordDefaultsFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordDefaultsFunction.htm" />
+  <HelpKINode Title="ApplyRecordUpdates method">
+    <HelpKINode Title="ITableOperations.ApplyRecordUpdates Method " Url="html/M_Gemstone_Data_Model_ITableOperations_ApplyRecordUpdates.htm" />
+    <HelpKINode Title="TableOperations(T).ApplyRecordUpdates Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordUpdates.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ApplyRecordUpdatesFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordUpdatesFunction.htm" />
+  <HelpKINode Title="ApplyRootQueryRestrictionToDeletes property">
+    <HelpKINode Title="ITableOperations.ApplyRootQueryRestrictionToDeletes Property " Url="html/P_Gemstone_Data_Model_ITableOperations_ApplyRootQueryRestrictionToDeletes.htm" />
+    <HelpKINode Title="TableOperations(T).ApplyRootQueryRestrictionToDeletes Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_ApplyRootQueryRestrictionToDeletes.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ApplyRootQueryRestrictionToUpdates property">
+    <HelpKINode Title="ITableOperations.ApplyRootQueryRestrictionToUpdates Property " Url="html/P_Gemstone_Data_Model_ITableOperations_ApplyRootQueryRestrictionToUpdates.htm" />
+    <HelpKINode Title="TableOperations(T).ApplyRootQueryRestrictionToUpdates Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_ApplyRootQueryRestrictionToUpdates.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ApplyToDeletes field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_ApplyToDeletes.htm" />
+  <HelpKINode Title="ApplyToUpdates field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_ApplyToUpdates.htm" />
+  <HelpKINode Title="AttemptBulkInsert property" Url="html/P_Gemstone_Data_DataInserter_AttemptBulkInsert.htm" />
+  <HelpKINode Title="AttemptTruncateTable property" Url="html/P_Gemstone_Data_DataInserter_AttemptTruncateTable.htm" />
+  <HelpKINode Title="AutoIncField property" Url="html/P_Gemstone_Data_Table_AutoIncField.htm" />
+  <HelpKINode Title="AutoIncrement property" Url="html/P_Gemstone_Data_Field_AutoIncrement.htm" />
+  <HelpKINode Title="AutoIncrementSeed property" Url="html/P_Gemstone_Data_Field_AutoIncrementSeed.htm" />
+  <HelpKINode Title="AutoIncrementStep property" Url="html/P_Gemstone_Data_Field_AutoIncrementStep.htm" />
+  <HelpKINode Title="BigInt enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="Binary enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="BitwiseAnd operator" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_BitwiseAnd.htm" />
+  <HelpKINode Title="BitwiseOr operator" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_BitwiseOr.htm" />
+  <HelpKINode Title="Blob enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="Bool method" Url="html/M_Gemstone_Data_AdoDataConnection_Bool.htm" />
+  <HelpKINode Title="Boolean enumeration member">
+    <HelpKINode Title="DataType Enumeration" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+    <HelpKINode Title="OleDbType Enumeration" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  </HelpKINode>
+  <HelpKINode Title="BSTR enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="BulkDataOperationBase class">
+    <HelpKINode Title="BulkDataOperationBase Class" Url="html/T_Gemstone_Data_BulkDataOperationBase.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_BulkDataOperationBase__ctor.htm" />
+    <HelpKINode Title="events" Url="html/Events_T_Gemstone_Data_BulkDataOperationBase.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Gemstone_Data_BulkDataOperationBase.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_BulkDataOperationBase.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_BulkDataOperationBase.htm" />
+  </HelpKINode>
+  <HelpKINode Title="BulkDataOperationBase.Analyze method" Url="html/M_Gemstone_Data_BulkDataOperationBase_Analyze.htm" />
+  <HelpKINode Title="BulkDataOperationBase.BulkDataOperationBase constructor" Url="html/Overload_Gemstone_Data_BulkDataOperationBase__ctor.htm" />
+  <HelpKINode Title="BulkDataOperationBase.Close method" Url="html/M_Gemstone_Data_BulkDataOperationBase_Close.htm" />
+  <HelpKINode Title="BulkDataOperationBase.Dispose method" Url="html/M_Gemstone_Data_BulkDataOperationBase_Dispose.htm" />
+  <HelpKINode Title="BulkDataOperationBase.ExcludedTables property" Url="html/P_Gemstone_Data_BulkDataOperationBase_ExcludedTables.htm" />
+  <HelpKINode Title="BulkDataOperationBase.Execute method" Url="html/M_Gemstone_Data_BulkDataOperationBase_Execute.htm" />
+  <HelpKINode Title="BulkDataOperationBase.FromSchema property" Url="html/P_Gemstone_Data_BulkDataOperationBase_FromSchema.htm" />
+  <HelpKINode Title="BulkDataOperationBase.OnOverallProgress method" Url="html/M_Gemstone_Data_BulkDataOperationBase_OnOverallProgress.htm" />
+  <HelpKINode Title="BulkDataOperationBase.OnRowProgress method" Url="html/M_Gemstone_Data_BulkDataOperationBase_OnRowProgress.htm" />
+  <HelpKINode Title="BulkDataOperationBase.OnSQLFailure method" Url="html/M_Gemstone_Data_BulkDataOperationBase_OnSQLFailure.htm" />
+  <HelpKINode Title="BulkDataOperationBase.OnTableProgress method" Url="html/M_Gemstone_Data_BulkDataOperationBase_OnTableProgress.htm" />
+  <HelpKINode Title="BulkDataOperationBase.OverallProgress field" Url="html/F_Gemstone_Data_BulkDataOperationBase_OverallProgress.htm" />
+  <HelpKINode Title="BulkDataOperationBase.OverallProgressStatus event" Url="html/E_Gemstone_Data_BulkDataOperationBase_OverallProgressStatus.htm" />
+  <HelpKINode Title="BulkDataOperationBase.OverallTotal field" Url="html/F_Gemstone_Data_BulkDataOperationBase_OverallTotal.htm" />
+  <HelpKINode Title="BulkDataOperationBase.RowProgressStatus event" Url="html/E_Gemstone_Data_BulkDataOperationBase_RowProgressStatus.htm" />
+  <HelpKINode Title="BulkDataOperationBase.RowReportInterval property" Url="html/P_Gemstone_Data_BulkDataOperationBase_RowReportInterval.htm" />
+  <HelpKINode Title="BulkDataOperationBase.SQLFailure event" Url="html/E_Gemstone_Data_BulkDataOperationBase_SQLFailure.htm" />
+  <HelpKINode Title="BulkDataOperationBase.TableCollection field" Url="html/F_Gemstone_Data_BulkDataOperationBase_TableCollection.htm" />
+  <HelpKINode Title="BulkDataOperationBase.TableProgressStatus event" Url="html/E_Gemstone_Data_BulkDataOperationBase_TableProgressStatus.htm" />
+  <HelpKINode Title="BulkDataOperationBase.Timeout property" Url="html/P_Gemstone_Data_BulkDataOperationBase_Timeout.htm" />
+  <HelpKINode Title="BulkDataOperationBase.ToSchema property" Url="html/P_Gemstone_Data_BulkDataOperationBase_ToSchema.htm" />
+  <HelpKINode Title="BulkDataOperationBase.UseFromSchemaReferentialIntegrity property" Url="html/P_Gemstone_Data_BulkDataOperationBase_UseFromSchemaReferentialIntegrity.htm" />
+  <HelpKINode Title="BulkDataOperationBase.UseFromSchemaRi field" Url="html/F_Gemstone_Data_BulkDataOperationBase_UseFromSchemaRi.htm" />
+  <HelpKINode Title="BulkDataOperationBase.WorkTables property" Url="html/P_Gemstone_Data_BulkDataOperationBase_WorkTables.htm" />
+  <HelpKINode Title="BulkInsertCompleted event" Url="html/E_Gemstone_Data_DataInserter_BulkInsertCompleted.htm" />
+  <HelpKINode Title="BulkInsertEncoding property" Url="html/P_Gemstone_Data_DataInserter_BulkInsertEncoding.htm" />
+  <HelpKINode Title="BulkInsertException event" Url="html/E_Gemstone_Data_DataInserter_BulkInsertException.htm" />
+  <HelpKINode Title="BulkInsertExecuting event" Url="html/E_Gemstone_Data_DataInserter_BulkInsertExecuting.htm" />
+  <HelpKINode Title="BulkInsertFilePath property" Url="html/P_Gemstone_Data_DataInserter_BulkInsertFilePath.htm" />
+  <HelpKINode Title="BulkInsertSettings property" Url="html/P_Gemstone_Data_DataInserter_BulkInsertSettings.htm" />
+  <HelpKINode Title="Byte enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="CalculateRowCount method" Url="html/M_Gemstone_Data_Table_CalculateRowCount.htm" />
+  <HelpKINode Title="Cascade enumeration member" Url="html/T_Gemstone_Data_ReferentialAction.htm" />
+  <HelpKINode Title="Catalog property" Url="html/P_Gemstone_Data_Table_Catalog.htm" />
+  <HelpKINode Title="Char enumeration member">
+    <HelpKINode Title="DataType Enumeration" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+    <HelpKINode Title="OleDbType Enumeration" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Clear method">
+    <HelpKINode Title="Fields.Clear Method " Url="html/M_Gemstone_Data_Fields_Clear.htm" />
+    <HelpKINode Title="Tables.Clear Method " Url="html/M_Gemstone_Data_Tables_Clear.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ClearDestinationTables property" Url="html/P_Gemstone_Data_DataInserter_ClearDestinationTables.htm" />
+  <HelpKINode Title="ClearPrimaryKeyCache method">
+    <HelpKINode Title="ITableOperations.ClearPrimaryKeyCache Method " Url="html/M_Gemstone_Data_Model_ITableOperations_ClearPrimaryKeyCache.htm" />
+    <HelpKINode Title="TableOperations(T).ClearPrimaryKeyCache Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_ClearPrimaryKeyCache.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Clone method" Url="html/Overload_Gemstone_Data_Model_RecordRestriction_Clone.htm" />
+  <HelpKINode Title="Close method">
+    <HelpKINode Title="BulkDataOperationBase.Close Method " Url="html/M_Gemstone_Data_BulkDataOperationBase_Close.htm" />
+    <HelpKINode Title="DataDeleter.Close Method " Url="html/M_Gemstone_Data_DataDeleter_Close.htm" />
+    <HelpKINode Title="DataInserter.Close Method " Url="html/M_Gemstone_Data_DataInserter_Close.htm" />
+    <HelpKINode Title="DataUpdater.Close Method " Url="html/M_Gemstone_Data_DataUpdater_Close.htm" />
+    <HelpKINode Title="IBulkDataOperation.Close Method " Url="html/M_Gemstone_Data_IBulkDataOperation_Close.htm" />
+    <HelpKINode Title="Schema.Close Method " Url="html/M_Gemstone_Data_Schema_Close.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CombineAnd method" Url="html/M_Gemstone_Data_Model_RecordRestriction_CombineAnd.htm" />
+  <HelpKINode Title="CombineOr method" Url="html/M_Gemstone_Data_Model_RecordRestriction_CombineOr.htm" />
+  <HelpKINode Title="Compare method" Url="html/M_Gemstone_Data_Tables_ReferentialOrderComparer_Compare.htm" />
+  <HelpKINode Title="CompareTo method">
+    <HelpKINode Title="Field.CompareTo Method " Url="html/M_Gemstone_Data_Field_CompareTo.htm" />
+    <HelpKINode Title="Table.CompareTo Method " Url="html/Overload_Gemstone_Data_Table_CompareTo.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Connection property">
+    <HelpKINode Title="AdoDataConnection.Connection Property " Url="html/P_Gemstone_Data_AdoDataConnection_Connection.htm" />
+    <HelpKINode Title="Schema.Connection Property " Url="html/P_Gemstone_Data_Schema_Connection.htm" />
+    <HelpKINode Title="Table.Connection Property " Url="html/P_Gemstone_Data_Table_Connection.htm" />
+    <HelpKINode Title="TableOperations(T).Connection Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_Connection.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ConnectionString property" Url="html/P_Gemstone_Data_Schema_ConnectionString.htm" />
+  <HelpKINode Title="ConvertField method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ConvertField.htm" />
+  <HelpKINode Title="ConvertGuidField method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ConvertGuidField.htm" />
+  <HelpKINode Title="ConvertNullableField(Of T) method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ConvertNullableField__1.htm" />
+  <HelpKINode Title="ConvertNullableField&lt;T&gt; method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ConvertNullableField__1.htm" />
+  <HelpKINode Title="Count property">
+    <HelpKINode Title="Fields.Count Property " Url="html/P_Gemstone_Data_Fields_Count.htm" />
+    <HelpKINode Title="ForeignKeyFields.Count Property " Url="html/P_Gemstone_Data_ForeignKeyFields_Count.htm" />
+    <HelpKINode Title="Tables.Count Property " Url="html/P_Gemstone_Data_Tables_Count.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CreateNewRecord enumeration member" Url="html/T_Gemstone_Data_Model_RecordOperation.htm" />
+  <HelpKINode Title="CreateParameterizedCommand method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_CreateParameterizedCommand.htm" />
+  <HelpKINode Title="Currency enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="DatabaseType enumeration" Url="html/T_Gemstone_Data_DatabaseType.htm" />
+  <HelpKINode Title="DatabaseType property" Url="html/P_Gemstone_Data_AdoDataConnection_DatabaseType.htm" />
+  <HelpKINode Title="DataDeleter class">
+    <HelpKINode Title="DataDeleter Class" Url="html/T_Gemstone_Data_DataDeleter.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_DataDeleter__ctor.htm" />
+    <HelpKINode Title="events" Url="html/Events_T_Gemstone_Data_DataDeleter.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Gemstone_Data_DataDeleter.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_DataDeleter.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_DataDeleter.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DataDeleter.Close method" Url="html/M_Gemstone_Data_DataDeleter_Close.htm" />
+  <HelpKINode Title="DataDeleter.DataDeleter constructor" Url="html/Overload_Gemstone_Data_DataDeleter__ctor.htm" />
+  <HelpKINode Title="DataDeleter.Disposed event" Url="html/E_Gemstone_Data_DataDeleter_Disposed.htm" />
+  <HelpKINode Title="DataDeleter.Execute method" Url="html/M_Gemstone_Data_DataDeleter_Execute.htm" />
+  <HelpKINode Title="DataExtensions class">
+    <HelpKINode Title="DataExtensions Class" Url="html/T_Gemstone_Data_DataExtensions_DataExtensions.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Gemstone_Data_DataExtensions_DataExtensions.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_DataExtensions_DataExtensions.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DataExtensions.AddParametersWithValues method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_AddParametersWithValues.htm" />
+  <HelpKINode Title="DataExtensions.AddParameterWithValue method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_AddParameterWithValue.htm" />
+  <HelpKINode Title="DataExtensions.ConvertField method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ConvertField.htm" />
+  <HelpKINode Title="DataExtensions.ConvertGuidField method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ConvertGuidField.htm" />
+  <HelpKINode Title="DataExtensions.ConvertNullableField(Of T) method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ConvertNullableField__1.htm" />
+  <HelpKINode Title="DataExtensions.ConvertNullableField&lt;T&gt; method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ConvertNullableField__1.htm" />
+  <HelpKINode Title="DataExtensions.CreateParameterizedCommand method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_CreateParameterizedCommand.htm" />
+  <HelpKINode Title="DataExtensions.DefaultTimeoutDuration field" Url="html/F_Gemstone_Data_DataExtensions_DataExtensions_DefaultTimeoutDuration.htm" />
+  <HelpKINode Title="DataExtensions.ExecuteMySQLScript method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteMySQLScript.htm" />
+  <HelpKINode Title="DataExtensions.ExecuteNonQuery method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteNonQuery.htm" />
+  <HelpKINode Title="DataExtensions.ExecuteOracleScript method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteOracleScript.htm" />
+  <HelpKINode Title="DataExtensions.ExecuteReader method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteReader.htm" />
+  <HelpKINode Title="DataExtensions.ExecuteScalar method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteScalar.htm" />
+  <HelpKINode Title="DataExtensions.ExecuteTSQLScript method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteTSQLScript.htm" />
+  <HelpKINode Title="DataExtensions.NullAsDBNull method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_NullAsDBNull.htm" />
+  <HelpKINode Title="DataExtensions.PopulateParameters method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_PopulateParameters.htm" />
+  <HelpKINode Title="DataExtensions.RetrieveData method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveData.htm" />
+  <HelpKINode Title="DataExtensions.RetrieveDataSet method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveDataSet.htm" />
+  <HelpKINode Title="DataExtensions.RetrieveRow method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveRow.htm" />
+  <HelpKINode Title="DataExtensions.SQLEncode method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_SQLEncode.htm" />
+  <HelpKINode Title="DataExtensions.ToDataTable method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ToDataTable.htm" />
+  <HelpKINode Title="DataExtensions.ToDelimitedString method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ToDelimitedString.htm" />
+  <HelpKINode Title="DataExtensions.UpdateData method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_UpdateData.htm" />
+  <HelpKINode Title="DataInserter class">
+    <HelpKINode Title="DataInserter Class" Url="html/T_Gemstone_Data_DataInserter.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_DataInserter__ctor.htm" />
+    <HelpKINode Title="events" Url="html/Events_T_Gemstone_Data_DataInserter.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Gemstone_Data_DataInserter.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_DataInserter.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_DataInserter.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DataInserter.AttemptBulkInsert property" Url="html/P_Gemstone_Data_DataInserter_AttemptBulkInsert.htm" />
+  <HelpKINode Title="DataInserter.AttemptTruncateTable property" Url="html/P_Gemstone_Data_DataInserter_AttemptTruncateTable.htm" />
+  <HelpKINode Title="DataInserter.BulkInsertCompleted event" Url="html/E_Gemstone_Data_DataInserter_BulkInsertCompleted.htm" />
+  <HelpKINode Title="DataInserter.BulkInsertEncoding property" Url="html/P_Gemstone_Data_DataInserter_BulkInsertEncoding.htm" />
+  <HelpKINode Title="DataInserter.BulkInsertException event" Url="html/E_Gemstone_Data_DataInserter_BulkInsertException.htm" />
+  <HelpKINode Title="DataInserter.BulkInsertExecuting event" Url="html/E_Gemstone_Data_DataInserter_BulkInsertExecuting.htm" />
+  <HelpKINode Title="DataInserter.BulkInsertFilePath property" Url="html/P_Gemstone_Data_DataInserter_BulkInsertFilePath.htm" />
+  <HelpKINode Title="DataInserter.BulkInsertSettings property" Url="html/P_Gemstone_Data_DataInserter_BulkInsertSettings.htm" />
+  <HelpKINode Title="DataInserter.ClearDestinationTables property" Url="html/P_Gemstone_Data_DataInserter_ClearDestinationTables.htm" />
+  <HelpKINode Title="DataInserter.Close method" Url="html/M_Gemstone_Data_DataInserter_Close.htm" />
+  <HelpKINode Title="DataInserter.DataInserter constructor" Url="html/Overload_Gemstone_Data_DataInserter__ctor.htm" />
+  <HelpKINode Title="DataInserter.DelimiterReplacement property" Url="html/P_Gemstone_Data_DataInserter_DelimiterReplacement.htm" />
+  <HelpKINode Title="DataInserter.Disposed event" Url="html/E_Gemstone_Data_DataInserter_Disposed.htm" />
+  <HelpKINode Title="DataInserter.Execute method" Url="html/M_Gemstone_Data_DataInserter_Execute.htm" />
+  <HelpKINode Title="DataInserter.ForceBulkInsert property" Url="html/P_Gemstone_Data_DataInserter_ForceBulkInsert.htm" />
+  <HelpKINode Title="DataInserter.ForceTruncateTable property" Url="html/P_Gemstone_Data_DataInserter_ForceTruncateTable.htm" />
+  <HelpKINode Title="DataInserter.PreserveAutoIncValues property" Url="html/P_Gemstone_Data_DataInserter_PreserveAutoIncValues.htm" />
+  <HelpKINode Title="DataInserter.TableCleared event" Url="html/E_Gemstone_Data_DataInserter_TableCleared.htm" />
+  <HelpKINode Title="DataSetEqualityComparer class">
+    <HelpKINode Title="DataSetEqualityComparer Class" Url="html/T_Gemstone_Data_DataSetEqualityComparer.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Gemstone_Data_DataSetEqualityComparer.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_DataSetEqualityComparer.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DataSetEqualityComparer.Default field" Url="html/F_Gemstone_Data_DataSetEqualityComparer_Default.htm" />
+  <HelpKINode Title="DataSetEqualityComparer.Equals method" Url="html/Overload_Gemstone_Data_DataSetEqualityComparer_Equals.htm" />
+  <HelpKINode Title="DataSetEqualityComparer.GetHashCode method" Url="html/Overload_Gemstone_Data_DataSetEqualityComparer_GetHashCode.htm" />
+  <HelpKINode Title="DataSetExtensions class">
+    <HelpKINode Title="DataSetExtensions Class" Url="html/T_Gemstone_Data_DataSetExtensions_DataSetExtensions.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_DataSetExtensions_DataSetExtensions.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DataSetExtensions.DeriveColumnType method" Url="html/M_Gemstone_Data_DataSetExtensions_DataSetExtensions_DeriveColumnType.htm" />
+  <HelpKINode Title="DataSetExtensions.DeserializeToDataSet method" Url="html/M_Gemstone_Data_DataSetExtensions_DataSetExtensions_DeserializeToDataSet.htm" />
+  <HelpKINode Title="DataSetExtensions.GetDataType method" Url="html/M_Gemstone_Data_DataSetExtensions_DataSetExtensions_GetDataType.htm" />
+  <HelpKINode Title="DataSetExtensions.SerializeToStream method" Url="html/M_Gemstone_Data_DataSetExtensions_DataSetExtensions_SerializeToStream.htm" />
+  <HelpKINode Title="DataSourceType property" Url="html/P_Gemstone_Data_Schema_DataSourceType.htm" />
+  <HelpKINode Title="DataType enumeration" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="DataUpdater class">
+    <HelpKINode Title="DataUpdater Class" Url="html/T_Gemstone_Data_DataUpdater.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_DataUpdater__ctor.htm" />
+    <HelpKINode Title="events" Url="html/Events_T_Gemstone_Data_DataUpdater.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Gemstone_Data_DataUpdater.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_DataUpdater.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_DataUpdater.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DataUpdater.Close method" Url="html/M_Gemstone_Data_DataUpdater_Close.htm" />
+  <HelpKINode Title="DataUpdater.DataUpdater constructor" Url="html/Overload_Gemstone_Data_DataUpdater__ctor.htm" />
+  <HelpKINode Title="DataUpdater.Disposed event" Url="html/E_Gemstone_Data_DataUpdater_Disposed.htm" />
+  <HelpKINode Title="DataUpdater.Execute method" Url="html/M_Gemstone_Data_DataUpdater_Execute.htm" />
+  <HelpKINode Title="Date enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="DateTime enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="DateTimePrecision property" Url="html/P_Gemstone_Data_Field_DateTimePrecision.htm" />
+  <HelpKINode Title="DBDate enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="DBTime enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="DBTimeStamp enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="Decimal enumeration member">
+    <HelpKINode Title="DataType Enumeration" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+    <HelpKINode Title="OleDbType Enumeration" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Default enumeration member" Url="html/T_Gemstone_Data_Model_SearchType.htm" />
+  <HelpKINode Title="Default field">
+    <HelpKINode Title="DataSetEqualityComparer.Default Field" Url="html/F_Gemstone_Data_DataSetEqualityComparer_Default.htm" />
+    <HelpKINode Title="Tables.ReferentialOrderComparer.Default Field" Url="html/F_Gemstone_Data_Tables_ReferentialOrderComparer_Default.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DefaultIsloationLevel property" Url="html/P_Gemstone_Data_AdoDataConnection_DefaultIsloationLevel.htm" />
+  <HelpKINode Title="DefaultKeyReference field" Url="html/F_Gemstone_Data_Model_EncryptDataAttribute_DefaultKeyReference.htm" />
+  <HelpKINode Title="DefaultTimeout property" Url="html/P_Gemstone_Data_AdoDataConnection_DefaultTimeout.htm" />
+  <HelpKINode Title="DefaultTimeoutDuration field" Url="html/F_Gemstone_Data_DataExtensions_DataExtensions_DefaultTimeoutDuration.htm" />
+  <HelpKINode Title="DefaultValue property" Url="html/P_Gemstone_Data_Field_DefaultValue.htm" />
+  <HelpKINode Title="DefineForeignKey method" Url="html/M_Gemstone_Data_Table_DefineForeignKey.htm" />
+  <HelpKINode Title="DefinePrimaryKey method" Url="html/M_Gemstone_Data_Table_DefinePrimaryKey.htm" />
+  <HelpKINode Title="Delete enumeration member" Url="html/T_Gemstone_Data_Model_StatementTypes.htm" />
+  <HelpKINode Title="DeleteRecord enumeration member" Url="html/T_Gemstone_Data_Model_RecordOperation.htm" />
+  <HelpKINode Title="DeleteRecord method">
+    <HelpKINode Title="ITableOperations.DeleteRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_DeleteRecord.htm" />
+    <HelpKINode Title="TableOperations(T).DeleteRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_DeleteRecord.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DeleteRecordWhere method">
+    <HelpKINode Title="ITableOperations.DeleteRecordWhere Method " Url="html/M_Gemstone_Data_Model_ITableOperations_DeleteRecordWhere.htm" />
+    <HelpKINode Title="TableOperations(T).DeleteRecordWhere Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_DeleteRecordWhere.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DeleteRule property" Url="html/P_Gemstone_Data_ForeignKeyField_DeleteRule.htm" />
+  <HelpKINode Title="DelimiterReplacement property" Url="html/P_Gemstone_Data_DataInserter_DelimiterReplacement.htm" />
+  <HelpKINode Title="DeriveColumnType method" Url="html/M_Gemstone_Data_DataSetExtensions_DataSetExtensions_DeriveColumnType.htm" />
+  <HelpKINode Title="Description property">
+    <HelpKINode Title="Field.Description Property " Url="html/P_Gemstone_Data_Field_Description.htm" />
+    <HelpKINode Title="Table.Description Property " Url="html/P_Gemstone_Data_Table_Description.htm" />
+  </HelpKINode>
+  <HelpKINode Title="DeserializeToDataSet method" Url="html/M_Gemstone_Data_DataSetExtensions_DataSetExtensions_DeserializeToDataSet.htm" />
+  <HelpKINode Title="Dispose method">
+    <HelpKINode Title="AdoDataConnection.Dispose Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_Dispose.htm" />
+    <HelpKINode Title="BulkDataOperationBase.Dispose Method " Url="html/M_Gemstone_Data_BulkDataOperationBase_Dispose.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Disposed event">
+    <HelpKINode Title="DataDeleter.Disposed Event" Url="html/E_Gemstone_Data_DataDeleter_Disposed.htm" />
+    <HelpKINode Title="DataInserter.Disposed Event" Url="html/E_Gemstone_Data_DataInserter_Disposed.htm" />
+    <HelpKINode Title="DataUpdater.Disposed Event" Url="html/E_Gemstone_Data_DataUpdater_Disposed.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Double enumeration member">
+    <HelpKINode Title="DataType Enumeration" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+    <HelpKINode Title="OleDbType Enumeration" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Empty enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="EncryptDataAttribute class">
+    <HelpKINode Title="EncryptDataAttribute Class" Url="html/T_Gemstone_Data_Model_EncryptDataAttribute.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_Model_EncryptDataAttribute__ctor.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Gemstone_Data_Model_EncryptDataAttribute.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_EncryptDataAttribute.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_EncryptDataAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EncryptDataAttribute.DefaultKeyReference field" Url="html/F_Gemstone_Data_Model_EncryptDataAttribute_DefaultKeyReference.htm" />
+  <HelpKINode Title="EncryptDataAttribute.EncryptDataAttribute constructor" Url="html/Overload_Gemstone_Data_Model_EncryptDataAttribute__ctor.htm" />
+  <HelpKINode Title="EncryptDataAttribute.KeyReference property" Url="html/P_Gemstone_Data_Model_EncryptDataAttribute_KeyReference.htm" />
+  <HelpKINode Title="Equality operator" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_Equality.htm" />
+  <HelpKINode Title="Equals method">
+    <HelpKINode Title="DataSetEqualityComparer.Equals Method " Url="html/Overload_Gemstone_Data_DataSetEqualityComparer_Equals.htm" />
+    <HelpKINode Title="RecordRestriction.Equals Method " Url="html/Overload_Gemstone_Data_Model_RecordRestriction_Equals.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Error enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="EscapeIdentifier method" Url="html/M_Gemstone_Data_AdoDataConnection_EscapeIdentifier.htm" />
+  <HelpKINode Title="ExceptionHandler property">
+    <HelpKINode Title="ITableOperations.ExceptionHandler Property " Url="html/P_Gemstone_Data_Model_ITableOperations_ExceptionHandler.htm" />
+    <HelpKINode Title="TableOperations(T).ExceptionHandler Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_ExceptionHandler.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ExcludedTables property" Url="html/P_Gemstone_Data_BulkDataOperationBase_ExcludedTables.htm" />
+  <HelpKINode Title="Execute method">
+    <HelpKINode Title="BulkDataOperationBase.Execute Method " Url="html/M_Gemstone_Data_BulkDataOperationBase_Execute.htm" />
+    <HelpKINode Title="DataDeleter.Execute Method " Url="html/M_Gemstone_Data_DataDeleter_Execute.htm" />
+    <HelpKINode Title="DataInserter.Execute Method " Url="html/M_Gemstone_Data_DataInserter_Execute.htm" />
+    <HelpKINode Title="DataUpdater.Execute Method " Url="html/M_Gemstone_Data_DataUpdater_Execute.htm" />
+    <HelpKINode Title="IBulkDataOperation.Execute Method " Url="html/M_Gemstone_Data_IBulkDataOperation_Execute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ExecuteMySQLScript method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteMySQLScript.htm" />
+  <HelpKINode Title="ExecuteNonQuery method">
+    <HelpKINode Title="AdoDataConnection.ExecuteNonQuery Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteNonQuery.htm" />
+    <HelpKINode Title="DataExtensions.ExecuteNonQuery Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteNonQuery.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ExecuteOracleScript method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteOracleScript.htm" />
+  <HelpKINode Title="ExecuteReader method">
+    <HelpKINode Title="AdoDataConnection.ExecuteReader Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteReader.htm" />
+    <HelpKINode Title="DataExtensions.ExecuteReader Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteReader.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ExecuteScalar method">
+    <HelpKINode Title="AdoDataConnection.ExecuteScalar Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteScalar.htm" />
+    <HelpKINode Title="DataExtensions.ExecuteScalar Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteScalar.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ExecuteScript method" Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteScript.htm" />
+  <HelpKINode Title="ExecuteTSQLScript method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteTSQLScript.htm" />
+  <HelpKINode Title="Field class">
+    <HelpKINode Title="Field Class" Url="html/T_Gemstone_Data_Field.htm" />
+    <HelpKINode Title="constructor" Url="html/M_Gemstone_Data_Field__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Field.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Field.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Field.AllowsNulls property" Url="html/P_Gemstone_Data_Field_AllowsNulls.htm" />
+  <HelpKINode Title="Field.AutoIncrement property" Url="html/P_Gemstone_Data_Field_AutoIncrement.htm" />
+  <HelpKINode Title="Field.AutoIncrementSeed property" Url="html/P_Gemstone_Data_Field_AutoIncrementSeed.htm" />
+  <HelpKINode Title="Field.AutoIncrementStep property" Url="html/P_Gemstone_Data_Field_AutoIncrementStep.htm" />
+  <HelpKINode Title="Field.CompareTo method" Url="html/M_Gemstone_Data_Field_CompareTo.htm" />
+  <HelpKINode Title="Field.DateTimePrecision property" Url="html/P_Gemstone_Data_Field_DateTimePrecision.htm" />
+  <HelpKINode Title="Field.DefaultValue property" Url="html/P_Gemstone_Data_Field_DefaultValue.htm" />
+  <HelpKINode Title="Field.Description property" Url="html/P_Gemstone_Data_Field_Description.htm" />
+  <HelpKINode Title="Field.Field constructor" Url="html/M_Gemstone_Data_Field__ctor.htm" />
+  <HelpKINode Title="Field.ForeignKeys property" Url="html/P_Gemstone_Data_Field_ForeignKeys.htm" />
+  <HelpKINode Title="Field.HasDefault property" Url="html/P_Gemstone_Data_Field_HasDefault.htm" />
+  <HelpKINode Title="Field.IsForeignKey property" Url="html/P_Gemstone_Data_Field_IsForeignKey.htm" />
+  <HelpKINode Title="Field.IsPrimaryKey property" Url="html/P_Gemstone_Data_Field_IsPrimaryKey.htm" />
+  <HelpKINode Title="Field.MaxLength property" Url="html/P_Gemstone_Data_Field_MaxLength.htm" />
+  <HelpKINode Title="Field.Name property" Url="html/P_Gemstone_Data_Field_Name.htm" />
+  <HelpKINode Title="Field.NonNullNativeValue property" Url="html/P_Gemstone_Data_Field_NonNullNativeValue.htm" />
+  <HelpKINode Title="Field.NumericPrecision property" Url="html/P_Gemstone_Data_Field_NumericPrecision.htm" />
+  <HelpKINode Title="Field.NumericScale property" Url="html/P_Gemstone_Data_Field_NumericScale.htm" />
+  <HelpKINode Title="Field.Ordinal property" Url="html/P_Gemstone_Data_Field_Ordinal.htm" />
+  <HelpKINode Title="Field.Parent property" Url="html/P_Gemstone_Data_Field_Parent.htm" />
+  <HelpKINode Title="Field.PrimaryKeyName property" Url="html/P_Gemstone_Data_Field_PrimaryKeyName.htm" />
+  <HelpKINode Title="Field.PrimaryKeyOrdinal property" Url="html/P_Gemstone_Data_Field_PrimaryKeyOrdinal.htm" />
+  <HelpKINode Title="Field.ReadOnly property" Url="html/P_Gemstone_Data_Field_ReadOnly.htm" />
+  <HelpKINode Title="Field.ReferencedBy property" Url="html/P_Gemstone_Data_Field_ReferencedBy.htm" />
+  <HelpKINode Title="Field.SQLEncodedValue property" Url="html/P_Gemstone_Data_Field_SQLEncodedValue.htm" />
+  <HelpKINode Title="Field.SQLEscapedName property" Url="html/P_Gemstone_Data_Field_SQLEscapedName.htm" />
+  <HelpKINode Title="Field.Table property" Url="html/P_Gemstone_Data_Field_Table.htm" />
+  <HelpKINode Title="Field.Type property" Url="html/P_Gemstone_Data_Field_Type.htm" />
+  <HelpKINode Title="Field.Unique property" Url="html/P_Gemstone_Data_Field_Unique.htm" />
+  <HelpKINode Title="Field.Value property" Url="html/P_Gemstone_Data_Field_Value.htm" />
+  <HelpKINode Title="FieldDataType property" Url="html/P_Gemstone_Data_Model_FieldDataTypeAttribute_FieldDataType.htm" />
+  <HelpKINode Title="FieldDataTypeAttribute class">
+    <HelpKINode Title="FieldDataTypeAttribute Class" Url="html/T_Gemstone_Data_Model_FieldDataTypeAttribute.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_Model_FieldDataTypeAttribute__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_FieldDataTypeAttribute.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_FieldDataTypeAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FieldDataTypeAttribute.FieldDataType property" Url="html/P_Gemstone_Data_Model_FieldDataTypeAttribute_FieldDataType.htm" />
+  <HelpKINode Title="FieldDataTypeAttribute.FieldDataTypeAttribute constructor" Url="html/Overload_Gemstone_Data_Model_FieldDataTypeAttribute__ctor.htm" />
+  <HelpKINode Title="FieldDataTypeAttribute.TargetDatabaseType property" Url="html/P_Gemstone_Data_Model_FieldDataTypeAttribute_TargetDatabaseType.htm" />
+  <HelpKINode Title="FieldHasAttribute method">
+    <HelpKINode Title="ITableOperations.FieldHasAttribute Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_FieldHasAttribute.htm" />
+    <HelpKINode Title="TableOperations(T).FieldHasAttribute Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_FieldHasAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FieldList enumeration member" Url="html/T_Gemstone_Data_Model_TargetExpression.htm" />
+  <HelpKINode Title="FieldName property" Url="html/P_Gemstone_Data_Model_FieldNameAttribute_FieldName.htm" />
+  <HelpKINode Title="FieldNameAttribute class">
+    <HelpKINode Title="FieldNameAttribute Class" Url="html/T_Gemstone_Data_Model_FieldNameAttribute.htm" />
+    <HelpKINode Title="constructor" Url="html/M_Gemstone_Data_Model_FieldNameAttribute__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_FieldNameAttribute.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_FieldNameAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FieldNameAttribute.FieldName property" Url="html/P_Gemstone_Data_Model_FieldNameAttribute_FieldName.htm" />
+  <HelpKINode Title="FieldNameAttribute.FieldNameAttribute constructor" Url="html/M_Gemstone_Data_Model_FieldNameAttribute__ctor.htm" />
+  <HelpKINode Title="Fields class">
+    <HelpKINode Title="Fields Class" Url="html/T_Gemstone_Data_Fields.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Fields.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Fields.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Fields property" Url="html/P_Gemstone_Data_Table_Fields.htm" />
+  <HelpKINode Title="Fields.Add method" Url="html/M_Gemstone_Data_Fields_Add.htm" />
+  <HelpKINode Title="Fields.Clear method" Url="html/M_Gemstone_Data_Fields_Clear.htm" />
+  <HelpKINode Title="Fields.Count property" Url="html/P_Gemstone_Data_Fields_Count.htm" />
+  <HelpKINode Title="Fields.GetEnumerator method" Url="html/M_Gemstone_Data_Fields_GetEnumerator.htm" />
+  <HelpKINode Title="Fields.GetList method" Url="html/M_Gemstone_Data_Fields_GetList.htm" />
+  <HelpKINode Title="Fields.Item property" Url="html/Overload_Gemstone_Data_Fields_Item.htm" />
+  <HelpKINode Title="Fields.Parent property" Url="html/P_Gemstone_Data_Fields_Parent.htm" />
+  <HelpKINode Title="Fields.Remove method" Url="html/M_Gemstone_Data_Fields_Remove.htm" />
+  <HelpKINode Title="Filetime enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="FilterExpression field">
+    <HelpKINode Title="RecordRestriction.FilterExpression Field" Url="html/F_Gemstone_Data_Model_RecordRestriction_FilterExpression.htm" />
+    <HelpKINode Title="RootQueryRestrictionAttribute.FilterExpression Field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_FilterExpression.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Finalize method" Url="html/M_Gemstone_Data_AdoDataConnection_Finalize.htm" />
+  <HelpKINode Title="FindByMapName method" Url="html/M_Gemstone_Data_Tables_FindByMapName.htm" />
+  <HelpKINode Title="ForceBulkInsert property" Url="html/P_Gemstone_Data_DataInserter_ForceBulkInsert.htm" />
+  <HelpKINode Title="ForceTruncateTable property" Url="html/P_Gemstone_Data_DataInserter_ForceTruncateTable.htm" />
+  <HelpKINode Title="ForeignKey property" Url="html/P_Gemstone_Data_ForeignKeyField_ForeignKey.htm" />
+  <HelpKINode Title="ForeignKeyField class">
+    <HelpKINode Title="ForeignKeyField Class" Url="html/T_Gemstone_Data_ForeignKeyField.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_ForeignKeyField.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_ForeignKeyField.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ForeignKeyField.DeleteRule property" Url="html/P_Gemstone_Data_ForeignKeyField_DeleteRule.htm" />
+  <HelpKINode Title="ForeignKeyField.ForeignKey property" Url="html/P_Gemstone_Data_ForeignKeyField_ForeignKey.htm" />
+  <HelpKINode Title="ForeignKeyField.KeyName property" Url="html/P_Gemstone_Data_ForeignKeyField_KeyName.htm" />
+  <HelpKINode Title="ForeignKeyField.Ordinal property" Url="html/P_Gemstone_Data_ForeignKeyField_Ordinal.htm" />
+  <HelpKINode Title="ForeignKeyField.Parent property" Url="html/P_Gemstone_Data_ForeignKeyField_Parent.htm" />
+  <HelpKINode Title="ForeignKeyField.PrimaryKey property" Url="html/P_Gemstone_Data_ForeignKeyField_PrimaryKey.htm" />
+  <HelpKINode Title="ForeignKeyField.UpdateRule property" Url="html/P_Gemstone_Data_ForeignKeyField_UpdateRule.htm" />
+  <HelpKINode Title="ForeignKeyFields class">
+    <HelpKINode Title="ForeignKeyFields Class" Url="html/T_Gemstone_Data_ForeignKeyFields.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_ForeignKeyFields.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_ForeignKeyFields.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ForeignKeyFields.Count property" Url="html/P_Gemstone_Data_ForeignKeyFields_Count.htm" />
+  <HelpKINode Title="ForeignKeyFields.GetEnumerator method" Url="html/M_Gemstone_Data_ForeignKeyFields_GetEnumerator.htm" />
+  <HelpKINode Title="ForeignKeyFields.GetList method" Url="html/M_Gemstone_Data_ForeignKeyFields_GetList.htm" />
+  <HelpKINode Title="ForeignKeyFields.Item property" Url="html/Overload_Gemstone_Data_ForeignKeyFields_Item.htm" />
+  <HelpKINode Title="ForeignKeyFields.Parent property" Url="html/P_Gemstone_Data_ForeignKeyFields_Parent.htm" />
+  <HelpKINode Title="ForeignKeys property" Url="html/P_Gemstone_Data_Field_ForeignKeys.htm" />
+  <HelpKINode Title="FromSchema property">
+    <HelpKINode Title="BulkDataOperationBase.FromSchema Property " Url="html/P_Gemstone_Data_BulkDataOperationBase_FromSchema.htm" />
+    <HelpKINode Title="IBulkDataOperation.FromSchema Property " Url="html/P_Gemstone_Data_IBulkDataOperation_FromSchema.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FullName property" Url="html/P_Gemstone_Data_Table_FullName.htm" />
+  <HelpKINode Title="FullValueMatch enumeration member" Url="html/T_Gemstone_Data_Model_SearchType.htm" />
+  <HelpKINode Title="Gemstone.Data namespace" Url="html/N_Gemstone_Data.htm" />
+  <HelpKINode Title="Gemstone.Data.AdoDataConnection class" Url="html/T_Gemstone_Data_AdoDataConnection.htm" />
+  <HelpKINode Title="Gemstone.Data.BulkDataOperationBase class" Url="html/T_Gemstone_Data_BulkDataOperationBase.htm" />
+  <HelpKINode Title="Gemstone.Data.DatabaseType enumeration" Url="html/T_Gemstone_Data_DatabaseType.htm" />
+  <HelpKINode Title="Gemstone.Data.DataDeleter class" Url="html/T_Gemstone_Data_DataDeleter.htm" />
+  <HelpKINode Title="Gemstone.Data.DataExtensions namespace" Url="html/N_Gemstone_Data_DataExtensions.htm" />
+  <HelpKINode Title="Gemstone.Data.DataExtensions.DataExtensions class" Url="html/T_Gemstone_Data_DataExtensions_DataExtensions.htm" />
+  <HelpKINode Title="Gemstone.Data.DataInserter class" Url="html/T_Gemstone_Data_DataInserter.htm" />
+  <HelpKINode Title="Gemstone.Data.DataSetEqualityComparer class" Url="html/T_Gemstone_Data_DataSetEqualityComparer.htm" />
+  <HelpKINode Title="Gemstone.Data.DataSetExtensions namespace" Url="html/N_Gemstone_Data_DataSetExtensions.htm" />
+  <HelpKINode Title="Gemstone.Data.DataSetExtensions.DataSetExtensions class" Url="html/T_Gemstone_Data_DataSetExtensions_DataSetExtensions.htm" />
+  <HelpKINode Title="Gemstone.Data.DataSetExtensions.DataType enumeration" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="Gemstone.Data.DataUpdater class" Url="html/T_Gemstone_Data_DataUpdater.htm" />
+  <HelpKINode Title="Gemstone.Data.Field class" Url="html/T_Gemstone_Data_Field.htm" />
+  <HelpKINode Title="Gemstone.Data.Fields class" Url="html/T_Gemstone_Data_Fields.htm" />
+  <HelpKINode Title="Gemstone.Data.ForeignKeyField class" Url="html/T_Gemstone_Data_ForeignKeyField.htm" />
+  <HelpKINode Title="Gemstone.Data.ForeignKeyFields class" Url="html/T_Gemstone_Data_ForeignKeyFields.htm" />
+  <HelpKINode Title="Gemstone.Data.IBulkDataOperation interface" Url="html/T_Gemstone_Data_IBulkDataOperation.htm" />
+  <HelpKINode Title="Gemstone.Data.Model namespace" Url="html/N_Gemstone_Data_Model.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.AffixPosition enumeration" Url="html/T_Gemstone_Data_Model_AffixPosition.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.AmendExpressionAttribute class" Url="html/T_Gemstone_Data_Model_AmendExpressionAttribute.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.EncryptDataAttribute class" Url="html/T_Gemstone_Data_Model_EncryptDataAttribute.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.FieldDataTypeAttribute class" Url="html/T_Gemstone_Data_Model_FieldDataTypeAttribute.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.FieldNameAttribute class" Url="html/T_Gemstone_Data_Model_FieldNameAttribute.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.ITableOperations interface" Url="html/T_Gemstone_Data_Model_ITableOperations.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.NonRecordFieldAttribute class" Url="html/T_Gemstone_Data_Model_NonRecordFieldAttribute.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.PrimaryKeyAttribute class" Url="html/T_Gemstone_Data_Model_PrimaryKeyAttribute.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.RecordOperation enumeration" Url="html/T_Gemstone_Data_Model_RecordOperation.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.RecordOperationAttribute class" Url="html/T_Gemstone_Data_Model_RecordOperationAttribute.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.RecordRestriction class" Url="html/T_Gemstone_Data_Model_RecordRestriction.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.RootQueryRestrictionAttribute class" Url="html/T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.SearchableAttribute class" Url="html/T_Gemstone_Data_Model_SearchableAttribute.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.SearchType enumeration" Url="html/T_Gemstone_Data_Model_SearchType.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.StatementTypes enumeration" Url="html/T_Gemstone_Data_Model_StatementTypes.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.TableNameAttribute class" Url="html/T_Gemstone_Data_Model_TableNameAttribute.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.TableOperations(Of T) class" Url="html/T_Gemstone_Data_Model_TableOperations_1.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.TableOperations&lt;T&gt; class" Url="html/T_Gemstone_Data_Model_TableOperations_1.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.TargetExpression enumeration" Url="html/T_Gemstone_Data_Model_TargetExpression.htm" />
+  <HelpKINode Title="Gemstone.Data.Model.UseEscapedNameAttribute class" Url="html/T_Gemstone_Data_Model_UseEscapedNameAttribute.htm" />
+  <HelpKINode Title="Gemstone.Data.OleDbType enumeration" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="Gemstone.Data.ReferentialAction enumeration" Url="html/T_Gemstone_Data_ReferentialAction.htm" />
+  <HelpKINode Title="Gemstone.Data.Schema class" Url="html/T_Gemstone_Data_Schema.htm" />
+  <HelpKINode Title="Gemstone.Data.Table class" Url="html/T_Gemstone_Data_Table.htm" />
+  <HelpKINode Title="Gemstone.Data.Tables class" Url="html/T_Gemstone_Data_Tables.htm" />
+  <HelpKINode Title="Gemstone.Data.Tables.ReferentialOrderComparer class" Url="html/T_Gemstone_Data_Tables_ReferentialOrderComparer.htm" />
+  <HelpKINode Title="Gemstone.Data.TableType enumeration" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="GetDataType method" Url="html/M_Gemstone_Data_DataSetExtensions_DataSetExtensions_GetDataType.htm" />
+  <HelpKINode Title="GetEnumerator method">
+    <HelpKINode Title="Fields.GetEnumerator Method " Url="html/M_Gemstone_Data_Fields_GetEnumerator.htm" />
+    <HelpKINode Title="ForeignKeyFields.GetEnumerator Method " Url="html/M_Gemstone_Data_ForeignKeyFields_GetEnumerator.htm" />
+    <HelpKINode Title="Tables.GetEnumerator Method " Url="html/M_Gemstone_Data_Tables_GetEnumerator.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetFieldNames method">
+    <HelpKINode Title="ITableOperations.GetFieldNames Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetFieldNames.htm" />
+    <HelpKINode Title="TableOperations(T).GetFieldNames Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetFieldNames.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetFieldType method">
+    <HelpKINode Title="ITableOperations.GetFieldType Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetFieldType.htm" />
+    <HelpKINode Title="TableOperations(T).GetFieldType Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetFieldType.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetFieldValue method">
+    <HelpKINode Title="ITableOperations.GetFieldValue Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetFieldValue.htm" />
+    <HelpKINode Title="TableOperations(T).GetFieldValue Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetFieldValue.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetHashCode method">
+    <HelpKINode Title="DataSetEqualityComparer.GetHashCode Method " Url="html/Overload_Gemstone_Data_DataSetEqualityComparer_GetHashCode.htm" />
+    <HelpKINode Title="RecordRestriction.GetHashCode Method " Url="html/M_Gemstone_Data_Model_RecordRestriction_GetHashCode.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetInterpretedFieldValue method">
+    <HelpKINode Title="ITableOperations.GetInterpretedFieldValue Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetInterpretedFieldValue.htm" />
+    <HelpKINode Title="TableOperations(T).GetInterpretedFieldValue Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetInterpretedFieldValue.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetList method">
+    <HelpKINode Title="Fields.GetList Method " Url="html/M_Gemstone_Data_Fields_GetList.htm" />
+    <HelpKINode Title="ForeignKeyFields.GetList Method " Url="html/M_Gemstone_Data_ForeignKeyFields_GetList.htm" />
+    <HelpKINode Title="Tables.GetList Method " Url="html/M_Gemstone_Data_Tables_GetList.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetPageOfRecords method">
+    <HelpKINode Title="ITableOperations.GetPageOfRecords Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetPageOfRecords.htm" />
+    <HelpKINode Title="TableOperations(T).GetPageOfRecords Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPageOfRecords.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetPrimaryKeyCacheSize method">
+    <HelpKINode Title="ITableOperations.GetPrimaryKeyCacheSize Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetPrimaryKeyCacheSize.htm" />
+    <HelpKINode Title="TableOperations(T).GetPrimaryKeyCacheSize Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeyCacheSize.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetPrimaryKeyFieldNames method">
+    <HelpKINode Title="ITableOperations.GetPrimaryKeyFieldNames Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetPrimaryKeyFieldNames.htm" />
+    <HelpKINode Title="TableOperations(T).GetPrimaryKeyFieldNames Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeyFieldNames.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetPrimaryKeys method">
+    <HelpKINode Title="ITableOperations.GetPrimaryKeys Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_GetPrimaryKeys.htm" />
+    <HelpKINode Title="TableOperations(T).GetPrimaryKeys Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeys.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetSearchRestriction method">
+    <HelpKINode Title="ITableOperations.GetSearchRestriction Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetSearchRestriction.htm" />
+    <HelpKINode Title="TableOperations(T).GetSearchRestriction Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetSearchRestriction.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GlobalTemp enumeration member" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="Guid enumeration member">
+    <HelpKINode Title="DataType Enumeration" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+    <HelpKINode Title="OleDbType Enumeration" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Guid method" Url="html/Overload_Gemstone_Data_AdoDataConnection_Guid.htm" />
+  <HelpKINode Title="HasAutoIncField property" Url="html/P_Gemstone_Data_Table_HasAutoIncField.htm" />
+  <HelpKINode Title="HasDefault property" Url="html/P_Gemstone_Data_Field_HasDefault.htm" />
+  <HelpKINode Title="HasPrimaryKeyIdentityField property">
+    <HelpKINode Title="ITableOperations.HasPrimaryKeyIdentityField Property " Url="html/P_Gemstone_Data_Model_ITableOperations_HasPrimaryKeyIdentityField.htm" />
+    <HelpKINode Title="TableOperations(T).HasPrimaryKeyIdentityField Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_HasPrimaryKeyIdentityField.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IBulkDataOperation interface">
+    <HelpKINode Title="IBulkDataOperation Interface" Url="html/T_Gemstone_Data_IBulkDataOperation.htm" />
+    <HelpKINode Title="events" Url="html/Events_T_Gemstone_Data_IBulkDataOperation.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_IBulkDataOperation.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_IBulkDataOperation.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IBulkDataOperation.Close method" Url="html/M_Gemstone_Data_IBulkDataOperation_Close.htm" />
+  <HelpKINode Title="IBulkDataOperation.Execute method" Url="html/M_Gemstone_Data_IBulkDataOperation_Execute.htm" />
+  <HelpKINode Title="IBulkDataOperation.FromSchema property" Url="html/P_Gemstone_Data_IBulkDataOperation_FromSchema.htm" />
+  <HelpKINode Title="IBulkDataOperation.OverallProgressStatus event" Url="html/E_Gemstone_Data_IBulkDataOperation_OverallProgressStatus.htm" />
+  <HelpKINode Title="IBulkDataOperation.RowProgressStatus event" Url="html/E_Gemstone_Data_IBulkDataOperation_RowProgressStatus.htm" />
+  <HelpKINode Title="IBulkDataOperation.RowReportInterval property" Url="html/P_Gemstone_Data_IBulkDataOperation_RowReportInterval.htm" />
+  <HelpKINode Title="IBulkDataOperation.SQLFailure event" Url="html/E_Gemstone_Data_IBulkDataOperation_SQLFailure.htm" />
+  <HelpKINode Title="IBulkDataOperation.TableProgressStatus event" Url="html/E_Gemstone_Data_IBulkDataOperation_TableProgressStatus.htm" />
+  <HelpKINode Title="IBulkDataOperation.Timeout property" Url="html/P_Gemstone_Data_IBulkDataOperation_Timeout.htm" />
+  <HelpKINode Title="IBulkDataOperation.ToSchema property" Url="html/P_Gemstone_Data_IBulkDataOperation_ToSchema.htm" />
+  <HelpKINode Title="IBulkDataOperation.WorkTables property" Url="html/P_Gemstone_Data_IBulkDataOperation_WorkTables.htm" />
+  <HelpKINode Title="IdentitySQL property" Url="html/P_Gemstone_Data_Table_IdentitySQL.htm" />
+  <HelpKINode Title="IDispatch enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="ImmediateClose property" Url="html/P_Gemstone_Data_Schema_ImmediateClose.htm" />
+  <HelpKINode Title="Inequality operator" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_Inequality.htm" />
+  <HelpKINode Title="Insert enumeration member" Url="html/T_Gemstone_Data_Model_StatementTypes.htm" />
+  <HelpKINode Title="Int16 enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="Int32 enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="Int64 enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="Integer enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="IsForeignKey property" Url="html/P_Gemstone_Data_Field_IsForeignKey.htm" />
+  <HelpKINode Title="IsForeignKeyTable property" Url="html/P_Gemstone_Data_Table_IsForeignKeyTable.htm" />
+  <HelpKINode Title="IsIdentity property" Url="html/P_Gemstone_Data_Model_PrimaryKeyAttribute_IsIdentity.htm" />
+  <HelpKINode Title="IsJetEngine property" Url="html/P_Gemstone_Data_AdoDataConnection_IsJetEngine.htm" />
+  <HelpKINode Title="IsLinked property" Url="html/P_Gemstone_Data_Table_IsLinked.htm" />
+  <HelpKINode Title="IsMySQL property" Url="html/P_Gemstone_Data_AdoDataConnection_IsMySQL.htm" />
+  <HelpKINode Title="IsOracle property" Url="html/P_Gemstone_Data_AdoDataConnection_IsOracle.htm" />
+  <HelpKINode Title="IsPostgreSQL property" Url="html/P_Gemstone_Data_AdoDataConnection_IsPostgreSQL.htm" />
+  <HelpKINode Title="IsPrimaryKey property" Url="html/P_Gemstone_Data_Field_IsPrimaryKey.htm" />
+  <HelpKINode Title="IsReferencedBy method" Url="html/M_Gemstone_Data_Table_IsReferencedBy.htm" />
+  <HelpKINode Title="IsReferencedVia method" Url="html/M_Gemstone_Data_Table_IsReferencedVia.htm" />
+  <HelpKINode Title="IsSearchMatch method">
+    <HelpKINode Title="ITableOperations.IsSearchMatch Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_IsSearchMatch.htm" />
+    <HelpKINode Title="TableOperations(T).IsSearchMatch Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_IsSearchMatch.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IsSqlite property" Url="html/P_Gemstone_Data_AdoDataConnection_IsSqlite.htm" />
+  <HelpKINode Title="IsSQLServer property" Url="html/P_Gemstone_Data_AdoDataConnection_IsSQLServer.htm" />
+  <HelpKINode Title="IsSystem property" Url="html/P_Gemstone_Data_Table_IsSystem.htm" />
+  <HelpKINode Title="IsTemporary property" Url="html/P_Gemstone_Data_Table_IsTemporary.htm" />
+  <HelpKINode Title="IsView property" Url="html/P_Gemstone_Data_Table_IsView.htm" />
+  <HelpKINode Title="ITableOperations interface">
+    <HelpKINode Title="ITableOperations Interface" Url="html/T_Gemstone_Data_Model_ITableOperations.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_ITableOperations.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_ITableOperations.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ITableOperations.AddNewOrUpdateRecord method" Url="html/M_Gemstone_Data_Model_ITableOperations_AddNewOrUpdateRecord.htm" />
+  <HelpKINode Title="ITableOperations.AddNewRecord method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_AddNewRecord.htm" />
+  <HelpKINode Title="ITableOperations.ApplyRecordDefaults method" Url="html/M_Gemstone_Data_Model_ITableOperations_ApplyRecordDefaults.htm" />
+  <HelpKINode Title="ITableOperations.ApplyRecordUpdates method" Url="html/M_Gemstone_Data_Model_ITableOperations_ApplyRecordUpdates.htm" />
+  <HelpKINode Title="ITableOperations.ApplyRootQueryRestrictionToDeletes property" Url="html/P_Gemstone_Data_Model_ITableOperations_ApplyRootQueryRestrictionToDeletes.htm" />
+  <HelpKINode Title="ITableOperations.ApplyRootQueryRestrictionToUpdates property" Url="html/P_Gemstone_Data_Model_ITableOperations_ApplyRootQueryRestrictionToUpdates.htm" />
+  <HelpKINode Title="ITableOperations.ClearPrimaryKeyCache method" Url="html/M_Gemstone_Data_Model_ITableOperations_ClearPrimaryKeyCache.htm" />
+  <HelpKINode Title="ITableOperations.DeleteRecord method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_DeleteRecord.htm" />
+  <HelpKINode Title="ITableOperations.DeleteRecordWhere method" Url="html/M_Gemstone_Data_Model_ITableOperations_DeleteRecordWhere.htm" />
+  <HelpKINode Title="ITableOperations.ExceptionHandler property" Url="html/P_Gemstone_Data_Model_ITableOperations_ExceptionHandler.htm" />
+  <HelpKINode Title="ITableOperations.FieldHasAttribute method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_FieldHasAttribute.htm" />
+  <HelpKINode Title="ITableOperations.GetFieldNames method" Url="html/M_Gemstone_Data_Model_ITableOperations_GetFieldNames.htm" />
+  <HelpKINode Title="ITableOperations.GetFieldType method" Url="html/M_Gemstone_Data_Model_ITableOperations_GetFieldType.htm" />
+  <HelpKINode Title="ITableOperations.GetFieldValue method" Url="html/M_Gemstone_Data_Model_ITableOperations_GetFieldValue.htm" />
+  <HelpKINode Title="ITableOperations.GetInterpretedFieldValue method" Url="html/M_Gemstone_Data_Model_ITableOperations_GetInterpretedFieldValue.htm" />
+  <HelpKINode Title="ITableOperations.GetPageOfRecords method" Url="html/M_Gemstone_Data_Model_ITableOperations_GetPageOfRecords.htm" />
+  <HelpKINode Title="ITableOperations.GetPrimaryKeyCacheSize method" Url="html/M_Gemstone_Data_Model_ITableOperations_GetPrimaryKeyCacheSize.htm" />
+  <HelpKINode Title="ITableOperations.GetPrimaryKeyFieldNames method" Url="html/M_Gemstone_Data_Model_ITableOperations_GetPrimaryKeyFieldNames.htm" />
+  <HelpKINode Title="ITableOperations.GetPrimaryKeys method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_GetPrimaryKeys.htm" />
+  <HelpKINode Title="ITableOperations.GetSearchRestriction method" Url="html/M_Gemstone_Data_Model_ITableOperations_GetSearchRestriction.htm" />
+  <HelpKINode Title="ITableOperations.HasPrimaryKeyIdentityField property" Url="html/P_Gemstone_Data_Model_ITableOperations_HasPrimaryKeyIdentityField.htm" />
+  <HelpKINode Title="ITableOperations.IsSearchMatch method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_IsSearchMatch.htm" />
+  <HelpKINode Title="ITableOperations.LoadRecord method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_LoadRecord.htm" />
+  <HelpKINode Title="ITableOperations.NewRecord method" Url="html/M_Gemstone_Data_Model_ITableOperations_NewRecord.htm" />
+  <HelpKINode Title="ITableOperations.PrimaryKeyCache property" Url="html/P_Gemstone_Data_Model_ITableOperations_PrimaryKeyCache.htm" />
+  <HelpKINode Title="ITableOperations.QueryRecord method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecord.htm" />
+  <HelpKINode Title="ITableOperations.QueryRecordCount method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecordCount.htm" />
+  <HelpKINode Title="ITableOperations.QueryRecordCountWhere method" Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecordCountWhere.htm" />
+  <HelpKINode Title="ITableOperations.QueryRecords method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecords.htm" />
+  <HelpKINode Title="ITableOperations.QueryRecordsWhere method" Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecordsWhere.htm" />
+  <HelpKINode Title="ITableOperations.QueryRecordWhere method" Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecordWhere.htm" />
+  <HelpKINode Title="ITableOperations.RootQueryRestriction property" Url="html/P_Gemstone_Data_Model_ITableOperations_RootQueryRestriction.htm" />
+  <HelpKINode Title="ITableOperations.SearchRecords method" Url="html/M_Gemstone_Data_Model_ITableOperations_SearchRecords.htm" />
+  <HelpKINode Title="ITableOperations.TableName property" Url="html/P_Gemstone_Data_Model_ITableOperations_TableName.htm" />
+  <HelpKINode Title="ITableOperations.ToDataTable method" Url="html/M_Gemstone_Data_Model_ITableOperations_ToDataTable.htm" />
+  <HelpKINode Title="ITableOperations.TryGetFieldAttribute method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_TryGetFieldAttribute.htm" />
+  <HelpKINode Title="ITableOperations.UnescapedTableName property" Url="html/P_Gemstone_Data_Model_ITableOperations_UnescapedTableName.htm" />
+  <HelpKINode Title="ITableOperations.UpdateRecord method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_UpdateRecord.htm" />
+  <HelpKINode Title="ITableOperations.UpdateRecordWhere method" Url="html/Overload_Gemstone_Data_Model_ITableOperations_UpdateRecordWhere.htm" />
+  <HelpKINode Title="ITableOperations.UseCaseSensitiveFieldNames property" Url="html/P_Gemstone_Data_Model_ITableOperations_UseCaseSensitiveFieldNames.htm" />
+  <HelpKINode Title="Item property">
+    <HelpKINode Title="Fields.Item Property " Url="html/Overload_Gemstone_Data_Fields_Item.htm" />
+    <HelpKINode Title="ForeignKeyFields.Item Property " Url="html/Overload_Gemstone_Data_ForeignKeyFields_Item.htm" />
+    <HelpKINode Title="RecordRestriction.Item Property " Url="html/P_Gemstone_Data_Model_RecordRestriction_Item.htm" />
+    <HelpKINode Title="Tables.Item Property " Url="html/Overload_Gemstone_Data_Tables_Item.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IUnknown enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="KeyName property" Url="html/P_Gemstone_Data_ForeignKeyField_KeyName.htm" />
+  <HelpKINode Title="KeyReference property" Url="html/P_Gemstone_Data_Model_EncryptDataAttribute_KeyReference.htm" />
+  <HelpKINode Title="LikeExpression enumeration member" Url="html/T_Gemstone_Data_Model_SearchType.htm" />
+  <HelpKINode Title="Link enumeration member" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="LoadRecord method">
+    <HelpKINode Title="ITableOperations.LoadRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_LoadRecord.htm" />
+    <HelpKINode Title="TableOperations(T).LoadRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_LoadRecord.htm" />
+  </HelpKINode>
+  <HelpKINode Title="LoadRecordFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_LoadRecordFunction.htm" />
+  <HelpKINode Title="LocalTemp enumeration member" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="LongVarBinary enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="LongVarChar enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="LongVarWChar enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="MapName property" Url="html/P_Gemstone_Data_Table_MapName.htm" />
+  <HelpKINode Title="MaxLength property" Url="html/P_Gemstone_Data_Field_MaxLength.htm" />
+  <HelpKINode Title="ModelType property" Url="html/P_Gemstone_Data_Model_RecordOperationAttribute_ModelType.htm" />
+  <HelpKINode Title="MySQL enumeration member" Url="html/T_Gemstone_Data_DatabaseType.htm" />
+  <HelpKINode Title="Name property">
+    <HelpKINode Title="Field.Name Property " Url="html/P_Gemstone_Data_Field_Name.htm" />
+    <HelpKINode Title="Table.Name Property " Url="html/P_Gemstone_Data_Table_Name.htm" />
+  </HelpKINode>
+  <HelpKINode Title="NewRecord method">
+    <HelpKINode Title="ITableOperations.NewRecord Method " Url="html/M_Gemstone_Data_Model_ITableOperations_NewRecord.htm" />
+    <HelpKINode Title="TableOperations(T).NewRecord Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_NewRecord.htm" />
+  </HelpKINode>
+  <HelpKINode Title="NewRecordFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_NewRecordFunction.htm" />
+  <HelpKINode Title="NoAction enumeration member" Url="html/T_Gemstone_Data_ReferentialAction.htm" />
+  <HelpKINode Title="NonNullNativeValue property" Url="html/P_Gemstone_Data_Field_NonNullNativeValue.htm" />
+  <HelpKINode Title="NonRecordFieldAttribute class">
+    <HelpKINode Title="NonRecordFieldAttribute Class" Url="html/T_Gemstone_Data_Model_NonRecordFieldAttribute.htm" />
+    <HelpKINode Title="constructor" Url="html/M_Gemstone_Data_Model_NonRecordFieldAttribute__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_NonRecordFieldAttribute.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_NonRecordFieldAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="NonRecordFieldAttribute.NonRecordFieldAttribute constructor" Url="html/M_Gemstone_Data_Model_NonRecordFieldAttribute__ctor.htm" />
+  <HelpKINode Title="NoRestriction field" Url="html/F_Gemstone_Data_Schema_NoRestriction.htm" />
+  <HelpKINode Title="NullAsDBNull method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_NullAsDBNull.htm" />
+  <HelpKINode Title="Numeric enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="NumericPrecision property" Url="html/P_Gemstone_Data_Field_NumericPrecision.htm" />
+  <HelpKINode Title="NumericScale property" Url="html/P_Gemstone_Data_Field_NumericScale.htm" />
+  <HelpKINode Title="Object enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="OleDbType enumeration" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="OnOverallProgress method" Url="html/M_Gemstone_Data_BulkDataOperationBase_OnOverallProgress.htm" />
+  <HelpKINode Title="OnRowProgress method" Url="html/M_Gemstone_Data_BulkDataOperationBase_OnRowProgress.htm" />
+  <HelpKINode Title="OnSQLFailure method" Url="html/M_Gemstone_Data_BulkDataOperationBase_OnSQLFailure.htm" />
+  <HelpKINode Title="OnTableProgress method" Url="html/M_Gemstone_Data_BulkDataOperationBase_OnTableProgress.htm" />
+  <HelpKINode Title="OpenConnection method" Url="html/Overload_Gemstone_Data_Schema_OpenConnection.htm" />
+  <HelpKINode Title="Operation property" Url="html/P_Gemstone_Data_Model_RecordOperationAttribute_Operation.htm" />
+  <HelpKINode Title="Oracle enumeration member" Url="html/T_Gemstone_Data_DatabaseType.htm" />
+  <HelpKINode Title="Ordinal property">
+    <HelpKINode Title="Field.Ordinal Property " Url="html/P_Gemstone_Data_Field_Ordinal.htm" />
+    <HelpKINode Title="ForeignKeyField.Ordinal Property " Url="html/P_Gemstone_Data_ForeignKeyField_Ordinal.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Other enumeration member" Url="html/T_Gemstone_Data_DatabaseType.htm" />
+  <HelpKINode Title="OverallProgress field" Url="html/F_Gemstone_Data_BulkDataOperationBase_OverallProgress.htm" />
+  <HelpKINode Title="OverallProgressStatus event">
+    <HelpKINode Title="BulkDataOperationBase.OverallProgressStatus Event" Url="html/E_Gemstone_Data_BulkDataOperationBase_OverallProgressStatus.htm" />
+    <HelpKINode Title="IBulkDataOperation.OverallProgressStatus Event" Url="html/E_Gemstone_Data_IBulkDataOperation_OverallProgressStatus.htm" />
+  </HelpKINode>
+  <HelpKINode Title="OverallTotal field" Url="html/F_Gemstone_Data_BulkDataOperationBase_OverallTotal.htm" />
+  <HelpKINode Title="ParameterizedQueryString method" Url="html/M_Gemstone_Data_AdoDataConnection_ParameterizedQueryString.htm" />
+  <HelpKINode Title="Parameters field">
+    <HelpKINode Title="RecordRestriction.Parameters Field" Url="html/F_Gemstone_Data_Model_RecordRestriction_Parameters.htm" />
+    <HelpKINode Title="RootQueryRestrictionAttribute.Parameters Field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_Parameters.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Parent property">
+    <HelpKINode Title="Field.Parent Property " Url="html/P_Gemstone_Data_Field_Parent.htm" />
+    <HelpKINode Title="Fields.Parent Property " Url="html/P_Gemstone_Data_Fields_Parent.htm" />
+    <HelpKINode Title="ForeignKeyField.Parent Property " Url="html/P_Gemstone_Data_ForeignKeyField_Parent.htm" />
+    <HelpKINode Title="ForeignKeyFields.Parent Property " Url="html/P_Gemstone_Data_ForeignKeyFields_Parent.htm" />
+    <HelpKINode Title="Table.Parent Property " Url="html/P_Gemstone_Data_Table_Parent.htm" />
+    <HelpKINode Title="Tables.Parent Property " Url="html/P_Gemstone_Data_Tables_Parent.htm" />
+  </HelpKINode>
+  <HelpKINode Title="PopulateParameters method" Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_PopulateParameters.htm" />
+  <HelpKINode Title="PostgreSQL enumeration member" Url="html/T_Gemstone_Data_DatabaseType.htm" />
+  <HelpKINode Title="Prefix enumeration member" Url="html/T_Gemstone_Data_Model_AffixPosition.htm" />
+  <HelpKINode Title="PreserveAutoIncValues property" Url="html/P_Gemstone_Data_DataInserter_PreserveAutoIncValues.htm" />
+  <HelpKINode Title="PrimaryKey property" Url="html/P_Gemstone_Data_ForeignKeyField_PrimaryKey.htm" />
+  <HelpKINode Title="PrimaryKeyAttribute class">
+    <HelpKINode Title="PrimaryKeyAttribute Class" Url="html/T_Gemstone_Data_Model_PrimaryKeyAttribute.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_Model_PrimaryKeyAttribute__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_PrimaryKeyAttribute.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_PrimaryKeyAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="PrimaryKeyAttribute.IsIdentity property" Url="html/P_Gemstone_Data_Model_PrimaryKeyAttribute_IsIdentity.htm" />
+  <HelpKINode Title="PrimaryKeyAttribute.PrimaryKeyAttribute constructor" Url="html/Overload_Gemstone_Data_Model_PrimaryKeyAttribute__ctor.htm" />
+  <HelpKINode Title="PrimaryKeyCache property">
+    <HelpKINode Title="ITableOperations.PrimaryKeyCache Property " Url="html/P_Gemstone_Data_Model_ITableOperations_PrimaryKeyCache.htm" />
+    <HelpKINode Title="TableOperations(T).PrimaryKeyCache Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_PrimaryKeyCache.htm" />
+  </HelpKINode>
+  <HelpKINode Title="PrimaryKeyFieldCount property" Url="html/P_Gemstone_Data_Table_PrimaryKeyFieldCount.htm" />
+  <HelpKINode Title="PrimaryKeyName property" Url="html/P_Gemstone_Data_Field_PrimaryKeyName.htm" />
+  <HelpKINode Title="PrimaryKeyOrdinal property" Url="html/P_Gemstone_Data_Field_PrimaryKeyOrdinal.htm" />
+  <HelpKINode Title="Priority property" Url="html/P_Gemstone_Data_Table_Priority.htm" />
+  <HelpKINode Title="Process property" Url="html/P_Gemstone_Data_Table_Process.htm" />
+  <HelpKINode Title="PropVariant enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="QueryRecord method">
+    <HelpKINode Title="ITableOperations.QueryRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecord.htm" />
+    <HelpKINode Title="TableOperations(T).QueryRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecord.htm" />
+  </HelpKINode>
+  <HelpKINode Title="QueryRecordCount enumeration member" Url="html/T_Gemstone_Data_Model_RecordOperation.htm" />
+  <HelpKINode Title="QueryRecordCount method">
+    <HelpKINode Title="ITableOperations.QueryRecordCount Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecordCount.htm" />
+    <HelpKINode Title="TableOperations(T).QueryRecordCount Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecordCount.htm" />
+  </HelpKINode>
+  <HelpKINode Title="QueryRecordCountWhere method">
+    <HelpKINode Title="ITableOperations.QueryRecordCountWhere Method " Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecordCountWhere.htm" />
+    <HelpKINode Title="TableOperations(T).QueryRecordCountWhere Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordCountWhere.htm" />
+  </HelpKINode>
+  <HelpKINode Title="QueryRecords enumeration member" Url="html/T_Gemstone_Data_Model_RecordOperation.htm" />
+  <HelpKINode Title="QueryRecords method">
+    <HelpKINode Title="ITableOperations.QueryRecords Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecords.htm" />
+    <HelpKINode Title="TableOperations(T).QueryRecords Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecords.htm" />
+  </HelpKINode>
+  <HelpKINode Title="QueryRecordsWhere method">
+    <HelpKINode Title="ITableOperations.QueryRecordsWhere Method " Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecordsWhere.htm" />
+    <HelpKINode Title="TableOperations(T).QueryRecordsWhere Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordsWhere.htm" />
+  </HelpKINode>
+  <HelpKINode Title="QueryRecordWhere method">
+    <HelpKINode Title="ITableOperations.QueryRecordWhere Method " Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecordWhere.htm" />
+    <HelpKINode Title="TableOperations(T).QueryRecordWhere Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordWhere.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ReadOnly property" Url="html/P_Gemstone_Data_Field_ReadOnly.htm" />
+  <HelpKINode Title="RecordOperation enumeration" Url="html/T_Gemstone_Data_Model_RecordOperation.htm" />
+  <HelpKINode Title="RecordOperationAttribute class">
+    <HelpKINode Title="RecordOperationAttribute Class" Url="html/T_Gemstone_Data_Model_RecordOperationAttribute.htm" />
+    <HelpKINode Title="constructor" Url="html/M_Gemstone_Data_Model_RecordOperationAttribute__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_RecordOperationAttribute.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_RecordOperationAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RecordOperationAttribute.ModelType property" Url="html/P_Gemstone_Data_Model_RecordOperationAttribute_ModelType.htm" />
+  <HelpKINode Title="RecordOperationAttribute.Operation property" Url="html/P_Gemstone_Data_Model_RecordOperationAttribute_Operation.htm" />
+  <HelpKINode Title="RecordOperationAttribute.RecordOperationAttribute constructor" Url="html/M_Gemstone_Data_Model_RecordOperationAttribute__ctor.htm" />
+  <HelpKINode Title="RecordRestriction class">
+    <HelpKINode Title="RecordRestriction Class" Url="html/T_Gemstone_Data_Model_RecordRestriction.htm" />
+    <HelpKINode Title="constructor" Url="html/M_Gemstone_Data_Model_RecordRestriction__ctor.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Gemstone_Data_Model_RecordRestriction.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_RecordRestriction.htm" />
+    <HelpKINode Title="operators and type conversions" Url="html/Operators_T_Gemstone_Data_Model_RecordRestriction.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_RecordRestriction.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RecordRestriction.Addition operator" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_Addition.htm" />
+  <HelpKINode Title="RecordRestriction.BitwiseAnd operator" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_BitwiseAnd.htm" />
+  <HelpKINode Title="RecordRestriction.BitwiseOr operator" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_BitwiseOr.htm" />
+  <HelpKINode Title="RecordRestriction.Clone method" Url="html/Overload_Gemstone_Data_Model_RecordRestriction_Clone.htm" />
+  <HelpKINode Title="RecordRestriction.CombineAnd method" Url="html/M_Gemstone_Data_Model_RecordRestriction_CombineAnd.htm" />
+  <HelpKINode Title="RecordRestriction.CombineOr method" Url="html/M_Gemstone_Data_Model_RecordRestriction_CombineOr.htm" />
+  <HelpKINode Title="RecordRestriction.Equality operator" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_Equality.htm" />
+  <HelpKINode Title="RecordRestriction.Equals method" Url="html/Overload_Gemstone_Data_Model_RecordRestriction_Equals.htm" />
+  <HelpKINode Title="RecordRestriction.FilterExpression field" Url="html/F_Gemstone_Data_Model_RecordRestriction_FilterExpression.htm" />
+  <HelpKINode Title="RecordRestriction.GetHashCode method" Url="html/M_Gemstone_Data_Model_RecordRestriction_GetHashCode.htm" />
+  <HelpKINode Title="RecordRestriction.Inequality operator" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_Inequality.htm" />
+  <HelpKINode Title="RecordRestriction.Item property" Url="html/P_Gemstone_Data_Model_RecordRestriction_Item.htm" />
+  <HelpKINode Title="RecordRestriction.Parameters field" Url="html/F_Gemstone_Data_Model_RecordRestriction_Parameters.htm" />
+  <HelpKINode Title="RecordRestriction.RecordRestriction constructor" Url="html/M_Gemstone_Data_Model_RecordRestriction__ctor.htm" />
+  <HelpKINode Title="ReevalulateIdentitySQL method" Url="html/M_Gemstone_Data_Table_ReevalulateIdentitySQL.htm" />
+  <HelpKINode Title="ReferencedBy property" Url="html/P_Gemstone_Data_Field_ReferencedBy.htm" />
+  <HelpKINode Title="ReferencedByForeignKeys property" Url="html/P_Gemstone_Data_Table_ReferencedByForeignKeys.htm" />
+  <HelpKINode Title="ReferentialAction enumeration" Url="html/T_Gemstone_Data_ReferentialAction.htm" />
+  <HelpKINode Title="ReferentialOrderComparer class">
+    <HelpKINode Title="fields" Url="html/Fields_T_Gemstone_Data_Tables_ReferentialOrderComparer.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Tables_ReferentialOrderComparer.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Remove method">
+    <HelpKINode Title="Fields.Remove Method " Url="html/M_Gemstone_Data_Fields_Remove.htm" />
+    <HelpKINode Title="Tables.Remove Method " Url="html/M_Gemstone_Data_Tables_Remove.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RetrieveData method">
+    <HelpKINode Title="AdoDataConnection.RetrieveData Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveData.htm" />
+    <HelpKINode Title="DataExtensions.RetrieveData Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveData.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RetrieveDataSet method">
+    <HelpKINode Title="AdoDataConnection.RetrieveDataSet Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveDataSet.htm" />
+    <HelpKINode Title="DataExtensions.RetrieveDataSet Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveDataSet.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RetrieveRow method">
+    <HelpKINode Title="AdoDataConnection.RetrieveRow Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveRow.htm" />
+    <HelpKINode Title="DataExtensions.RetrieveRow Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveRow.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RootQueryRestriction property">
+    <HelpKINode Title="ITableOperations.RootQueryRestriction Property " Url="html/P_Gemstone_Data_Model_ITableOperations_RootQueryRestriction.htm" />
+    <HelpKINode Title="TableOperations(T).RootQueryRestriction Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_RootQueryRestriction.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RootQueryRestrictionAttribute class">
+    <HelpKINode Title="RootQueryRestrictionAttribute Class" Url="html/T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm" />
+    <HelpKINode Title="constructor" Url="html/M_Gemstone_Data_Model_RootQueryRestrictionAttribute__ctor.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RootQueryRestrictionAttribute.ApplyToDeletes field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_ApplyToDeletes.htm" />
+  <HelpKINode Title="RootQueryRestrictionAttribute.ApplyToUpdates field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_ApplyToUpdates.htm" />
+  <HelpKINode Title="RootQueryRestrictionAttribute.FilterExpression field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_FilterExpression.htm" />
+  <HelpKINode Title="RootQueryRestrictionAttribute.Parameters field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_Parameters.htm" />
+  <HelpKINode Title="RootQueryRestrictionAttribute.RootQueryRestrictionAttribute constructor" Url="html/M_Gemstone_Data_Model_RootQueryRestrictionAttribute__ctor.htm" />
+  <HelpKINode Title="RowCount property" Url="html/P_Gemstone_Data_Table_RowCount.htm" />
+  <HelpKINode Title="RowProgressStatus event">
+    <HelpKINode Title="BulkDataOperationBase.RowProgressStatus Event" Url="html/E_Gemstone_Data_BulkDataOperationBase_RowProgressStatus.htm" />
+    <HelpKINode Title="IBulkDataOperation.RowProgressStatus Event" Url="html/E_Gemstone_Data_IBulkDataOperation_RowProgressStatus.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RowReportInterval property">
+    <HelpKINode Title="BulkDataOperationBase.RowReportInterval Property " Url="html/P_Gemstone_Data_BulkDataOperationBase_RowReportInterval.htm" />
+    <HelpKINode Title="IBulkDataOperation.RowReportInterval Property " Url="html/P_Gemstone_Data_IBulkDataOperation_RowReportInterval.htm" />
+  </HelpKINode>
+  <HelpKINode Title="SByte enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="Schema class">
+    <HelpKINode Title="Schema Class" Url="html/T_Gemstone_Data_Schema.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_Schema__ctor.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Gemstone_Data_Schema.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Schema.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Schema.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Schema property" Url="html/P_Gemstone_Data_Table_Schema.htm" />
+  <HelpKINode Title="Schema.AllowNumericNulls property" Url="html/P_Gemstone_Data_Schema_AllowNumericNulls.htm" />
+  <HelpKINode Title="Schema.AllowTextNulls property" Url="html/P_Gemstone_Data_Schema_AllowTextNulls.htm" />
+  <HelpKINode Title="Schema.Analyze method" Url="html/M_Gemstone_Data_Schema_Analyze.htm" />
+  <HelpKINode Title="Schema.Close method" Url="html/M_Gemstone_Data_Schema_Close.htm" />
+  <HelpKINode Title="Schema.Connection property" Url="html/P_Gemstone_Data_Schema_Connection.htm" />
+  <HelpKINode Title="Schema.ConnectionString property" Url="html/P_Gemstone_Data_Schema_ConnectionString.htm" />
+  <HelpKINode Title="Schema.DataSourceType property" Url="html/P_Gemstone_Data_Schema_DataSourceType.htm" />
+  <HelpKINode Title="Schema.ImmediateClose property" Url="html/P_Gemstone_Data_Schema_ImmediateClose.htm" />
+  <HelpKINode Title="Schema.NoRestriction field" Url="html/F_Gemstone_Data_Schema_NoRestriction.htm" />
+  <HelpKINode Title="Schema.OpenConnection method" Url="html/Overload_Gemstone_Data_Schema_OpenConnection.htm" />
+  <HelpKINode Title="Schema.Schema constructor" Url="html/Overload_Gemstone_Data_Schema__ctor.htm" />
+  <HelpKINode Title="Schema.SQLEscapeName method" Url="html/M_Gemstone_Data_Schema_SQLEscapeName.htm" />
+  <HelpKINode Title="Schema.Tables property" Url="html/P_Gemstone_Data_Schema_Tables.htm" />
+  <HelpKINode Title="Schema.TableTypeRestriction property" Url="html/P_Gemstone_Data_Schema_TableTypeRestriction.htm" />
+  <HelpKINode Title="SearchableAttribute class">
+    <HelpKINode Title="SearchableAttribute Class" Url="html/T_Gemstone_Data_Model_SearchableAttribute.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_Model_SearchableAttribute__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_SearchableAttribute.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_SearchableAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="SearchableAttribute.SearchableAttribute constructor" Url="html/Overload_Gemstone_Data_Model_SearchableAttribute__ctor.htm" />
+  <HelpKINode Title="SearchableAttribute.SearchType property" Url="html/P_Gemstone_Data_Model_SearchableAttribute_SearchType.htm" />
+  <HelpKINode Title="SearchRecords method">
+    <HelpKINode Title="ITableOperations.SearchRecords Method " Url="html/M_Gemstone_Data_Model_ITableOperations_SearchRecords.htm" />
+    <HelpKINode Title="TableOperations(T).SearchRecords Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_SearchRecords.htm" />
+  </HelpKINode>
+  <HelpKINode Title="SearchType enumeration" Url="html/T_Gemstone_Data_Model_SearchType.htm" />
+  <HelpKINode Title="SearchType property" Url="html/P_Gemstone_Data_Model_SearchableAttribute_SearchType.htm" />
+  <HelpKINode Title="Select enumeration member" Url="html/T_Gemstone_Data_Model_StatementTypes.htm" />
+  <HelpKINode Title="SelectCount enumeration member" Url="html/T_Gemstone_Data_Model_StatementTypes.htm" />
+  <HelpKINode Title="SelectRow enumeration member" Url="html/T_Gemstone_Data_Model_StatementTypes.htm" />
+  <HelpKINode Title="SelectSet enumeration member" Url="html/T_Gemstone_Data_Model_StatementTypes.htm" />
+  <HelpKINode Title="SerializeToStream method" Url="html/M_Gemstone_Data_DataSetExtensions_DataSetExtensions_SerializeToStream.htm" />
+  <HelpKINode Title="SetDefault enumeration member" Url="html/T_Gemstone_Data_ReferentialAction.htm" />
+  <HelpKINode Title="SetNull enumeration member" Url="html/T_Gemstone_Data_ReferentialAction.htm" />
+  <HelpKINode Title="Single enumeration member">
+    <HelpKINode Title="DataType Enumeration" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+    <HelpKINode Title="OleDbType Enumeration" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  </HelpKINode>
+  <HelpKINode Title="SmallInt enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="SQLEncode method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_SQLEncode.htm" />
+  <HelpKINode Title="SQLEncodedValue property" Url="html/P_Gemstone_Data_Field_SQLEncodedValue.htm" />
+  <HelpKINode Title="SQLEscapedName property">
+    <HelpKINode Title="Field.SQLEscapedName Property " Url="html/P_Gemstone_Data_Field_SQLEscapedName.htm" />
+    <HelpKINode Title="Table.SQLEscapedName Property " Url="html/P_Gemstone_Data_Table_SQLEscapedName.htm" />
+  </HelpKINode>
+  <HelpKINode Title="SQLEscapeName method" Url="html/M_Gemstone_Data_Schema_SQLEscapeName.htm" />
+  <HelpKINode Title="SQLFailure event">
+    <HelpKINode Title="BulkDataOperationBase.SQLFailure Event" Url="html/E_Gemstone_Data_BulkDataOperationBase_SQLFailure.htm" />
+    <HelpKINode Title="IBulkDataOperation.SQLFailure Event" Url="html/E_Gemstone_Data_IBulkDataOperation_SQLFailure.htm" />
+  </HelpKINode>
+  <HelpKINode Title="SQLite enumeration member" Url="html/T_Gemstone_Data_DatabaseType.htm" />
+  <HelpKINode Title="SQLServer enumeration member" Url="html/T_Gemstone_Data_DatabaseType.htm" />
+  <HelpKINode Title="StatementTypes enumeration" Url="html/T_Gemstone_Data_Model_StatementTypes.htm" />
+  <HelpKINode Title="StatementTypes property" Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_StatementTypes.htm" />
+  <HelpKINode Title="String enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="String to RecordRestriction conversion" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_Implicit.htm" />
+  <HelpKINode Title="Suffix enumeration member" Url="html/T_Gemstone_Data_Model_AffixPosition.htm" />
+  <HelpKINode Title="Synonym enumeration member" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="SystemTable enumeration member" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="SystemView enumeration member" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="Table class">
+    <HelpKINode Title="Table Class" Url="html/T_Gemstone_Data_Table.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_Table__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Table.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Table.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Table enumeration member" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="Table property" Url="html/P_Gemstone_Data_Field_Table.htm" />
+  <HelpKINode Title="Table.AutoIncField property" Url="html/P_Gemstone_Data_Table_AutoIncField.htm" />
+  <HelpKINode Title="Table.CalculateRowCount method" Url="html/M_Gemstone_Data_Table_CalculateRowCount.htm" />
+  <HelpKINode Title="Table.Catalog property" Url="html/P_Gemstone_Data_Table_Catalog.htm" />
+  <HelpKINode Title="Table.CompareTo method" Url="html/Overload_Gemstone_Data_Table_CompareTo.htm" />
+  <HelpKINode Title="Table.Connection property" Url="html/P_Gemstone_Data_Table_Connection.htm" />
+  <HelpKINode Title="Table.DefineForeignKey method" Url="html/M_Gemstone_Data_Table_DefineForeignKey.htm" />
+  <HelpKINode Title="Table.DefinePrimaryKey method" Url="html/M_Gemstone_Data_Table_DefinePrimaryKey.htm" />
+  <HelpKINode Title="Table.Description property" Url="html/P_Gemstone_Data_Table_Description.htm" />
+  <HelpKINode Title="Table.Fields property" Url="html/P_Gemstone_Data_Table_Fields.htm" />
+  <HelpKINode Title="Table.FullName property" Url="html/P_Gemstone_Data_Table_FullName.htm" />
+  <HelpKINode Title="Table.HasAutoIncField property" Url="html/P_Gemstone_Data_Table_HasAutoIncField.htm" />
+  <HelpKINode Title="Table.IdentitySQL property" Url="html/P_Gemstone_Data_Table_IdentitySQL.htm" />
+  <HelpKINode Title="Table.IsForeignKeyTable property" Url="html/P_Gemstone_Data_Table_IsForeignKeyTable.htm" />
+  <HelpKINode Title="Table.IsLinked property" Url="html/P_Gemstone_Data_Table_IsLinked.htm" />
+  <HelpKINode Title="Table.IsReferencedBy method" Url="html/M_Gemstone_Data_Table_IsReferencedBy.htm" />
+  <HelpKINode Title="Table.IsReferencedVia method" Url="html/M_Gemstone_Data_Table_IsReferencedVia.htm" />
+  <HelpKINode Title="Table.IsSystem property" Url="html/P_Gemstone_Data_Table_IsSystem.htm" />
+  <HelpKINode Title="Table.IsTemporary property" Url="html/P_Gemstone_Data_Table_IsTemporary.htm" />
+  <HelpKINode Title="Table.IsView property" Url="html/P_Gemstone_Data_Table_IsView.htm" />
+  <HelpKINode Title="Table.MapName property" Url="html/P_Gemstone_Data_Table_MapName.htm" />
+  <HelpKINode Title="Table.Name property" Url="html/P_Gemstone_Data_Table_Name.htm" />
+  <HelpKINode Title="Table.Parent property" Url="html/P_Gemstone_Data_Table_Parent.htm" />
+  <HelpKINode Title="Table.PrimaryKeyFieldCount property" Url="html/P_Gemstone_Data_Table_PrimaryKeyFieldCount.htm" />
+  <HelpKINode Title="Table.Priority property" Url="html/P_Gemstone_Data_Table_Priority.htm" />
+  <HelpKINode Title="Table.Process property" Url="html/P_Gemstone_Data_Table_Process.htm" />
+  <HelpKINode Title="Table.ReevalulateIdentitySQL method" Url="html/M_Gemstone_Data_Table_ReevalulateIdentitySQL.htm" />
+  <HelpKINode Title="Table.ReferencedByForeignKeys property" Url="html/P_Gemstone_Data_Table_ReferencedByForeignKeys.htm" />
+  <HelpKINode Title="Table.RowCount property" Url="html/P_Gemstone_Data_Table_RowCount.htm" />
+  <HelpKINode Title="Table.Schema property" Url="html/P_Gemstone_Data_Table_Schema.htm" />
+  <HelpKINode Title="Table.SQLEscapedName property" Url="html/P_Gemstone_Data_Table_SQLEscapedName.htm" />
+  <HelpKINode Title="Table.Table constructor" Url="html/Overload_Gemstone_Data_Table__ctor.htm" />
+  <HelpKINode Title="Table.ToString method" Url="html/M_Gemstone_Data_Table_ToString.htm" />
+  <HelpKINode Title="Table.Type property" Url="html/P_Gemstone_Data_Table_Type.htm" />
+  <HelpKINode Title="Table.UsesDefaultSchema method" Url="html/M_Gemstone_Data_Table_UsesDefaultSchema.htm" />
+  <HelpKINode Title="TableCleared event" Url="html/E_Gemstone_Data_DataInserter_TableCleared.htm" />
+  <HelpKINode Title="TableCollection field" Url="html/F_Gemstone_Data_BulkDataOperationBase_TableCollection.htm" />
+  <HelpKINode Title="TableName enumeration member" Url="html/T_Gemstone_Data_Model_TargetExpression.htm" />
+  <HelpKINode Title="TableName property">
+    <HelpKINode Title="ITableOperations.TableName Property " Url="html/P_Gemstone_Data_Model_ITableOperations_TableName.htm" />
+    <HelpKINode Title="TableNameAttribute.TableName Property " Url="html/P_Gemstone_Data_Model_TableNameAttribute_TableName.htm" />
+    <HelpKINode Title="TableOperations(T).TableName Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_TableName.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TableNameAttribute class">
+    <HelpKINode Title="TableNameAttribute Class" Url="html/T_Gemstone_Data_Model_TableNameAttribute.htm" />
+    <HelpKINode Title="constructor" Url="html/M_Gemstone_Data_Model_TableNameAttribute__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_TableNameAttribute.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_TableNameAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TableNameAttribute.TableName property" Url="html/P_Gemstone_Data_Model_TableNameAttribute_TableName.htm" />
+  <HelpKINode Title="TableNameAttribute.TableNameAttribute constructor" Url="html/M_Gemstone_Data_Model_TableNameAttribute__ctor.htm" />
+  <HelpKINode Title="TableOperations(Of T) class">
+    <HelpKINode Title="TableOperations(T) Class" Url="html/T_Gemstone_Data_Model_TableOperations_1.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_Model_TableOperations_1__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_TableOperations_1.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_TableOperations_1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TableOperations(Of T).AddNewOrUpdateRecord method" Url="html/M_Gemstone_Data_Model_TableOperations_1_AddNewOrUpdateRecord.htm" />
+  <HelpKINode Title="TableOperations(Of T).AddNewRecord method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_AddNewRecord.htm" />
+  <HelpKINode Title="TableOperations(Of T).ApplyRecordDefaults method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordDefaults.htm" />
+  <HelpKINode Title="TableOperations(Of T).ApplyRecordDefaultsFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordDefaultsFunction.htm" />
+  <HelpKINode Title="TableOperations(Of T).ApplyRecordUpdates method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordUpdates.htm" />
+  <HelpKINode Title="TableOperations(Of T).ApplyRecordUpdatesFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordUpdatesFunction.htm" />
+  <HelpKINode Title="TableOperations(Of T).ApplyRootQueryRestrictionToDeletes property" Url="html/P_Gemstone_Data_Model_TableOperations_1_ApplyRootQueryRestrictionToDeletes.htm" />
+  <HelpKINode Title="TableOperations(Of T).ApplyRootQueryRestrictionToUpdates property" Url="html/P_Gemstone_Data_Model_TableOperations_1_ApplyRootQueryRestrictionToUpdates.htm" />
+  <HelpKINode Title="TableOperations(Of T).ClearPrimaryKeyCache method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ClearPrimaryKeyCache.htm" />
+  <HelpKINode Title="TableOperations(Of T).Connection property" Url="html/P_Gemstone_Data_Model_TableOperations_1_Connection.htm" />
+  <HelpKINode Title="TableOperations(Of T).DeleteRecord method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_DeleteRecord.htm" />
+  <HelpKINode Title="TableOperations(Of T).DeleteRecordWhere method" Url="html/M_Gemstone_Data_Model_TableOperations_1_DeleteRecordWhere.htm" />
+  <HelpKINode Title="TableOperations(Of T).ExceptionHandler property" Url="html/P_Gemstone_Data_Model_TableOperations_1_ExceptionHandler.htm" />
+  <HelpKINode Title="TableOperations(Of T).FieldHasAttribute method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_FieldHasAttribute.htm" />
+  <HelpKINode Title="TableOperations(Of T).GetFieldNames method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetFieldNames.htm" />
+  <HelpKINode Title="TableOperations(Of T).GetFieldType method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetFieldType.htm" />
+  <HelpKINode Title="TableOperations(Of T).GetFieldValue method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetFieldValue.htm" />
+  <HelpKINode Title="TableOperations(Of T).GetInterpretedFieldValue method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetInterpretedFieldValue.htm" />
+  <HelpKINode Title="TableOperations(Of T).GetPageOfRecords method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPageOfRecords.htm" />
+  <HelpKINode Title="TableOperations(Of T).GetPrimaryKeyCacheSize method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeyCacheSize.htm" />
+  <HelpKINode Title="TableOperations(Of T).GetPrimaryKeyFieldNames method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeyFieldNames.htm" />
+  <HelpKINode Title="TableOperations(Of T).GetPrimaryKeys method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeys.htm" />
+  <HelpKINode Title="TableOperations(Of T).GetSearchRestriction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetSearchRestriction.htm" />
+  <HelpKINode Title="TableOperations(Of T).HasPrimaryKeyIdentityField property" Url="html/P_Gemstone_Data_Model_TableOperations_1_HasPrimaryKeyIdentityField.htm" />
+  <HelpKINode Title="TableOperations(Of T).IsSearchMatch method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_IsSearchMatch.htm" />
+  <HelpKINode Title="TableOperations(Of T).LoadRecord method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_LoadRecord.htm" />
+  <HelpKINode Title="TableOperations(Of T).LoadRecordFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_LoadRecordFunction.htm" />
+  <HelpKINode Title="TableOperations(Of T).NewRecord method" Url="html/M_Gemstone_Data_Model_TableOperations_1_NewRecord.htm" />
+  <HelpKINode Title="TableOperations(Of T).NewRecordFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_NewRecordFunction.htm" />
+  <HelpKINode Title="TableOperations(Of T).PrimaryKeyCache property" Url="html/P_Gemstone_Data_Model_TableOperations_1_PrimaryKeyCache.htm" />
+  <HelpKINode Title="TableOperations(Of T).QueryRecord method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecord.htm" />
+  <HelpKINode Title="TableOperations(Of T).QueryRecordCount method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecordCount.htm" />
+  <HelpKINode Title="TableOperations(Of T).QueryRecordCountWhere method" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordCountWhere.htm" />
+  <HelpKINode Title="TableOperations(Of T).QueryRecords method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecords.htm" />
+  <HelpKINode Title="TableOperations(Of T).QueryRecordsWhere method" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordsWhere.htm" />
+  <HelpKINode Title="TableOperations(Of T).QueryRecordWhere method" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordWhere.htm" />
+  <HelpKINode Title="TableOperations(Of T).RootQueryRestriction property" Url="html/P_Gemstone_Data_Model_TableOperations_1_RootQueryRestriction.htm" />
+  <HelpKINode Title="TableOperations(Of T).SearchRecords method" Url="html/M_Gemstone_Data_Model_TableOperations_1_SearchRecords.htm" />
+  <HelpKINode Title="TableOperations(Of T).TableName property" Url="html/P_Gemstone_Data_Model_TableOperations_1_TableName.htm" />
+  <HelpKINode Title="TableOperations(Of T).TableOperations constructor" Url="html/Overload_Gemstone_Data_Model_TableOperations_1__ctor.htm" />
+  <HelpKINode Title="TableOperations(Of T).ToDataTable method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ToDataTable.htm" />
+  <HelpKINode Title="TableOperations(Of T).TryGetFieldAttribute method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_TryGetFieldAttribute.htm" />
+  <HelpKINode Title="TableOperations(Of T).TypeRegistry property" Url="html/P_Gemstone_Data_Model_TableOperations_1_TypeRegistry.htm" />
+  <HelpKINode Title="TableOperations(Of T).UnescapedTableName property" Url="html/P_Gemstone_Data_Model_TableOperations_1_UnescapedTableName.htm" />
+  <HelpKINode Title="TableOperations(Of T).UpdateRecord method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_UpdateRecord.htm" />
+  <HelpKINode Title="TableOperations(Of T).UpdateRecordWhere method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_UpdateRecordWhere.htm" />
+  <HelpKINode Title="TableOperations(Of T).UseCaseSensitiveFieldNames property" Url="html/P_Gemstone_Data_Model_TableOperations_1_UseCaseSensitiveFieldNames.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt; class">
+    <HelpKINode Title="TableOperations(T) Class" Url="html/T_Gemstone_Data_Model_TableOperations_1.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_Model_TableOperations_1__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_TableOperations_1.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_TableOperations_1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TableOperations&lt;T&gt;.AddNewOrUpdateRecord method" Url="html/M_Gemstone_Data_Model_TableOperations_1_AddNewOrUpdateRecord.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.AddNewRecord method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_AddNewRecord.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.ApplyRecordDefaults method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordDefaults.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.ApplyRecordDefaultsFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordDefaultsFunction.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.ApplyRecordUpdates method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordUpdates.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.ApplyRecordUpdatesFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordUpdatesFunction.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.ApplyRootQueryRestrictionToDeletes property" Url="html/P_Gemstone_Data_Model_TableOperations_1_ApplyRootQueryRestrictionToDeletes.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.ApplyRootQueryRestrictionToUpdates property" Url="html/P_Gemstone_Data_Model_TableOperations_1_ApplyRootQueryRestrictionToUpdates.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.ClearPrimaryKeyCache method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ClearPrimaryKeyCache.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.Connection property" Url="html/P_Gemstone_Data_Model_TableOperations_1_Connection.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.DeleteRecord method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_DeleteRecord.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.DeleteRecordWhere method" Url="html/M_Gemstone_Data_Model_TableOperations_1_DeleteRecordWhere.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.ExceptionHandler property" Url="html/P_Gemstone_Data_Model_TableOperations_1_ExceptionHandler.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.FieldHasAttribute method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_FieldHasAttribute.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.GetFieldNames method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetFieldNames.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.GetFieldType method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetFieldType.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.GetFieldValue method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetFieldValue.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.GetInterpretedFieldValue method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetInterpretedFieldValue.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.GetPageOfRecords method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPageOfRecords.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.GetPrimaryKeyCacheSize method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeyCacheSize.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.GetPrimaryKeyFieldNames method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeyFieldNames.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.GetPrimaryKeys method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeys.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.GetSearchRestriction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetSearchRestriction.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.HasPrimaryKeyIdentityField property" Url="html/P_Gemstone_Data_Model_TableOperations_1_HasPrimaryKeyIdentityField.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.IsSearchMatch method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_IsSearchMatch.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.LoadRecord method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_LoadRecord.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.LoadRecordFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_LoadRecordFunction.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.NewRecord method" Url="html/M_Gemstone_Data_Model_TableOperations_1_NewRecord.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.NewRecordFunction method" Url="html/M_Gemstone_Data_Model_TableOperations_1_NewRecordFunction.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.PrimaryKeyCache property" Url="html/P_Gemstone_Data_Model_TableOperations_1_PrimaryKeyCache.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.QueryRecord method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecord.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.QueryRecordCount method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecordCount.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.QueryRecordCountWhere method" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordCountWhere.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.QueryRecords method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecords.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.QueryRecordsWhere method" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordsWhere.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.QueryRecordWhere method" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordWhere.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.RootQueryRestriction property" Url="html/P_Gemstone_Data_Model_TableOperations_1_RootQueryRestriction.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.SearchRecords method" Url="html/M_Gemstone_Data_Model_TableOperations_1_SearchRecords.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.TableName property" Url="html/P_Gemstone_Data_Model_TableOperations_1_TableName.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.TableOperations constructor" Url="html/Overload_Gemstone_Data_Model_TableOperations_1__ctor.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.ToDataTable method" Url="html/M_Gemstone_Data_Model_TableOperations_1_ToDataTable.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.TryGetFieldAttribute method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_TryGetFieldAttribute.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.TypeRegistry property" Url="html/P_Gemstone_Data_Model_TableOperations_1_TypeRegistry.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.UnescapedTableName property" Url="html/P_Gemstone_Data_Model_TableOperations_1_UnescapedTableName.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.UpdateRecord method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_UpdateRecord.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.UpdateRecordWhere method" Url="html/Overload_Gemstone_Data_Model_TableOperations_1_UpdateRecordWhere.htm" />
+  <HelpKINode Title="TableOperations&lt;T&gt;.UseCaseSensitiveFieldNames property" Url="html/P_Gemstone_Data_Model_TableOperations_1_UseCaseSensitiveFieldNames.htm" />
+  <HelpKINode Title="TableProgressStatus event">
+    <HelpKINode Title="BulkDataOperationBase.TableProgressStatus Event" Url="html/E_Gemstone_Data_BulkDataOperationBase_TableProgressStatus.htm" />
+    <HelpKINode Title="IBulkDataOperation.TableProgressStatus Event" Url="html/E_Gemstone_Data_IBulkDataOperation_TableProgressStatus.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Tables class">
+    <HelpKINode Title="Tables Class" Url="html/T_Gemstone_Data_Tables.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Tables.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Tables.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Tables property" Url="html/P_Gemstone_Data_Schema_Tables.htm" />
+  <HelpKINode Title="Tables.Add method" Url="html/M_Gemstone_Data_Tables_Add.htm" />
+  <HelpKINode Title="Tables.Clear method" Url="html/M_Gemstone_Data_Tables_Clear.htm" />
+  <HelpKINode Title="Tables.Count property" Url="html/P_Gemstone_Data_Tables_Count.htm" />
+  <HelpKINode Title="Tables.FindByMapName method" Url="html/M_Gemstone_Data_Tables_FindByMapName.htm" />
+  <HelpKINode Title="Tables.GetEnumerator method" Url="html/M_Gemstone_Data_Tables_GetEnumerator.htm" />
+  <HelpKINode Title="Tables.GetList method" Url="html/M_Gemstone_Data_Tables_GetList.htm" />
+  <HelpKINode Title="Tables.Item property" Url="html/Overload_Gemstone_Data_Tables_Item.htm" />
+  <HelpKINode Title="Tables.Parent property" Url="html/P_Gemstone_Data_Tables_Parent.htm" />
+  <HelpKINode Title="Tables.ReferentialOrderComparer class">
+    <HelpKINode Title="Tables.ReferentialOrderComparer Class" Url="html/T_Gemstone_Data_Tables_ReferentialOrderComparer.htm" />
+    <HelpKINode Title="constructor" Url="html/M_Gemstone_Data_Tables_ReferentialOrderComparer__ctor.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Tables.ReferentialOrderComparer.Compare method" Url="html/M_Gemstone_Data_Tables_ReferentialOrderComparer_Compare.htm" />
+  <HelpKINode Title="Tables.ReferentialOrderComparer.Default field" Url="html/F_Gemstone_Data_Tables_ReferentialOrderComparer_Default.htm" />
+  <HelpKINode Title="Tables.ReferentialOrderComparer.ReferentialOrderComparer constructor" Url="html/M_Gemstone_Data_Tables_ReferentialOrderComparer__ctor.htm" />
+  <HelpKINode Title="Tables.Remove method" Url="html/M_Gemstone_Data_Tables_Remove.htm" />
+  <HelpKINode Title="TableType enumeration" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="TableTypeRestriction property" Url="html/P_Gemstone_Data_Schema_TableTypeRestriction.htm" />
+  <HelpKINode Title="TargetDatabaseType property">
+    <HelpKINode Title="AmendExpressionAttribute.TargetDatabaseType Property " Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_TargetDatabaseType.htm" />
+    <HelpKINode Title="FieldDataTypeAttribute.TargetDatabaseType Property " Url="html/P_Gemstone_Data_Model_FieldDataTypeAttribute_TargetDatabaseType.htm" />
+    <HelpKINode Title="UseEscapedNameAttribute.TargetDatabaseType Property " Url="html/P_Gemstone_Data_Model_UseEscapedNameAttribute_TargetDatabaseType.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TargetExpression enumeration" Url="html/T_Gemstone_Data_Model_TargetExpression.htm" />
+  <HelpKINode Title="TargetExpression property" Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_TargetExpression.htm" />
+  <HelpKINode Title="Timeout property">
+    <HelpKINode Title="BulkDataOperationBase.Timeout Property " Url="html/P_Gemstone_Data_BulkDataOperationBase_Timeout.htm" />
+    <HelpKINode Title="IBulkDataOperation.Timeout Property " Url="html/P_Gemstone_Data_IBulkDataOperation_Timeout.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TimeSpan enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="TinyInt enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="ToDataProviderString method" Url="html/M_Gemstone_Data_AdoDataConnection_ToDataProviderString.htm" />
+  <HelpKINode Title="ToDataTable method">
+    <HelpKINode Title="DataExtensions.ToDataTable Method " Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ToDataTable.htm" />
+    <HelpKINode Title="ITableOperations.ToDataTable Method " Url="html/M_Gemstone_Data_Model_ITableOperations_ToDataTable.htm" />
+    <HelpKINode Title="TableOperations(T).ToDataTable Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_ToDataTable.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ToDelimitedString method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ToDelimitedString.htm" />
+  <HelpKINode Title="ToSchema property">
+    <HelpKINode Title="BulkDataOperationBase.ToSchema Property " Url="html/P_Gemstone_Data_BulkDataOperationBase_ToSchema.htm" />
+    <HelpKINode Title="IBulkDataOperation.ToSchema Property " Url="html/P_Gemstone_Data_IBulkDataOperation_ToSchema.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ToString method" Url="html/M_Gemstone_Data_Table_ToString.htm" />
+  <HelpKINode Title="TryGetFieldAttribute method">
+    <HelpKINode Title="ITableOperations.TryGetFieldAttribute Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_TryGetFieldAttribute.htm" />
+    <HelpKINode Title="TableOperations(T).TryGetFieldAttribute Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_TryGetFieldAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Type property">
+    <HelpKINode Title="Field.Type Property " Url="html/P_Gemstone_Data_Field_Type.htm" />
+    <HelpKINode Title="Table.Type Property " Url="html/P_Gemstone_Data_Table_Type.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TypeRegistry property" Url="html/P_Gemstone_Data_Model_TableOperations_1_TypeRegistry.htm" />
+  <HelpKINode Title="UInt16 enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="UInt32 enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="UInt64 enumeration member" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
+  <HelpKINode Title="Undetermined enumeration member" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="UnescapedTableName property">
+    <HelpKINode Title="ITableOperations.UnescapedTableName Property " Url="html/P_Gemstone_Data_Model_ITableOperations_UnescapedTableName.htm" />
+    <HelpKINode Title="TableOperations(T).UnescapedTableName Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_UnescapedTableName.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Unique property" Url="html/P_Gemstone_Data_Field_Unique.htm" />
+  <HelpKINode Title="UnsignedBigInt enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="UnsignedInt enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="UnsignedSmallInt enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="UnsignedTinyInt enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="Update enumeration member" Url="html/T_Gemstone_Data_Model_StatementTypes.htm" />
+  <HelpKINode Title="UpdateData method" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_UpdateData.htm" />
+  <HelpKINode Title="UpdateRecord enumeration member" Url="html/T_Gemstone_Data_Model_RecordOperation.htm" />
+  <HelpKINode Title="UpdateRecord method">
+    <HelpKINode Title="ITableOperations.UpdateRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_UpdateRecord.htm" />
+    <HelpKINode Title="TableOperations(T).UpdateRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_UpdateRecord.htm" />
+  </HelpKINode>
+  <HelpKINode Title="UpdateRecordWhere method">
+    <HelpKINode Title="ITableOperations.UpdateRecordWhere Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_UpdateRecordWhere.htm" />
+    <HelpKINode Title="TableOperations(T).UpdateRecordWhere Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_UpdateRecordWhere.htm" />
+  </HelpKINode>
+  <HelpKINode Title="UpdateRule property" Url="html/P_Gemstone_Data_ForeignKeyField_UpdateRule.htm" />
+  <HelpKINode Title="UseAnsiQuotes property" Url="html/P_Gemstone_Data_Model_UseEscapedNameAttribute_UseAnsiQuotes.htm" />
+  <HelpKINode Title="UseCaseSensitiveFieldNames property">
+    <HelpKINode Title="ITableOperations.UseCaseSensitiveFieldNames Property " Url="html/P_Gemstone_Data_Model_ITableOperations_UseCaseSensitiveFieldNames.htm" />
+    <HelpKINode Title="TableOperations(T).UseCaseSensitiveFieldNames Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_UseCaseSensitiveFieldNames.htm" />
+  </HelpKINode>
+  <HelpKINode Title="UseEscapedNameAttribute class">
+    <HelpKINode Title="UseEscapedNameAttribute Class" Url="html/T_Gemstone_Data_Model_UseEscapedNameAttribute.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_Gemstone_Data_Model_UseEscapedNameAttribute__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_Model_UseEscapedNameAttribute.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_Model_UseEscapedNameAttribute.htm" />
+  </HelpKINode>
+  <HelpKINode Title="UseEscapedNameAttribute.TargetDatabaseType property" Url="html/P_Gemstone_Data_Model_UseEscapedNameAttribute_TargetDatabaseType.htm" />
+  <HelpKINode Title="UseEscapedNameAttribute.UseAnsiQuotes property" Url="html/P_Gemstone_Data_Model_UseEscapedNameAttribute_UseAnsiQuotes.htm" />
+  <HelpKINode Title="UseEscapedNameAttribute.UseEscapedNameAttribute constructor" Url="html/Overload_Gemstone_Data_Model_UseEscapedNameAttribute__ctor.htm" />
+  <HelpKINode Title="UseFromSchemaReferentialIntegrity property" Url="html/P_Gemstone_Data_BulkDataOperationBase_UseFromSchemaReferentialIntegrity.htm" />
+  <HelpKINode Title="UseFromSchemaRi field" Url="html/F_Gemstone_Data_BulkDataOperationBase_UseFromSchemaRi.htm" />
+  <HelpKINode Title="UsesDefaultSchema method" Url="html/M_Gemstone_Data_Table_UsesDefaultSchema.htm" />
+  <HelpKINode Title="UtcNow property" Url="html/P_Gemstone_Data_AdoDataConnection_UtcNow.htm" />
+  <HelpKINode Title="Value property" Url="html/P_Gemstone_Data_Field_Value.htm" />
+  <HelpKINode Title="VarBinary enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="VarChar enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="Variant enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="VarNumeric enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="VarWChar enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
+  <HelpKINode Title="View enumeration member" Url="html/T_Gemstone_Data_TableType.htm" />
+  <HelpKINode Title="WChar enumeration member" Url="html/T_Gemstone_Data_OleDbType.htm" />
   <HelpKINode Title="welcome">
-    <HelpKINode Title="getting started, root, gemstone" Url="html/gemstone.htm" />
+    <HelpKINode Title="getting started, root, gemstone" Url="html/About.htm" />
+  </HelpKINode>
+  <HelpKINode Title="WorkTables property">
+    <HelpKINode Title="BulkDataOperationBase.WorkTables Property " Url="html/P_Gemstone_Data_BulkDataOperationBase_WorkTables.htm" />
+    <HelpKINode Title="IBulkDataOperation.WorkTables Property " Url="html/P_Gemstone_Data_IBulkDataOperation_WorkTables.htm" />
   </HelpKINode>
 </HelpKI>

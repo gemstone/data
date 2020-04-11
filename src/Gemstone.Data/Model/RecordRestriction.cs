@@ -154,11 +154,14 @@ namespace Gemstone.Data.Model
         /// <returns><c>true</c> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <c>false</c>.</returns>
         public bool Equals(RecordRestriction? other)
         {
+            if (other == null)
+                return false;
+
             if (ReferenceEquals(this, other))
                 return true;
 
-            if (string.Equals(FilterExpression, other?.FilterExpression, StringComparison.Ordinal))
-                return Parameters.CompareTo(other?.Parameters) == 0;
+            if (string.Equals(FilterExpression, other.FilterExpression, StringComparison.Ordinal))
+                return Parameters.CompareTo(other.Parameters) == 0;
 
             return false;
         }

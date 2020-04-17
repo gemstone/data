@@ -48,9 +48,6 @@ using Gemstone.StringExtensions;
 // ReSharper disable NotAccessedField.Local
 // ReSharper disable ArrangeRedundantParentheses
 
-// TODO: This is a temporary workaround as message should not be displayed, see: https://github.com/dotnet/roslyn/issues/35936
-#pragma warning disable IDE0057 // Use range operator
-
 namespace Gemstone.Data.Model
 {
     /// <summary>

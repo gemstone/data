@@ -40,6 +40,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Gemstone.Data.DataExtensions;
+using Gemstone.EventHandlerExtensions;
 using Gemstone.IO;
 using Gemstone.Reflection;
 
@@ -195,7 +196,7 @@ namespace Gemstone.Data
         {
             base.Close();
 
-            Disposed?.Invoke(this, EventArgs.Empty); //-V3083
+            Disposed?.SafeInvoke(this, EventArgs.Empty); //-V3083
         }
 
         /// <summary>
@@ -316,7 +317,7 @@ namespace Gemstone.Data
             {
                 table.Connection.ExecuteNonQuery(deleteSql, Timeout);
 
-                TableCleared?.Invoke(this, new EventArgs<string>(table.Name)); //-V3083
+                TableCleared?.SafeInvoke(this, new EventArgs<string>(table.Name)); //-V3083
 
                 return true;
             }
@@ -995,7 +996,7 @@ namespace Gemstone.Data
             // Close bulk insert file stream
             bulkInsertFileStream.Close();
 
-            BulkInsertExecuting?.Invoke(this, new EventArgs<string>(toTable.Name)); //-V3083
+            BulkInsertExecuting?.SafeInvoke(this, new EventArgs<string>(toTable.Name)); //-V3083
 
             try
             {
@@ -1009,7 +1010,7 @@ namespace Gemstone.Data
             }
             catch (Exception ex)
             {
-                BulkInsertException?.Invoke(this, new EventArgs<string, string, Exception>(toTable.Name, bulkInsertSql, ex)); //-V3083
+                BulkInsertException?.SafeInvoke(this, new EventArgs<string, string, Exception>(toTable.Name, bulkInsertSql, ex)); //-V3083
             }
             finally
             {
@@ -1027,10 +1028,10 @@ namespace Gemstone.Data
             }
             catch (Exception ex)
             {
-                BulkInsertException?.Invoke(this, new EventArgs<string, string, Exception>(toTable.Name, bulkInsertSql, new InvalidOperationException($"Failed to delete temporary bulk insert file \"{bulkInsertFile}\" due to exception [{ex.Message}], file will need to be manually deleted.", ex)));
+                BulkInsertException?.SafeInvoke(this, new EventArgs<string, string, Exception>(toTable.Name, bulkInsertSql, new InvalidOperationException($"Failed to delete temporary bulk insert file \"{bulkInsertFile}\" due to exception [{ex.Message}], file will need to be manually deleted.", ex)));
             }
 
-            BulkInsertCompleted?.Invoke(this, new EventArgs<string, int, int>(toTable.Name, progressIndex, Convert.ToInt32(stopTime - startTime))); //-V3083
+            BulkInsertCompleted?.SafeInvoke(this, new EventArgs<string, int, int>(toTable.Name, progressIndex, Convert.ToInt32(stopTime - startTime))); //-V3083
         }
 
         /// <summary>

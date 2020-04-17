@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Gemstone.EventHandlerExtensions;
 
 #pragma warning disable CA2235
 #pragma warning disable CS8603
@@ -315,7 +316,7 @@ namespace Gemstone.Data
 
             TableCollection.Clear();
 
-            // We preprocess which tables we are going to access for data operation...
+            // We pre-process which tables we are going to access for data operation...
             foreach (Table table in FromSchema.Tables)
             {
                 // Bypass excluded tables
@@ -352,7 +353,7 @@ namespace Gemstone.Data
         /// <param name="totalTables">total table count in data processing</param>
         protected virtual void OnTableProgress(string tableName, bool executed, int currentTable, int totalTables)
         {
-            TableProgressStatus?.Invoke(this, new EventArgs<string, bool, int, int>(tableName, executed, currentTable, totalTables)); //-V3083
+            TableProgressStatus?.SafeInvoke(this, new EventArgs<string, bool, int, int>(tableName, executed, currentTable, totalTables)); //-V3083
         }
 
         /// <summary>
@@ -363,7 +364,7 @@ namespace Gemstone.Data
         /// <param name="totalRows">total rows needs to be process in data processing</param>
         protected virtual void OnRowProgress(string tableName, int currentRow, int totalRows)
         {
-            RowProgressStatus?.Invoke(this, new EventArgs<string, int, int>(tableName, currentRow, totalRows)); //-V3083
+            RowProgressStatus?.SafeInvoke(this, new EventArgs<string, int, int>(tableName, currentRow, totalRows)); //-V3083
         }
 
         /// <summary>
@@ -373,7 +374,7 @@ namespace Gemstone.Data
         /// <param name="total">Total table count in data processing</param>
         protected virtual void OnOverallProgress(int current, int total)
         {
-            OverallProgressStatus?.Invoke(this, new EventArgs<int, int>(current, total)); //-V3083
+            OverallProgressStatus?.SafeInvoke(this, new EventArgs<int, int>(current, total)); //-V3083
         }
 
         /// <summary>
@@ -383,7 +384,7 @@ namespace Gemstone.Data
         /// <param name="ex">exception information</param>
         protected virtual void OnSQLFailure(string sql, Exception ex)
         {
-            SQLFailure?.Invoke(this, new EventArgs<string, Exception>(sql, ex)); //-V3083
+            SQLFailure?.SafeInvoke(this, new EventArgs<string, Exception>(sql, ex)); //-V3083
         }
 
         #endregion

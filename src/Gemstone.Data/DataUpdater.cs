@@ -29,6 +29,7 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Gemstone.Data.DataExtensions;
+using Gemstone.EventHandlerExtensions;
 
 #pragma warning disable CA2235
 #pragma warning disable CS8603
@@ -94,7 +95,7 @@ namespace Gemstone.Data
         {
             base.Close();
 
-            Disposed?.Invoke(this, EventArgs.Empty);
+            Disposed?.SafeInvoke(this, EventArgs.Empty);
         }
 
         /// <summary>

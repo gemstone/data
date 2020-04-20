@@ -796,7 +796,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
         public static DataRow RetrieveRow(this IDbConnection connection, Type dataAdapterType, int timeout, string sql, params object[] parameters)
         {
-            DataTable dataTable = connection.RetrieveData(dataAdapterType, sql, timeout, parameters);
+            DataTable dataTable = connection.RetrieveData(dataAdapterType, timeout,sql, parameters);
 
             if (dataTable.Rows.Count == 0)
                 dataTable.Rows.Add(dataTable.NewRow());
@@ -881,7 +881,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
         public static DataRow RetrieveRow(this IDbCommand command, Type dataAdapterType, int timeout, string sql, params object[] parameters)
         {
-            DataTable dataTable = command.RetrieveData(dataAdapterType, sql, timeout, parameters);
+            DataTable dataTable = command.RetrieveData(dataAdapterType, timeout, sql, parameters);
 
             if (dataTable.Rows.Count == 0)
                 dataTable.Rows.Add(dataTable.NewRow());
@@ -975,7 +975,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>A <see cref="DataTable"/> object.</returns>
         public static DataTable RetrieveData(this IDbConnection connection, Type dataAdapterType, int timeout, string sql, params object[] parameters)
         {
-            return connection.RetrieveDataSet(dataAdapterType, sql, timeout, parameters).Tables[0];
+            return connection.RetrieveDataSet(dataAdapterType, timeout, sql, parameters).Tables[0];
         }
 
         /// <summary>
@@ -1060,7 +1060,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>A <see cref="DataTable"/> object.</returns>
         public static DataTable RetrieveData(this IDbCommand command, Type dataAdapterType, int timeout, string sql, params object[] parameters)
         {
-            return command.RetrieveDataSet(dataAdapterType, sql, timeout, parameters).Tables[0];
+            return command.RetrieveDataSet(dataAdapterType, timeout, sql, parameters).Tables[0];
         }
 
         #endregion

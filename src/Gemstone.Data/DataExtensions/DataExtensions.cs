@@ -173,9 +173,7 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static int ExecuteNonQuery(this SqlConnection connection, int timeout, string sql, params object[] parameters)
         {
-            using SqlCommand command = new SqlCommand(sql, connection);
-
-            command.CommandTimeout = timeout;
+            using SqlCommand command = new SqlCommand(sql, connection) { CommandTimeout = timeout };
             command.PopulateParameters(parameters);
 
             return command.ExecuteNonQuery();
@@ -316,9 +314,7 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static SqlDataReader ExecuteReader(this SqlConnection connection, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
         {
-            using SqlCommand command = new SqlCommand(sql, connection);
-
-            command.CommandTimeout = timeout;
+            using SqlCommand command = new SqlCommand(sql, connection) { CommandTimeout = timeout };
             command.PopulateParameters(parameters);
 
             return command.ExecuteReader(behavior);
@@ -462,9 +458,7 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static object ExecuteScalar(this SqlConnection connection, int timeout, string sql, params object[] parameters)
         {
-            using SqlCommand command = new SqlCommand(sql, connection);
-
-            command.CommandTimeout = timeout;
+            using SqlCommand command = new SqlCommand(sql, connection) { CommandTimeout = timeout };
             command.PopulateParameters(parameters);
 
             return command.ExecuteScalar();
@@ -776,7 +770,7 @@ namespace Gemstone.Data.DataExtensions
         /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
@@ -789,7 +783,7 @@ namespace Gemstone.Data.DataExtensions
         /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
@@ -861,7 +855,7 @@ namespace Gemstone.Data.DataExtensions
         /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
@@ -874,7 +868,7 @@ namespace Gemstone.Data.DataExtensions
         /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
@@ -954,7 +948,7 @@ namespace Gemstone.Data.DataExtensions
         /// of result set, if the result set contains multiple tables.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataTable"/> object.</returns>
@@ -968,7 +962,7 @@ namespace Gemstone.Data.DataExtensions
         /// of result set, if the result set contains multiple tables.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
@@ -1039,7 +1033,7 @@ namespace Gemstone.Data.DataExtensions
         /// of result set, if the result set contains multiple tables.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataTable"/> object.</returns>
@@ -1053,7 +1047,7 @@ namespace Gemstone.Data.DataExtensions
         /// of result set, if the result set contains multiple tables.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
@@ -1121,9 +1115,7 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static DataSet RetrieveDataSet(this SqlConnection connection, int timeout, int startRow, int maxRows, string sql, params object[] parameters)
         {
-            using SqlCommand command = new SqlCommand(sql, connection);
-
-            command.CommandTimeout = timeout;
+            using SqlCommand command = new SqlCommand(sql, connection) { CommandTimeout = timeout };
             command.PopulateParameters(parameters);
             SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
             DataSet data = new DataSet("Temp");
@@ -1137,7 +1129,7 @@ namespace Gemstone.Data.DataExtensions
         /// may contain multiple tables, depending on the SQL statement.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataSet"/> object.</returns>
@@ -1151,7 +1143,7 @@ namespace Gemstone.Data.DataExtensions
         /// may contain multiple tables, depending on the SQL statement.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
@@ -1239,7 +1231,7 @@ namespace Gemstone.Data.DataExtensions
         /// may contain multiple tables, depending on the SQL statement.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataSet"/> object.</returns>
@@ -1253,7 +1245,7 @@ namespace Gemstone.Data.DataExtensions
         /// may contain multiple tables, depending on the SQL statement.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retreieve data.</param>
+        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
@@ -1483,7 +1475,6 @@ namespace Gemstone.Data.DataExtensions
                 if (!IsStoredProcedure(commandText))
                 {
                     command.AddParametersWithValues(commandText, values);
-
                     return;
                 }
 
@@ -1508,11 +1499,9 @@ namespace Gemstone.Data.DataExtensions
                     Array.Resize(ref values, command.Parameters.Count); // Makes the Values array match the Parameters of the Stored Proc.
                 }
 
-                // Assigns the values to the the Parameters.
+                // Assigns the values to the Parameters.
                 for (int i = 0; i < command.Parameters.Count; i++)
-                {
                     ((DbParameter)command.Parameters[i]).Value = values[i];
-                }
             }
         }
 
@@ -1575,9 +1564,7 @@ namespace Gemstone.Data.DataExtensions
             {
                 // Values are already parameters.
                 foreach (object param in values)
-                {
                     command.Parameters.Add(param);
-                }
             }
             else
             {
@@ -1591,7 +1578,7 @@ namespace Gemstone.Data.DataExtensions
                 int i = 0;
 
                 if (tokens.Length != values.Length)
-                    throw new ArgumentException("Number of parameter arguments in sql expression do not match number of supplied values", nameof(values));
+                    throw new ArgumentException("Number of parameter arguments in SQL expression do not match number of supplied values", nameof(values));
 
                 foreach (string token in tokens)
                 {
@@ -1674,7 +1661,7 @@ namespace Gemstone.Data.DataExtensions
             // Regex pattern that will be used to split the delimited data.
             pattern = $"{Regex.Escape(delimiter)}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))";
 
-            // Remove any leading and trailing whitespaces, carriage returns or line feeds.
+            // Remove any leading and trailing whitespace, carriage returns or line feeds.
             delimitedData = delimitedData.Trim().Trim('\r', '\n').Replace("\n", "");
 
             string[] lines = delimitedData.Split('\r'); //Splits delimited data into lines.
@@ -1699,7 +1686,7 @@ namespace Gemstone.Data.DataExtensions
                     table.Columns.Add(new DataColumn());
             }
 
-            // Populates the data table with csv data.
+            // Populates the data table with CSV data.
             for (; cursor < lines.Length; cursor++)
             {
                 // Creates new row.
@@ -1731,35 +1718,35 @@ namespace Gemstone.Data.DataExtensions
         {
             StringBuilder data = new StringBuilder();
 
-            //Uses the column names as the headers if headers are requested.
+            // Uses the column names as the headers if headers are requested.
             if (header)
             {
                 for (int i = 0; i < table.Columns.Count; i++)
                 {
-                    data.Append((quoted ? "\"" : "") + table.Columns[i].ColumnName + (quoted ? "\"" : ""));
+                    data.Append($"{(quoted ? "\"" : "")}{table.Columns[i].ColumnName}{(quoted ? "\"" : "")}");
 
                     if (i < table.Columns.Count - 1)
                         data.Append(delimiter);
                 }
 
-                data.Append("\r\n");
+                data.Append(Environment.NewLine);
             }
 
             for (int i = 0; i < table.Rows.Count; i++)
             {
-                //Converts data table's data to delimited data.
+                // Converts data table's data to delimited data.
                 for (int j = 0; j < table.Columns.Count; j++)
                 {
-                    data.Append((quoted ? "\"" : "") + table.Rows[i][j] + (quoted ? "\"" : ""));
+                    data.Append($"{(quoted ? "\"" : "")}{table.Rows[i][j]}{(quoted ? "\"" : "")}");
 
                     if (j < table.Columns.Count - 1)
                         data.Append(delimiter);
                 }
 
-                data.Append("\r\n");
+                data.Append(Environment.NewLine);
             }
 
-            //Returns the delimited data.
+            // Returns the delimited data.
             return data.ToString();
         }
 

@@ -40,6 +40,8 @@ using Gemstone.EventHandlerExtensions;
 #pragma warning disable CS8618
 #pragma warning disable CS8625
 
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMemberInSuper.Global
 namespace Gemstone.Data
 {
     #region [ IBulkDataOperation ]
@@ -316,7 +318,7 @@ namespace Gemstone.Data
 
             TableCollection.Clear();
 
-            // We pre-process which tables we are going to access for data operation...
+            // We preprocess which tables we are going to access for data operation...
             foreach (Table table in FromSchema.Tables)
             {
                 // Bypass excluded tables

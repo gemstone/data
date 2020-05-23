@@ -37,7 +37,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Gemstone.Data.DataExtensions;
 using Gemstone.EventHandlerExtensions;
@@ -52,6 +51,7 @@ using Gemstone.Reflection;
 #pragma warning disable CS8618
 #pragma warning disable CS8625
 
+// ReSharper disable InconsistentNaming
 namespace Gemstone.Data
 {
     // Note: if you have triggers that insert records into other tables automatically that have defined records to
@@ -222,7 +222,7 @@ namespace Gemstone.Data
             if (ClearDestinationTables)
             {
                 // We do not consider table exclusions when deleting data from destination tables as these may have triggered inserts
-                List<Table> allSourceTables = new List<Table>(FromSchema.Tables.Cast<Table>());
+                List<Table> allSourceTables = new List<Table>(FromSchema.Tables);
 
                 // Clear data in a child to parent direction to help avoid potential constraint issues
                 allSourceTables.Sort((table1, table2) => table1.Priority > table2.Priority ? 1 : table1.Priority < table2.Priority ? -1 : 0);
@@ -373,7 +373,7 @@ namespace Gemstone.Data
             }
             catch (Exception ex)
             {
-                OnSQLFailure(resetAutoIncValueSQL, new InvalidOperationException(string.Format("Failed to reset auto-increment seed for table \"{0}\": {1}", table.Name, ex.Message), ex));
+                OnSQLFailure(resetAutoIncValueSQL, new InvalidOperationException($"Failed to reset auto-increment seed for table \"{table.Name}\": {ex.Message}", ex));
             }
         }
 
@@ -585,7 +585,7 @@ namespace Gemstone.Data
                     }
                     catch (Exception ex)
                     {
-                        OnSQLFailure(setIndentityInsertSQL, new InvalidOperationException(string.Format("Failed to turn off identity inserts on table \"{0}\": {1}", toTable.Name, ex.Message), ex));
+                        OnSQLFailure(setIndentityInsertSQL, new InvalidOperationException($"Failed to turn off identity inserts on table \"{toTable.Name}\": {ex.Message}", ex));
                     }
                 }
 
@@ -1042,18 +1042,15 @@ namespace Gemstone.Data
         /// <param name="value"></param>
         /// <param name="fieldStack"></param>
         /// <returns></returns>
-        internal object DereferenceValue(Table sourceTable, string fieldName, object value, ArrayList fieldStack = null)
+        internal object DereferenceValue(Table sourceTable, string fieldName, object value, ArrayList? fieldStack = null)
         {
-            Field lookupField;
-            object tempValue;
-
             // No need to attempt to deference null value
             if (Convert.IsDBNull(value) || value == null)
                 return value;
 
             // If this field is referenced as a foreign key field by a primary key field that is auto-incremented, we
             // translate the auto-inc value if possible
-            lookupField = sourceTable.Fields[fieldName];
+            Field lookupField = sourceTable.Fields[fieldName];
 
             if (lookupField != null)
             {
@@ -1067,7 +1064,7 @@ namespace Gemstone.Data
                         if (referenceByField.AutoIncrementTranslations == null)
                             return value;
 
-                        tempValue = referenceByField.AutoIncrementTranslations[Convert.ToString(value)];
+                        object tempValue = referenceByField.AutoIncrementTranslations[Convert.ToString(value)];
 
                         return tempValue ?? value;
                     }
@@ -1104,14 +1101,12 @@ namespace Gemstone.Data
 
         private void ParseBulkInsertSettings(out string fieldTerminator, out string rowTerminator)
         {
-            string[] keyValue;
-
             fieldTerminator = "";
             rowTerminator = "";
 
             foreach (string setting in BulkInsertSettings.Split(','))
             {
-                keyValue = setting.Split('=');
+                string[] keyValue = setting.Split('=');
 
                 if (keyValue.Length == 2)
                 {

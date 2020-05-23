@@ -295,7 +295,7 @@ namespace Gemstone.Data
                     if (whereSQL.Length > 0)
                     {
                         // Add where criteria to Sql delete statement
-                        deleteSQL.Append(whereSQL.ToString());
+                        deleteSQL.Append(whereSQL);
 
                         try
                         {

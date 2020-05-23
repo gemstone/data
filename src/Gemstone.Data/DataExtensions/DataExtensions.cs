@@ -78,10 +78,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Data.SqlClient;
 
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedVariable
 namespace Gemstone.Data.DataExtensions
 {
-    // ReSharper disable UnusedVariable
-
     /// <summary>
     /// Defines extension functions related to database and SQL interaction.
     /// </summary>

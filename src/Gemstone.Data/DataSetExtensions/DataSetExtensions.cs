@@ -30,6 +30,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Gemstone.IO;
 
+// ReSharper disable InconsistentNaming
 namespace Gemstone.Data.DataSetExtensions
 {
     /// <summary>

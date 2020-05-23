@@ -39,6 +39,7 @@ using System.Runtime.CompilerServices;
 using Gemstone.Data.DataExtensions;
 using Gemstone.StringExtensions;
 
+// ReSharper disable InconsistentNaming
 namespace Gemstone.Data
 {
     /// <summary>

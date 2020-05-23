@@ -25,11 +25,11 @@ using System;
 using System.Data;
 using System.IO;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Gemstone.Collections.CollectionExtensions;
-using Gemstone.IO;
 using Gemstone.Data.DataSetExtensions;
+using Gemstone.IO;
 using Gemstone.Units;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Random = Gemstone.Security.Cryptography.Random;
 
 namespace Gemstone.Data.UnitTests.DataSetExtensions
@@ -215,7 +215,7 @@ namespace Gemstone.Data.UnitTests.DataSetExtensions
                         {
                             byte[] bytes = sourceRow[j] as byte[];
 
-                            if ((object)bytes != null)
+                            if (bytes != null)
                                 Assert.IsTrue(bytes.CompareTo((byte[])destinationRow[j]) == 0);
                             else
                                 Assert.AreEqual(sourceRow[j], destinationRow[j]);

@@ -47,6 +47,7 @@ using Gemstone.Data.DataExtensions;
 #pragma warning disable CS8618
 #pragma warning disable CS8625
 
+// ReSharper disable InconsistentNaming
 namespace Gemstone.Data
 {
     // James Ritchie Carroll - 2003
@@ -1042,7 +1043,7 @@ namespace Gemstone.Data
         /// <param name="returnAutoInc"></param>
         /// <param name="sqlEscapeFunction"></param>
         /// <returns></returns>
-        public string GetList(bool returnAutoInc = true, Func<string, string> sqlEscapeFunction = null)
+        public string GetList(bool returnAutoInc = true, Func<string, string>? sqlEscapeFunction = null)
         {
             if (sqlEscapeFunction == null)
                 sqlEscapeFunction = Parent.Parent.Parent.SQLEscapeName;
@@ -2055,8 +2056,6 @@ namespace Gemstone.Data
                 // Check to see if user requested to keep connection open, this is just for convience...
                 if (ImmediateClose)
                     Close();
-
-                return;
             }
 
             // If connection is OleDB, attempt to directly infer schema
@@ -2256,15 +2255,15 @@ namespace Gemstone.Data
         //        Close();
         //}
 
-        /// <summary>
-        /// <see cref="IDbConnection"/> state change event will fire if it unexpectedly close connection while processing.
-        /// </summary>
-        private void SchemaConnection_StateChange(object _, StateChangeEventArgs e)
-        {
-            // The connection may have been closed prematurely so we reopen it.
-            if (m_schemaConnection.State == ConnectionState.Closed)
-                m_schemaConnection.Open();
-        }
+        ///// <summary>
+        ///// <see cref="IDbConnection"/> state change event will fire if it unexpectedly close connection while processing.
+        ///// </summary>
+        //private void SchemaConnection_StateChange(object _, StateChangeEventArgs e)
+        //{
+        //    // The connection may have been closed prematurely so we reopen it.
+        //    if (m_schemaConnection.State == ConnectionState.Closed)
+        //        m_schemaConnection.Open();
+        //}
 
         /// <summary>
         /// Close <see cref="IDbConnection"/> 

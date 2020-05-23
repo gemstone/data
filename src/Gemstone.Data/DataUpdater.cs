@@ -307,7 +307,7 @@ namespace Gemstone.Data
                     if (whereSQL.Length > 0)
                     {
                         // Add where criteria to Sql update statement
-                        updateSQL.Append(whereSQL.ToString());
+                        updateSQL.Append(whereSQL);
 
                         try
                         {

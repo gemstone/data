@@ -2,14 +2,14 @@
 <HelpTOC>
 
   <HelpTOCNode Title="About" Url="html/About.htm" />
-  <HelpTOCNode Id="495460aa-ec81-4a71-a316-be8498c46eee" Title="Gemstone.Data" Url="html/N_Gemstone_Data.htm">
-    <HelpTOCNode Id="5bba04e8-99a5-4a74-8b0f-e65e521c94f9" Title="AdoDataConnection Class" Url="html/T_Gemstone_Data_AdoDataConnection.htm">
-      <HelpTOCNode Id="cfb384e7-9fc1-43df-bd43-363bc28ae611" Title="AdoDataConnection Constructor " Url="html/Overload_Gemstone_Data_AdoDataConnection__ctor.htm">
+  <HelpTOCNode Id="afb47c0e-0941-4279-9f86-d9fd00fd90d7" Title="Gemstone.Data" Url="html/N_Gemstone_Data.htm">
+    <HelpTOCNode Id="417867fd-f644-4c5f-868b-a3a66259b16c" Title="AdoDataConnection Class" Url="html/T_Gemstone_Data_AdoDataConnection.htm">
+      <HelpTOCNode Id="a2e58cca-582c-4799-84a8-a139231b2a9e" Title="AdoDataConnection Constructor " Url="html/Overload_Gemstone_Data_AdoDataConnection__ctor.htm">
         <HelpTOCNode Title="AdoDataConnection Constructor (String, String)" Url="html/M_Gemstone_Data_AdoDataConnection__ctor_1.htm" />
         <HelpTOCNode Title="AdoDataConnection Constructor (IDbConnection, Type, Boolean)" Url="html/M_Gemstone_Data_AdoDataConnection__ctor.htm" />
         <HelpTOCNode Title="AdoDataConnection Constructor (String, Type, Type)" Url="html/M_Gemstone_Data_AdoDataConnection__ctor_2.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="72ddc0a0-820a-4ce7-a032-ef3f4bb69975" Title="AdoDataConnection Properties" Url="html/Properties_T_Gemstone_Data_AdoDataConnection.htm">
+      <HelpTOCNode Id="2b94e22a-4b1c-4e1e-b950-a432f6a2a158" Title="AdoDataConnection Properties" Url="html/Properties_T_Gemstone_Data_AdoDataConnection.htm">
         <HelpTOCNode Title="AdapterType Property " Url="html/P_Gemstone_Data_AdoDataConnection_AdapterType.htm" />
         <HelpTOCNode Title="Connection Property " Url="html/P_Gemstone_Data_AdoDataConnection_Connection.htm" />
         <HelpTOCNode Title="DatabaseType Property " Url="html/P_Gemstone_Data_AdoDataConnection_DatabaseType.htm" />
@@ -23,23 +23,23 @@
         <HelpTOCNode Title="IsSQLServer Property " Url="html/P_Gemstone_Data_AdoDataConnection_IsSQLServer.htm" />
         <HelpTOCNode Title="UtcNow Property " Url="html/P_Gemstone_Data_AdoDataConnection_UtcNow.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="6dfc52fa-badd-44c2-8949-a985aa824cb3" Title="AdoDataConnection Methods" Url="html/Methods_T_Gemstone_Data_AdoDataConnection.htm">
+      <HelpTOCNode Id="a299360b-bec3-4b62-962d-38186adb3405" Title="AdoDataConnection Methods" Url="html/Methods_T_Gemstone_Data_AdoDataConnection.htm">
         <HelpTOCNode Title="Bool Method " Url="html/M_Gemstone_Data_AdoDataConnection_Bool.htm" />
-        <HelpTOCNode Id="44b10e88-94ce-4ab4-805b-8e9048fd5091" Title="Dispose Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_Dispose.htm">
+        <HelpTOCNode Id="9c632a13-6540-4880-ad90-bf42f3a41584" Title="Dispose Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_Dispose.htm">
           <HelpTOCNode Title="Dispose Method " Url="html/M_Gemstone_Data_AdoDataConnection_Dispose.htm" />
           <HelpTOCNode Title="Dispose Method (Boolean)" Url="html/M_Gemstone_Data_AdoDataConnection_Dispose_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="EscapeIdentifier Method " Url="html/M_Gemstone_Data_AdoDataConnection_EscapeIdentifier.htm" />
-        <HelpTOCNode Id="de5b22e7-2e80-4905-8893-1cca92ad7745" Title="ExecuteNonQuery Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteNonQuery.htm">
+        <HelpTOCNode Id="0641261c-e381-4b04-90ea-4d2ef60030f0" Title="ExecuteNonQuery Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteNonQuery.htm">
           <HelpTOCNode Title="ExecuteNonQuery Method (String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteNonQuery_1.htm" />
           <HelpTOCNode Title="ExecuteNonQuery Method (Int32, String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteNonQuery.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="cd8eda03-1ea2-4f02-bc6a-e4a9db3a5793" Title="ExecuteReader Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteReader.htm">
+        <HelpTOCNode Id="b5c4160a-7611-46f6-a8b1-0f20c894272b" Title="ExecuteReader Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteReader.htm">
           <HelpTOCNode Title="ExecuteReader Method (String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteReader_2.htm" />
           <HelpTOCNode Title="ExecuteReader Method (Int32, String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteReader_1.htm" />
           <HelpTOCNode Title="ExecuteReader Method (CommandBehavior, Int32, String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteReader.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="46ccd2cb-b073-424e-89c7-f15204c1ded6" Title="ExecuteScalar Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteScalar.htm">
+        <HelpTOCNode Id="830f7430-2b7c-44f9-b56c-5f80a09b1099" Title="ExecuteScalar Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteScalar.htm">
           <HelpTOCNode Title="ExecuteScalar(T) Method (String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteScalar__1_1.htm" />
           <HelpTOCNode Title="ExecuteScalar Method (String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteScalar_1.htm" />
           <HelpTOCNode Title="ExecuteScalar(T) Method (Int32, String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteScalar__1.htm" />
@@ -51,38 +51,38 @@
           <HelpTOCNode Title="ExecuteScalar(T) Method (T, Int32, String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteScalar__1_2.htm" />
           <HelpTOCNode Title="ExecuteScalar Method (Type, Object, Int32, String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteScalar_3.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="900843be-e497-4c19-ba95-f39c44da92a0" Title="ExecuteScript Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteScript.htm">
+        <HelpTOCNode Id="e6eb75dd-f653-440d-854b-35ddacf0484a" Title="ExecuteScript Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_ExecuteScript.htm">
           <HelpTOCNode Title="ExecuteScript Method (TextReader)" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteScript.htm" />
           <HelpTOCNode Title="ExecuteScript Method (String)" Url="html/M_Gemstone_Data_AdoDataConnection_ExecuteScript_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Finalize Method " Url="html/M_Gemstone_Data_AdoDataConnection_Finalize.htm" />
-        <HelpTOCNode Id="2f97c1ec-c088-4561-a06a-f1b0d929865d" Title="Guid Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_Guid.htm">
+        <HelpTOCNode Id="97b7df10-5294-4efc-820d-4510a090423c" Title="Guid Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_Guid.htm">
           <HelpTOCNode Title="Guid Method (Guid)" Url="html/M_Gemstone_Data_AdoDataConnection_Guid_1.htm" />
           <HelpTOCNode Title="Guid Method (DataRow, String)" Url="html/M_Gemstone_Data_AdoDataConnection_Guid.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="ParameterizedQueryString Method " Url="html/M_Gemstone_Data_AdoDataConnection_ParameterizedQueryString.htm" />
-        <HelpTOCNode Id="1dc37902-abfc-4bda-84c6-9d11869a07e2" Title="RetrieveData Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveData.htm">
+        <HelpTOCNode Id="8dcd9f60-fca1-4fb1-b90f-a638bb576a49" Title="RetrieveData Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveData.htm">
           <HelpTOCNode Title="RetrieveData Method (String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_RetrieveData_1.htm" />
           <HelpTOCNode Title="RetrieveData Method (Int32, String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_RetrieveData.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="564b114e-204b-4647-99c3-9320f0718c47" Title="RetrieveDataSet Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveDataSet.htm">
+        <HelpTOCNode Id="90dff6f0-7f3c-49d0-b30d-9ba4b5d2a31a" Title="RetrieveDataSet Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveDataSet.htm">
           <HelpTOCNode Title="RetrieveDataSet Method (String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_RetrieveDataSet_1.htm" />
           <HelpTOCNode Title="RetrieveDataSet Method (Int32, String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_RetrieveDataSet.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="8861045b-d292-4833-aec1-9337a5854caf" Title="RetrieveRow Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveRow.htm">
+        <HelpTOCNode Id="281ff118-258a-4fc8-b296-f2aa4f239e48" Title="RetrieveRow Method " Url="html/Overload_Gemstone_Data_AdoDataConnection_RetrieveRow.htm">
           <HelpTOCNode Title="RetrieveRow Method (String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_RetrieveRow_1.htm" />
           <HelpTOCNode Title="RetrieveRow Method (Int32, String, Object[])" Url="html/M_Gemstone_Data_AdoDataConnection_RetrieveRow.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="ToDataProviderString Method " Url="html/M_Gemstone_Data_AdoDataConnection_ToDataProviderString.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="b8946469-fd02-4a3f-9df1-18b3bf5f27a3" Title="BulkDataOperationBase Class" Url="html/T_Gemstone_Data_BulkDataOperationBase.htm">
-      <HelpTOCNode Id="8f712c0c-50f2-4d2a-81de-8a463ca4655e" Title="BulkDataOperationBase Constructor " Url="html/Overload_Gemstone_Data_BulkDataOperationBase__ctor.htm">
+    <HelpTOCNode Id="760b5fd1-4c57-4e66-8d36-6b02baf7bf6e" Title="BulkDataOperationBase Class" Url="html/T_Gemstone_Data_BulkDataOperationBase.htm">
+      <HelpTOCNode Id="d565e155-2065-4122-a15f-424381255f7e" Title="BulkDataOperationBase Constructor " Url="html/Overload_Gemstone_Data_BulkDataOperationBase__ctor.htm">
         <HelpTOCNode Title="BulkDataOperationBase Constructor " Url="html/M_Gemstone_Data_BulkDataOperationBase__ctor.htm" />
         <HelpTOCNode Title="BulkDataOperationBase Constructor (String, String)" Url="html/M_Gemstone_Data_BulkDataOperationBase__ctor_2.htm" />
         <HelpTOCNode Title="BulkDataOperationBase Constructor (Schema, Schema)" Url="html/M_Gemstone_Data_BulkDataOperationBase__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="4f7ed5a8-752a-40f5-9bf8-0d1f85e97cf7" Title="BulkDataOperationBase Properties" Url="html/Properties_T_Gemstone_Data_BulkDataOperationBase.htm">
+      <HelpTOCNode Id="78353c33-b1cd-43de-a3f3-8712d6aeb907" Title="BulkDataOperationBase Properties" Url="html/Properties_T_Gemstone_Data_BulkDataOperationBase.htm">
         <HelpTOCNode Title="ExcludedTables Property " Url="html/P_Gemstone_Data_BulkDataOperationBase_ExcludedTables.htm" />
         <HelpTOCNode Title="FromSchema Property " Url="html/P_Gemstone_Data_BulkDataOperationBase_FromSchema.htm" />
         <HelpTOCNode Title="RowReportInterval Property " Url="html/P_Gemstone_Data_BulkDataOperationBase_RowReportInterval.htm" />
@@ -91,7 +91,7 @@
         <HelpTOCNode Title="UseFromSchemaReferentialIntegrity Property " Url="html/P_Gemstone_Data_BulkDataOperationBase_UseFromSchemaReferentialIntegrity.htm" />
         <HelpTOCNode Title="WorkTables Property " Url="html/P_Gemstone_Data_BulkDataOperationBase_WorkTables.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="0b0b196f-8108-4b37-8c77-7d67a8c32ad2" Title="BulkDataOperationBase Methods" Url="html/Methods_T_Gemstone_Data_BulkDataOperationBase.htm">
+      <HelpTOCNode Id="1e27b4f7-ad1e-4e7d-a1d4-5fc6b2ab69b8" Title="BulkDataOperationBase Methods" Url="html/Methods_T_Gemstone_Data_BulkDataOperationBase.htm">
         <HelpTOCNode Title="Analyze Method " Url="html/M_Gemstone_Data_BulkDataOperationBase_Analyze.htm" />
         <HelpTOCNode Title="Close Method " Url="html/M_Gemstone_Data_BulkDataOperationBase_Close.htm" />
         <HelpTOCNode Title="Dispose Method " Url="html/M_Gemstone_Data_BulkDataOperationBase_Dispose.htm" />
@@ -101,13 +101,13 @@
         <HelpTOCNode Title="OnSQLFailure Method " Url="html/M_Gemstone_Data_BulkDataOperationBase_OnSQLFailure.htm" />
         <HelpTOCNode Title="OnTableProgress Method " Url="html/M_Gemstone_Data_BulkDataOperationBase_OnTableProgress.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="66d144fe-f5ff-4f26-bf12-0fca4c72e5df" Title="BulkDataOperationBase Events" Url="html/Events_T_Gemstone_Data_BulkDataOperationBase.htm">
+      <HelpTOCNode Id="48c135b5-8afb-40b1-aeec-52c20576e9c7" Title="BulkDataOperationBase Events" Url="html/Events_T_Gemstone_Data_BulkDataOperationBase.htm">
         <HelpTOCNode Title="OverallProgressStatus Event" Url="html/E_Gemstone_Data_BulkDataOperationBase_OverallProgressStatus.htm" />
         <HelpTOCNode Title="RowProgressStatus Event" Url="html/E_Gemstone_Data_BulkDataOperationBase_RowProgressStatus.htm" />
         <HelpTOCNode Title="SQLFailure Event" Url="html/E_Gemstone_Data_BulkDataOperationBase_SQLFailure.htm" />
         <HelpTOCNode Title="TableProgressStatus Event" Url="html/E_Gemstone_Data_BulkDataOperationBase_TableProgressStatus.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="8a4d85bb-b255-4b1c-a9ac-5fbaf5fd704f" Title="BulkDataOperationBase Fields" Url="html/Fields_T_Gemstone_Data_BulkDataOperationBase.htm">
+      <HelpTOCNode Id="8cc03368-a59c-41b2-a049-30cd6c6c4cec" Title="BulkDataOperationBase Fields" Url="html/Fields_T_Gemstone_Data_BulkDataOperationBase.htm">
         <HelpTOCNode Title="OverallProgress Field" Url="html/F_Gemstone_Data_BulkDataOperationBase_OverallProgress.htm" />
         <HelpTOCNode Title="OverallTotal Field" Url="html/F_Gemstone_Data_BulkDataOperationBase_OverallTotal.htm" />
         <HelpTOCNode Title="TableCollection Field" Url="html/F_Gemstone_Data_BulkDataOperationBase_TableCollection.htm" />
@@ -115,29 +115,29 @@
       </HelpTOCNode>
     </HelpTOCNode>
     <HelpTOCNode Title="DatabaseType Enumeration" Url="html/T_Gemstone_Data_DatabaseType.htm" />
-    <HelpTOCNode Id="909f24e4-9ec8-430c-9276-a06f10a4e956" Title="DataDeleter Class" Url="html/T_Gemstone_Data_DataDeleter.htm">
-      <HelpTOCNode Id="cc4fb4bd-44e1-4ffa-8f31-d2acbac36353" Title="DataDeleter Constructor " Url="html/Overload_Gemstone_Data_DataDeleter__ctor.htm">
+    <HelpTOCNode Id="a9f3c031-e978-4c0c-b38d-0aacdc8f7583" Title="DataDeleter Class" Url="html/T_Gemstone_Data_DataDeleter.htm">
+      <HelpTOCNode Id="1b5c4039-241e-482d-9548-7c2e1050b464" Title="DataDeleter Constructor " Url="html/Overload_Gemstone_Data_DataDeleter__ctor.htm">
         <HelpTOCNode Title="DataDeleter Constructor " Url="html/M_Gemstone_Data_DataDeleter__ctor.htm" />
         <HelpTOCNode Title="DataDeleter Constructor (String, String)" Url="html/M_Gemstone_Data_DataDeleter__ctor_2.htm" />
         <HelpTOCNode Title="DataDeleter Constructor (Schema, Schema)" Url="html/M_Gemstone_Data_DataDeleter__ctor_1.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="DataDeleter Properties" Url="html/Properties_T_Gemstone_Data_DataDeleter.htm" />
-      <HelpTOCNode Id="afa04c51-e71a-4ce3-81e8-07f01d780470" Title="DataDeleter Methods" Url="html/Methods_T_Gemstone_Data_DataDeleter.htm">
+      <HelpTOCNode Id="a1178f57-93ba-45b5-9035-6499f4341bda" Title="DataDeleter Methods" Url="html/Methods_T_Gemstone_Data_DataDeleter.htm">
         <HelpTOCNode Title="Close Method " Url="html/M_Gemstone_Data_DataDeleter_Close.htm" />
         <HelpTOCNode Title="Execute Method " Url="html/M_Gemstone_Data_DataDeleter_Execute.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="25ddfd43-f462-41b1-b8aa-cdb597a9ebcb" Title="DataDeleter Events" Url="html/Events_T_Gemstone_Data_DataDeleter.htm">
+      <HelpTOCNode Id="be026727-adda-41e9-a0b3-cc4126f4f9cf" Title="DataDeleter Events" Url="html/Events_T_Gemstone_Data_DataDeleter.htm">
         <HelpTOCNode Title="Disposed Event" Url="html/E_Gemstone_Data_DataDeleter_Disposed.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="DataDeleter Fields" Url="html/Fields_T_Gemstone_Data_DataDeleter.htm" />
     </HelpTOCNode>
-    <HelpTOCNode Id="9e6885d8-7067-4111-9c11-eaed805880b6" Title="DataInserter Class" Url="html/T_Gemstone_Data_DataInserter.htm">
-      <HelpTOCNode Id="26bece00-1c45-4ffc-a6eb-aac0f25b2ed4" Title="DataInserter Constructor " Url="html/Overload_Gemstone_Data_DataInserter__ctor.htm">
+    <HelpTOCNode Id="fc3edb9b-023a-4f1f-aace-ae1790d8f8af" Title="DataInserter Class" Url="html/T_Gemstone_Data_DataInserter.htm">
+      <HelpTOCNode Id="c4c352d2-2308-449f-8c87-34a5edc0c12f" Title="DataInserter Constructor " Url="html/Overload_Gemstone_Data_DataInserter__ctor.htm">
         <HelpTOCNode Title="DataInserter Constructor " Url="html/M_Gemstone_Data_DataInserter__ctor.htm" />
         <HelpTOCNode Title="DataInserter Constructor (String, String)" Url="html/M_Gemstone_Data_DataInserter__ctor_2.htm" />
         <HelpTOCNode Title="DataInserter Constructor (Schema, Schema)" Url="html/M_Gemstone_Data_DataInserter__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="6e88b99f-8756-4c88-967f-909fc0691c67" Title="DataInserter Properties" Url="html/Properties_T_Gemstone_Data_DataInserter.htm">
+      <HelpTOCNode Id="ba6878b3-ac0c-4cd0-9e2c-c9f8a8f5e73d" Title="DataInserter Properties" Url="html/Properties_T_Gemstone_Data_DataInserter.htm">
         <HelpTOCNode Title="AttemptBulkInsert Property " Url="html/P_Gemstone_Data_DataInserter_AttemptBulkInsert.htm" />
         <HelpTOCNode Title="AttemptTruncateTable Property " Url="html/P_Gemstone_Data_DataInserter_AttemptTruncateTable.htm" />
         <HelpTOCNode Title="BulkInsertEncoding Property " Url="html/P_Gemstone_Data_DataInserter_BulkInsertEncoding.htm" />
@@ -149,11 +149,11 @@
         <HelpTOCNode Title="ForceTruncateTable Property " Url="html/P_Gemstone_Data_DataInserter_ForceTruncateTable.htm" />
         <HelpTOCNode Title="PreserveAutoIncValues Property " Url="html/P_Gemstone_Data_DataInserter_PreserveAutoIncValues.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="6e9d3abe-def5-43ce-ab91-f81ea06a56f5" Title="DataInserter Methods" Url="html/Methods_T_Gemstone_Data_DataInserter.htm">
+      <HelpTOCNode Id="0701cba1-58a7-4dd2-8b42-4bdb319d53f6" Title="DataInserter Methods" Url="html/Methods_T_Gemstone_Data_DataInserter.htm">
         <HelpTOCNode Title="Close Method " Url="html/M_Gemstone_Data_DataInserter_Close.htm" />
         <HelpTOCNode Title="Execute Method " Url="html/M_Gemstone_Data_DataInserter_Execute.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="33622c32-4e06-4c50-a0a5-2ad51aeb30ee" Title="DataInserter Events" Url="html/Events_T_Gemstone_Data_DataInserter.htm">
+      <HelpTOCNode Id="1269ca3b-cabd-4597-9028-488cce296683" Title="DataInserter Events" Url="html/Events_T_Gemstone_Data_DataInserter.htm">
         <HelpTOCNode Title="BulkInsertCompleted Event" Url="html/E_Gemstone_Data_DataInserter_BulkInsertCompleted.htm" />
         <HelpTOCNode Title="BulkInsertException Event" Url="html/E_Gemstone_Data_DataInserter_BulkInsertException.htm" />
         <HelpTOCNode Title="BulkInsertExecuting Event" Url="html/E_Gemstone_Data_DataInserter_BulkInsertExecuting.htm" />
@@ -162,38 +162,38 @@
       </HelpTOCNode>
       <HelpTOCNode Title="DataInserter Fields" Url="html/Fields_T_Gemstone_Data_DataInserter.htm" />
     </HelpTOCNode>
-    <HelpTOCNode Id="ac720875-d3d9-49b7-9dbc-b308645700fd" Title="DataSetEqualityComparer Class" Url="html/T_Gemstone_Data_DataSetEqualityComparer.htm">
-      <HelpTOCNode Id="0f5081de-4643-4b29-bd62-204911959022" Title="DataSetEqualityComparer Methods" Url="html/Methods_T_Gemstone_Data_DataSetEqualityComparer.htm">
-        <HelpTOCNode Id="0648e691-aaa1-49ae-ab51-0ca2969807ce" Title="Equals Method " Url="html/Overload_Gemstone_Data_DataSetEqualityComparer_Equals.htm">
+    <HelpTOCNode Id="17d8c2f6-a59d-4ea2-8a39-f3e7c39c816c" Title="DataSetEqualityComparer Class" Url="html/T_Gemstone_Data_DataSetEqualityComparer.htm">
+      <HelpTOCNode Id="d46047f5-f859-4f90-945f-2fad57dcaff3" Title="DataSetEqualityComparer Methods" Url="html/Methods_T_Gemstone_Data_DataSetEqualityComparer.htm">
+        <HelpTOCNode Id="1fbb48c6-d222-498b-ae1f-d16564e671af" Title="Equals Method " Url="html/Overload_Gemstone_Data_DataSetEqualityComparer_Equals.htm">
           <HelpTOCNode Title="Equals Method (DataSet, DataSet)" Url="html/M_Gemstone_Data_DataSetEqualityComparer_Equals.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="b7c08742-adbb-43b1-bdd8-e46d6b3781fc" Title="GetHashCode Method " Url="html/Overload_Gemstone_Data_DataSetEqualityComparer_GetHashCode.htm">
+        <HelpTOCNode Id="603194b5-999b-48d1-b052-c622be5b7224" Title="GetHashCode Method " Url="html/Overload_Gemstone_Data_DataSetEqualityComparer_GetHashCode.htm">
           <HelpTOCNode Title="GetHashCode Method (DataSet)" Url="html/M_Gemstone_Data_DataSetEqualityComparer_GetHashCode.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="d30778cf-1b57-40d8-b3ff-d70b2ab2accf" Title="DataSetEqualityComparer Fields" Url="html/Fields_T_Gemstone_Data_DataSetEqualityComparer.htm">
+      <HelpTOCNode Id="3592dad0-eed9-4d25-b958-eb04e7298b80" Title="DataSetEqualityComparer Fields" Url="html/Fields_T_Gemstone_Data_DataSetEqualityComparer.htm">
         <HelpTOCNode Title="Default Field" Url="html/F_Gemstone_Data_DataSetEqualityComparer_Default.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="44d375a4-6ff5-4038-9589-926c1c3f3604" Title="DataUpdater Class" Url="html/T_Gemstone_Data_DataUpdater.htm">
-      <HelpTOCNode Id="ff259daa-84cb-4122-873f-536d8ff551ff" Title="DataUpdater Constructor " Url="html/Overload_Gemstone_Data_DataUpdater__ctor.htm">
+    <HelpTOCNode Id="7fb7d7f8-7436-4743-9de5-d78d78a49360" Title="DataUpdater Class" Url="html/T_Gemstone_Data_DataUpdater.htm">
+      <HelpTOCNode Id="5783f398-70e6-4669-bb92-cb0f867cc0ef" Title="DataUpdater Constructor " Url="html/Overload_Gemstone_Data_DataUpdater__ctor.htm">
         <HelpTOCNode Title="DataUpdater Constructor " Url="html/M_Gemstone_Data_DataUpdater__ctor.htm" />
         <HelpTOCNode Title="DataUpdater Constructor (String, String)" Url="html/M_Gemstone_Data_DataUpdater__ctor_2.htm" />
         <HelpTOCNode Title="DataUpdater Constructor (Schema, Schema)" Url="html/M_Gemstone_Data_DataUpdater__ctor_1.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="DataUpdater Properties" Url="html/Properties_T_Gemstone_Data_DataUpdater.htm" />
-      <HelpTOCNode Id="76231270-3443-48d2-8227-411086d665b0" Title="DataUpdater Methods" Url="html/Methods_T_Gemstone_Data_DataUpdater.htm">
+      <HelpTOCNode Id="46f18404-f98c-4eae-a6aa-e50c89b18ae2" Title="DataUpdater Methods" Url="html/Methods_T_Gemstone_Data_DataUpdater.htm">
         <HelpTOCNode Title="Close Method " Url="html/M_Gemstone_Data_DataUpdater_Close.htm" />
         <HelpTOCNode Title="Execute Method " Url="html/M_Gemstone_Data_DataUpdater_Execute.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="83fd1c71-38d7-455e-b2bb-36961cc84152" Title="DataUpdater Events" Url="html/Events_T_Gemstone_Data_DataUpdater.htm">
+      <HelpTOCNode Id="2a6a70e5-9373-4c6a-b029-6a68dc3522ff" Title="DataUpdater Events" Url="html/Events_T_Gemstone_Data_DataUpdater.htm">
         <HelpTOCNode Title="Disposed Event" Url="html/E_Gemstone_Data_DataUpdater_Disposed.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="DataUpdater Fields" Url="html/Fields_T_Gemstone_Data_DataUpdater.htm" />
     </HelpTOCNode>
-    <HelpTOCNode Id="083425b4-87d6-4efc-9424-4be440a272d1" Title="Field Class" Url="html/T_Gemstone_Data_Field.htm">
+    <HelpTOCNode Id="637bc626-6e31-48c3-b106-fac77a6f51a8" Title="Field Class" Url="html/T_Gemstone_Data_Field.htm">
       <HelpTOCNode Title="Field Constructor " Url="html/M_Gemstone_Data_Field__ctor.htm" />
-      <HelpTOCNode Id="1f61af0b-51c0-4d22-8247-d6520d605fc7" Title="Field Properties" Url="html/Properties_T_Gemstone_Data_Field.htm">
+      <HelpTOCNode Id="a9bc21ab-38ad-42c4-a5ba-d278ec258277" Title="Field Properties" Url="html/Properties_T_Gemstone_Data_Field.htm">
         <HelpTOCNode Title="AllowsNulls Property " Url="html/P_Gemstone_Data_Field_AllowsNulls.htm" />
         <HelpTOCNode Title="AutoIncrement Property " Url="html/P_Gemstone_Data_Field_AutoIncrement.htm" />
         <HelpTOCNode Title="AutoIncrementSeed Property " Url="html/P_Gemstone_Data_Field_AutoIncrementSeed.htm" />
@@ -223,20 +223,20 @@
         <HelpTOCNode Title="Unique Property " Url="html/P_Gemstone_Data_Field_Unique.htm" />
         <HelpTOCNode Title="Value Property " Url="html/P_Gemstone_Data_Field_Value.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="e8bfd253-b71c-49f4-b765-9fd6d5f6eefb" Title="Field Methods" Url="html/Methods_T_Gemstone_Data_Field.htm">
+      <HelpTOCNode Id="028e10a7-ee01-462e-8c98-97628a055bdb" Title="Field Methods" Url="html/Methods_T_Gemstone_Data_Field.htm">
         <HelpTOCNode Title="CompareTo Method " Url="html/M_Gemstone_Data_Field_CompareTo.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="949c93b6-3ef1-4ebc-9f11-a435b53dfed8" Title="Fields Class" Url="html/T_Gemstone_Data_Fields.htm">
-      <HelpTOCNode Id="ce259e01-3b66-45a3-bc7b-d3e610d13b9e" Title="Fields Properties" Url="html/Properties_T_Gemstone_Data_Fields.htm">
+    <HelpTOCNode Id="8476f525-18f5-4fb9-9edc-b38530e5fef5" Title="Fields Class" Url="html/T_Gemstone_Data_Fields.htm">
+      <HelpTOCNode Id="99e2b049-8402-4f05-b9ec-9ddb5989318a" Title="Fields Properties" Url="html/Properties_T_Gemstone_Data_Fields.htm">
         <HelpTOCNode Title="Count Property " Url="html/P_Gemstone_Data_Fields_Count.htm" />
-        <HelpTOCNode Id="41fe3470-771d-43ef-a256-8efb9fa04a48" Title="Item Property " Url="html/Overload_Gemstone_Data_Fields_Item.htm">
+        <HelpTOCNode Id="5842fdd4-6239-46d7-a56c-3264c3f49828" Title="Item Property " Url="html/Overload_Gemstone_Data_Fields_Item.htm">
           <HelpTOCNode Title="Item Property (Int32)" Url="html/P_Gemstone_Data_Fields_Item.htm" />
           <HelpTOCNode Title="Item Property (String)" Url="html/P_Gemstone_Data_Fields_Item_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Parent Property " Url="html/P_Gemstone_Data_Fields_Parent.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="66a2a565-d84b-4f05-b64f-f3f1f9e854ed" Title="Fields Methods" Url="html/Methods_T_Gemstone_Data_Fields.htm">
+      <HelpTOCNode Id="b6298128-bef0-43dd-aecd-260bf982f5c8" Title="Fields Methods" Url="html/Methods_T_Gemstone_Data_Fields.htm">
         <HelpTOCNode Title="Add Method " Url="html/M_Gemstone_Data_Fields_Add.htm" />
         <HelpTOCNode Title="Clear Method " Url="html/M_Gemstone_Data_Fields_Clear.htm" />
         <HelpTOCNode Title="GetEnumerator Method " Url="html/M_Gemstone_Data_Fields_GetEnumerator.htm" />
@@ -244,8 +244,8 @@
         <HelpTOCNode Title="Remove Method " Url="html/M_Gemstone_Data_Fields_Remove.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="7dff2184-d9e3-4d37-b6c1-2f471d368350" Title="ForeignKeyField Class" Url="html/T_Gemstone_Data_ForeignKeyField.htm">
-      <HelpTOCNode Id="44ee38f0-5725-4293-9e4e-774bcea3a4fc" Title="ForeignKeyField Properties" Url="html/Properties_T_Gemstone_Data_ForeignKeyField.htm">
+    <HelpTOCNode Id="72813031-a049-4d05-b661-437fb7718736" Title="ForeignKeyField Class" Url="html/T_Gemstone_Data_ForeignKeyField.htm">
+      <HelpTOCNode Id="d96b7251-f21f-48d0-ba40-486888b71976" Title="ForeignKeyField Properties" Url="html/Properties_T_Gemstone_Data_ForeignKeyField.htm">
         <HelpTOCNode Title="DeleteRule Property " Url="html/P_Gemstone_Data_ForeignKeyField_DeleteRule.htm" />
         <HelpTOCNode Title="ForeignKey Property " Url="html/P_Gemstone_Data_ForeignKeyField_ForeignKey.htm" />
         <HelpTOCNode Title="KeyName Property " Url="html/P_Gemstone_Data_ForeignKeyField_KeyName.htm" />
@@ -256,33 +256,33 @@
       </HelpTOCNode>
       <HelpTOCNode Title="ForeignKeyField Methods" Url="html/Methods_T_Gemstone_Data_ForeignKeyField.htm" />
     </HelpTOCNode>
-    <HelpTOCNode Id="ffd28d79-aeb3-4c63-acea-46396e649243" Title="ForeignKeyFields Class" Url="html/T_Gemstone_Data_ForeignKeyFields.htm">
-      <HelpTOCNode Id="787ed271-44f8-435e-a3eb-c29dd08b451d" Title="ForeignKeyFields Properties" Url="html/Properties_T_Gemstone_Data_ForeignKeyFields.htm">
+    <HelpTOCNode Id="2b0bf97b-4f5f-4500-ab22-dbb2b4dce789" Title="ForeignKeyFields Class" Url="html/T_Gemstone_Data_ForeignKeyFields.htm">
+      <HelpTOCNode Id="39abca94-1b4f-4b14-bf66-dc6795f3b8d7" Title="ForeignKeyFields Properties" Url="html/Properties_T_Gemstone_Data_ForeignKeyFields.htm">
         <HelpTOCNode Title="Count Property " Url="html/P_Gemstone_Data_ForeignKeyFields_Count.htm" />
-        <HelpTOCNode Id="9b500a24-7193-431e-8d2b-ea0d1269f917" Title="Item Property " Url="html/Overload_Gemstone_Data_ForeignKeyFields_Item.htm">
+        <HelpTOCNode Id="cac9d2e0-c4ca-4625-a759-99507c76b51c" Title="Item Property " Url="html/Overload_Gemstone_Data_ForeignKeyFields_Item.htm">
           <HelpTOCNode Title="Item Property (Int32)" Url="html/P_Gemstone_Data_ForeignKeyFields_Item.htm" />
           <HelpTOCNode Title="Item Property (String)" Url="html/P_Gemstone_Data_ForeignKeyFields_Item_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Parent Property " Url="html/P_Gemstone_Data_ForeignKeyFields_Parent.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="a3d6b193-942a-450d-8a3b-304a299a6f66" Title="ForeignKeyFields Methods" Url="html/Methods_T_Gemstone_Data_ForeignKeyFields.htm">
+      <HelpTOCNode Id="c4b6593c-b98f-496d-9940-fc0e639f93d6" Title="ForeignKeyFields Methods" Url="html/Methods_T_Gemstone_Data_ForeignKeyFields.htm">
         <HelpTOCNode Title="GetEnumerator Method " Url="html/M_Gemstone_Data_ForeignKeyFields_GetEnumerator.htm" />
         <HelpTOCNode Title="GetList Method " Url="html/M_Gemstone_Data_ForeignKeyFields_GetList.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="837e8624-007a-4072-8f8e-169425ead6f9" Title="IBulkDataOperation Interface" Url="html/T_Gemstone_Data_IBulkDataOperation.htm">
-      <HelpTOCNode Id="29b2164c-5996-4dba-a175-84fd782d9cb2" Title="IBulkDataOperation Properties" Url="html/Properties_T_Gemstone_Data_IBulkDataOperation.htm">
+    <HelpTOCNode Id="0ac30126-43ba-4e59-81cf-1a0faeb274c7" Title="IBulkDataOperation Interface" Url="html/T_Gemstone_Data_IBulkDataOperation.htm">
+      <HelpTOCNode Id="564658c2-b8eb-4606-9f65-84f665b388d5" Title="IBulkDataOperation Properties" Url="html/Properties_T_Gemstone_Data_IBulkDataOperation.htm">
         <HelpTOCNode Title="FromSchema Property " Url="html/P_Gemstone_Data_IBulkDataOperation_FromSchema.htm" />
         <HelpTOCNode Title="RowReportInterval Property " Url="html/P_Gemstone_Data_IBulkDataOperation_RowReportInterval.htm" />
         <HelpTOCNode Title="Timeout Property " Url="html/P_Gemstone_Data_IBulkDataOperation_Timeout.htm" />
         <HelpTOCNode Title="ToSchema Property " Url="html/P_Gemstone_Data_IBulkDataOperation_ToSchema.htm" />
         <HelpTOCNode Title="WorkTables Property " Url="html/P_Gemstone_Data_IBulkDataOperation_WorkTables.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="dd04eb69-bcae-42d0-b8a3-fcd4fea31822" Title="IBulkDataOperation Methods" Url="html/Methods_T_Gemstone_Data_IBulkDataOperation.htm">
+      <HelpTOCNode Id="271b01d6-37d5-4d0a-a1c1-d872ced799d3" Title="IBulkDataOperation Methods" Url="html/Methods_T_Gemstone_Data_IBulkDataOperation.htm">
         <HelpTOCNode Title="Close Method " Url="html/M_Gemstone_Data_IBulkDataOperation_Close.htm" />
         <HelpTOCNode Title="Execute Method " Url="html/M_Gemstone_Data_IBulkDataOperation_Execute.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="6db5af01-5dbe-4c2a-8550-5a6a1e51e5c7" Title="IBulkDataOperation Events" Url="html/Events_T_Gemstone_Data_IBulkDataOperation.htm">
+      <HelpTOCNode Id="b86001c3-34f3-41e9-a7ce-c46393aff9cf" Title="IBulkDataOperation Events" Url="html/Events_T_Gemstone_Data_IBulkDataOperation.htm">
         <HelpTOCNode Title="OverallProgressStatus Event" Url="html/E_Gemstone_Data_IBulkDataOperation_OverallProgressStatus.htm" />
         <HelpTOCNode Title="RowProgressStatus Event" Url="html/E_Gemstone_Data_IBulkDataOperation_RowProgressStatus.htm" />
         <HelpTOCNode Title="SQLFailure Event" Url="html/E_Gemstone_Data_IBulkDataOperation_SQLFailure.htm" />
@@ -291,12 +291,12 @@
     </HelpTOCNode>
     <HelpTOCNode Title="OleDbType Enumeration" Url="html/T_Gemstone_Data_OleDbType.htm" />
     <HelpTOCNode Title="ReferentialAction Enumeration" Url="html/T_Gemstone_Data_ReferentialAction.htm" />
-    <HelpTOCNode Id="7ff62403-b67d-424a-a145-c1b99044944a" Title="Schema Class" Url="html/T_Gemstone_Data_Schema.htm">
-      <HelpTOCNode Id="ae272c6c-36c1-4685-b13f-5246613745bb" Title="Schema Constructor " Url="html/Overload_Gemstone_Data_Schema__ctor.htm">
+    <HelpTOCNode Id="6a82d3d4-a7bd-44b9-898f-150112d01f1d" Title="Schema Class" Url="html/T_Gemstone_Data_Schema.htm">
+      <HelpTOCNode Id="4ae39d09-790e-46c4-b3a9-5b1305c4195b" Title="Schema Constructor " Url="html/Overload_Gemstone_Data_Schema__ctor.htm">
         <HelpTOCNode Title="Schema Constructor " Url="html/M_Gemstone_Data_Schema__ctor.htm" />
         <HelpTOCNode Title="Schema Constructor (String, TableType, Boolean, Boolean)" Url="html/M_Gemstone_Data_Schema__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="7daca5f0-e565-472b-be49-aa633e1de6a7" Title="Schema Properties" Url="html/Properties_T_Gemstone_Data_Schema.htm">
+      <HelpTOCNode Id="be6db6d1-db91-4beb-8007-f95ccdefa4f8" Title="Schema Properties" Url="html/Properties_T_Gemstone_Data_Schema.htm">
         <HelpTOCNode Title="AllowNumericNulls Property " Url="html/P_Gemstone_Data_Schema_AllowNumericNulls.htm" />
         <HelpTOCNode Title="AllowTextNulls Property " Url="html/P_Gemstone_Data_Schema_AllowTextNulls.htm" />
         <HelpTOCNode Title="Connection Property " Url="html/P_Gemstone_Data_Schema_Connection.htm" />
@@ -306,26 +306,26 @@
         <HelpTOCNode Title="Tables Property " Url="html/P_Gemstone_Data_Schema_Tables.htm" />
         <HelpTOCNode Title="TableTypeRestriction Property " Url="html/P_Gemstone_Data_Schema_TableTypeRestriction.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="babf3d31-0336-439b-bd85-94e2c21b8ea7" Title="Schema Methods" Url="html/Methods_T_Gemstone_Data_Schema.htm">
+      <HelpTOCNode Id="ddb18a77-c3f8-4986-af83-2fdf5b9a830c" Title="Schema Methods" Url="html/Methods_T_Gemstone_Data_Schema.htm">
         <HelpTOCNode Title="Analyze Method " Url="html/M_Gemstone_Data_Schema_Analyze.htm" />
         <HelpTOCNode Title="Close Method " Url="html/M_Gemstone_Data_Schema_Close.htm" />
-        <HelpTOCNode Id="6221331e-cf92-402b-be4e-43a728c18c6f" Title="OpenConnection Method " Url="html/Overload_Gemstone_Data_Schema_OpenConnection.htm">
+        <HelpTOCNode Id="1261bbac-fb28-4bf9-b44f-b33eddc2a4b5" Title="OpenConnection Method " Url="html/Overload_Gemstone_Data_Schema_OpenConnection.htm">
           <HelpTOCNode Title="OpenConnection Method (String)" Url="html/M_Gemstone_Data_Schema_OpenConnection.htm" />
           <HelpTOCNode Title="OpenConnection Method (String, DatabaseType, Schema, Boolean)" Url="html/M_Gemstone_Data_Schema_OpenConnection_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="SQLEscapeName Method " Url="html/M_Gemstone_Data_Schema_SQLEscapeName.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="5db70a2f-be27-49a7-a32d-b2ee2cae5fe7" Title="Schema Fields" Url="html/Fields_T_Gemstone_Data_Schema.htm">
+      <HelpTOCNode Id="8385f188-4423-4b7f-8d6f-a8077bc2bccf" Title="Schema Fields" Url="html/Fields_T_Gemstone_Data_Schema.htm">
         <HelpTOCNode Title="NoRestriction Field" Url="html/F_Gemstone_Data_Schema_NoRestriction.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="9f69b6e6-e48b-4ebc-ab15-77fa2f33d0e6" Title="Table Class" Url="html/T_Gemstone_Data_Table.htm">
-      <HelpTOCNode Id="ef7f2037-6fc0-40dd-bc2e-e2bc1b45ce58" Title="Table Constructor " Url="html/Overload_Gemstone_Data_Table__ctor.htm">
+    <HelpTOCNode Id="d449ae29-ff25-47a0-9f78-e8b84b942953" Title="Table Class" Url="html/T_Gemstone_Data_Table.htm">
+      <HelpTOCNode Id="71b4b1f6-687a-46e4-bc51-4f2f0400bc41" Title="Table Constructor " Url="html/Overload_Gemstone_Data_Table__ctor.htm">
         <HelpTOCNode Title="Table Constructor " Url="html/M_Gemstone_Data_Table__ctor.htm" />
         <HelpTOCNode Title="Table Constructor (String)" Url="html/M_Gemstone_Data_Table__ctor_1.htm" />
         <HelpTOCNode Title="Table Constructor (String, String, String, String, String, Int32)" Url="html/M_Gemstone_Data_Table__ctor_2.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="3367a0ae-6d33-4503-b345-b47f207758a7" Title="Table Properties" Url="html/Properties_T_Gemstone_Data_Table.htm">
+      <HelpTOCNode Id="56547b32-0d7c-4722-86d8-a11627bb6e68" Title="Table Properties" Url="html/Properties_T_Gemstone_Data_Table.htm">
         <HelpTOCNode Title="AutoIncField Property " Url="html/P_Gemstone_Data_Table_AutoIncField.htm" />
         <HelpTOCNode Title="Catalog Property " Url="html/P_Gemstone_Data_Table_Catalog.htm" />
         <HelpTOCNode Title="Connection Property " Url="html/P_Gemstone_Data_Table_Connection.htm" />
@@ -351,9 +351,9 @@
         <HelpTOCNode Title="SQLEscapedName Property " Url="html/P_Gemstone_Data_Table_SQLEscapedName.htm" />
         <HelpTOCNode Title="Type Property " Url="html/P_Gemstone_Data_Table_Type.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="656b627f-43ac-4aa8-81e4-f2aabb7199b4" Title="Table Methods" Url="html/Methods_T_Gemstone_Data_Table.htm">
+      <HelpTOCNode Id="1da6ba2f-d7cf-40a0-aa86-9ef96474f4a0" Title="Table Methods" Url="html/Methods_T_Gemstone_Data_Table.htm">
         <HelpTOCNode Title="CalculateRowCount Method " Url="html/M_Gemstone_Data_Table_CalculateRowCount.htm" />
-        <HelpTOCNode Id="4004ba46-819d-4d06-92bb-79e18d059d3c" Title="CompareTo Method " Url="html/Overload_Gemstone_Data_Table_CompareTo.htm">
+        <HelpTOCNode Id="a774790a-2774-44fa-86f5-a9fc4590d3f3" Title="CompareTo Method " Url="html/Overload_Gemstone_Data_Table_CompareTo.htm">
           <HelpTOCNode Title="CompareTo Method (Object)" Url="html/M_Gemstone_Data_Table_CompareTo_1.htm" />
           <HelpTOCNode Title="CompareTo Method (Table)" Url="html/M_Gemstone_Data_Table_CompareTo.htm" />
         </HelpTOCNode>
@@ -366,16 +366,16 @@
         <HelpTOCNode Title="UsesDefaultSchema Method " Url="html/M_Gemstone_Data_Table_UsesDefaultSchema.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="52c653b6-d3eb-4b36-b928-8e7ea6084df2" Title="Tables Class" Url="html/T_Gemstone_Data_Tables.htm">
-      <HelpTOCNode Id="9d0001f9-245f-4a0f-b858-99e0d4f6b768" Title="Tables Properties" Url="html/Properties_T_Gemstone_Data_Tables.htm">
+    <HelpTOCNode Id="93bf5e62-849f-400f-b876-5c60148a7d36" Title="Tables Class" Url="html/T_Gemstone_Data_Tables.htm">
+      <HelpTOCNode Id="cd01d71c-79cc-49ee-b9a8-16d67102795a" Title="Tables Properties" Url="html/Properties_T_Gemstone_Data_Tables.htm">
         <HelpTOCNode Title="Count Property " Url="html/P_Gemstone_Data_Tables_Count.htm" />
-        <HelpTOCNode Id="90c6cc04-100e-4ead-87b7-34b71d8546bd" Title="Item Property " Url="html/Overload_Gemstone_Data_Tables_Item.htm">
+        <HelpTOCNode Id="afbf075e-d084-4ae5-8dac-83427e83929e" Title="Item Property " Url="html/Overload_Gemstone_Data_Tables_Item.htm">
           <HelpTOCNode Title="Item Property (Int32)" Url="html/P_Gemstone_Data_Tables_Item.htm" />
           <HelpTOCNode Title="Item Property (String)" Url="html/P_Gemstone_Data_Tables_Item_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Parent Property " Url="html/P_Gemstone_Data_Tables_Parent.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="fad40d97-f90a-45ec-92f4-139317636bbc" Title="Tables Methods" Url="html/Methods_T_Gemstone_Data_Tables.htm">
+      <HelpTOCNode Id="ec296ff6-5887-4335-8c7a-61729b26130a" Title="Tables Methods" Url="html/Methods_T_Gemstone_Data_Tables.htm">
         <HelpTOCNode Title="Add Method " Url="html/M_Gemstone_Data_Tables_Add.htm" />
         <HelpTOCNode Title="Clear Method " Url="html/M_Gemstone_Data_Tables_Clear.htm" />
         <HelpTOCNode Title="FindByMapName Method " Url="html/M_Gemstone_Data_Tables_FindByMapName.htm" />
@@ -384,23 +384,23 @@
         <HelpTOCNode Title="Remove Method " Url="html/M_Gemstone_Data_Tables_Remove.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="f60ec16f-58a3-4913-ba56-f8d105d51a26" Title="Tables.ReferentialOrderComparer Class" Url="html/T_Gemstone_Data_Tables_ReferentialOrderComparer.htm">
+    <HelpTOCNode Id="dac8da5c-e3d3-4c25-bb96-96f22fbf9e14" Title="Tables.ReferentialOrderComparer Class" Url="html/T_Gemstone_Data_Tables_ReferentialOrderComparer.htm">
       <HelpTOCNode Title="Tables.ReferentialOrderComparer Constructor " Url="html/M_Gemstone_Data_Tables_ReferentialOrderComparer__ctor.htm" />
-      <HelpTOCNode Id="acb61456-2b3b-4721-8d49-6a7c60057257" Title="ReferentialOrderComparer Methods" Url="html/Methods_T_Gemstone_Data_Tables_ReferentialOrderComparer.htm">
+      <HelpTOCNode Id="11eff9de-634e-40fa-adbb-90b4810f5e53" Title="ReferentialOrderComparer Methods" Url="html/Methods_T_Gemstone_Data_Tables_ReferentialOrderComparer.htm">
         <HelpTOCNode Title="Compare Method " Url="html/M_Gemstone_Data_Tables_ReferentialOrderComparer_Compare.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="adcc6b1e-9d9b-4062-b461-babd2667bad3" Title="ReferentialOrderComparer Fields" Url="html/Fields_T_Gemstone_Data_Tables_ReferentialOrderComparer.htm">
+      <HelpTOCNode Id="d9c3bcdb-8664-4d01-a66b-577da1f270b8" Title="ReferentialOrderComparer Fields" Url="html/Fields_T_Gemstone_Data_Tables_ReferentialOrderComparer.htm">
         <HelpTOCNode Title="Default Field" Url="html/F_Gemstone_Data_Tables_ReferentialOrderComparer_Default.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
     <HelpTOCNode Title="TableType Enumeration" Url="html/T_Gemstone_Data_TableType.htm" />
   </HelpTOCNode>
-  <HelpTOCNode Id="8e7d84e8-c187-4f81-8ff7-3c31890b6591" Title="Gemstone.Data.DataExtensions" Url="html/N_Gemstone_Data_DataExtensions.htm">
-    <HelpTOCNode Id="db7d0043-e029-4644-9967-de3772c62340" Title="DataExtensions Class" Url="html/T_Gemstone_Data_DataExtensions_DataExtensions.htm">
-      <HelpTOCNode Id="f838c376-720c-4780-95d1-b4837ec48ac1" Title="DataExtensions Methods" Url="html/Methods_T_Gemstone_Data_DataExtensions_DataExtensions.htm">
+  <HelpTOCNode Id="e07ba943-0611-49df-b342-b24041629dd0" Title="Gemstone.Data.DataExtensions" Url="html/N_Gemstone_Data_DataExtensions.htm">
+    <HelpTOCNode Id="b2d1bf71-641b-40e8-a9db-8ff3dc3c6261" Title="DataExtensions Class" Url="html/T_Gemstone_Data_DataExtensions_DataExtensions.htm">
+      <HelpTOCNode Id="de36a285-fab2-4ad4-a8cf-ced6deebab54" Title="DataExtensions Methods" Url="html/Methods_T_Gemstone_Data_DataExtensions_DataExtensions.htm">
         <HelpTOCNode Title="AddParametersWithValues Method " Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_AddParametersWithValues.htm" />
         <HelpTOCNode Title="AddParameterWithValue Method " Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_AddParameterWithValue.htm" />
-        <HelpTOCNode Id="3405ba5c-3da9-423f-aa88-b92801470df5" Title="ConvertField Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ConvertField.htm">
+        <HelpTOCNode Id="6b7382df-d7f5-428b-9e15-701a6842d629" Title="ConvertField Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ConvertField.htm">
           <HelpTOCNode Title="ConvertField(T) Method (DataRow, String)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ConvertField__1.htm" />
           <HelpTOCNode Title="ConvertField Method (DataRow, String, Type)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ConvertField.htm" />
           <HelpTOCNode Title="ConvertField(T) Method (DataRow, String, T)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ConvertField__1_1.htm" />
@@ -409,11 +409,11 @@
         <HelpTOCNode Title="ConvertGuidField Method " Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ConvertGuidField.htm" />
         <HelpTOCNode Title="ConvertNullableField(T) Method " Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ConvertNullableField__1.htm" />
         <HelpTOCNode Title="CreateParameterizedCommand Method " Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_CreateParameterizedCommand.htm" />
-        <HelpTOCNode Id="8a2a7cbc-baf4-4c2c-817a-9a19fa578ba2" Title="ExecuteMySQLScript Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteMySQLScript.htm">
+        <HelpTOCNode Id="a9842660-d107-48f4-af0c-a1f5260e61fd" Title="ExecuteMySQLScript Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteMySQLScript.htm">
           <HelpTOCNode Title="ExecuteMySQLScript Method (IDbConnection, TextReader)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteMySQLScript.htm" />
           <HelpTOCNode Title="ExecuteMySQLScript Method (IDbConnection, String)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteMySQLScript_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="8a4dce07-6b98-4cfa-96ec-b2fb7f5fe238" Title="ExecuteNonQuery Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteNonQuery.htm">
+        <HelpTOCNode Id="06a69bfc-55ce-4fd0-af3b-448a29467e8f" Title="ExecuteNonQuery Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteNonQuery.htm">
           <HelpTOCNode Title="ExecuteNonQuery Method (SqlCommand, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteNonQuery_1.htm" />
           <HelpTOCNode Title="ExecuteNonQuery Method (SqlConnection, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteNonQuery_3.htm" />
           <HelpTOCNode Title="ExecuteNonQuery Method (IDbCommand, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteNonQuery_5.htm" />
@@ -423,11 +423,11 @@
           <HelpTOCNode Title="ExecuteNonQuery Method (IDbCommand, Int32, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteNonQuery_4.htm" />
           <HelpTOCNode Title="ExecuteNonQuery(TConnection) Method (TConnection, Int32, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteNonQuery__1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="aa39fc77-9c07-46dc-9cf1-b22b5c855177" Title="ExecuteOracleScript Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteOracleScript.htm">
+        <HelpTOCNode Id="4009eabd-8c6f-4b79-9b36-b439788e9860" Title="ExecuteOracleScript Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteOracleScript.htm">
           <HelpTOCNode Title="ExecuteOracleScript Method (IDbConnection, TextReader)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteOracleScript.htm" />
           <HelpTOCNode Title="ExecuteOracleScript Method (IDbConnection, String)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteOracleScript_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="5f80bfaf-be85-4a12-87c0-47e2960c6080" Title="ExecuteReader Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteReader.htm">
+        <HelpTOCNode Id="2e59369a-e1b5-46e0-9a0f-89afee10d0be" Title="ExecuteReader Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteReader.htm">
           <HelpTOCNode Title="ExecuteReader Method (SqlCommand, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteReader_1.htm" />
           <HelpTOCNode Title="ExecuteReader Method (SqlConnection, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteReader_3.htm" />
           <HelpTOCNode Title="ExecuteReader Method (IDbCommand, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteReader_6.htm" />
@@ -439,7 +439,7 @@
           <HelpTOCNode Title="ExecuteReader Method (IDbCommand, Int32, String, CommandBehavior, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteReader_4.htm" />
           <HelpTOCNode Title="ExecuteReader(TConnection) Method (TConnection, Int32, String, CommandBehavior, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteReader__1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="3b751454-6297-464e-8f34-f77fd43f8d73" Title="ExecuteScalar Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteScalar.htm">
+        <HelpTOCNode Id="2980a63c-224c-4a6f-b686-636eed37f75b" Title="ExecuteScalar Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteScalar.htm">
           <HelpTOCNode Title="ExecuteScalar Method (SqlCommand, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteScalar_1.htm" />
           <HelpTOCNode Title="ExecuteScalar Method (SqlConnection, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteScalar_3.htm" />
           <HelpTOCNode Title="ExecuteScalar Method (IDbCommand, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteScalar_5.htm" />
@@ -449,17 +449,17 @@
           <HelpTOCNode Title="ExecuteScalar Method (IDbCommand, Int32, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteScalar_4.htm" />
           <HelpTOCNode Title="ExecuteScalar(TConnection) Method (TConnection, Int32, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteScalar__1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="aaf75e91-829e-45ce-b5c3-d9f3a0817340" Title="ExecuteTSQLScript Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteTSQLScript.htm">
+        <HelpTOCNode Id="edd759de-ec44-46e1-9bcf-829a3709a455" Title="ExecuteTSQLScript Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_ExecuteTSQLScript.htm">
           <HelpTOCNode Title="ExecuteTSQLScript Method (IDbConnection, TextReader)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteTSQLScript.htm" />
           <HelpTOCNode Title="ExecuteTSQLScript Method (IDbConnection, String)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ExecuteTSQLScript_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="NullAsDBNull Method " Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_NullAsDBNull.htm" />
-        <HelpTOCNode Id="c4c0483e-819a-4352-91bc-9516f61550ca" Title="PopulateParameters Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_PopulateParameters.htm">
+        <HelpTOCNode Id="c25bdd88-90cf-4e0a-bf44-4f1903202f36" Title="PopulateParameters Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_PopulateParameters.htm">
           <HelpTOCNode Title="PopulateParameters Method (SqlCommand, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_PopulateParameters_1.htm" />
           <HelpTOCNode Title="PopulateParameters Method (SqlCommand, Object, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_PopulateParameters.htm" />
           <HelpTOCNode Title="PopulateParameters(TDbCommand) Method (TDbCommand, Action(TDbCommand), Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_PopulateParameters__1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="1cee48b6-7ce1-40fd-bb22-f1fb8f0a6d8c" Title="RetrieveData Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveData.htm">
+        <HelpTOCNode Id="60f7dea3-250a-472b-aba0-032f87c81fef" Title="RetrieveData Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveData.htm">
           <HelpTOCNode Title="RetrieveData Method (SqlCommand, String)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveData_2.htm" />
           <HelpTOCNode Title="RetrieveData Method (SqlConnection, String)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveData_6.htm" />
           <HelpTOCNode Title="RetrieveData Method (SqlCommand, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveData_3.htm" />
@@ -473,7 +473,7 @@
           <HelpTOCNode Title="RetrieveData Method (SqlCommand, Int32, Int32, Int32, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveData_1.htm" />
           <HelpTOCNode Title="RetrieveData Method (SqlConnection, Int32, Int32, Int32, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveData_5.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="f7e3209d-c53e-4cfe-bcd7-a86a4e6e3bbc" Title="RetrieveDataSet Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveDataSet.htm">
+        <HelpTOCNode Id="73fd36da-f1f2-48c5-85b0-4e64a36ecdd4" Title="RetrieveDataSet Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveDataSet.htm">
           <HelpTOCNode Title="RetrieveDataSet Method (SqlCommand, String)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveDataSet_2.htm" />
           <HelpTOCNode Title="RetrieveDataSet Method (SqlConnection, String)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveDataSet_6.htm" />
           <HelpTOCNode Title="RetrieveDataSet Method (SqlCommand, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveDataSet_3.htm" />
@@ -487,7 +487,7 @@
           <HelpTOCNode Title="RetrieveDataSet Method (SqlCommand, Int32, Int32, Int32, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveDataSet_1.htm" />
           <HelpTOCNode Title="RetrieveDataSet Method (SqlConnection, Int32, Int32, Int32, String, Object[])" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveDataSet_5.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="af087bcd-647c-4c61-914e-0c22fb288074" Title="RetrieveRow Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveRow.htm">
+        <HelpTOCNode Id="51fba753-4269-40dc-b502-4298113dfa08" Title="RetrieveRow Method " Url="html/Overload_Gemstone_Data_DataExtensions_DataExtensions_RetrieveRow.htm">
           <HelpTOCNode Title="RetrieveRow Method (SqlCommand, String)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveRow_2.htm" />
           <HelpTOCNode Title="RetrieveRow Method (SqlConnection, String)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveRow_6.htm" />
           <HelpTOCNode Title="RetrieveRow Method (SqlCommand, Int32, String)" Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_RetrieveRow.htm" />
@@ -506,14 +506,14 @@
         <HelpTOCNode Title="ToDelimitedString Method " Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_ToDelimitedString.htm" />
         <HelpTOCNode Title="UpdateData Method " Url="html/M_Gemstone_Data_DataExtensions_DataExtensions_UpdateData.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="7238dce1-0bfb-4cea-ab75-9c63dc8b3e72" Title="DataExtensions Fields" Url="html/Fields_T_Gemstone_Data_DataExtensions_DataExtensions.htm">
+      <HelpTOCNode Id="800a62e4-c862-46f3-b543-315e3c45f34b" Title="DataExtensions Fields" Url="html/Fields_T_Gemstone_Data_DataExtensions_DataExtensions.htm">
         <HelpTOCNode Title="DefaultTimeoutDuration Field" Url="html/F_Gemstone_Data_DataExtensions_DataExtensions_DefaultTimeoutDuration.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
   </HelpTOCNode>
-  <HelpTOCNode Id="6cbe0660-dc29-409b-b2db-ac940048dc54" Title="Gemstone.Data.DataSetExtensions" Url="html/N_Gemstone_Data_DataSetExtensions.htm">
-    <HelpTOCNode Id="e277b9f7-264d-4f17-a7aa-3f502073dba2" Title="DataSetExtensions Class" Url="html/T_Gemstone_Data_DataSetExtensions_DataSetExtensions.htm">
-      <HelpTOCNode Id="68559f25-90fd-47d4-a6dd-02e5f4487641" Title="DataSetExtensions Methods" Url="html/Methods_T_Gemstone_Data_DataSetExtensions_DataSetExtensions.htm">
+  <HelpTOCNode Id="f9810d0d-1258-4328-bdff-a313d281633d" Title="Gemstone.Data.DataSetExtensions" Url="html/N_Gemstone_Data_DataSetExtensions.htm">
+    <HelpTOCNode Id="c61b3593-c5c5-4ef3-85df-9d281902e01a" Title="DataSetExtensions Class" Url="html/T_Gemstone_Data_DataSetExtensions_DataSetExtensions.htm">
+      <HelpTOCNode Id="8537b3f8-4e1a-4434-9641-d9988fad65c2" Title="DataSetExtensions Methods" Url="html/Methods_T_Gemstone_Data_DataSetExtensions_DataSetExtensions.htm">
         <HelpTOCNode Title="DeriveColumnType Method " Url="html/M_Gemstone_Data_DataSetExtensions_DataSetExtensions_DeriveColumnType.htm" />
         <HelpTOCNode Title="DeserializeToDataSet Method " Url="html/M_Gemstone_Data_DataSetExtensions_DataSetExtensions_DeserializeToDataSet.htm" />
         <HelpTOCNode Title="GetDataType Method " Url="html/M_Gemstone_Data_DataSetExtensions_DataSetExtensions_GetDataType.htm" />
@@ -522,14 +522,14 @@
     </HelpTOCNode>
     <HelpTOCNode Title="DataType Enumeration" Url="html/T_Gemstone_Data_DataSetExtensions_DataType.htm" />
   </HelpTOCNode>
-  <HelpTOCNode Id="25f1ac55-ba0c-41b5-a1b8-a98c2bfe2467" Title="Gemstone.Data.Model" Url="html/N_Gemstone_Data_Model.htm">
+  <HelpTOCNode Id="ed470c15-8311-4001-befc-71143f9834ec" Title="Gemstone.Data.Model" Url="html/N_Gemstone_Data_Model.htm">
     <HelpTOCNode Title="AffixPosition Enumeration" Url="html/T_Gemstone_Data_Model_AffixPosition.htm" />
-    <HelpTOCNode Id="8c02fb1f-9ef0-4c9d-a06f-4f1e2a76386b" Title="AmendExpressionAttribute Class" Url="html/T_Gemstone_Data_Model_AmendExpressionAttribute.htm">
-      <HelpTOCNode Id="67e4cb9e-e210-4cba-9a48-442b9a368853" Title="AmendExpressionAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_AmendExpressionAttribute__ctor.htm">
+    <HelpTOCNode Id="da6c84f3-4868-4f62-a87a-82119e209652" Title="AmendExpressionAttribute Class" Url="html/T_Gemstone_Data_Model_AmendExpressionAttribute.htm">
+      <HelpTOCNode Id="4f821f2d-7af2-401f-945f-079b660b45dc" Title="AmendExpressionAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_AmendExpressionAttribute__ctor.htm">
         <HelpTOCNode Title="AmendExpressionAttribute Constructor (String)" Url="html/M_Gemstone_Data_Model_AmendExpressionAttribute__ctor.htm" />
         <HelpTOCNode Title="AmendExpressionAttribute Constructor (String, DatabaseType)" Url="html/M_Gemstone_Data_Model_AmendExpressionAttribute__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="127dd588-057c-4f6c-980e-9514664e43fc" Title="AmendExpressionAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_AmendExpressionAttribute.htm">
+      <HelpTOCNode Id="c0f0d4e0-b65e-442b-bc57-104a5cd29f06" Title="AmendExpressionAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_AmendExpressionAttribute.htm">
         <HelpTOCNode Title="AffixPosition Property " Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_AffixPosition.htm" />
         <HelpTOCNode Title="AmendmentText Property " Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_AmendmentText.htm" />
         <HelpTOCNode Title="StatementTypes Property " Url="html/P_Gemstone_Data_Model_AmendExpressionAttribute_StatementTypes.htm" />
@@ -538,39 +538,39 @@
       </HelpTOCNode>
       <HelpTOCNode Title="AmendExpressionAttribute Methods" Url="html/Methods_T_Gemstone_Data_Model_AmendExpressionAttribute.htm" />
     </HelpTOCNode>
-    <HelpTOCNode Id="43aa4b61-bfa2-459b-a461-bb49c9539347" Title="EncryptDataAttribute Class" Url="html/T_Gemstone_Data_Model_EncryptDataAttribute.htm">
-      <HelpTOCNode Id="78e19d16-26c6-48b8-9675-ed64f0132d2c" Title="EncryptDataAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_EncryptDataAttribute__ctor.htm">
+    <HelpTOCNode Id="9956ca34-8ae1-43e8-aa62-618ccd042907" Title="EncryptDataAttribute Class" Url="html/T_Gemstone_Data_Model_EncryptDataAttribute.htm">
+      <HelpTOCNode Id="83f1d4cc-c3ce-403b-acd9-0b9862e2608e" Title="EncryptDataAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_EncryptDataAttribute__ctor.htm">
         <HelpTOCNode Title="EncryptDataAttribute Constructor " Url="html/M_Gemstone_Data_Model_EncryptDataAttribute__ctor.htm" />
         <HelpTOCNode Title="EncryptDataAttribute Constructor (String)" Url="html/M_Gemstone_Data_Model_EncryptDataAttribute__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="ef97e741-59ce-4175-86fa-e1aeda92cd62" Title="EncryptDataAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_EncryptDataAttribute.htm">
+      <HelpTOCNode Id="d4ef843e-f31a-4b9c-aa88-e6b866ab44f0" Title="EncryptDataAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_EncryptDataAttribute.htm">
         <HelpTOCNode Title="KeyReference Property " Url="html/P_Gemstone_Data_Model_EncryptDataAttribute_KeyReference.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="EncryptDataAttribute Methods" Url="html/Methods_T_Gemstone_Data_Model_EncryptDataAttribute.htm" />
-      <HelpTOCNode Id="c54eac20-ebad-4a92-9558-5c928c23af42" Title="EncryptDataAttribute Fields" Url="html/Fields_T_Gemstone_Data_Model_EncryptDataAttribute.htm">
+      <HelpTOCNode Id="ee3d45b3-bb1e-4a74-a875-ec4ca0f24f5a" Title="EncryptDataAttribute Fields" Url="html/Fields_T_Gemstone_Data_Model_EncryptDataAttribute.htm">
         <HelpTOCNode Title="DefaultKeyReference Field" Url="html/F_Gemstone_Data_Model_EncryptDataAttribute_DefaultKeyReference.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="f92fc03c-3e33-42cf-9a52-cc54e2563265" Title="FieldDataTypeAttribute Class" Url="html/T_Gemstone_Data_Model_FieldDataTypeAttribute.htm">
-      <HelpTOCNode Id="4663f543-2fc1-48af-bc80-10e63d7ea040" Title="FieldDataTypeAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_FieldDataTypeAttribute__ctor.htm">
+    <HelpTOCNode Id="54042d38-195d-4cf3-931b-fad282f6bebe" Title="FieldDataTypeAttribute Class" Url="html/T_Gemstone_Data_Model_FieldDataTypeAttribute.htm">
+      <HelpTOCNode Id="fd087820-1c86-4bbd-a430-44d7832b4a3b" Title="FieldDataTypeAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_FieldDataTypeAttribute__ctor.htm">
         <HelpTOCNode Title="FieldDataTypeAttribute Constructor (DbType)" Url="html/M_Gemstone_Data_Model_FieldDataTypeAttribute__ctor.htm" />
         <HelpTOCNode Title="FieldDataTypeAttribute Constructor (DbType, DatabaseType)" Url="html/M_Gemstone_Data_Model_FieldDataTypeAttribute__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="1663627e-7203-4860-b476-cd1da9f6c4a6" Title="FieldDataTypeAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_FieldDataTypeAttribute.htm">
+      <HelpTOCNode Id="1c4e4e82-6f0b-45df-9039-6ca445eede9c" Title="FieldDataTypeAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_FieldDataTypeAttribute.htm">
         <HelpTOCNode Title="FieldDataType Property " Url="html/P_Gemstone_Data_Model_FieldDataTypeAttribute_FieldDataType.htm" />
         <HelpTOCNode Title="TargetDatabaseType Property " Url="html/P_Gemstone_Data_Model_FieldDataTypeAttribute_TargetDatabaseType.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="FieldDataTypeAttribute Methods" Url="html/Methods_T_Gemstone_Data_Model_FieldDataTypeAttribute.htm" />
     </HelpTOCNode>
-    <HelpTOCNode Id="b852f3a0-e9ca-4259-b9c8-92e94fcaf90f" Title="FieldNameAttribute Class" Url="html/T_Gemstone_Data_Model_FieldNameAttribute.htm">
+    <HelpTOCNode Id="049ed0c3-7129-4401-919c-5c10c8dfb904" Title="FieldNameAttribute Class" Url="html/T_Gemstone_Data_Model_FieldNameAttribute.htm">
       <HelpTOCNode Title="FieldNameAttribute Constructor " Url="html/M_Gemstone_Data_Model_FieldNameAttribute__ctor.htm" />
-      <HelpTOCNode Id="91efd5be-1418-4877-a94c-4cb5525cef02" Title="FieldNameAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_FieldNameAttribute.htm">
+      <HelpTOCNode Id="bba50f2c-558c-4887-b411-ce9a7cf60015" Title="FieldNameAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_FieldNameAttribute.htm">
         <HelpTOCNode Title="FieldName Property " Url="html/P_Gemstone_Data_Model_FieldNameAttribute_FieldName.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="FieldNameAttribute Methods" Url="html/Methods_T_Gemstone_Data_Model_FieldNameAttribute.htm" />
     </HelpTOCNode>
-    <HelpTOCNode Id="40113105-c72d-4022-934c-fe97dda7c142" Title="ITableOperations Interface" Url="html/T_Gemstone_Data_Model_ITableOperations.htm">
-      <HelpTOCNode Id="169738a5-1f20-4b43-bd41-31eeeb5588b0" Title="ITableOperations Properties" Url="html/Properties_T_Gemstone_Data_Model_ITableOperations.htm">
+    <HelpTOCNode Id="77ca085a-3f5b-4f58-98de-c1b5d375f9e7" Title="ITableOperations Interface" Url="html/T_Gemstone_Data_Model_ITableOperations.htm">
+      <HelpTOCNode Id="fea07a67-336b-4e58-91c0-2c176b84ac34" Title="ITableOperations Properties" Url="html/Properties_T_Gemstone_Data_Model_ITableOperations.htm">
         <HelpTOCNode Title="ApplyRootQueryRestrictionToDeletes Property " Url="html/P_Gemstone_Data_Model_ITableOperations_ApplyRootQueryRestrictionToDeletes.htm" />
         <HelpTOCNode Title="ApplyRootQueryRestrictionToUpdates Property " Url="html/P_Gemstone_Data_Model_ITableOperations_ApplyRootQueryRestrictionToUpdates.htm" />
         <HelpTOCNode Title="ExceptionHandler Property " Url="html/P_Gemstone_Data_Model_ITableOperations_ExceptionHandler.htm" />
@@ -581,23 +581,23 @@
         <HelpTOCNode Title="UnescapedTableName Property " Url="html/P_Gemstone_Data_Model_ITableOperations_UnescapedTableName.htm" />
         <HelpTOCNode Title="UseCaseSensitiveFieldNames Property " Url="html/P_Gemstone_Data_Model_ITableOperations_UseCaseSensitiveFieldNames.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="f8a4bd5c-56d2-48b1-9133-20373addf4d0" Title="ITableOperations Methods" Url="html/Methods_T_Gemstone_Data_Model_ITableOperations.htm">
+      <HelpTOCNode Id="c2aea571-bec4-446b-8edc-7faf9fb7982a" Title="ITableOperations Methods" Url="html/Methods_T_Gemstone_Data_Model_ITableOperations.htm">
         <HelpTOCNode Title="AddNewOrUpdateRecord Method " Url="html/M_Gemstone_Data_Model_ITableOperations_AddNewOrUpdateRecord.htm" />
-        <HelpTOCNode Id="323a6bac-d2e4-4564-bfcd-a9c4d770805e" Title="AddNewRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_AddNewRecord.htm">
+        <HelpTOCNode Id="ab0c7b6f-dad4-460a-ae82-2b6a770b2bc7" Title="AddNewRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_AddNewRecord.htm">
           <HelpTOCNode Title="AddNewRecord Method (DataRow)" Url="html/M_Gemstone_Data_Model_ITableOperations_AddNewRecord.htm" />
           <HelpTOCNode Title="AddNewRecord Method (Object)" Url="html/M_Gemstone_Data_Model_ITableOperations_AddNewRecord_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="ApplyRecordDefaults Method " Url="html/M_Gemstone_Data_Model_ITableOperations_ApplyRecordDefaults.htm" />
         <HelpTOCNode Title="ApplyRecordUpdates Method " Url="html/M_Gemstone_Data_Model_ITableOperations_ApplyRecordUpdates.htm" />
         <HelpTOCNode Title="ClearPrimaryKeyCache Method " Url="html/M_Gemstone_Data_Model_ITableOperations_ClearPrimaryKeyCache.htm" />
-        <HelpTOCNode Id="fe2fad7b-a4ad-46d8-b7bb-aefcf25dc82f" Title="DeleteRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_DeleteRecord.htm">
+        <HelpTOCNode Id="7564c8de-a9be-485c-bc22-2ff4d6308eca" Title="DeleteRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_DeleteRecord.htm">
           <HelpTOCNode Title="DeleteRecord Method (DataRow)" Url="html/M_Gemstone_Data_Model_ITableOperations_DeleteRecord_1.htm" />
           <HelpTOCNode Title="DeleteRecord Method (Object)" Url="html/M_Gemstone_Data_Model_ITableOperations_DeleteRecord_2.htm" />
           <HelpTOCNode Title="DeleteRecord Method (Object[])" Url="html/M_Gemstone_Data_Model_ITableOperations_DeleteRecord_3.htm" />
           <HelpTOCNode Title="DeleteRecord Method (RecordRestriction, Nullable(Boolean))" Url="html/M_Gemstone_Data_Model_ITableOperations_DeleteRecord.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="DeleteRecordWhere Method " Url="html/M_Gemstone_Data_Model_ITableOperations_DeleteRecordWhere.htm" />
-        <HelpTOCNode Id="ee2e4c9d-70bd-43d7-8083-25774f708b43" Title="FieldHasAttribute Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_FieldHasAttribute.htm">
+        <HelpTOCNode Id="9853e215-3b9b-4673-b03b-948f3191d37d" Title="FieldHasAttribute Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_FieldHasAttribute.htm">
           <HelpTOCNode Title="FieldHasAttribute(TAttribute) Method (String)" Url="html/M_Gemstone_Data_Model_ITableOperations_FieldHasAttribute__1.htm" />
           <HelpTOCNode Title="FieldHasAttribute Method (String, Type)" Url="html/M_Gemstone_Data_Model_ITableOperations_FieldHasAttribute.htm" />
         </HelpTOCNode>
@@ -608,30 +608,30 @@
         <HelpTOCNode Title="GetPageOfRecords Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetPageOfRecords.htm" />
         <HelpTOCNode Title="GetPrimaryKeyCacheSize Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetPrimaryKeyCacheSize.htm" />
         <HelpTOCNode Title="GetPrimaryKeyFieldNames Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetPrimaryKeyFieldNames.htm" />
-        <HelpTOCNode Id="50da199b-ffd5-47ba-8cb6-266a208a3804" Title="GetPrimaryKeys Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_GetPrimaryKeys.htm">
+        <HelpTOCNode Id="f750f10e-5741-4d18-827e-7a3b32e1ce2f" Title="GetPrimaryKeys Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_GetPrimaryKeys.htm">
           <HelpTOCNode Title="GetPrimaryKeys Method (DataRow)" Url="html/M_Gemstone_Data_Model_ITableOperations_GetPrimaryKeys.htm" />
           <HelpTOCNode Title="GetPrimaryKeys Method (Object)" Url="html/M_Gemstone_Data_Model_ITableOperations_GetPrimaryKeys_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="GetSearchRestriction Method " Url="html/M_Gemstone_Data_Model_ITableOperations_GetSearchRestriction.htm" />
-        <HelpTOCNode Id="44cb5a1d-bf15-4825-be3d-771b9d7a0e4e" Title="IsSearchMatch Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_IsSearchMatch.htm">
+        <HelpTOCNode Id="d5a54739-014b-4685-8803-c9593de6621c" Title="IsSearchMatch Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_IsSearchMatch.htm">
           <HelpTOCNode Title="IsSearchMatch Method (Object, String[])" Url="html/M_Gemstone_Data_Model_ITableOperations_IsSearchMatch.htm" />
           <HelpTOCNode Title="IsSearchMatch Method (Object, StringComparison, String[])" Url="html/M_Gemstone_Data_Model_ITableOperations_IsSearchMatch_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="216a5956-5e3f-4050-8ffe-a619edb102c0" Title="LoadRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_LoadRecord.htm">
+        <HelpTOCNode Id="352e86ee-426b-4316-bab0-f506a2779bef" Title="LoadRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_LoadRecord.htm">
           <HelpTOCNode Title="LoadRecord Method (DataRow)" Url="html/M_Gemstone_Data_Model_ITableOperations_LoadRecord.htm" />
           <HelpTOCNode Title="LoadRecord Method (Object[])" Url="html/M_Gemstone_Data_Model_ITableOperations_LoadRecord_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="NewRecord Method " Url="html/M_Gemstone_Data_Model_ITableOperations_NewRecord.htm" />
-        <HelpTOCNode Id="1b971d84-5316-4f4c-9191-ea379e4cd344" Title="QueryRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecord.htm">
+        <HelpTOCNode Id="6d9f2f3f-4e0e-4ea9-a489-796da41de300" Title="QueryRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecord.htm">
           <HelpTOCNode Title="QueryRecord Method (RecordRestriction)" Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecord.htm" />
           <HelpTOCNode Title="QueryRecord Method (String, RecordRestriction)" Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecord_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="edb81f0f-d831-4fac-9fe5-d8056002f5c3" Title="QueryRecordCount Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecordCount.htm">
+        <HelpTOCNode Id="3108793b-03a6-45b1-bc3e-d838f0fda7bf" Title="QueryRecordCount Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecordCount.htm">
           <HelpTOCNode Title="QueryRecordCount Method (String)" Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecordCount_1.htm" />
           <HelpTOCNode Title="QueryRecordCount Method (RecordRestriction)" Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecordCount.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="QueryRecordCountWhere Method " Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecordCountWhere.htm" />
-        <HelpTOCNode Id="a8c00bf4-c515-4a7c-b411-95bcfaf53fbb" Title="QueryRecords Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecords.htm">
+        <HelpTOCNode Id="08cd5054-c622-4b49-b52b-7e11ca2e2e4b" Title="QueryRecords Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_QueryRecords.htm">
           <HelpTOCNode Title="QueryRecords Method (RecordRestriction)" Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecords.htm" />
           <HelpTOCNode Title="QueryRecords Method (String, RecordRestriction, Int32)" Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecords_1.htm" />
           <HelpTOCNode Title="QueryRecords Method (String, Boolean, Int32, Int32, RecordRestriction)" Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecords_2.htm" />
@@ -641,63 +641,63 @@
         <HelpTOCNode Title="QueryRecordWhere Method " Url="html/M_Gemstone_Data_Model_ITableOperations_QueryRecordWhere.htm" />
         <HelpTOCNode Title="SearchRecords Method " Url="html/M_Gemstone_Data_Model_ITableOperations_SearchRecords.htm" />
         <HelpTOCNode Title="ToDataTable Method " Url="html/M_Gemstone_Data_Model_ITableOperations_ToDataTable.htm" />
-        <HelpTOCNode Id="f76d40d1-66b9-470b-9fb4-3882402115f0" Title="TryGetFieldAttribute Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_TryGetFieldAttribute.htm">
+        <HelpTOCNode Id="449a5f90-6d5f-4f60-ba69-a7743eb50ddf" Title="TryGetFieldAttribute Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_TryGetFieldAttribute.htm">
           <HelpTOCNode Title="TryGetFieldAttribute(TAttribute) Method (String, TAttribute)" Url="html/M_Gemstone_Data_Model_ITableOperations_TryGetFieldAttribute__1.htm" />
           <HelpTOCNode Title="TryGetFieldAttribute Method (String, Type, Attribute)" Url="html/M_Gemstone_Data_Model_ITableOperations_TryGetFieldAttribute.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="3ff31eff-77d5-42df-995e-94bcfb872e46" Title="UpdateRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_UpdateRecord.htm">
+        <HelpTOCNode Id="c03ae45f-4c41-4a78-9d1e-1bcf73a84a0b" Title="UpdateRecord Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_UpdateRecord.htm">
           <HelpTOCNode Title="UpdateRecord Method (DataRow, RecordRestriction)" Url="html/M_Gemstone_Data_Model_ITableOperations_UpdateRecord.htm" />
           <HelpTOCNode Title="UpdateRecord Method (Object, RecordRestriction, Nullable(Boolean))" Url="html/M_Gemstone_Data_Model_ITableOperations_UpdateRecord_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="278b3d3e-4d23-40c9-a85e-f275d2744173" Title="UpdateRecordWhere Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_UpdateRecordWhere.htm">
+        <HelpTOCNode Id="a0e675f6-c0f4-4048-a6e9-26b6fcfc57c7" Title="UpdateRecordWhere Method " Url="html/Overload_Gemstone_Data_Model_ITableOperations_UpdateRecordWhere.htm">
           <HelpTOCNode Title="UpdateRecordWhere Method (DataRow, String, Object[])" Url="html/M_Gemstone_Data_Model_ITableOperations_UpdateRecordWhere.htm" />
           <HelpTOCNode Title="UpdateRecordWhere Method (Object, String, Object[])" Url="html/M_Gemstone_Data_Model_ITableOperations_UpdateRecordWhere_1.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="159182cd-cb63-40ea-95f8-df74a37e7427" Title="NonRecordFieldAttribute Class" Url="html/T_Gemstone_Data_Model_NonRecordFieldAttribute.htm">
+    <HelpTOCNode Id="8a60a4ac-528f-407f-9a69-f0e42d13e74d" Title="NonRecordFieldAttribute Class" Url="html/T_Gemstone_Data_Model_NonRecordFieldAttribute.htm">
       <HelpTOCNode Title="NonRecordFieldAttribute Constructor " Url="html/M_Gemstone_Data_Model_NonRecordFieldAttribute__ctor.htm" />
       <HelpTOCNode Title="NonRecordFieldAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_NonRecordFieldAttribute.htm" />
       <HelpTOCNode Title="NonRecordFieldAttribute Methods" Url="html/Methods_T_Gemstone_Data_Model_NonRecordFieldAttribute.htm" />
     </HelpTOCNode>
-    <HelpTOCNode Id="e78d7e9a-2f79-43b6-a14f-cefc4b1006ba" Title="PrimaryKeyAttribute Class" Url="html/T_Gemstone_Data_Model_PrimaryKeyAttribute.htm">
-      <HelpTOCNode Id="5697d642-5bc2-4dcb-bb91-e55aa0a1c2ff" Title="PrimaryKeyAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_PrimaryKeyAttribute__ctor.htm">
+    <HelpTOCNode Id="f9935665-37f2-4165-9f85-8433e747c70e" Title="PrimaryKeyAttribute Class" Url="html/T_Gemstone_Data_Model_PrimaryKeyAttribute.htm">
+      <HelpTOCNode Id="a2d16d04-ac4f-4ccf-89b9-151accf0ca75" Title="PrimaryKeyAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_PrimaryKeyAttribute__ctor.htm">
         <HelpTOCNode Title="PrimaryKeyAttribute Constructor " Url="html/M_Gemstone_Data_Model_PrimaryKeyAttribute__ctor.htm" />
         <HelpTOCNode Title="PrimaryKeyAttribute Constructor (Boolean)" Url="html/M_Gemstone_Data_Model_PrimaryKeyAttribute__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="d2776402-da3c-4843-b481-c4ea4010d091" Title="PrimaryKeyAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_PrimaryKeyAttribute.htm">
+      <HelpTOCNode Id="63336ba6-a1fb-4f19-8b5c-cfb0a2138f87" Title="PrimaryKeyAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_PrimaryKeyAttribute.htm">
         <HelpTOCNode Title="IsIdentity Property " Url="html/P_Gemstone_Data_Model_PrimaryKeyAttribute_IsIdentity.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="PrimaryKeyAttribute Methods" Url="html/Methods_T_Gemstone_Data_Model_PrimaryKeyAttribute.htm" />
     </HelpTOCNode>
     <HelpTOCNode Title="RecordOperation Enumeration" Url="html/T_Gemstone_Data_Model_RecordOperation.htm" />
-    <HelpTOCNode Id="b62b2f9e-a9a2-45c5-99c4-693384488826" Title="RecordOperationAttribute Class" Url="html/T_Gemstone_Data_Model_RecordOperationAttribute.htm">
+    <HelpTOCNode Id="9e643e83-4ef8-4901-bc14-30c82c97efb0" Title="RecordOperationAttribute Class" Url="html/T_Gemstone_Data_Model_RecordOperationAttribute.htm">
       <HelpTOCNode Title="RecordOperationAttribute Constructor " Url="html/M_Gemstone_Data_Model_RecordOperationAttribute__ctor.htm" />
-      <HelpTOCNode Id="39b738ea-e56b-4e8a-8992-b3e12387bb57" Title="RecordOperationAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_RecordOperationAttribute.htm">
+      <HelpTOCNode Id="77950dc9-6647-4934-8afb-b941c2e9d8bb" Title="RecordOperationAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_RecordOperationAttribute.htm">
         <HelpTOCNode Title="ModelType Property " Url="html/P_Gemstone_Data_Model_RecordOperationAttribute_ModelType.htm" />
         <HelpTOCNode Title="Operation Property " Url="html/P_Gemstone_Data_Model_RecordOperationAttribute_Operation.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="RecordOperationAttribute Methods" Url="html/Methods_T_Gemstone_Data_Model_RecordOperationAttribute.htm" />
     </HelpTOCNode>
-    <HelpTOCNode Id="7807c4a6-d3dd-4b6c-bf10-4cfcbbf14c7d" Title="RecordRestriction Class" Url="html/T_Gemstone_Data_Model_RecordRestriction.htm">
+    <HelpTOCNode Id="3b09464d-ddc7-4630-84ee-1fa72a466989" Title="RecordRestriction Class" Url="html/T_Gemstone_Data_Model_RecordRestriction.htm">
       <HelpTOCNode Title="RecordRestriction Constructor " Url="html/M_Gemstone_Data_Model_RecordRestriction__ctor.htm" />
-      <HelpTOCNode Id="d7a11f09-e7f7-4eaa-ac93-a859e36bcf89" Title="RecordRestriction Properties" Url="html/Properties_T_Gemstone_Data_Model_RecordRestriction.htm">
+      <HelpTOCNode Id="58aeb4da-e81c-4d33-9049-14b348b64ee0" Title="RecordRestriction Properties" Url="html/Properties_T_Gemstone_Data_Model_RecordRestriction.htm">
         <HelpTOCNode Title="Item Property " Url="html/P_Gemstone_Data_Model_RecordRestriction_Item.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="01f9b85b-ab01-4bd0-be8a-3a5879ffd886" Title="RecordRestriction Methods" Url="html/Methods_T_Gemstone_Data_Model_RecordRestriction.htm">
-        <HelpTOCNode Id="e0be9f76-c92c-4b92-a031-a6e3e92eb9ca" Title="Clone Method " Url="html/Overload_Gemstone_Data_Model_RecordRestriction_Clone.htm">
+      <HelpTOCNode Id="8e98369f-8c65-4103-9691-ae11403bf077" Title="RecordRestriction Methods" Url="html/Methods_T_Gemstone_Data_Model_RecordRestriction.htm">
+        <HelpTOCNode Id="0fcfc834-c7af-4cb3-946c-f9dfe3c018bb" Title="Clone Method " Url="html/Overload_Gemstone_Data_Model_RecordRestriction_Clone.htm">
           <HelpTOCNode Title="Clone Method " Url="html/M_Gemstone_Data_Model_RecordRestriction_Clone.htm" />
           <HelpTOCNode Title="Clone Method (RecordRestriction)" Url="html/M_Gemstone_Data_Model_RecordRestriction_Clone_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="CombineAnd Method " Url="html/M_Gemstone_Data_Model_RecordRestriction_CombineAnd.htm" />
         <HelpTOCNode Title="CombineOr Method " Url="html/M_Gemstone_Data_Model_RecordRestriction_CombineOr.htm" />
-        <HelpTOCNode Id="b255ae85-37d8-47aa-8471-bfe505b068d4" Title="Equals Method " Url="html/Overload_Gemstone_Data_Model_RecordRestriction_Equals.htm">
+        <HelpTOCNode Id="6a372d64-fefe-445b-858b-d62071c9955d" Title="Equals Method " Url="html/Overload_Gemstone_Data_Model_RecordRestriction_Equals.htm">
           <HelpTOCNode Title="Equals Method (Object)" Url="html/M_Gemstone_Data_Model_RecordRestriction_Equals_1.htm" />
           <HelpTOCNode Title="Equals Method (RecordRestriction)" Url="html/M_Gemstone_Data_Model_RecordRestriction_Equals.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="GetHashCode Method " Url="html/M_Gemstone_Data_Model_RecordRestriction_GetHashCode.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="0f4a0544-7796-41ba-8b1e-b9bb79af679f" Title="RecordRestriction Operators and Type Conversions" Url="html/Operators_T_Gemstone_Data_Model_RecordRestriction.htm">
+      <HelpTOCNode Id="172895ef-f604-4c99-b719-6678270625fc" Title="RecordRestriction Operators and Type Conversions" Url="html/Operators_T_Gemstone_Data_Model_RecordRestriction.htm">
         <HelpTOCNode Title="Addition Operator " Url="html/M_Gemstone_Data_Model_RecordRestriction_op_Addition.htm" />
         <HelpTOCNode Title="BitwiseAnd Operator " Url="html/M_Gemstone_Data_Model_RecordRestriction_op_BitwiseAnd.htm" />
         <HelpTOCNode Title="BitwiseOr Operator " Url="html/M_Gemstone_Data_Model_RecordRestriction_op_BitwiseOr.htm" />
@@ -705,47 +705,47 @@
         <HelpTOCNode Title="Implicit Conversion (String to RecordRestriction)" Url="html/M_Gemstone_Data_Model_RecordRestriction_op_Implicit.htm" />
         <HelpTOCNode Title="Inequality Operator " Url="html/M_Gemstone_Data_Model_RecordRestriction_op_Inequality.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="20c3e9da-3550-45da-a083-31b5d67443e3" Title="RecordRestriction Fields" Url="html/Fields_T_Gemstone_Data_Model_RecordRestriction.htm">
+      <HelpTOCNode Id="7243aea0-b677-4c35-a42b-e7c17aa595c7" Title="RecordRestriction Fields" Url="html/Fields_T_Gemstone_Data_Model_RecordRestriction.htm">
         <HelpTOCNode Title="FilterExpression Field" Url="html/F_Gemstone_Data_Model_RecordRestriction_FilterExpression.htm" />
         <HelpTOCNode Title="Parameters Field" Url="html/F_Gemstone_Data_Model_RecordRestriction_Parameters.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="c90db093-0eb8-47cf-81ba-c676b456ae91" Title="RootQueryRestrictionAttribute Class" Url="html/T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm">
+    <HelpTOCNode Id="f23a18fa-ce31-46c3-be6f-4ecb022b1356" Title="RootQueryRestrictionAttribute Class" Url="html/T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm">
       <HelpTOCNode Title="RootQueryRestrictionAttribute Constructor " Url="html/M_Gemstone_Data_Model_RootQueryRestrictionAttribute__ctor.htm" />
       <HelpTOCNode Title="RootQueryRestrictionAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm" />
       <HelpTOCNode Title="RootQueryRestrictionAttribute Methods" Url="html/Methods_T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm" />
-      <HelpTOCNode Id="50e16040-b0ac-49b2-9ad0-17aa220d59e5" Title="RootQueryRestrictionAttribute Fields" Url="html/Fields_T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm">
+      <HelpTOCNode Id="ee390190-1a91-43d7-b756-d6533f58588b" Title="RootQueryRestrictionAttribute Fields" Url="html/Fields_T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm">
         <HelpTOCNode Title="ApplyToDeletes Field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_ApplyToDeletes.htm" />
         <HelpTOCNode Title="ApplyToUpdates Field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_ApplyToUpdates.htm" />
         <HelpTOCNode Title="FilterExpression Field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_FilterExpression.htm" />
         <HelpTOCNode Title="Parameters Field" Url="html/F_Gemstone_Data_Model_RootQueryRestrictionAttribute_Parameters.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="4954c1ec-c5e8-4d79-ad07-df85d1a27711" Title="SearchableAttribute Class" Url="html/T_Gemstone_Data_Model_SearchableAttribute.htm">
-      <HelpTOCNode Id="1bc8cebe-a90e-4023-b235-9e75ccdc6c39" Title="SearchableAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_SearchableAttribute__ctor.htm">
+    <HelpTOCNode Id="6bed29e4-1de7-44d7-b101-1ff532b3d7af" Title="SearchableAttribute Class" Url="html/T_Gemstone_Data_Model_SearchableAttribute.htm">
+      <HelpTOCNode Id="5cfb5140-8aa8-4adf-bf62-23fae60171f5" Title="SearchableAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_SearchableAttribute__ctor.htm">
         <HelpTOCNode Title="SearchableAttribute Constructor " Url="html/M_Gemstone_Data_Model_SearchableAttribute__ctor.htm" />
         <HelpTOCNode Title="SearchableAttribute Constructor (SearchType)" Url="html/M_Gemstone_Data_Model_SearchableAttribute__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="72781a70-d8bf-402d-b6e9-a8884d84e84c" Title="SearchableAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_SearchableAttribute.htm">
+      <HelpTOCNode Id="2591f688-6b02-4e2a-8134-e2a321ab0d9a" Title="SearchableAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_SearchableAttribute.htm">
         <HelpTOCNode Title="SearchType Property " Url="html/P_Gemstone_Data_Model_SearchableAttribute_SearchType.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="SearchableAttribute Methods" Url="html/Methods_T_Gemstone_Data_Model_SearchableAttribute.htm" />
     </HelpTOCNode>
     <HelpTOCNode Title="SearchType Enumeration" Url="html/T_Gemstone_Data_Model_SearchType.htm" />
     <HelpTOCNode Title="StatementTypes Enumeration" Url="html/T_Gemstone_Data_Model_StatementTypes.htm" />
-    <HelpTOCNode Id="7f7700d0-f768-49bf-b19b-7e0765a45088" Title="TableNameAttribute Class" Url="html/T_Gemstone_Data_Model_TableNameAttribute.htm">
+    <HelpTOCNode Id="4cf1f979-acb6-4dce-9d19-18a2d21f605a" Title="TableNameAttribute Class" Url="html/T_Gemstone_Data_Model_TableNameAttribute.htm">
       <HelpTOCNode Title="TableNameAttribute Constructor " Url="html/M_Gemstone_Data_Model_TableNameAttribute__ctor.htm" />
-      <HelpTOCNode Id="3995d526-5413-4936-a442-9abe32dc2467" Title="TableNameAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_TableNameAttribute.htm">
+      <HelpTOCNode Id="3eab5a10-ae54-440b-9660-fbcde9ea1fbc" Title="TableNameAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_TableNameAttribute.htm">
         <HelpTOCNode Title="TableName Property " Url="html/P_Gemstone_Data_Model_TableNameAttribute_TableName.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="TableNameAttribute Methods" Url="html/Methods_T_Gemstone_Data_Model_TableNameAttribute.htm" />
     </HelpTOCNode>
-    <HelpTOCNode Id="5a8302dd-290b-4d62-9d38-d00933851871" Title="TableOperations(T) Class" Url="html/T_Gemstone_Data_Model_TableOperations_1.htm">
-      <HelpTOCNode Id="96849323-233a-4935-a749-35f16d343e8f" Title="TableOperations(T) Constructor " Url="html/Overload_Gemstone_Data_Model_TableOperations_1__ctor.htm">
+    <HelpTOCNode Id="a38aa5c5-b812-4272-9b25-efb6fed3b8f7" Title="TableOperations(T) Class" Url="html/T_Gemstone_Data_Model_TableOperations_1.htm">
+      <HelpTOCNode Id="e8d4ce7a-65a6-4777-bfde-1c20cd209cb7" Title="TableOperations(T) Constructor " Url="html/Overload_Gemstone_Data_Model_TableOperations_1__ctor.htm">
         <HelpTOCNode Title="TableOperations(T) Constructor (AdoDataConnection, IEnumerable(KeyValuePair(String, String)))" Url="html/M_Gemstone_Data_Model_TableOperations_1__ctor_1.htm" />
         <HelpTOCNode Title="TableOperations(T) Constructor (AdoDataConnection, Action(Exception), IEnumerable(KeyValuePair(String, String)))" Url="html/M_Gemstone_Data_Model_TableOperations_1__ctor.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="9cf886b3-0cdf-4832-9d71-47eae0b693da" Title="TableOperations(T) Properties" Url="html/Properties_T_Gemstone_Data_Model_TableOperations_1.htm">
+      <HelpTOCNode Id="74fd5f2f-4975-447f-8fcd-b3fb3e6e3b3f" Title="TableOperations(T) Properties" Url="html/Properties_T_Gemstone_Data_Model_TableOperations_1.htm">
         <HelpTOCNode Title="ApplyRootQueryRestrictionToDeletes Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_ApplyRootQueryRestrictionToDeletes.htm" />
         <HelpTOCNode Title="ApplyRootQueryRestrictionToUpdates Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_ApplyRootQueryRestrictionToUpdates.htm" />
         <HelpTOCNode Title="Connection Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_Connection.htm" />
@@ -758,9 +758,9 @@
         <HelpTOCNode Title="UnescapedTableName Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_UnescapedTableName.htm" />
         <HelpTOCNode Title="UseCaseSensitiveFieldNames Property " Url="html/P_Gemstone_Data_Model_TableOperations_1_UseCaseSensitiveFieldNames.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="eef9a73d-6ef2-422a-bc86-5b1246a52d42" Title="TableOperations(T) Methods" Url="html/Methods_T_Gemstone_Data_Model_TableOperations_1.htm">
+      <HelpTOCNode Id="ea5f2fb5-4b5f-466c-bbd7-02683ba03bc2" Title="TableOperations(T) Methods" Url="html/Methods_T_Gemstone_Data_Model_TableOperations_1.htm">
         <HelpTOCNode Title="AddNewOrUpdateRecord Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_AddNewOrUpdateRecord.htm" />
-        <HelpTOCNode Id="98291963-f550-4091-9caf-bbd6bdc4fe2c" Title="AddNewRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_AddNewRecord.htm">
+        <HelpTOCNode Id="59179564-4bf4-4af1-ba20-8808c1d78701" Title="AddNewRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_AddNewRecord.htm">
           <HelpTOCNode Title="AddNewRecord Method (DataRow)" Url="html/M_Gemstone_Data_Model_TableOperations_1_AddNewRecord.htm" />
           <HelpTOCNode Title="AddNewRecord Method (T)" Url="html/M_Gemstone_Data_Model_TableOperations_1_AddNewRecord_1.htm" />
         </HelpTOCNode>
@@ -769,14 +769,14 @@
         <HelpTOCNode Title="ApplyRecordUpdates Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordUpdates.htm" />
         <HelpTOCNode Title="ApplyRecordUpdatesFunction Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_ApplyRecordUpdatesFunction.htm" />
         <HelpTOCNode Title="ClearPrimaryKeyCache Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_ClearPrimaryKeyCache.htm" />
-        <HelpTOCNode Id="23e7e8f7-1331-4a29-bc20-4dabe602df87" Title="DeleteRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_DeleteRecord.htm">
+        <HelpTOCNode Id="78e0a4b5-0b9d-42db-97b8-0994f3a0e13b" Title="DeleteRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_DeleteRecord.htm">
           <HelpTOCNode Title="DeleteRecord Method (DataRow)" Url="html/M_Gemstone_Data_Model_TableOperations_1_DeleteRecord_1.htm" />
           <HelpTOCNode Title="DeleteRecord Method (Object[])" Url="html/M_Gemstone_Data_Model_TableOperations_1_DeleteRecord_2.htm" />
           <HelpTOCNode Title="DeleteRecord Method (T)" Url="html/M_Gemstone_Data_Model_TableOperations_1_DeleteRecord_3.htm" />
           <HelpTOCNode Title="DeleteRecord Method (RecordRestriction, Nullable(Boolean))" Url="html/M_Gemstone_Data_Model_TableOperations_1_DeleteRecord.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="DeleteRecordWhere Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_DeleteRecordWhere.htm" />
-        <HelpTOCNode Id="1fc8ed82-1b6e-48e6-a8ab-090732ae279a" Title="FieldHasAttribute Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_FieldHasAttribute.htm">
+        <HelpTOCNode Id="fd5a887f-b873-4ffc-9552-6c32eed184f6" Title="FieldHasAttribute Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_FieldHasAttribute.htm">
           <HelpTOCNode Title="FieldHasAttribute(TAttribute) Method (String)" Url="html/M_Gemstone_Data_Model_TableOperations_1_FieldHasAttribute__1.htm" />
           <HelpTOCNode Title="FieldHasAttribute Method (String, Type)" Url="html/M_Gemstone_Data_Model_TableOperations_1_FieldHasAttribute.htm" />
         </HelpTOCNode>
@@ -787,32 +787,32 @@
         <HelpTOCNode Title="GetPageOfRecords Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPageOfRecords.htm" />
         <HelpTOCNode Title="GetPrimaryKeyCacheSize Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeyCacheSize.htm" />
         <HelpTOCNode Title="GetPrimaryKeyFieldNames Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeyFieldNames.htm" />
-        <HelpTOCNode Id="f68e0732-1f9e-4584-892d-9911e6f8c606" Title="GetPrimaryKeys Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeys.htm">
+        <HelpTOCNode Id="f635cfdd-2dca-4810-9aaa-e444dcbf2a33" Title="GetPrimaryKeys Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeys.htm">
           <HelpTOCNode Title="GetPrimaryKeys Method (DataRow)" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeys.htm" />
           <HelpTOCNode Title="GetPrimaryKeys Method (T)" Url="html/M_Gemstone_Data_Model_TableOperations_1_GetPrimaryKeys_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="GetSearchRestriction Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_GetSearchRestriction.htm" />
-        <HelpTOCNode Id="d37c1a32-03cc-43c1-8eea-2face25c841c" Title="IsSearchMatch Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_IsSearchMatch.htm">
+        <HelpTOCNode Id="b56aac86-1572-4550-9435-6013dadf498f" Title="IsSearchMatch Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_IsSearchMatch.htm">
           <HelpTOCNode Title="IsSearchMatch Method (T, String[])" Url="html/M_Gemstone_Data_Model_TableOperations_1_IsSearchMatch.htm" />
           <HelpTOCNode Title="IsSearchMatch Method (T, StringComparison, String[])" Url="html/M_Gemstone_Data_Model_TableOperations_1_IsSearchMatch_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="268f6f05-aa17-4f9e-949b-d2c0fa8e2721" Title="LoadRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_LoadRecord.htm">
+        <HelpTOCNode Id="7849ceca-e3fe-4d30-8c52-57a9a0813339" Title="LoadRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_LoadRecord.htm">
           <HelpTOCNode Title="LoadRecord Method (DataRow)" Url="html/M_Gemstone_Data_Model_TableOperations_1_LoadRecord.htm" />
           <HelpTOCNode Title="LoadRecord Method (Object[])" Url="html/M_Gemstone_Data_Model_TableOperations_1_LoadRecord_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="LoadRecordFunction Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_LoadRecordFunction.htm" />
         <HelpTOCNode Title="NewRecord Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_NewRecord.htm" />
         <HelpTOCNode Title="NewRecordFunction Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_NewRecordFunction.htm" />
-        <HelpTOCNode Id="98b1d85c-8f6d-4791-bb2a-cf4bf50b0faa" Title="QueryRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecord.htm">
+        <HelpTOCNode Id="84c078ef-103b-44bf-ae47-2c2118307911" Title="QueryRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecord.htm">
           <HelpTOCNode Title="QueryRecord Method (RecordRestriction)" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecord.htm" />
           <HelpTOCNode Title="QueryRecord Method (String, RecordRestriction)" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecord_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="f771e7c4-9bb4-461a-b640-eb9099897395" Title="QueryRecordCount Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecordCount.htm">
+        <HelpTOCNode Id="ef66bfd1-4103-4c47-b4d2-9d16272893cd" Title="QueryRecordCount Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecordCount.htm">
           <HelpTOCNode Title="QueryRecordCount Method (String)" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordCount_1.htm" />
           <HelpTOCNode Title="QueryRecordCount Method (RecordRestriction)" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordCount.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="QueryRecordCountWhere Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordCountWhere.htm" />
-        <HelpTOCNode Id="2af3bb00-33b2-421e-aedc-b6d38fba22f0" Title="QueryRecords Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecords.htm">
+        <HelpTOCNode Id="95d871bb-63a5-4b5f-872c-03cd3b82ec64" Title="QueryRecords Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_QueryRecords.htm">
           <HelpTOCNode Title="QueryRecords Method (RecordRestriction)" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecords.htm" />
           <HelpTOCNode Title="QueryRecords Method (String, RecordRestriction, Int32)" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecords_1.htm" />
           <HelpTOCNode Title="QueryRecords Method (String, Boolean, Int32, Int32, RecordRestriction)" Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecords_2.htm" />
@@ -822,27 +822,27 @@
         <HelpTOCNode Title="QueryRecordWhere Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_QueryRecordWhere.htm" />
         <HelpTOCNode Title="SearchRecords Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_SearchRecords.htm" />
         <HelpTOCNode Title="ToDataTable Method " Url="html/M_Gemstone_Data_Model_TableOperations_1_ToDataTable.htm" />
-        <HelpTOCNode Id="f4556a92-c2a4-4f45-99bd-a18a2bf60876" Title="TryGetFieldAttribute Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_TryGetFieldAttribute.htm">
+        <HelpTOCNode Id="ed8ecf81-2456-434d-bcfb-980c88bc2ab9" Title="TryGetFieldAttribute Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_TryGetFieldAttribute.htm">
           <HelpTOCNode Title="TryGetFieldAttribute(TAttribute) Method (String, TAttribute)" Url="html/M_Gemstone_Data_Model_TableOperations_1_TryGetFieldAttribute__1.htm" />
           <HelpTOCNode Title="TryGetFieldAttribute Method (String, Type, Attribute)" Url="html/M_Gemstone_Data_Model_TableOperations_1_TryGetFieldAttribute.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="beed8bf1-1570-41ac-bd28-282e781216a3" Title="UpdateRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_UpdateRecord.htm">
+        <HelpTOCNode Id="914bbec8-6694-433d-806e-9e7dcba3f01d" Title="UpdateRecord Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_UpdateRecord.htm">
           <HelpTOCNode Title="UpdateRecord Method (DataRow, RecordRestriction)" Url="html/M_Gemstone_Data_Model_TableOperations_1_UpdateRecord.htm" />
           <HelpTOCNode Title="UpdateRecord Method (T, RecordRestriction, Nullable(Boolean))" Url="html/M_Gemstone_Data_Model_TableOperations_1_UpdateRecord_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="32da7739-1b9c-499d-95db-d927a0937964" Title="UpdateRecordWhere Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_UpdateRecordWhere.htm">
+        <HelpTOCNode Id="9b8baa1b-1b87-4607-a7e9-2c7c7466deb0" Title="UpdateRecordWhere Method " Url="html/Overload_Gemstone_Data_Model_TableOperations_1_UpdateRecordWhere.htm">
           <HelpTOCNode Title="UpdateRecordWhere Method (DataRow, String, Object[])" Url="html/M_Gemstone_Data_Model_TableOperations_1_UpdateRecordWhere.htm" />
           <HelpTOCNode Title="UpdateRecordWhere Method (T, String, Object[])" Url="html/M_Gemstone_Data_Model_TableOperations_1_UpdateRecordWhere_1.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
     <HelpTOCNode Title="TargetExpression Enumeration" Url="html/T_Gemstone_Data_Model_TargetExpression.htm" />
-    <HelpTOCNode Id="32e24cde-94af-4878-8714-15ea70663660" Title="UseEscapedNameAttribute Class" Url="html/T_Gemstone_Data_Model_UseEscapedNameAttribute.htm">
-      <HelpTOCNode Id="14b715fe-26ef-41ca-8e24-2d3461282de2" Title="UseEscapedNameAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_UseEscapedNameAttribute__ctor.htm">
+    <HelpTOCNode Id="476339c3-fb15-4d6c-96e8-ae73b613fe98" Title="UseEscapedNameAttribute Class" Url="html/T_Gemstone_Data_Model_UseEscapedNameAttribute.htm">
+      <HelpTOCNode Id="d6ce206d-0d15-4b3a-b886-c4bee9354dd6" Title="UseEscapedNameAttribute Constructor " Url="html/Overload_Gemstone_Data_Model_UseEscapedNameAttribute__ctor.htm">
         <HelpTOCNode Title="UseEscapedNameAttribute Constructor " Url="html/M_Gemstone_Data_Model_UseEscapedNameAttribute__ctor.htm" />
         <HelpTOCNode Title="UseEscapedNameAttribute Constructor (DatabaseType)" Url="html/M_Gemstone_Data_Model_UseEscapedNameAttribute__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="bf5a196e-8d6c-4957-9409-35735f1d3825" Title="UseEscapedNameAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_UseEscapedNameAttribute.htm">
+      <HelpTOCNode Id="6d24c353-c8bc-48f3-af29-f1a3cb0dea68" Title="UseEscapedNameAttribute Properties" Url="html/Properties_T_Gemstone_Data_Model_UseEscapedNameAttribute.htm">
         <HelpTOCNode Title="TargetDatabaseType Property " Url="html/P_Gemstone_Data_Model_UseEscapedNameAttribute_TargetDatabaseType.htm" />
         <HelpTOCNode Title="UseAnsiQuotes Property " Url="html/P_Gemstone_Data_Model_UseEscapedNameAttribute_UseAnsiQuotes.htm" />
       </HelpTOCNode>

@@ -7,6 +7,7 @@ The Gemstone Data Library organizes all Gemstone functionality related to data.
 
 [![GitHub license](https://img.shields.io/github/license/gemstone/data?color=4CC61E)](https://github.com/gemstone/data/blob/master/LICENSE)
 [![Build status](https://ci.appveyor.com/api/projects/status/5wt0fjmv57wsne81?svg=true)](https://ci.appveyor.com/project/ritchiecarroll/data)
+![CodeQL](https://github.com/gemstone/data/workflows/CodeQL/badge.svg)
 
 This library includes helpful data classes like the following:
 

@@ -29,7 +29,7 @@
   <HelpKINode Title="AdoDataConnection.Bool method" Url="html/M_Gemstone_Data_AdoDataConnection_Bool.htm" />
   <HelpKINode Title="AdoDataConnection.Connection property" Url="html/P_Gemstone_Data_AdoDataConnection_Connection.htm" />
   <HelpKINode Title="AdoDataConnection.DatabaseType property" Url="html/P_Gemstone_Data_AdoDataConnection_DatabaseType.htm" />
-  <HelpKINode Title="AdoDataConnection.DefaultIsloationLevel property" Url="html/P_Gemstone_Data_AdoDataConnection_DefaultIsloationLevel.htm" />
+  <HelpKINode Title="AdoDataConnection.DefaultIsolationLevel property" Url="html/P_Gemstone_Data_AdoDataConnection_DefaultIsolationLevel.htm" />
   <HelpKINode Title="AdoDataConnection.DefaultTimeout property" Url="html/P_Gemstone_Data_AdoDataConnection_DefaultTimeout.htm" />
   <HelpKINode Title="AdoDataConnection.Dispose method" Url="html/Overload_Gemstone_Data_AdoDataConnection_Dispose.htm" />
   <HelpKINode Title="AdoDataConnection.EscapeIdentifier method" Url="html/M_Gemstone_Data_AdoDataConnection_EscapeIdentifier.htm" />
@@ -314,7 +314,7 @@
     <HelpKINode Title="DataSetEqualityComparer.Default Field" Url="html/F_Gemstone_Data_DataSetEqualityComparer_Default.htm" />
     <HelpKINode Title="Tables.ReferentialOrderComparer.Default Field" Url="html/F_Gemstone_Data_Tables_ReferentialOrderComparer_Default.htm" />
   </HelpKINode>
-  <HelpKINode Title="DefaultIsloationLevel property" Url="html/P_Gemstone_Data_AdoDataConnection_DefaultIsloationLevel.htm" />
+  <HelpKINode Title="DefaultIsolationLevel property" Url="html/P_Gemstone_Data_AdoDataConnection_DefaultIsolationLevel.htm" />
   <HelpKINode Title="DefaultKeyReference field" Url="html/F_Gemstone_Data_Model_EncryptDataAttribute_DefaultKeyReference.htm" />
   <HelpKINode Title="DefaultTimeout property" Url="html/P_Gemstone_Data_AdoDataConnection_DefaultTimeout.htm" />
   <HelpKINode Title="DefaultTimeoutDuration field" Url="html/F_Gemstone_Data_DataExtensions_DataExtensions_DefaultTimeoutDuration.htm" />

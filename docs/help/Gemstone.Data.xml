@@ -57,7 +57,7 @@
             Gets or sets the type of the database underlying the <see cref="T:Gemstone.Data.AdoDataConnection" />.
             </summary>
     </member>
-    <member name="P:Gemstone.Data.AdoDataConnection.DefaultIsloationLevel">
+    <member name="P:Gemstone.Data.AdoDataConnection.DefaultIsolationLevel">
       <summary>
             Gets the default <see cref="T:System.Data.IsolationLevel" /> for the connected <see cref="T:Gemstone.Data.AdoDataConnection" /> database type.
             </summary>

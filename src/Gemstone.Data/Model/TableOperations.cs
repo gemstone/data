@@ -529,7 +529,7 @@ namespace Gemstone.Data.Model
 
         void ITableOperations.ApplyRecordDefaults(object value)
         {
-            if (!(value is T record))
+            if (value is not T record)
                 throw new ArgumentException($"Cannot apply defaults for record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
 
             ApplyRecordDefaults(record);
@@ -557,7 +557,7 @@ namespace Gemstone.Data.Model
 
         void ITableOperations.ApplyRecordUpdates(object value)
         {
-            if (!(value is T record))
+            if (value is not T record)
                 throw new ArgumentException($"Cannot apply updates for record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
 
             ApplyRecordUpdates(record);
@@ -1115,7 +1115,7 @@ namespace Gemstone.Data.Model
 
         bool ITableOperations.IsSearchMatch(object value, StringComparison comparison, params string[] searchValues)
         {
-            if (!(value is T record))
+            if (value is not T record)
                 throw new ArgumentException($"Cannot execute search match for record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
 
             return IsSearchMatch(record, comparison, searchValues);
@@ -1325,7 +1325,7 @@ namespace Gemstone.Data.Model
 
         int ITableOperations.DeleteRecord(object value)
         {
-            if (!(value is T record))
+            if (value is not T record)
                 throw new ArgumentException($"Cannot delete record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
 
             return DeleteRecord(record);
@@ -1523,7 +1523,7 @@ namespace Gemstone.Data.Model
 
         int ITableOperations.UpdateRecord(object value, RecordRestriction? restriction, bool? applyRootQueryRestriction)
         {
-            if (!(value is T record))
+            if (value is not T record)
                 throw new ArgumentException($"Cannot update record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
 
             return UpdateRecord(record, restriction, applyRootQueryRestriction);
@@ -1571,7 +1571,7 @@ namespace Gemstone.Data.Model
 
         int ITableOperations.UpdateRecordWhere(object value, string filterExpression, params object?[] parameters)
         {
-            if (!(value is T record))
+            if (value is not T record)
                 throw new ArgumentException($"Cannot update record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
 
             return UpdateRecordWhere(record, filterExpression, parameters);
@@ -1675,7 +1675,7 @@ namespace Gemstone.Data.Model
 
         int ITableOperations.AddNewRecord(object value)
         {
-            if (!(value is T record))
+            if (value is not T record)
                 throw new ArgumentException($"Cannot add new record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
 
             return AddNewRecord(record);
@@ -1699,7 +1699,7 @@ namespace Gemstone.Data.Model
 
         int ITableOperations.AddNewOrUpdateRecord(object value)
         {
-            if (!(value is T record))
+            if (value is not T record)
                 throw new ArgumentException($"Cannot add new or update record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
 
             return AddNewOrUpdateRecord(record);
@@ -1736,7 +1736,7 @@ namespace Gemstone.Data.Model
 
         object[] ITableOperations.GetPrimaryKeys(object value)
         {
-            if (!(value is T record))
+            if (value is not T record)
                 throw new ArgumentException($"Cannot get primary keys for record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
 
             return GetPrimaryKeys(record);
@@ -1889,7 +1889,7 @@ namespace Gemstone.Data.Model
 
         object? ITableOperations.GetFieldValue(object? value, string fieldName)
         {
-            if (!(value is T record))
+            if (value is not T record)
                 throw new ArgumentException($"Cannot get \"{fieldName}\" field value for record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
 
             return GetFieldValue(record, fieldName);

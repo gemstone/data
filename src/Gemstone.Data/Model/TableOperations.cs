@@ -2496,7 +2496,7 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public static Func<DataRow, T?> LoadRecordFunction()
         {
-            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection), typeof(DbDataAdapter));
+            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection));
 
             return new TableOperations<T>(connection).LoadRecord;
         }
@@ -2512,7 +2512,7 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public static Func<T?> NewRecordFunction()
         {
-            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection), typeof(DbDataAdapter));
+            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection));
 
             return new TableOperations<T>(connection).NewRecord;
         }
@@ -2528,7 +2528,7 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public static Action<T> ApplyRecordDefaultsFunction()
         {
-            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection), typeof(DbDataAdapter));
+            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection));
 
             return new TableOperations<T>(connection).ApplyRecordDefaults;
         }
@@ -2544,7 +2544,7 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public static Action<T> ApplyRecordUpdatesFunction()
         {
-            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection), typeof(DbDataAdapter));
+            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection));
 
             return new TableOperations<T>(connection).ApplyRecordUpdates;
         }

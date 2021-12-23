@@ -187,21 +187,16 @@ namespace Gemstone.Data
         }
 
         /// <summary>
-        /// Creates and opens a new <see cref="AdoDataConnection"/> from specified <paramref name="connectionString"/>,
-        /// <paramref name="connectionType"/>, and <paramref name="adapterType"/>.
+        /// Creates and opens a new <see cref="AdoDataConnection"/> from specified <paramref name="connectionString"/>
+        /// and <paramref name="connectionType"/>.
         /// </summary>
         /// <param name="connectionString">Database specific ADO connection string.</param>
         /// <param name="connectionType">The ADO type used to establish the database connection.</param>
-        /// <param name="adapterType">The ADO type used to load data into <see cref="DataTable"/>s.</param>
-        public AdoDataConnection(string connectionString, Type connectionType, Type adapterType)
+        public AdoDataConnection(string connectionString, Type connectionType)
         {
             if (!typeof(IDbConnection).IsAssignableFrom(connectionType))
                 throw new ArgumentException("Connection type must implement the IDbConnection interface", nameof(connectionType));
 
-            if (!typeof(IDbDataAdapter).IsAssignableFrom(adapterType))
-                throw new ArgumentException("Adapter type must implement the IDbDataAdapter interface", nameof(adapterType));
-
-            AdapterType = adapterType;
             DatabaseType = GetDatabaseType();
             m_disposeConnection = true;
 
@@ -219,19 +214,13 @@ namespace Gemstone.Data
         }
 
         /// <summary>
-        /// Creates a new <see cref="AdoDataConnection"/> from specified <paramref name="connection"/>
-        /// and <paramref name="adapterType"/>.
+        /// Creates a new <see cref="AdoDataConnection"/> from specified <paramref name="connection"/>.
         /// </summary>
         /// <param name="connection">The database connection.</param>
-        /// <param name="adapterType">The ADO type used to load data into <see cref="DataTable"/>s.</param>
         /// <param name="disposeConnection">True if the database connection should be closed when the <see cref="AdoDataConnection"/> is disposed; false otherwise.</param>
-        public AdoDataConnection(IDbConnection connection, Type adapterType, bool disposeConnection)
+        public AdoDataConnection(IDbConnection connection, bool disposeConnection)
         {
-            if (!typeof(IDbDataAdapter).IsAssignableFrom(adapterType))
-                throw new ArgumentException("Adapter type must implement the IDbDataAdapter interface", nameof(adapterType));
-
             Connection = connection;
-            AdapterType = adapterType;
             DatabaseType = GetDatabaseType();
             m_disposeConnection = disposeConnection;
         }
@@ -258,12 +247,12 @@ namespace Gemstone.Data
                 if (string.IsNullOrEmpty(connectionTypeName))
                     throw new NullReferenceException("ADO database connection type was undefined.");
 
-                if (string.IsNullOrEmpty(adapterTypeName))
-                    throw new NullReferenceException("ADO database adapter type was undefined.");
-
                 Assembly assembly = Assembly.Load(new AssemblyName(assemblyName));
                 connectionType = assembly.GetType(connectionTypeName);
-                AdapterType = assembly.GetType(adapterTypeName);
+
+                if (!typeof(IDbConnection).IsAssignableFrom(connectionType))
+                    throw new ArgumentException("Connection type must implement the IDbConnection interface", nameof(dataProviderString));
+
                 DatabaseType = GetDatabaseType();
                 m_disposeConnection = true;
             }
@@ -301,11 +290,6 @@ namespace Gemstone.Data
         /// Gets an open <see cref="IDbConnection"/> to configured ADO.NET data source.
         /// </summary>
         public IDbConnection Connection { get; } = default!;
-
-        /// <summary>
-        /// Gets the type of data adapter for configured ADO.NET data source.
-        /// </summary>
-        public Type AdapterType { get; }
 
         /// <summary>
         /// Gets or sets the type of the database underlying the <see cref="AdoDataConnection"/>.
@@ -660,7 +644,7 @@ namespace Gemstone.Data
         {
             string sql = GenericParameterizedQueryString(sqlFormat, parameters);
 
-            return Connection.RetrieveRow(AdapterType, timeout, sql, ResolveParameters(parameters));
+            return Connection.RetrieveRow(timeout, sql, ResolveParameters(parameters));
         }
 
         /// <summary>
@@ -684,7 +668,7 @@ namespace Gemstone.Data
         {
             string sql = GenericParameterizedQueryString(sqlFormat, parameters);
 
-            return Connection.RetrieveData(AdapterType, timeout, sql, ResolveParameters(parameters));
+            return Connection.RetrieveData(timeout, sql, ResolveParameters(parameters));
         }
 
         /// <summary>
@@ -708,7 +692,7 @@ namespace Gemstone.Data
         {
             string sql = GenericParameterizedQueryString(sqlFormat, parameters);
 
-            return Connection.RetrieveDataSet(AdapterType, timeout, sql, ResolveParameters(parameters));
+            return Connection.RetrieveDataSet(timeout, sql, ResolveParameters(parameters));
         }
 
         /// <summary>
@@ -838,36 +822,33 @@ namespace Gemstone.Data
         {
             DatabaseType type = DatabaseType.Other;
 
-            if (AdapterType != null)
+            switch (Connection.GetType().Name.ToLowerInvariant())
             {
-                switch (AdapterType.Name.ToLowerInvariant())
-                {
-                    case "sqldataadapter":
-                        type = DatabaseType.SQLServer;
+                case "sqlconnection":
+                    type = DatabaseType.SQLServer;
 
-                        break;
-                    case "mysqldataadapter":
-                        type = DatabaseType.MySQL;
+                    break;
+                case "mysqlconnection":
+                    type = DatabaseType.MySQL;
 
-                        break;
-                    case "oracledataadapter":
-                        type = DatabaseType.Oracle;
+                    break;
+                case "oracleconnection":
+                    type = DatabaseType.Oracle;
 
-                        break;
-                    case "sqlitedataadapter":
-                        type = DatabaseType.SQLite;
+                    break;
+                case "sqliteconnection":
+                    type = DatabaseType.SQLite;
 
-                        break;
-                    case "npgsqldataadapter":
-                        type = DatabaseType.PostgreSQL;
+                    break;
+                case "npgsqlconnection":
+                    type = DatabaseType.PostgreSQL;
 
-                        break;
-                    case "oledbdataadapter":
-                        if (Connection.ConnectionString?.ToLowerInvariant().Contains("microsoft.jet.oledb") ?? false)
-                            type = DatabaseType.Access;
+                    break;
+                case "oledbconnection":
+                    if (Connection.ConnectionString?.ToLowerInvariant().Contains("microsoft.jet.oledb") ?? false)
+                        type = DatabaseType.Access;
 
-                        break;
-                }
+                    break;
             }
 
             return type;

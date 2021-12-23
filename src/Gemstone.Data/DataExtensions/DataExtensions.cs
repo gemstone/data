@@ -770,27 +770,25 @@ namespace Gemstone.Data.DataExtensions
         /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-        public static DataRow RetrieveRow(this IDbConnection connection, Type dataAdapterType, string sql, params object[] parameters)
+        public static DataRow RetrieveRow(this IDbConnection connection, string sql, params object[] parameters)
         {
-            return connection.RetrieveRow(dataAdapterType, DefaultTimeoutDuration, sql, parameters);
+            return connection.RetrieveRow(DefaultTimeoutDuration, sql, parameters);
         }
 
         /// <summary>
         /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-        public static DataRow RetrieveRow(this IDbConnection connection, Type dataAdapterType, int timeout, string sql, params object[] parameters)
+        public static DataRow RetrieveRow(this IDbConnection connection, int timeout, string sql, params object[] parameters)
         {
-            DataTable dataTable = connection.RetrieveData(dataAdapterType, timeout,sql, parameters);
+            DataTable dataTable = connection.RetrieveData(timeout, sql, parameters);
 
             if (dataTable.Rows.Count == 0)
                 dataTable.Rows.Add(dataTable.NewRow());
@@ -855,27 +853,25 @@ namespace Gemstone.Data.DataExtensions
         /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-        public static DataRow RetrieveRow(this IDbCommand command, Type dataAdapterType, string sql, params object[] parameters)
+        public static DataRow RetrieveRow(this IDbCommand command, string sql, params object[] parameters)
         {
-            return command.RetrieveRow(dataAdapterType, DefaultTimeoutDuration, sql, parameters);
+            return command.RetrieveRow(DefaultTimeoutDuration, sql, parameters);
         }
 
         /// <summary>
         /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-        public static DataRow RetrieveRow(this IDbCommand command, Type dataAdapterType, int timeout, string sql, params object[] parameters)
+        public static DataRow RetrieveRow(this IDbCommand command, int timeout, string sql, params object[] parameters)
         {
-            DataTable dataTable = command.RetrieveData(dataAdapterType, timeout, sql, parameters);
+            DataTable dataTable = command.RetrieveData(timeout, sql, parameters);
 
             if (dataTable.Rows.Count == 0)
                 dataTable.Rows.Add(dataTable.NewRow());
@@ -948,13 +944,12 @@ namespace Gemstone.Data.DataExtensions
         /// of result set, if the result set contains multiple tables.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataTable"/> object.</returns>
-        public static DataTable RetrieveData(this IDbConnection connection, Type dataAdapterType, string sql, params object[] parameters)
+        public static DataTable RetrieveData(this IDbConnection connection, string sql, params object[] parameters)
         {
-            return connection.RetrieveData(dataAdapterType, DefaultTimeoutDuration, sql, parameters);
+            return connection.RetrieveData(DefaultTimeoutDuration, sql, parameters);
         }
 
         /// <summary>
@@ -962,14 +957,13 @@ namespace Gemstone.Data.DataExtensions
         /// of result set, if the result set contains multiple tables.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataTable"/> object.</returns>
-        public static DataTable RetrieveData(this IDbConnection connection, Type dataAdapterType, int timeout, string sql, params object[] parameters)
+        public static DataTable RetrieveData(this IDbConnection connection, int timeout, string sql, params object[] parameters)
         {
-            return connection.RetrieveDataSet(dataAdapterType, timeout, sql, parameters).Tables[0];
+            return connection.RetrieveDataSet(timeout, sql, parameters).Tables[0];
         }
 
         /// <summary>
@@ -1033,13 +1027,12 @@ namespace Gemstone.Data.DataExtensions
         /// of result set, if the result set contains multiple tables.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataTable"/> object.</returns>
-        public static DataTable RetrieveData(this IDbCommand command, Type dataAdapterType, string sql, params object[] parameters)
+        public static DataTable RetrieveData(this IDbCommand command, string sql, params object[] parameters)
         {
-            return command.RetrieveData(dataAdapterType, DefaultTimeoutDuration, sql, parameters);
+            return command.RetrieveData(DefaultTimeoutDuration, sql, parameters);
         }
 
         /// <summary>
@@ -1047,14 +1040,13 @@ namespace Gemstone.Data.DataExtensions
         /// of result set, if the result set contains multiple tables.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataTable"/> object.</returns>
-        public static DataTable RetrieveData(this IDbCommand command, Type dataAdapterType, int timeout, string sql, params object[] parameters)
+        public static DataTable RetrieveData(this IDbCommand command, int timeout, string sql, params object[] parameters)
         {
-            return command.RetrieveDataSet(dataAdapterType, timeout, sql, parameters).Tables[0];
+            return command.RetrieveDataSet(timeout, sql, parameters).Tables[0];
         }
 
         #endregion
@@ -1129,13 +1121,12 @@ namespace Gemstone.Data.DataExtensions
         /// may contain multiple tables, depending on the SQL statement.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataSet"/> object.</returns>
-        public static DataSet RetrieveDataSet(this IDbConnection connection, Type dataAdapterType, string sql, params object[] parameters)
+        public static DataSet RetrieveDataSet(this IDbConnection connection, string sql, params object[] parameters)
         {
-            return connection.RetrieveDataSet(dataAdapterType, DefaultTimeoutDuration, sql, parameters);
+            return connection.RetrieveDataSet(DefaultTimeoutDuration, sql, parameters);
         }
 
         /// <summary>
@@ -1143,19 +1134,25 @@ namespace Gemstone.Data.DataExtensions
         /// may contain multiple tables, depending on the SQL statement.
         /// </summary>
         /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataSet"/> object.</returns>
-        public static DataSet RetrieveDataSet(this IDbConnection connection, Type dataAdapterType, int timeout, string sql, params object[] parameters)
+        public static DataSet RetrieveDataSet(this IDbConnection connection, int timeout, string sql, params object[] parameters)
         {
             using IDbCommand command = connection.CreateParameterizedCommand(sql, parameters);
-
             command.CommandTimeout = timeout;
-            IDataAdapter dataAdapter = (IDataAdapter)Activator.CreateInstance(dataAdapterType, command);
+
+            using IDataReader reader = command.ExecuteReader();
             DataSet data = new DataSet("Temp");
-            dataAdapter.Fill(data);
+            int tableIndex = 0;
+
+            do
+            {
+                string tableName = (tableIndex == 0) ? "Table" : $"Table{tableIndex}";
+                data.Load(reader, LoadOption.PreserveChanges, tableName);
+                tableIndex++;
+            } while (reader.NextResult());
 
             return data;
         }
@@ -1231,13 +1228,12 @@ namespace Gemstone.Data.DataExtensions
         /// may contain multiple tables, depending on the SQL statement.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataSet"/> object.</returns>
-        public static DataSet RetrieveDataSet(this IDbCommand command, Type dataAdapterType, string sql, params object[] parameters)
+        public static DataSet RetrieveDataSet(this IDbCommand command, string sql, params object[] parameters)
         {
-            return command.RetrieveDataSet(dataAdapterType, DefaultTimeoutDuration, sql, parameters);
+            return command.RetrieveDataSet(DefaultTimeoutDuration, sql, parameters);
         }
 
         /// <summary>
@@ -1245,19 +1241,26 @@ namespace Gemstone.Data.DataExtensions
         /// may contain multiple tables, depending on the SQL statement.
         /// </summary>
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-        /// <param name="dataAdapterType">The <see cref="Type"/> of data adapter to use to retrieve data.</param>
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>A <see cref="DataSet"/> object.</returns>
-        public static DataSet RetrieveDataSet(this IDbCommand command, Type dataAdapterType, int timeout, string sql, params object[] parameters)
+        public static DataSet RetrieveDataSet(this IDbCommand command, int timeout, string sql, params object[] parameters)
         {
             command.CommandTimeout = timeout;
             command.Parameters.Clear();
             command.AddParametersWithValues(sql, parameters);
-            IDataAdapter dataAdapter = (IDataAdapter)Activator.CreateInstance(dataAdapterType, command);
+
+            using IDataReader reader = command.ExecuteReader();
             DataSet data = new DataSet("Temp");
-            dataAdapter.Fill(data);
+            int tableIndex = 0;
+
+            do
+            {
+                string tableName = (tableIndex == 0) ? "Table" : $"Table{tableIndex}";
+                data.Load(reader, LoadOption.PreserveChanges, tableName);
+                tableIndex++;
+            } while (reader.NextResult());
 
             return data;
         }

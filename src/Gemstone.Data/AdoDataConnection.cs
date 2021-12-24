@@ -97,49 +97,49 @@ namespace Gemstone.Data
     ///         <term>SQL Server</term>
     ///         <description>
     ///         ConnectionString = "Data Source=serverName; Initial Catalog=databaseName; User ID=userName; Password=password"<br/>
-    ///         DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.SqlClient.SqlConnection; AdapterType=System.Data.SqlClient.SqlDataAdapter"
+    ///         DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.SqlClient.SqlConnection"
     ///         </description>
     ///     </item>
     ///     <item>
     ///         <term>Oracle</term>
     ///         <description>
     ///         ConnectionString = "Data Source=tnsName; User ID=schemaUserName; Password=schemaPassword"<br/>
-    ///         DataProviderString = "AssemblyName={Oracle.DataAccess, Version=2.112.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342}; ConnectionType=Oracle.DataAccess.Client.OracleConnection; AdapterType=Oracle.DataAccess.Client.OracleDataAdapter"
+    ///         DataProviderString = "AssemblyName={Oracle.DataAccess, Version=2.112.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342}; ConnectionType=Oracle.DataAccess.Client.OracleConnection"
     ///         </description>
     ///     </item>
     ///     <item>
     ///         <term>MySQL</term>
     ///         <description>
     ///         ConnectionString = "Server=serverName; Database=databaseName; Uid=root; Pwd=password; allow user variables = true"<br/>
-    ///         DataProviderString = "AssemblyName={MySql.Data, Version=6.3.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d}; ConnectionType=MySql.Data.MySqlClient.MySqlConnection; AdapterType=MySql.Data.MySqlClient.MySqlDataAdapter"
+    ///         DataProviderString = "AssemblyName={MySql.Data, Version=6.3.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d}; ConnectionType=MySql.Data.MySqlClient.MySqlConnection"
     ///         </description>
     ///     </item>
     ///     <item>
     ///         <term>SQLite</term>
     ///         <description>
     ///         ConnectionString = "Data Source=databaseName.db; Version=3; Foreign Keys=True; FailIfMissing=True"<br/>
-    ///         DataProviderString = "AssemblyName={System.Data.SQLite, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139}; ConnectionType=System.Data.SQLite.SQLiteConnection; AdapterType=System.Data.SQLite.SQLiteDataAdapter"
+    ///         DataProviderString = "AssemblyName={System.Data.SQLite, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139}; ConnectionType=System.Data.SQLite.SQLiteConnection"
     ///         </description>
     ///     </item>
     ///     <item>
     ///         <term>SQLite (Mono native driver)</term>
     ///         <description>
     ///         ConnectionString = "Data Source=./databaseName.db; Version=3; Foreign Keys=True; FailIfMissing=True"<br/>
-    ///         DataProviderString = "AssemblyName={Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756}; ConnectionType=Mono.Data.Sqlite.SqliteConnection; AdapterType=Mono.Data.Sqlite.SqliteDataAdapter"
+    ///         DataProviderString = "AssemblyName={Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756}; ConnectionType=Mono.Data.Sqlite.SqliteConnection"
     ///         </description>
     ///     </item>
     ///     <item>
     ///         <term>Access / OleDB</term>
     ///         <description>
     ///         ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=databaseName.mdb"<br/>
-    ///         DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.OleDb.OleDbConnection; AdapterType=System.Data.OleDb.OleDbDataAdapter"
+    ///         DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.OleDb.OleDbConnection"
     ///         </description>
     ///     </item>
     ///     <item>
     ///         <term>ODBC Connection</term>
     ///         <description>
     ///         ConnectionString = "Driver={SQL Server Native Client 10.0}; Server=serverName; Database=databaseName; Uid=userName; Pwd=password"<br/>
-    ///         DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.Odbc.OdbcConnection; AdapterType=System.Data.Odbc.OdbcDataAdapter"
+    ///         DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.Odbc.OdbcConnection"
     ///         </description>
     ///     </item>
     /// </list>
@@ -154,7 +154,7 @@ namespace Gemstone.Data
     ///   <categorizedSettings>
     ///     <systemSettings>
     ///       <add name="ConnectionString" value="Data Source=localhost\SQLEXPRESS; Initial Catalog=MyDatabase; Integrated Security=SSPI" description="ADO database connection string" encrypted="false" />
-    ///       <add name="DataProviderString" value="AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.SqlClient.SqlConnection; AdapterType=System.Data.SqlClient.SqlDataAdapter" description="ADO database provider string" encrypted="false" />
+    ///       <add name="DataProviderString" value="AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.SqlClient.SqlConnection" description="ADO database provider string" encrypted="false" />
     ///     </systemSettings>
     ///   </categorizedSettings>
     ///   <startup>
@@ -197,7 +197,7 @@ namespace Gemstone.Data
             if (!typeof(IDbConnection).IsAssignableFrom(connectionType))
                 throw new ArgumentException("Connection type must implement the IDbConnection interface", nameof(connectionType));
 
-            DatabaseType = GetDatabaseType();
+            DatabaseType = GetDatabaseType(connectionType);
             m_disposeConnection = true;
 
             try
@@ -221,7 +221,7 @@ namespace Gemstone.Data
         public AdoDataConnection(IDbConnection connection, bool disposeConnection)
         {
             Connection = connection;
-            DatabaseType = GetDatabaseType();
+            DatabaseType = GetDatabaseType(connection.GetType());
             m_disposeConnection = disposeConnection;
         }
 
@@ -242,7 +242,6 @@ namespace Gemstone.Data
                 Dictionary<string, string> settings = dataProviderString.ParseKeyValuePairs();
                 string assemblyName = settings["AssemblyName"].ToNonNullString();
                 string connectionTypeName = settings["ConnectionType"].ToNonNullString();
-                string adapterTypeName = settings["AdapterType"].ToNonNullString();
 
                 if (string.IsNullOrEmpty(connectionTypeName))
                     throw new NullReferenceException("ADO database connection type was undefined.");
@@ -253,7 +252,7 @@ namespace Gemstone.Data
                 if (!typeof(IDbConnection).IsAssignableFrom(connectionType))
                     throw new ArgumentException("Connection type must implement the IDbConnection interface", nameof(dataProviderString));
 
-                DatabaseType = GetDatabaseType();
+                DatabaseType = GetDatabaseType(connectionType);
                 m_disposeConnection = true;
             }
             catch (Exception ex)
@@ -295,7 +294,7 @@ namespace Gemstone.Data
         /// Gets or sets the type of the database underlying the <see cref="AdoDataConnection"/>.
         /// </summary>
         /// <remarks>
-        /// This value is automatically assigned based on the adapter type specified in the data provider string, however,
+        /// This value is automatically assigned based on the connection type specified in the data provider string, however,
         /// if the database type cannot be determined it will be set to <see cref="Data.DatabaseType.Other"/>. In this
         /// case, if you know the behavior of your custom ADO database connection matches that of another defined database
         /// type, you can manually assign the database type to allow for database interaction interoperability.
@@ -818,11 +817,11 @@ namespace Gemstone.Data
         }
 
         [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")]
-        private DatabaseType GetDatabaseType()
+        private DatabaseType GetDatabaseType(Type connectionType)
         {
             DatabaseType type = DatabaseType.Other;
 
-            switch (Connection.GetType().Name.ToLowerInvariant())
+            switch (connectionType.Name.ToLowerInvariant())
             {
                 case "sqlconnection":
                     type = DatabaseType.SQLServer;
@@ -915,23 +914,16 @@ namespace Gemstone.Data
         #region [ Static ]
 
         /// <summary>
-        /// Generates a data provider string for the given connection type and adapter type.
+        /// Generates a data provider string for the given connection type.
         /// </summary>
         /// <param name="connectionType">The type used to establish a connection to the database.</param>
-        /// <param name="adapterType">The type used to load data from the database into a data table.</param>
-        /// <returns></returns>
-        public static string ToDataProviderString(Type connectionType, Type adapterType)
+        /// <returns>The data provider string for the given connection type.</returns>
+        public static string ToDataProviderString(Type connectionType)
         {
             if (!typeof(IDbConnection).IsAssignableFrom(connectionType))
                 throw new ArgumentException("Connection type must implement the IDbConnection interface", nameof(connectionType));
 
-            if (!typeof(IDbDataAdapter).IsAssignableFrom(adapterType))
-                throw new ArgumentException("Adapter type must implement the IDbDataAdapter interface", nameof(adapterType));
-
-            if (connectionType.Assembly != adapterType.Assembly)
-                throw new InvalidOperationException("Data provider string requires that connection type and adapter type reside in the same assembly");
-
-            Dictionary<string, string> settings = new Dictionary<string, string> { ["AssemblyName"] = connectionType.Assembly.FullName, ["ConnectionType"] = connectionType.FullName, ["AdapterType"] = adapterType.FullName };
+            Dictionary<string, string> settings = new Dictionary<string, string> { ["AssemblyName"] = connectionType.Assembly.FullName, ["ConnectionType"] = connectionType.FullName };
 
             return settings.JoinKeyValuePairs();
         }

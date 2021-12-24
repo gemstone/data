@@ -1152,7 +1152,7 @@ namespace Gemstone.Data.DataExtensions
                 string tableName = (tableIndex == 0) ? "Table" : $"Table{tableIndex}";
                 data.Load(reader, LoadOption.PreserveChanges, tableName);
                 tableIndex++;
-            } while (reader.NextResult());
+            } while (!reader.IsClosed);
 
             return data;
         }
@@ -1260,7 +1260,7 @@ namespace Gemstone.Data.DataExtensions
                 string tableName = (tableIndex == 0) ? "Table" : $"Table{tableIndex}";
                 data.Load(reader, LoadOption.PreserveChanges, tableName);
                 tableIndex++;
-            } while (reader.NextResult());
+            } while (!reader.IsClosed);
 
             return data;
         }

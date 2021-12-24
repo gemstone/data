@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <HelpKI>
   <HelpKINode Title="Access enumeration member" Url="html/T_Gemstone_Data_DatabaseType.htm" />
-  <HelpKINode Title="AdapterType property" Url="html/P_Gemstone_Data_AdoDataConnection_AdapterType.htm" />
   <HelpKINode Title="Add method">
     <HelpKINode Title="Fields.Add Method " Url="html/M_Gemstone_Data_Fields_Add.htm" />
     <HelpKINode Title="Tables.Add Method " Url="html/M_Gemstone_Data_Tables_Add.htm" />
@@ -24,7 +23,6 @@
     <HelpKINode Title="methods" Url="html/Methods_T_Gemstone_Data_AdoDataConnection.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_Gemstone_Data_AdoDataConnection.htm" />
   </HelpKINode>
-  <HelpKINode Title="AdoDataConnection.AdapterType property" Url="html/P_Gemstone_Data_AdoDataConnection_AdapterType.htm" />
   <HelpKINode Title="AdoDataConnection.AdoDataConnection constructor" Url="html/Overload_Gemstone_Data_AdoDataConnection__ctor.htm" />
   <HelpKINode Title="AdoDataConnection.Bool method" Url="html/M_Gemstone_Data_AdoDataConnection_Bool.htm" />
   <HelpKINode Title="AdoDataConnection.Connection property" Url="html/P_Gemstone_Data_AdoDataConnection_Connection.htm" />

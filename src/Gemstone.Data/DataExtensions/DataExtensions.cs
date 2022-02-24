@@ -283,41 +283,22 @@ namespace Gemstone.Data.DataExtensions
         /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
         public static IDataReader ExecuteReader<TConnection>(this TConnection connection, int timeout, string sql, CommandBehavior behavior, params object[] parameters) where TConnection : IDbConnection
         {
-            using IDbCommand command = connection.CreateParameterizedCommand(sql, parameters);
+            IDbCommand? command = null;
+            IDataReader? reader = null;
 
-            command.CommandTimeout = timeout;
-
-            return command.ExecuteReader(behavior);
-        }
-
-        /// <summary>
-        /// Executes the SQL statement using <see cref="SqlConnection"/>, and builds a <see cref="SqlDataReader"/>.
-        /// </summary>
-        /// <param name="sql">The SQL statement to be executed.</param>
-        /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
-        /// <returns>A <see cref="SqlDataReader"/> object.</returns>
-        public static SqlDataReader ExecuteReader(this SqlConnection connection, string sql, params object[] parameters)
-        {
-            return connection.ExecuteReader(DefaultTimeoutDuration, sql, CommandBehavior.Default, parameters);
-        }
-
-        /// <summary>
-        /// Executes the SQL statement using <see cref="SqlConnection"/>, and builds a <see cref="SqlDataReader"/>.
-        /// </summary>
-        /// <param name="sql">The SQL statement to be executed.</param>
-        /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-        /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
-        /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-        /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
-        /// <returns>A <see cref="SqlDataReader"/> object.</returns>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public static SqlDataReader ExecuteReader(this SqlConnection connection, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
-        {
-            using SqlCommand command = new SqlCommand(sql, connection) { CommandTimeout = timeout };
-            command.PopulateParameters(parameters);
-
-            return command.ExecuteReader(behavior);
+            try
+            {
+                command = connection.CreateParameterizedCommand(sql, parameters);
+                command.CommandTimeout = timeout;
+                reader = command.ExecuteReader(behavior);
+                return new DataReaderWrapper(command, reader);
+            }
+            catch
+            {
+                reader?.Dispose();
+                command?.Dispose();
+                throw;
+            }
         }
 
         /// <summary>
@@ -395,6 +376,66 @@ namespace Gemstone.Data.DataExtensions
 
             return command.ExecuteReader(behavior);
         }
+
+        #region [ IDbConnection.ExecuteReader Wrapper Class ]
+
+        private class DataReaderWrapper : IDataReader
+        {
+            private IDbCommand Command { get; }
+            private IDataReader Reader { get; }
+
+            public DataReaderWrapper(IDbCommand command, IDataReader reader)
+            {
+                Command = command;
+                Reader = reader;
+            }
+
+            public object this[int i] => Reader[i];
+            public object this[string name] => Reader[name];
+            public int Depth => Reader.Depth;
+            public bool IsClosed => Reader.IsClosed;
+            public int RecordsAffected => Reader.RecordsAffected;
+            public int FieldCount => Reader.FieldCount;
+
+            public bool GetBoolean(int i) => Reader.GetBoolean(i);
+            public byte GetByte(int i) => Reader.GetByte(i);
+            public char GetChar(int i) => Reader.GetChar(i);
+            public IDataReader GetData(int i) => Reader.GetData(i);
+            public string GetDataTypeName(int i) => Reader.GetDataTypeName(i);
+            public DateTime GetDateTime(int i) => Reader.GetDateTime(i);
+            public decimal GetDecimal(int i) => Reader.GetDecimal(i);
+            public double GetDouble(int i) => Reader.GetDouble(i);
+            public Type GetFieldType(int i) => Reader.GetFieldType(i);
+            public float GetFloat(int i) => Reader.GetFloat(i);
+            public Guid GetGuid(int i) => Reader.GetGuid(i);
+            public short GetInt16(int i) => Reader.GetInt16(i);
+            public int GetInt32(int i) => Reader.GetInt32(i);
+            public long GetInt64(int i) => Reader.GetInt64(i);
+            public string GetName(int i) => Reader.GetName(i);
+            public int GetOrdinal(string name) => Reader.GetOrdinal(name);
+            public DataTable GetSchemaTable() => Reader.GetSchemaTable();
+            public string GetString(int i) => Reader.GetString(i);
+            public object GetValue(int i) => Reader.GetValue(i);
+            public int GetValues(object[] values) => Reader.GetValues(values);
+            public bool IsDBNull(int i) => Reader.IsDBNull(i);
+            public bool NextResult() => Reader.NextResult();
+            public bool Read() => Reader.Read();
+            public void Close() => Reader.Close();
+
+            public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length) =>
+                Reader.GetBytes(i, fieldOffset, buffer, bufferoffset, length);
+
+            public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length) =>
+                Reader.GetChars(i, fieldoffset, buffer, bufferoffset, length);
+
+            public void Dispose()
+            {
+                Reader.Dispose();
+                Command.Dispose();
+            }
+        }
+
+        #endregion
 
         #endregion
 

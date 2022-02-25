@@ -396,20 +396,12 @@
       <param name="parameters">The parameter values to be used to fill in <see cref="T:System.Data.IDbDataParameter" /> parameters.</param>
       <returns>The first <see cref="T:System.Data.DataRow" /> in the result set.</returns>
     </member>
-    <member name="M:Gemstone.Data.AdoDataConnection.ToDataProviderString(System.Type,System.Type)">
+    <member name="M:Gemstone.Data.AdoDataConnection.ToDataProviderString(System.Type)">
       <summary>
-            Generates a data provider string for the given connection type and adapter type.
+            Generates a data provider string for the given connection type.
             </summary>
       <param name="connectionType">The type used to establish a connection to the database.</param>
-      <param name="adapterType">The type used to load data from the database into a data table.</param>
-      <returns>
-        <markup>
-          <include item="SMCMissingTag">
-            <parameter>returns</parameter>
-            <parameter>M:Gemstone.Data.AdoDataConnection.ToDataProviderString(System.Type,System.Type)</parameter>
-          </include>
-        </markup>
-      </returns>
+      <returns>The data provider string for the given connection type.</returns>
     </member>
     <member name="P:Gemstone.Data.AdoDataConnection.UtcNow">
       <summary>

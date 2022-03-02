@@ -2267,26 +2267,6 @@
       <param name="parameters">The parameter values to be used to fill in <see cref="T:System.Data.IDbDataParameter" /> parameters identified by '@' prefix in <paramref name="sql" /> expression -or- the parameter values to be passed into stored procedure being executed.</param>
       <returns>A <see cref="T:Microsoft.Data.SqlClient.SqlDataReader" /> object.</returns>
     </member>
-    <member name="M:Gemstone.Data.DataExtensions.DataExtensions.ExecuteReader(Microsoft.Data.SqlClient.SqlConnection,System.Int32,System.String,System.Data.CommandBehavior,System.Object[])">
-      <summary>
-            Executes the SQL statement using <see cref="T:Microsoft.Data.SqlClient.SqlConnection" />, and builds a <see cref="T:Microsoft.Data.SqlClient.SqlDataReader" />.
-            </summary>
-      <param name="sql">The SQL statement to be executed.</param>
-      <param name="connection">The <see cref="T:Microsoft.Data.SqlClient.SqlConnection" /> to use for executing the SQL statement.</param>
-      <param name="behavior">One of the <see cref="T:System.Data.CommandBehavior" /> values.</param>
-      <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-      <param name="parameters">The parameter values to be used to fill in <see cref="T:System.Data.IDbDataParameter" /> parameters identified by '@' prefix in <paramref name="sql" /> expression -or- the parameter values to be passed into stored procedure being executed.</param>
-      <returns>A <see cref="T:Microsoft.Data.SqlClient.SqlDataReader" /> object.</returns>
-    </member>
-    <member name="M:Gemstone.Data.DataExtensions.DataExtensions.ExecuteReader(Microsoft.Data.SqlClient.SqlConnection,System.String,System.Object[])">
-      <summary>
-            Executes the SQL statement using <see cref="T:Microsoft.Data.SqlClient.SqlConnection" />, and builds a <see cref="T:Microsoft.Data.SqlClient.SqlDataReader" />.
-            </summary>
-      <param name="sql">The SQL statement to be executed.</param>
-      <param name="connection">The <see cref="T:Microsoft.Data.SqlClient.SqlConnection" /> to use for executing the SQL statement.</param>
-      <param name="parameters">The parameter values to be used to fill in <see cref="T:System.Data.IDbDataParameter" /> parameters identified by '@' prefix in <paramref name="sql" /> expression -or- the parameter values to be passed into stored procedure being executed.</param>
-      <returns>A <see cref="T:Microsoft.Data.SqlClient.SqlDataReader" /> object.</returns>
-    </member>
     <member name="M:Gemstone.Data.DataExtensions.DataExtensions.ExecuteReader(System.Data.IDbCommand,System.Int32,System.String,System.Data.CommandBehavior,System.Object[])">
       <summary>
             Executes the SQL statement using <see cref="T:System.Data.IDbCommand" />, and builds a <see cref="T:System.Data.IDataReader" />.

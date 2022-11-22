@@ -95,9 +95,9 @@ namespace Gemstone.Data.DataExtensions
         // Defines a list of keywords used to identify PL/SQL blocks.
         private static readonly string[] s_plsqlIdentifiers = { "CREATE FUNCTION", "CREATE OR REPLACE FUNCTION", "CREATE PROCEDURE", "CREATE OR REPLACE PROCEDURE", "CREATE PACKAGE", "CREATE OR REPLACE PACKAGE", "DECLARE", "BEGIN" };
 
-        private static readonly Regex s_sqlParameterRegex = new Regex(@"^[:@][a-zA-Z]\w*$", RegexOptions.Compiled);
-        private static readonly Regex s_sqlCommentRegex = new Regex(@"/\*.*\*/|--.*(?=\n)", RegexOptions.Multiline);
-        private static readonly Regex s_sqlIdentifierRegex = new Regex(@"^(\S+|(\S+|\[.+\])(\.\S+|\.\[.+\])*|(\S+|\`.+\`)(\.\S+|\.\`.+\`)*|(\S+|\"".+\"")(\.\S+|\.\"".+\"")*)$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture);
+        private static readonly Regex s_sqlParameterRegex = new(@"^[:@][a-zA-Z]\w*$", RegexOptions.Compiled);
+        private static readonly Regex s_sqlCommentRegex = new(@"/\*.*\*/|--.*(?=\n)", RegexOptions.Multiline);
+        private static readonly Regex s_sqlIdentifierRegex = new(@"^(\S+|(\S+|\[.+\])(\.\S+|\.\[.+\])*|(\S+|\`.+\`)(\.\S+|\.\`.+\`)*|(\S+|\"".+\"")(\.\S+|\.\"".+\"")*)$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture);
 
         #region [ SQL Encoding String Extension ]
 
@@ -173,7 +173,7 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static int ExecuteNonQuery(this SqlConnection connection, int timeout, string sql, params object[] parameters)
         {
-            using SqlCommand command = new SqlCommand(sql, connection) { CommandTimeout = timeout };
+            using SqlCommand command = new(sql, connection) { CommandTimeout = timeout };
             command.PopulateParameters(parameters);
 
             return command.ExecuteNonQuery();
@@ -499,7 +499,7 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static object ExecuteScalar(this SqlConnection connection, int timeout, string sql, params object[] parameters)
         {
-            using SqlCommand command = new SqlCommand(sql, connection) { CommandTimeout = timeout };
+            using SqlCommand command = new(sql, connection) { CommandTimeout = timeout };
             command.PopulateParameters(parameters);
 
             return command.ExecuteScalar();
@@ -598,7 +598,7 @@ namespace Gemstone.Data.DataExtensions
 
             using IDbCommand command = connection.CreateCommand();
 
-            StringBuilder statementBuilder = new StringBuilder();
+            StringBuilder statementBuilder = new();
 
             while (line != null)
             {
@@ -653,7 +653,7 @@ namespace Gemstone.Data.DataExtensions
 
             using IDbCommand command = connection.CreateCommand();
 
-            StringBuilder statementBuilder = new StringBuilder();
+            StringBuilder statementBuilder = new();
 
             while (line != null)
             {
@@ -713,7 +713,7 @@ namespace Gemstone.Data.DataExtensions
 
             using IDbCommand command = connection.CreateCommand();
 
-            StringBuilder statementBuilder = new StringBuilder();
+            StringBuilder statementBuilder = new();
 
             while (line != null)
             {
@@ -1148,10 +1148,10 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static DataSet RetrieveDataSet(this SqlConnection connection, int timeout, int startRow, int maxRows, string sql, params object[] parameters)
         {
-            using SqlCommand command = new SqlCommand(sql, connection) { CommandTimeout = timeout };
+            using SqlCommand command = new(sql, connection) { CommandTimeout = timeout };
             command.PopulateParameters(parameters);
-            SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
-            DataSet data = new DataSet("Temp");
+            SqlDataAdapter dataAdapter = new(command);
+            DataSet data = new("Temp");
             dataAdapter.Fill(data, startRow, maxRows, "Table1");
 
             return data;
@@ -1185,7 +1185,7 @@ namespace Gemstone.Data.DataExtensions
             command.CommandTimeout = timeout;
 
             using IDataReader reader = command.ExecuteReader();
-            DataSet data = new DataSet("Temp");
+            DataSet data = new("Temp");
             int tableIndex = 0;
 
             do
@@ -1257,8 +1257,8 @@ namespace Gemstone.Data.DataExtensions
             command.CommandTimeout = timeout;
             command.Parameters.Clear();
             command.PopulateParameters(parameters);
-            SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
-            DataSet data = new DataSet("Temp");
+            SqlDataAdapter dataAdapter = new(command);
+            DataSet data = new("Temp");
             dataAdapter.Fill(data, startRow, maxRows, "Table1");
 
             return data;
@@ -1293,7 +1293,7 @@ namespace Gemstone.Data.DataExtensions
             command.AddParametersWithValues(sql, parameters);
 
             using IDataReader reader = command.ExecuteReader();
-            DataSet data = new DataSet("Temp");
+            DataSet data = new("Temp");
             int tableIndex = 0;
 
             do
@@ -1463,8 +1463,8 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static int UpdateData(this SqlConnection connection, DataTable sourceData, string sourceSql)
         {
-            SqlDataAdapter dataAdapter = new SqlDataAdapter(sourceSql, connection);
-            SqlCommandBuilder _ = new SqlCommandBuilder(dataAdapter);
+            SqlDataAdapter dataAdapter = new(sourceSql, connection);
+            SqlCommandBuilder _ = new(dataAdapter);
 
             return dataAdapter.Update(sourceData);
         }
@@ -1699,7 +1699,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>A <see cref="DataTable"/> object.</returns>
         public static DataTable ToDataTable(this string delimitedData, string delimiter, bool header)
         {
-            DataTable table = new DataTable();
+            DataTable table = new();
             string pattern;
 
             // Regex pattern that will be used to split the delimited data.
@@ -1760,7 +1760,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>A string of delimited text.</returns>
         public static string ToDelimitedString(this DataTable table, string delimiter, bool quoted, bool header)
         {
-            StringBuilder data = new StringBuilder();
+            StringBuilder data = new();
 
             // Uses the column names as the headers if headers are requested.
             if (header)

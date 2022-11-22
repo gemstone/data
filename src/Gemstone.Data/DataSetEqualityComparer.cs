@@ -145,6 +145,6 @@ namespace Gemstone.Data
         /// Default instance of the <see cref="DataSetEqualityComparer"/> class.
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
-        public static readonly DataSetEqualityComparer Default = new DataSetEqualityComparer();
+        public static readonly DataSetEqualityComparer Default = new();
     }
 }

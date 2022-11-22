@@ -447,7 +447,7 @@ namespace Gemstone.Data
         /// </summary>
         /// <param name="obj">Check <paramref name="obj"/> type <see cref="object"/>, if it is type of <see cref="Field"/> then compare to <see cref="Ordinal"/> of <paramref name="obj"/> else throw <see cref="ArgumentException"/></param>
         /// <returns></returns>
-        public int CompareTo(object obj)
+        public int CompareTo(object? obj)
         {
             // Fields are sorted in ordinal position order
             if (obj is Field field)
@@ -907,7 +907,7 @@ namespace Gemstone.Data
         /// <returns></returns>
         public string GetList()
         {
-            StringBuilder fieldList = new StringBuilder();
+            StringBuilder fieldList = new();
 
             foreach (ForeignKeyField field in FieldsList)
             {
@@ -1048,7 +1048,7 @@ namespace Gemstone.Data
             if (sqlEscapeFunction == null)
                 sqlEscapeFunction = Parent.Parent.Parent.SQLEscapeName;
 
-            StringBuilder fieldList = new StringBuilder();
+            StringBuilder fieldList = new();
 
             foreach (Field field in FieldList.Where(field => !field.AutoIncrement || returnAutoInc))
             {
@@ -1351,7 +1351,7 @@ namespace Gemstone.Data
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public int CompareTo(object obj)
+        public int CompareTo(object? obj)
         {
             // Tables are sorted in priority order
             if (obj is Table table)
@@ -1497,7 +1497,7 @@ namespace Gemstone.Data
 
                     if (remoteForeignKeyField != null)
                     {
-                        ForeignKeyField localForeignKeyField = new ForeignKeyField(localPrimaryKeyField.ForeignKeys);
+                        ForeignKeyField localForeignKeyField = new(localPrimaryKeyField.ForeignKeys);
 
                         localForeignKeyField.PrimaryKey = localPrimaryKeyField;
                         localForeignKeyField.ForeignKey = remoteForeignKeyField;
@@ -1738,7 +1738,7 @@ namespace Gemstone.Data
         /// <returns>Comma separated field list.</returns>
         public string GetList()
         {
-            StringBuilder fieldList = new StringBuilder();
+            StringBuilder fieldList = new();
 
             foreach (Table tbl in TableList)
             {
@@ -1772,7 +1772,7 @@ namespace Gemstone.Data
             /// Default property of object
             /// </summary>
             [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
-            public static readonly ReferentialOrderComparer Default = new ReferentialOrderComparer();
+            public static readonly ReferentialOrderComparer Default = new();
 
             #endregion
 
@@ -1999,7 +1999,7 @@ namespace Gemstone.Data
                     m_schemaConnection.ExecuteNonQuery("SET sql_mode='ANSI_QUOTES'");
 
                 // Validate table / field existence against open connection as defined in serialized schema
-                List<Table> tablesToRemove = new List<Table>();
+                List<Table> tablesToRemove = new();
 
                 foreach (Table table in Tables)
                 {
@@ -2008,7 +2008,7 @@ namespace Gemstone.Data
                         // Make sure table exists
                         m_schemaConnection.ExecuteScalar($"SELECT COUNT(*) FROM {table.SQLEscapedName}");
 
-                        List<Field> fieldsToRemove = new List<Field>();
+                        List<Field> fieldsToRemove = new();
                         string testFieldSQL;
 
                         try

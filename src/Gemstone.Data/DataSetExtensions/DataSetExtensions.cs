@@ -183,7 +183,7 @@ namespace Gemstone.Data.DataSetExtensions
             if (!destination.CanWrite)
                 throw new InvalidOperationException("Cannot write to a read-only stream");
 
-            BinaryWriter output = new BinaryWriter(destination);
+            BinaryWriter output = new(destination);
 
             // Serialize dataset name and table count
             output.Write(source.DataSetName);
@@ -192,13 +192,13 @@ namespace Gemstone.Data.DataSetExtensions
             // Serialize tables
             foreach (DataTable table in source.Tables)
             {
-                List<int> columnIndices = new List<int>();
-                List<DataType> columnDataTypes = new List<DataType>();
+                List<int> columnIndices = new();
+                List<DataType> columnDataTypes = new();
 
                 // Serialize column metadata
-                using (BlockAllocatedMemoryStream columnMetaDataStream = new BlockAllocatedMemoryStream())
+                using (BlockAllocatedMemoryStream columnMetaDataStream = new())
                 {
-                    BinaryWriter columnMetaData = new BinaryWriter(columnMetaDataStream);
+                    BinaryWriter columnMetaData = new(columnMetaDataStream);
 
                     foreach (DataColumn column in table.Columns)
                     {
@@ -353,9 +353,9 @@ namespace Gemstone.Data.DataSetExtensions
             if (!source.CanRead)
                 throw new InvalidOperationException("Cannot read from a write-only stream");
 
-            DataSet dataset = new DataSet();
+            DataSet dataset = new();
 
-            BinaryReader input = new BinaryReader(source);
+            BinaryReader input = new(source);
 
             // Deserialize dataset name and table count
             dataset.DataSetName = input.ReadString();
@@ -364,9 +364,9 @@ namespace Gemstone.Data.DataSetExtensions
             // Deserialize tables
             for (int i = 0; i < tableCount; i++)
             {
-                List<int> columnIndices = new List<int>();
-                List<DataType> columnDataTypes = new List<DataType>();
-                List<bool> columnNullable = new List<bool>();
+                List<int> columnIndices = new();
+                List<DataType> columnDataTypes = new();
+                List<bool> columnNullable = new();
 
                 DataTable table = dataset.Tables.Add();
 

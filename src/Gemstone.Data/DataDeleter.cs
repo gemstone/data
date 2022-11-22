@@ -102,7 +102,7 @@ namespace Gemstone.Data
         /// </summary>
         public override void Execute()
         {
-            List<Table> tablesList = new List<Table>();
+            List<Table> tablesList = new();
             Table tableLookup;
             Table table;
             int x;
@@ -199,7 +199,7 @@ namespace Gemstone.Data
 
             // Create a field list of all of the common fields in both tables
             // Use toTable as the parent to retrieve the appropriate SQLEncodedValues
-            Fields fieldCollection = new Fields(toTable);
+            Fields fieldCollection = new(toTable);
 
             foreach (Field field in fromTable.Fields)
             {

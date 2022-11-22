@@ -204,7 +204,7 @@ namespace Gemstone.Data
         /// </summary>
         public override void Execute()
         {
-            List<Table> tablesList = new List<Table>();
+            List<Table> tablesList = new();
             Table tableLookup;
             Table table;
             int x;
@@ -222,7 +222,7 @@ namespace Gemstone.Data
             if (ClearDestinationTables)
             {
                 // We do not consider table exclusions when deleting data from destination tables as these may have triggered inserts
-                List<Table> allSourceTables = new List<Table>(FromSchema.Tables);
+                List<Table> allSourceTables = new(FromSchema.Tables);
 
                 // Clear data in a child to parent direction to help avoid potential constraint issues
                 allSourceTables.Sort((table1, table2) => table1.Priority > table2.Priority ? 1 : table1.Priority < table2.Priority ? -1 : 0);
@@ -403,7 +403,7 @@ namespace Gemstone.Data
             FileStream bulkInsertFileStream = null;
 
             // Create a field list of all of the common fields in both tables
-            Fields fieldCollection = new Fields(toTable);
+            Fields fieldCollection = new(toTable);
 
             foreach (Field field in fromTable.Fields)
             {
@@ -848,9 +848,9 @@ namespace Gemstone.Data
 
         private void WriteBulkInsertRecord(Table toTable, Fields fieldCollection, Table sourceTable, string fieldTerminator, string rowTerminator, FileStream bulkInsertFileStream, IDataReader fromReader)
         {
-            Field commonField = new Field("Unused", OleDbType.Integer);
+            Field commonField = new("Unused", OleDbType.Integer);
             byte[] dataRow;
-            StringBuilder bulkInsertRow = new StringBuilder();
+            StringBuilder bulkInsertRow = new();
             string value;
             bool addedFirstInsertField;
 
@@ -991,7 +991,7 @@ namespace Gemstone.Data
             double startTime = 0;
             double stopTime;
 
-            DateTime todayMidNight = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
+            DateTime todayMidNight = new(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
 
             // Close bulk insert file stream
             bulkInsertFileStream.Close();

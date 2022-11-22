@@ -187,7 +187,7 @@ namespace Gemstone.Data.Model
         /// </summary>
         /// <param name="value">Operand.</param>
         /// <returns>Record operation representing the specified filter expression.</returns>
-        public static implicit operator RecordRestriction(string? value) => new RecordRestriction(value);
+        public static implicit operator RecordRestriction(string? value) => new(value);
 
         /// <summary>
         /// Compares to record restrictions for equality.

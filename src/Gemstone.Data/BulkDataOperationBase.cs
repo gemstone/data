@@ -258,7 +258,7 @@ namespace Gemstone.Data
         /// <summary>
         /// Get list of tables to be excluded during data processing
         /// </summary>
-        public List<string> ExcludedTables { get; } = new List<string>();
+        public List<string> ExcludedTables { get; } = new();
 
         #endregion
 

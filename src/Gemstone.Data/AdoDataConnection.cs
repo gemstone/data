@@ -923,7 +923,7 @@ namespace Gemstone.Data
             if (!typeof(IDbConnection).IsAssignableFrom(connectionType))
                 throw new ArgumentException("Connection type must implement the IDbConnection interface", nameof(connectionType));
 
-            Dictionary<string, string> settings = new Dictionary<string, string> { ["AssemblyName"] = connectionType.Assembly.FullName, ["ConnectionType"] = connectionType.FullName };
+            Dictionary<string, string> settings = new() { ["AssemblyName"] = connectionType.Assembly.FullName, ["ConnectionType"] = connectionType.FullName };
 
             return settings.JoinKeyValuePairs();
         }

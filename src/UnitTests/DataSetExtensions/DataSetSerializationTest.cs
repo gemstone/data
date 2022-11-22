@@ -43,10 +43,10 @@ namespace Gemstone.Data.UnitTests.DataSetExtensions
             const int RowCount = ushort.MaxValue; // * 10;// * 20;
 
             //Act
-            StringBuilder results = new StringBuilder();
+            StringBuilder results = new();
             Ticks stopTime, startTime;
 
-            DataSet sourceDataSet = new DataSet("source");
+            DataSet sourceDataSet = new("source");
             DataTable table = sourceDataSet.Tables.Add("table1");
 
             table.Columns.Add("col0", typeof(string));
@@ -228,8 +228,8 @@ namespace Gemstone.Data.UnitTests.DataSetExtensions
             results.AppendFormat("Dataset validation time: {0}\r\n", (stopTime - startTime).ToElapsedTimeString(4));
             results.AppendLine();
 
-            FileInfo xmlFile = new FileInfo(xmlFileName);
-            FileInfo binFile = new FileInfo(fileName);
+            FileInfo xmlFile = new(xmlFileName);
+            FileInfo binFile = new(fileName);
 
             results.AppendFormat("Binary serialization size =  {0}\r\n", SI2.ToScaledString(binFile.Length, "B"));
             results.AppendFormat("XML serialization size =  {0}\r\n", SI2.ToScaledString(xmlFile.Length, "B"));

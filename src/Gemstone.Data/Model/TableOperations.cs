@@ -710,7 +710,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                InvalidOperationException opex = new InvalidOperationException($"Exception during record query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
+                InvalidOperationException opex = new($"Exception during record query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
 
                 if (ExceptionHandler == null)
                     throw opex;
@@ -877,9 +877,9 @@ namespace Gemstone.Data.Model
                     if (sortFieldIsEncrypted && s_propertyNames.TryGetValue(sortField, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo sortFieldProperty))
                     {
                         // Reduce properties to load only primary key fields and sort field
-                        HashSet<PropertyInfo> properties = new HashSet<PropertyInfo>(s_primaryKeyProperties) { sortFieldProperty };
+                        HashSet<PropertyInfo> properties = new(s_primaryKeyProperties) { sortFieldProperty };
                         IEnumerable<T> sortResult = LocalOrderBy(PrimaryKeyCache.AsEnumerable().Select(row => LoadRecordFromCachedKeys(row.ItemArray, properties)).Where(record => record != null), sortField, ascending)!;
-                        DataTable sortedKeyCache = new DataTable(s_tableName);
+                        DataTable sortedKeyCache = new(s_tableName);
 
                         foreach (DataColumn column in PrimaryKeyCache.Columns)
                             sortedKeyCache.Columns.Add(column.ColumnName, column.DataType);
@@ -892,7 +892,7 @@ namespace Gemstone.Data.Model
                 }
                 catch (Exception ex)
                 {
-                    InvalidOperationException opex = new InvalidOperationException($"Exception during record query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
+                    InvalidOperationException opex = new($"Exception during record query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
 
                     if (ExceptionHandler == null)
                         throw opex;
@@ -961,7 +961,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                InvalidOperationException opex = new InvalidOperationException($"Exception during record count query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
+                InvalidOperationException opex = new($"Exception during record count query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
 
                 if (ExceptionHandler == null)
                     throw opex;
@@ -1155,7 +1155,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                InvalidOperationException opex = new InvalidOperationException($"Exception during record load for {typeof(T).Name} \"{m_selectRowSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
+                InvalidOperationException opex = new($"Exception during record load for {typeof(T).Name} \"{m_selectRowSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
 
                 if (ExceptionHandler == null)
                     throw opex;
@@ -1178,7 +1178,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                InvalidOperationException opex = new InvalidOperationException($"Exception during record load from primary key cache for {typeof(T).Name} \"{m_selectRowSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
+                InvalidOperationException opex = new($"Exception during record load from primary key cache for {typeof(T).Name} \"{m_selectRowSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
 
                 if (ExceptionHandler == null)
                     throw opex;
@@ -1204,7 +1204,7 @@ namespace Gemstone.Data.Model
         {
             try
             {
-                T record = new T();
+                T record = new();
 
                 // Make sure record exists, if not return null instead of a blank record
                 if (s_hasPrimaryKeyIdentityField && !skipPrimaryKeyValidation && GetPrimaryKeys(row).All(Common.IsDefaultValue))
@@ -1224,7 +1224,7 @@ namespace Gemstone.Data.Model
                     }
                     catch (Exception ex)
                     {
-                        InvalidOperationException opex = new InvalidOperationException($"Exception during record load field assignment for \"{typeof(T).Name}.{property.Name} = {row[s_fieldNames[property.Name]]}\": {ex.Message}", ex);
+                        InvalidOperationException opex = new($"Exception during record load field assignment for \"{typeof(T).Name}.{property.Name} = {row[s_fieldNames[property.Name]]}\": {ex.Message}", ex);
 
                         if (ExceptionHandler == null)
                             throw opex;
@@ -1237,7 +1237,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                InvalidOperationException opex = new InvalidOperationException($"Exception during record load for {typeof(T).Name} from data row: {ex.Message}", ex);
+                InvalidOperationException opex = new($"Exception during record load for {typeof(T).Name} from data row: {ex.Message}", ex);
 
                 if (ExceptionHandler == null)
                     throw opex;
@@ -1257,7 +1257,7 @@ namespace Gemstone.Data.Model
         /// <returns>A data table containing data from the given records.</returns>
         public DataTable ToDataTable(IEnumerable<T> records)
         {
-            DataTable dataTable = new DataTable(s_tableName);
+            DataTable dataTable = new(s_tableName);
 
             foreach (PropertyInfo property in s_properties.Values)
                 dataTable.Columns.Add(new DataColumn(s_fieldNames[property.Name]));
@@ -1305,7 +1305,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                InvalidOperationException opex = new InvalidOperationException($"Exception during record delete for {typeof(T).Name} \"{m_deleteSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
+                InvalidOperationException opex = new($"Exception during record delete for {typeof(T).Name} \"{m_deleteSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
 
                 if (ExceptionHandler == null)
                     throw opex;
@@ -1376,7 +1376,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                InvalidOperationException opex = new InvalidOperationException($"Exception during record delete for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction.Parameters)}\": {ex.Message}", ex);
+                InvalidOperationException opex = new($"Exception during record delete for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction.Parameters)}\": {ex.Message}", ex);
 
                 if (ExceptionHandler == null)
                     throw opex;
@@ -1445,7 +1445,7 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public int UpdateRecord(T record, RecordRestriction? restriction = null, bool? applyRootQueryRestriction = null)
         {
-            List<object?> values = new List<object?>();
+            List<object?> values = new();
 
             try
             {
@@ -1478,7 +1478,7 @@ namespace Gemstone.Data.Model
                 }
                 catch (Exception ex)
                 {
-                    InvalidOperationException opex = new InvalidOperationException($"Exception during record update for {typeof(T).Name} \"{m_updateSql}, {ValueList(values)}\": {ex.Message}", ex);
+                    InvalidOperationException opex = new($"Exception during record update for {typeof(T).Name} \"{m_updateSql}, {ValueList(values)}\": {ex.Message}", ex);
 
                     if (ExceptionHandler == null)
                         throw opex;
@@ -1498,7 +1498,7 @@ namespace Gemstone.Data.Model
 
                 values.AddRange(restriction.Parameters);
 
-                List<object> updateWhereOffsets = new List<object>();
+                List<object> updateWhereOffsets = new();
                 int updateFieldIndex = s_updateProperties.Length;
 
                 for (int i = 0; i < restriction.Parameters.Length; i++)
@@ -1510,7 +1510,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                InvalidOperationException opex = new InvalidOperationException($"Exception during record update for {typeof(T).Name} \"{sqlExpression}, {ValueList(values)}\": {ex.Message}", ex);
+                InvalidOperationException opex = new($"Exception during record update for {typeof(T).Name} \"{sqlExpression}, {ValueList(values)}\": {ex.Message}", ex);
 
                 if (ExceptionHandler == null)
                     throw opex;
@@ -1646,7 +1646,7 @@ namespace Gemstone.Data.Model
         /// <returns>Number of rows affected.</returns>
         public int AddNewRecord(T record)
         {
-            List<object?> values = new List<object?>();
+            List<object?> values = new();
 
             try
             {
@@ -1662,7 +1662,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                InvalidOperationException opex = new InvalidOperationException($"Exception during record insert for {typeof(T).Name} \"{m_addNewSql}, {ValueList(values)}\": {ex.Message}", ex);
+                InvalidOperationException opex = new($"Exception during record insert for {typeof(T).Name} \"{m_addNewSql}, {ValueList(values)}\": {ex.Message}", ex);
 
                 if (ExceptionHandler == null)
                     throw opex;
@@ -1714,7 +1714,7 @@ namespace Gemstone.Data.Model
         {
             try
             {
-                List<object> values = new List<object>();
+                List<object> values = new();
 
                 foreach (PropertyInfo property in s_primaryKeyProperties)
                     values.Add(property.GetValue(record));
@@ -1723,7 +1723,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                InvalidOperationException opex = new InvalidOperationException($"Exception loading primary key fields for {typeof(T).Name} \"{s_primaryKeyProperties.Select(property => property.Name).ToDelimitedString(", ")}\": {ex.Message}", ex);
+                InvalidOperationException opex = new($"Exception loading primary key fields for {typeof(T).Name} \"{s_primaryKeyProperties.Select(property => property.Name).ToDelimitedString(", ")}\": {ex.Message}", ex);
 
                 if (ExceptionHandler == null)
                     throw opex;
@@ -1757,7 +1757,7 @@ namespace Gemstone.Data.Model
         {
             try
             {
-                List<object> values = new List<object>();
+                List<object> values = new();
 
                 foreach (PropertyInfo property in s_primaryKeyProperties)
                     values.Add(row[s_fieldNames[property.Name]]);
@@ -1766,7 +1766,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                InvalidOperationException opex = new InvalidOperationException($"Exception loading primary key fields for {typeof(T).Name} \"{s_primaryKeyProperties.Select(property => property.Name).ToDelimitedString(", ")}\": {ex.Message}", ex);
+                InvalidOperationException opex = new($"Exception loading primary key fields for {typeof(T).Name} \"{s_primaryKeyProperties.Select(property => property.Name).ToDelimitedString(", ")}\": {ex.Message}", ex);
 
                 if (ExceptionHandler == null)
                     throw opex;
@@ -1977,7 +1977,7 @@ namespace Gemstone.Data.Model
             if (searchValues.Length == 1 && s_encryptedSearchTargets == null)
                 return new RecordRestriction(m_searchFilterSql, $"%{searchText}%", searchText);
 
-            StringBuilder searchValueFilter = new StringBuilder();
+            StringBuilder searchValueFilter = new();
 
             if (s_encryptedSearchTargets == null)
             {
@@ -1995,7 +1995,7 @@ namespace Gemstone.Data.Model
             }
 
             // Handle searches that include encrypted fields
-            List<object> parameters = new List<object>();
+            List<object> parameters = new();
 
             for (int i = 0; i < searchValues.Length; i++)
             {
@@ -2003,7 +2003,7 @@ namespace Gemstone.Data.Model
                     searchValueFilter.Append(" AND ");
 
                 searchValueFilter.Append('(');
-                List<object> offsets = new List<object>();
+                List<object> offsets = new();
                 int index = parameters.Count;
 
                 offsets.Add($"{{{index++}}}");
@@ -2241,16 +2241,16 @@ namespace Gemstone.Data.Model
         [SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline")]
         static TableOperations()
         {
-            StringBuilder addNewFields = new StringBuilder();
-            StringBuilder addNewFormat = new StringBuilder();
-            StringBuilder updateFormat = new StringBuilder();
-            StringBuilder whereFormat = new StringBuilder();
-            StringBuilder allFields = new StringBuilder("*");
-            StringBuilder primaryKeyFields = new StringBuilder();
-            StringBuilder searchFilterSql = new StringBuilder();
-            List<PropertyInfo> addNewProperties = new List<PropertyInfo>();
-            List<PropertyInfo> updateProperties = new List<PropertyInfo>();
-            List<PropertyInfo> primaryKeyProperties = new List<PropertyInfo>();
+            StringBuilder addNewFields = new();
+            StringBuilder addNewFormat = new();
+            StringBuilder updateFormat = new();
+            StringBuilder whereFormat = new();
+            StringBuilder allFields = new("*");
+            StringBuilder primaryKeyFields = new();
+            StringBuilder searchFilterSql = new();
+            List<PropertyInfo> addNewProperties = new();
+            List<PropertyInfo> updateProperties = new();
+            List<PropertyInfo> primaryKeyProperties = new();
             int primaryKeyIndex = 0;
             int addNewFieldIndex = 0;
             int updateFieldIndex = 0;
@@ -2412,7 +2412,7 @@ namespace Gemstone.Data.Model
                 s_primaryKeyFields = primaryKeyFields.ToString();
             }
 
-            List<object> updateWhereOffsets = new List<object>();
+            List<object> updateWhereOffsets = new();
 
             for (int i = 0; i < primaryKeyIndex; i++)
                 updateWhereOffsets.Add($"{{{updateFieldIndex + i}}}");
@@ -2496,7 +2496,7 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public static Func<DataRow, T?> LoadRecordFunction()
         {
-            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection));
+            using AdoDataConnection connection = new(default!, typeof(NullConnection));
 
             return new TableOperations<T>(connection).LoadRecord;
         }
@@ -2512,7 +2512,7 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public static Func<T?> NewRecordFunction()
         {
-            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection));
+            using AdoDataConnection connection = new(default!, typeof(NullConnection));
 
             return new TableOperations<T>(connection).NewRecord;
         }
@@ -2528,7 +2528,7 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public static Action<T> ApplyRecordDefaultsFunction()
         {
-            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection));
+            using AdoDataConnection connection = new(default!, typeof(NullConnection));
 
             return new TableOperations<T>(connection).ApplyRecordDefaults;
         }
@@ -2544,7 +2544,7 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public static Action<T> ApplyRecordUpdatesFunction()
         {
-            using AdoDataConnection connection = new AdoDataConnection(default!, typeof(NullConnection));
+            using AdoDataConnection connection = new(default!, typeof(NullConnection));
 
             return new TableOperations<T>(connection).ApplyRecordUpdates;
         }
@@ -2577,7 +2577,7 @@ namespace Gemstone.Data.Model
                 defaultFieldDataType = DbType.String;
             }
 
-            Dictionary<DatabaseType, DbType> fieldDataTypes = new Dictionary<DatabaseType, DbType>(databaseTypes.Length);
+            Dictionary<DatabaseType, DbType> fieldDataTypes = new(databaseTypes.Length);
 
             foreach (DatabaseType databaseType in databaseTypes)
             {
@@ -2607,7 +2607,7 @@ namespace Gemstone.Data.Model
                 databaseTypes = useEscapedNameAttributes.Select(attribute => attribute.TargetDatabaseType.GetValueOrDefault()).Distinct().ToArray();
             }
 
-            Dictionary<DatabaseType, bool> escapedNameTargets = new Dictionary<DatabaseType, bool>(databaseTypes.Length);
+            Dictionary<DatabaseType, bool> escapedNameTargets = new(databaseTypes.Length);
 
             foreach (DatabaseType databaseType in databaseTypes)
             {
@@ -2624,8 +2624,8 @@ namespace Gemstone.Data.Model
             if (amendExpressionAttributes == null || amendExpressionAttributes.Length == 0)
                 return null;
 
-            List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> typedExpressionAmendments = new List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>();
-            List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> untypedExpressionAmendments = new List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>();
+            List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> typedExpressionAmendments = new();
+            List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> untypedExpressionAmendments = new();
             List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> expressionAmendments;
 
             foreach (AmendExpressionAttribute attribute in amendExpressionAttributes)
@@ -2667,7 +2667,7 @@ namespace Gemstone.Data.Model
             if (values == null)
                 return string.Empty;
 
-            StringBuilder delimitedString = new StringBuilder();
+            StringBuilder delimitedString = new();
 
             for (int i = 0; i < values.Count; i++)
             {

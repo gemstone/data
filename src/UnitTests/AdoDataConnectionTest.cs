@@ -17,7 +17,7 @@ namespace Gemstone.Data.UnitTests
             System.Console.WriteLine($"Connection String = {connectionString}");
             System.Console.WriteLine($"Data Provider String = {dataProviderString}");
 
-            AdoDataConnection connection = new AdoDataConnection(connectionString, dataProviderString);
+            AdoDataConnection connection = new(connectionString, dataProviderString);
 
             Assert.IsTrue(Convert.ToInt32(connection.ExecuteScalar("SELECT COUNT(*) FROM Device")) >= 0);
         }
@@ -32,7 +32,7 @@ namespace Gemstone.Data.UnitTests
             System.Console.WriteLine($"Connection String = {connectionString}");
             System.Console.WriteLine($"Data Provider String = {dataProviderString}");
 
-            AdoDataConnection connection = new AdoDataConnection(connectionString, dataProviderString);
+            AdoDataConnection connection = new(connectionString, dataProviderString);
 
             Assert.IsTrue(Convert.ToInt32(connection.ExecuteScalar("SELECT COUNT(*) FROM Device")) >= 0);
         }

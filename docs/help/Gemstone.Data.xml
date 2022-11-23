@@ -8,6 +8,48 @@
       <summary>
             Creates a new <see cref="T:System.Data.IDbConnection" /> from any specified or configured ADO.NET data source.
             </summary>
+      <remarks>
+            Example connection and data provider strings:
+            <list type="table"><listheader><term>Database type</term><description>Example connection string / data provider string</description></listheader><item><term>SQL Server</term><description>
+                    ConnectionString = "Data Source=serverName; Initial Catalog=databaseName; User ID=userName; Password=password"<br />
+                    DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.SqlClient.SqlConnection"
+                    </description></item><item><term>Oracle</term><description>
+                    ConnectionString = "Data Source=tnsName; User ID=schemaUserName; Password=schemaPassword"<br />
+                    DataProviderString = "AssemblyName={Oracle.DataAccess, Version=2.112.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342}; ConnectionType=Oracle.DataAccess.Client.OracleConnection"
+                    </description></item><item><term>MySQL</term><description>
+                    ConnectionString = "Server=serverName; Database=databaseName; Uid=root; Pwd=password; allow user variables = true"<br />
+                    DataProviderString = "AssemblyName={MySql.Data, Version=6.3.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d}; ConnectionType=MySql.Data.MySqlClient.MySqlConnection"
+                    </description></item><item><term>SQLite</term><description>
+                    ConnectionString = "Data Source=databaseName.db; Version=3; Foreign Keys=True; FailIfMissing=True"<br />
+                    DataProviderString = "AssemblyName={System.Data.SQLite, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139}; ConnectionType=System.Data.SQLite.SQLiteConnection"
+                    </description></item><item><term>SQLite (Mono native driver)</term><description>
+                    ConnectionString = "Data Source=./databaseName.db; Version=3; Foreign Keys=True; FailIfMissing=True"<br />
+                    DataProviderString = "AssemblyName={Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756}; ConnectionType=Mono.Data.Sqlite.SqliteConnection"
+                    </description></item><item><term>Access / OleDB</term><description>
+                    ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=databaseName.mdb"<br />
+                    DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.OleDb.OleDbConnection"
+                    </description></item><item><term>ODBC Connection</term><description>
+                    ConnectionString = "Driver={SQL Server Native Client 10.0}; Server=serverName; Database=databaseName; Uid=userName; Pwd=password"<br />
+                    DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.Odbc.OdbcConnection"
+                    </description></item></list>
+            Example configuration file that defines connection settings:
+            <code language="cs">
+            &lt;?xml version="1.0" encoding="utf-8"?&gt;
+            &lt;configuration&gt;
+              &lt;configSections&gt;
+                &lt;section name="categorizedSettings" type="GSF.Configuration.CategorizedSettingsSection, GSF.Core" /&gt;
+              &lt;/configSections&gt;
+              &lt;categorizedSettings&gt;
+                &lt;systemSettings&gt;
+                  &lt;add name="ConnectionString" value="Data Source=localhost\SQLEXPRESS; Initial Catalog=MyDatabase; Integrated Security=SSPI" description="ADO database connection string" encrypted="false" /&gt;
+                  &lt;add name="DataProviderString" value="AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.SqlClient.SqlConnection" description="ADO database provider string" encrypted="false" /&gt;
+                &lt;/systemSettings&gt;
+              &lt;/categorizedSettings&gt;
+              &lt;startup&gt;
+                &lt;supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5" /&gt;
+              &lt;/startup&gt;
+            &lt;/configuration&gt;
+            </code></remarks>
     </member>
     <member name="M:Gemstone.Data.AdoDataConnection.#ctor(System.Data.IDbConnection,System.Boolean)">
       <summary>
@@ -48,6 +90,12 @@
       <summary>
             Gets or sets the type of the database underlying the <see cref="T:Gemstone.Data.AdoDataConnection" />.
             </summary>
+      <remarks>
+            This value is automatically assigned based on the connection type specified in the data provider string, however,
+            if the database type cannot be determined it will be set to <see cref="F:Gemstone.Data.DatabaseType.Other" />. In this
+            case, if you know the behavior of your custom ADO database connection matches that of another defined database
+            type, you can manually assign the database type to allow for database interaction interoperability.
+            </remarks>
     </member>
     <member name="P:Gemstone.Data.AdoDataConnection.DefaultIsolationLevel">
       <summary>
@@ -1311,6 +1359,9 @@
     </member>
     <member name="T:Gemstone.Data.OleDbType">
       <summary>Specifies the data type of a field, a property.</summary>
+      <remarks>
+            Copied from <c>System.Data.OleDb.OleDbParameter</c> in the .NET Framework.
+            </remarks>
     </member>
     <member name="F:Gemstone.Data.OleDbType.Empty">
       <summary>No value (DBTYPE_EMPTY).</summary>
@@ -2053,6 +2104,16 @@
       <param name="sql">The SQL statement.</param>
       <param name="values">The values for the parameters of the <see cref="T:System.Data.IDbCommand" /> in the order that they appear in the SQL statement.</param>
       <returns>The fully populated parameterized command.</returns>
+      <remarks>
+        <para>
+            This method does very rudimentary parsing of the SQL statement so parameter names should start with the '@'
+            character and should be surrounded by either spaces, parentheses, or commas.
+            </para>
+        <para>
+            Do not use the same parameter name twice in the expression so that each parameter, identified by '@', will
+            have a corresponding value.
+            </para>
+      </remarks>
       <exception cref="T:System.ArgumentException">Number of <see cref="T:System.Data.IDbDataParameter" /> arguments in <paramref name="sql" /> expression, identified by '@', do not match number of supplied parameter <paramref name="values" />.</exception>
     </member>
     <member name="M:Gemstone.Data.DataExtensions.DataExtensions.AddParameterWithValue(System.Data.IDbCommand,System.String,System.Object,System.Data.ParameterDirection)">
@@ -2134,6 +2195,16 @@
       <param name="sql">The SQL statement.</param>
       <param name="values">The values for the parameters of the <see cref="T:System.Data.IDbCommand" /> in the order that they appear in the SQL statement.</param>
       <returns>The fully populated parameterized command.</returns>
+      <remarks>
+        <para>
+            This method does very rudimentary parsing of the SQL statement so parameter names should start with the '@'
+            character and should be surrounded by either spaces, parentheses, or commas.
+            </para>
+        <para>
+            Do not use the same parameter name twice in the expression so that each parameter, identified by '@', will
+            have a corresponding value.
+            </para>
+      </remarks>
       <exception cref="T:System.ArgumentException">Number of <see cref="T:System.Data.IDbDataParameter" /> arguments in <paramref name="sql" /> expression, identified by '@', do not match number of supplied parameter <paramref name="values" />.</exception>
     </member>
     <member name="F:Gemstone.Data.DataExtensions.DataExtensions.DefaultTimeoutDuration">
@@ -3038,6 +3109,28 @@
       <summary>
             Defines an attribute that will request amendment of a table name or field list with the specified text.
             </summary>
+      <remarks>
+        <para>
+            As an example, this can be used to add table hints, e.g., <c>WITH (NOLOCK)</c>, for select statements in
+            SQL Server.
+            </para>
+        <para>
+            Applying the <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> to a modeled table with no specified database type parameter
+            will be meant to infer that the amendment be used for all database types. Using a specific database type as a
+            parameter to the attribute, e.g., <c>[AmendExpression("WITH (NOLOCK)", DatabaseType.SQLServer)]</c>, means the
+            amendment text will only be applied to the specific database - however, the attribute allows multiple instances
+            on the same identifier so you could specify that amendment application only be applied to two databases:
+            <code>
+            [AmendExpression("AS T1", DatabaseType.SQLServer), AmendExpression("AS T1", DatabaseType.MySQL)]
+            </code>
+            Other parameters exist to fully customize target expression, set affix position and specify statement types:
+            <code>
+            [AmendExpression("TOP 200",
+                TargetExpression = TargetExpression.FieldList,
+                AffixPosition = AffixPosition.Prefix,
+                StatementTypes = StatementTypes.SelectSet)]
+            </code></para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.AmendExpressionAttribute.#ctor(System.String)">
       <summary>
@@ -3073,6 +3166,9 @@
       <summary>
             Gets target <see cref="T:Gemstone.Data.DatabaseType" /> for amendment application.
             </summary>
+      <remarks>
+            When value is <c>null</c>, amendment text will be applied to all database types.
+            </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.AmendExpressionAttribute.TargetExpression">
       <summary>
@@ -3083,6 +3179,10 @@
       <summary>
             Defines an attribute that provides encryption of text field contents for a modeled table.
             </summary>
+      <remarks>
+            Application of attribute is only valid on <see cref="T:System.String" /> properties; attribute will be
+            ignored if applied to properties of other types.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.EncryptDataAttribute.#ctor">
       <summary>
@@ -3111,6 +3211,16 @@
             Defines an attribute that will request use of a specific data type on a modeled table field.
             Typically only needed to enforce use of a specific <see cref="T:System.Data.DbType" /> for parameters.
             </summary>
+      <remarks>
+            Applying this attribute to a modeled table field with no database type parameter will specify that
+            the field data type be used for all database types. Using a specific database type as a parameter
+            to the attribute, e.g., [FieldDataType(DbType.DateTime2, DatabaseType.SQLServer)], means the field
+            data type will only be applied to the specific database - however, the attribute allows multiple
+            instances on the same identifier so you could specify different field data types for different
+            database types. When multiple instances of the attribute are applied to the same identifier, the
+            first attribute encountered that does not target a specific database will be considered the default
+            value for all non-specified database types.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.FieldDataTypeAttribute.#ctor(System.Data.DbType)">
       <summary>
@@ -3136,6 +3246,9 @@
       <summary>
             Gets target <see cref="T:Gemstone.Data.DatabaseType" /> for this <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />.
             </summary>
+      <remarks>
+            When value is <c>null</c>, specified <see cref="P:Gemstone.Data.Model.FieldDataTypeAttribute.FieldDataType" /> will be applied to all database types.
+            </remarks>
     </member>
     <member name="T:Gemstone.Data.Model.FieldNameAttribute">
       <summary>
@@ -3202,16 +3315,49 @@
       <summary>
             Gets or sets flag that determines if <see cref="P:Gemstone.Data.Model.ITableOperations.RootQueryRestriction" /> should be applied to delete operations.
             </summary>
+      <remarks>
+        <para>
+            If <see cref="P:Gemstone.Data.Model.ITableOperations.RootQueryRestriction" /> only references primary key fields, then this property value should be set
+            to <c>false</c> since default delete operations for a modeled record already work against primary key fields.
+            </para>
+        <para>
+            This flag can be manually set per <see cref="T:Gemstone.Data.Model.TableOperations`1" /> instance or handled automatically by marking
+            a model with the <see cref="T:Gemstone.Data.Model.RootQueryRestrictionAttribute" /> and assigning a value to the attribute property
+            <see cref="F:Gemstone.Data.Model.RootQueryRestrictionAttribute.ApplyToDeletes" />.
+            </para>
+      </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.ITableOperations.ApplyRootQueryRestrictionToUpdates">
       <summary>
             Gets or sets flag that determines if <see cref="P:Gemstone.Data.Model.ITableOperations.RootQueryRestriction" /> should be applied to update operations.
             </summary>
+      <remarks>
+        <para>
+            If <see cref="P:Gemstone.Data.Model.ITableOperations.RootQueryRestriction" /> only references primary key fields, then this property value should be set
+            to <c>false</c> since default update operations for a modeled record already work against primary key fields.
+            </para>
+        <para>
+            This flag can be manually set per <see cref="T:Gemstone.Data.Model.TableOperations`1" /> instance or handled automatically by marking
+            a model with the <see cref="T:Gemstone.Data.Model.RootQueryRestrictionAttribute" /> and assigning a value to the attribute property
+            <see cref="F:Gemstone.Data.Model.RootQueryRestrictionAttribute.ApplyToUpdates" />.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.ClearPrimaryKeyCache">
       <summary>
             Clears the primary key cache for this <see cref="T:Gemstone.Data.Model.ITableOperations" /> instance.
             </summary>
+      <remarks>
+        <para>
+            This method is intended to be used in conjunction with calls to the overloads for
+            <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)" /> which are
+            used for record pagination.
+            </para>
+        <para>
+            If record set is known to have changed outside purview of this class, this method
+            should be called so that primary key cache can be reloaded.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.DeleteRecord(Gemstone.Data.Model.RecordRestriction,System.Nullable{System.Boolean})">
       <summary>
@@ -3223,6 +3369,12 @@
             <see cref="P:Gemstone.Data.Model.ITableOperations.ApplyRootQueryRestrictionToDeletes" /> setting.
             </param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </remarks>
       <exception cref="T:System.ArgumentNullException">
         <paramref name="restriction" /> cannot be <c>null</c>.</exception>
     </member>
@@ -3258,11 +3410,37 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.DeleteRecord(Gemstone.Data.Model.RecordRestriction,System.Nullable{System.Boolean})" />.
+            </para>
+      </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.ITableOperations.ExceptionHandler">
       <summary>
             Gets or sets delegate used to handle table operation exceptions.
             </summary>
+      <remarks>
+            When exception handler is provided, table operations will not throw exceptions for database calls, any
+            encountered exceptions will be passed to handler for processing. Otherwise, exceptions will be thrown
+            on the call stack.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.FieldHasAttribute``1(System.String)">
       <summary>
@@ -3290,6 +3468,9 @@
             </summary>
       <param name="escaped">Flag that determines if field names should include any escaping as defined in the model; defaults to <c>true</c>.</param>
       <returns>Array of field names.</returns>
+      <remarks>
+            A field name will only be escaped if the model requested escaping with the <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.GetFieldType(System.String)">
       <summary>
@@ -3317,6 +3498,27 @@
             Interpreted value for the specified field, encrypting or returning any intermediate <see cref="T:System.Data.IDbDataParameter" /> value
             as needed.
             </returns>
+      <remarks>
+        <para>
+            This function will need to be used when calling overloads that take a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> or composite format
+            filter expression where the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" /> have been modeled
+            on a field referenced by one of the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameters. Since the record restrictions are used
+            with a free-form expression, the <see cref="T:Gemstone.Data.Model.TableOperations`1" /> class cannot be aware of the fields accessed in the
+            expression without attempting to parse the expression which would be time consuming and error prone; as a result, users
+            will need to be aware to call this function when using record restriction that references fields that are either marked
+            for encryption or use a specific field data-type attribute.
+            </para>
+        <para>
+            If a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter references a field that is modeled with an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />,
+            this function will need to be called, replacing the restriction parameter with the returned value, so that the field data
+            value will be properly encrypted prior to executing the database function.
+            </para>
+        <para>
+            If a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter references a field that is modeled with a <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />,
+            this function will need to be called, replacing the restriction parameter with the returned value, so that the field data
+            type will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.GetPageOfRecords(System.Object[],System.Int32,System.Int32)">
       <summary>
@@ -3339,6 +3541,9 @@
             </summary>
       <param name="escaped">Flag that determines if field names should include any escaping as defined in the model; defaults to <c>true</c>.</param>
       <returns>Array of primary key field names.</returns>
+      <remarks>
+            A field name will only be escaped if the model requested escaping with the <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.GetPrimaryKeys(System.Data.DataRow)">
       <summary>
@@ -3347,6 +3552,12 @@
       <param name="row">
         <see cref="T:System.Data.DataRow" /> of queried data.</param>
       <returns>Primary key values from the specified <paramref name="row" />.</returns>
+      <remarks>
+            Function returns raw data from <paramref name="row" /> without interpretation, it may be
+            necessary to call <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> for models with primary key
+            fields that are marked with either <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or
+            <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.GetPrimaryKeys(System.Object)">
       <summary>
@@ -3362,6 +3573,13 @@
       <param name="searchText">Text to search.</param>
       <returns>
         <see cref="T:Gemstone.Data.Model.RecordRestriction" /> based on fields marked with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and specified <paramref name="searchText" />.</returns>
+      <remarks>
+            Any fields marked with both <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> will be automatically managed, i.e.,
+            the returned <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameters will already apply any field based encryption as needed. Database query functions
+            executed for fields marked for encryption will only be searched using <see cref="F:Gemstone.Data.Model.SearchType.FullValueMatch" />, regardless of any otherwise
+            specified value in the <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> as encryption is handled locally. However, the <see cref="M:Gemstone.Data.Model.ITableOperations.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)" /> function
+            can be used to find data in encrypted fields that are marked for search with a <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
+            </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.ITableOperations.HasPrimaryKeyIdentityField">
       <summary>
@@ -3379,6 +3597,9 @@
         <c>true</c> if any <paramref name="record" /> fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> match any of the
             specified <paramref name="searchValues" />; otherwise, <c>false</c>.
             </returns>
+      <remarks>
+            String comparisons will be ordinal ignoring case.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.IsSearchMatch(System.Object,System.StringComparison,System.String[])">
       <summary>
@@ -3421,6 +3642,25 @@
       <summary>
             Gets or sets primary key cache.
             </summary>
+      <remarks>
+        <para>
+            The <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)" /> overloads that include paging parameters
+            cache the sorted and filtered primary keys of queried records between calls so that paging is fast and
+            efficient. Since the primary keys are cached, an instance of the <see cref="T:Gemstone.Data.Model.TableOperations`1" /> should
+            exist per user session when using query functions that support pagination. In web based implementations,
+            the primary cache should be stored with user session state data and then restored between instances of
+            the <see cref="T:Gemstone.Data.Model.TableOperations`1" /> that are created along with a connection that is opened per page.
+            </para>
+        <para>
+            The function <see cref="M:Gemstone.Data.Model.ITableOperations.ClearPrimaryKeyCache" /> should be called to manually clear cache when table
+            contents are known to have changed. Note that calls to any <see cref="M:Gemstone.Data.Model.ITableOperations.DeleteRecord(System.Object)" /> overload
+            will automatically clear any existing primary key cache.
+            </para>
+        <para>
+            Primary keys values are stored in data table without interpretation, i.e., in their raw form as queried
+            from the database. Primary key data in cache will be encrypted for models with primary key fields that
+            are marked with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /></para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecord(Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -3428,6 +3668,21 @@
             </summary>
       <param name="restriction">Record restriction to apply.</param>
       <returns>A single modeled table record for the queried record.</returns>
+      <remarks>
+        <para>
+            If no record is found for specified <paramref name="restriction" />, <c>null</c> will be returned.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)" />
+            specifying the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter with a limit of 1 record.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecord(System.String,Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -3437,6 +3692,21 @@
       <param name="orderByExpression">Field name expression used for sort order, include ASC or DESC as needed - does not include ORDER BY; defaults to primary keys.</param>
       <param name="restriction">Record restriction to apply.</param>
       <returns>A single modeled table record for the queried record.</returns>
+      <remarks>
+        <para>
+            If no record is found for specified <paramref name="restriction" />, <c>null</c> will be returned.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)" />
+            specifying the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter with a limit of 1 record.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -3448,6 +3718,12 @@
             Record count for the specified <paramref name="restriction" /> - or - total record count
             for the modeled table if <paramref name="restriction" /> is <c>null</c>.
             </returns>
+      <remarks>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(System.String)">
       <summary>
@@ -3456,6 +3732,9 @@
             </summary>
       <param name="searchText">Text to search.</param>
       <returns>Record count for the modeled table based on search parameter.</returns>
+      <remarks>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)" /> where restriction
+            is generated by <see cref="M:Gemstone.Data.Model.ITableOperations.GetSearchRestriction(System.String)" /></remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecordCountWhere(System.String,System.Object[])">
       <summary>
@@ -3467,6 +3746,27 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>Record count for the modeled table for the specified parameters.</returns>
+      <remarks>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)" />.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecords(Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -3474,6 +3774,18 @@
             </summary>
       <param name="restriction">Record restriction to apply.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)" /> only
+            specifying the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)">
       <summary>
@@ -3483,6 +3795,17 @@
       <param name="restriction">Record restriction to apply, if any.</param>
       <param name="limit">Limit of number of record to return.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            If no record <paramref name="restriction" /> or <paramref name="limit" /> is provided, all rows will be returned.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -3494,6 +3817,24 @@
       <param name="pageSize">Current page size.</param>
       <param name="restriction">Record restriction to apply, if any.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            This function is used for record paging. Primary keys are cached server-side, typically per user session,
+            to maintain desired per-page sort order. Call <see cref="M:Gemstone.Data.Model.ITableOperations.ClearPrimaryKeyCache" /> to manually clear cache
+            when table contents are known to have changed.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If the specified <paramref name="sortField" /> has been marked with <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />,
+            establishing the primary key cache operation will take longer to execute since query data will need to
+            be downloaded locally and decrypted so the proper sort order can be determined.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)">
       <summary>
@@ -3506,6 +3847,22 @@
       <param name="pageSize">Current page size.</param>
       <param name="searchText">Text to search.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            This function is used for record paging. Primary keys are cached server-side, typically per user session,
+            to maintain desired per-page sort order. Call <see cref="M:Gemstone.Data.Model.ITableOperations.ClearPrimaryKeyCache" /> to manually clear cache
+            when table contents are known to have changed.
+            </para>
+        <para>
+            If the specified <paramref name="sortField" /> has been marked with <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />,
+            establishing the primary key cache operation will take longer to execute since query data will need to
+            be downloaded locally and decrypted so the proper sort order can be determined.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)" /> where restriction
+            is generated by <see cref="M:Gemstone.Data.Model.ITableOperations.GetSearchRestriction(System.String)" /> using <paramref name="searchText" />.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecordsWhere(System.String,System.Object[])">
       <summary>
@@ -3518,6 +3875,28 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)" /> only
+            specifying the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecordWhere(System.String,System.Object[])">
       <summary>
@@ -3530,11 +3909,58 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>A single modeled table record for the queried record.</returns>
+      <remarks>
+        <para>
+            If no record is found for specified filter expression and parameters, <c>null</c> will be returned.
+            </para>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)" />
+            specifying the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter with a limit of 1 record.
+            </para>
+      </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.ITableOperations.RootQueryRestriction">
       <summary>
             Gets or sets root record restriction that applies to query table operations.
             </summary>
+      <remarks>
+        <para>
+            Defining a root query restriction creates a base query filter that gets applied to all query operations,
+            even when another restriction is applied - in this case the root restriction will be pre-pended to the
+            specified query, e.g.:
+            <code language="cs">
+            restriction = RootQueryRestriction + restriction;
+            </code>
+            A root query restriction is useful to apply a common state to the query operations, e.g., always
+            filtering records for a specific user or context.
+            </para>
+        <para>
+            A root query restriction can be manually assigned to a <see cref="T:Gemstone.Data.Model.TableOperations`1" /> instance or
+            automatically assigned by marking a model with the <see cref="T:Gemstone.Data.Model.RootQueryRestrictionAttribute" />.
+            </para>
+        <para>
+            If any of the <see cref="F:Gemstone.Data.Model.RecordRestriction.Parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)">
       <summary>
@@ -3548,6 +3974,19 @@
       <param name="comparison">
         <see cref="T:System.StringComparison" /> to use when searching string fields; defaults to ordinal ignore case.</param>
       <returns>An array of modeled table row instances for the queried records that match the search.</returns>
+      <remarks>
+        <para>
+            This function searches records locally after query from database, this way <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> functionality will work
+            even with fields that are modeled with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> and use the <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
+            Primary keys for this function will not be cached server-side and this function will be slower and more expensive than similar calls
+            to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)" />. Usage should be restricted to cases searching for field data that has
+            been modeled with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />.
+            </para>
+        <para>
+            This function does not paginate records, instead a full list of search records is returned. User can cache returned records and page
+            through them using the <see cref="M:Gemstone.Data.Model.ITableOperations.GetPageOfRecords(System.Object[],System.Int32,System.Int32)" /> function. As a result, usage should be restricted to smaller data sets. 
+            </para>
+      </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.ITableOperations.TableName">
       <summary>
@@ -3587,6 +4026,9 @@
       <summary>
             Gets the table name defined for the modeled table without any escape characters.
             </summary>
+      <remarks>
+            A table name will only be escaped if the model requested escaping with the <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.UpdateRecord(System.Data.DataRow,Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -3598,6 +4040,18 @@
         <see cref="T:System.Data.DataRow" /> of queried data to be updated.</param>
       <param name="restriction">Record restriction to apply, if any.</param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+        <para>
+            Record restriction is only used for custom update expressions or in cases where modeled
+            table has no defined primary keys.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.UpdateRecord(System.Object,Gemstone.Data.Model.RecordRestriction,System.Nullable{System.Boolean})">
       <summary>
@@ -3612,6 +4066,18 @@
             <see cref="P:Gemstone.Data.Model.ITableOperations.ApplyRootQueryRestrictionToUpdates" /> setting.
             </param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+        <para>
+            Record restriction is only used for custom update expressions or in cases where modeled
+            table has no defined primary keys.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.UpdateRecordWhere(System.Data.DataRow,System.String,System.Object[])">
       <summary>
@@ -3628,6 +4094,31 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+        <para>
+            Record restriction is only used for custom update expressions or in cases where modeled
+            table has no defined primary keys.
+            </para>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.UpdateRecord(System.Data.DataRow,Gemstone.Data.Model.RecordRestriction)" />.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.UpdateRecordWhere(System.Object,System.String,System.Object[])">
       <summary>
@@ -3643,11 +4134,41 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+        <para>
+            Record restriction is only used for custom update expressions or in cases where modeled
+            table has no defined primary keys.
+            </para>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.UpdateRecord(System.Object,Gemstone.Data.Model.RecordRestriction,System.Nullable{System.Boolean})" />.
+            </para>
+      </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.ITableOperations.UseCaseSensitiveFieldNames">
       <summary>
             Gets or sets flag that determines if field names should be treated as case sensitive. Defaults to <c>false</c>.
             </summary>
+      <remarks>
+            In cases where modeled table fields have applied <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />, this flag will be used
+            to properly update escaped field names that may be case sensitive. For example, escaped field names in Oracle
+            are case sensitive. This value is typically <c>false</c>.
+            </remarks>
     </member>
     <member name="T:Gemstone.Data.Model.NonRecordFieldAttribute">
       <summary>
@@ -3672,6 +4193,9 @@
       <summary>
             Creates a new <see cref="T:Gemstone.Data.Model.PrimaryKeyAttribute" />.
             </summary>
+      <remarks>
+        <see cref="P:Gemstone.Data.Model.PrimaryKeyAttribute.IsIdentity" /> is assumed to be <c>false</c>.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.PrimaryKeyAttribute.#ctor(System.Boolean)">
       <summary>
@@ -3744,6 +4268,12 @@
       <summary>
             Defines a parameterized record restriction that can be applied to queries.
             </summary>
+      <remarks>
+            For versatility, values in the <see cref="F:Gemstone.Data.Model.RecordRestriction.Parameters" /> array are mutable, however, this makes the
+            array vulnerable to unintended updates for long-lived instances. Consequently, the normal use-case
+            of record restriction instances should be considered temporal. If an instance needs to be cached,
+            consider use of the <see cref="M:Gemstone.Data.Model.RecordRestriction.Clone" /> function to reduce risk of unintended array updates.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.RecordRestriction.#ctor(System.String,System.Object[])">
       <summary>
@@ -3755,6 +4285,25 @@
             When escaping is needed for field names, use standard ANSI quotes.
             </param>
       <param name="parameters">Restriction parameter values.</param>
+      <remarks>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the <paramref name="parameters" /> reference a table field that is modeled with either
+            an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the
+            target parameter with the returned value so that the field value will be properly set prior to
+            executing any database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.RecordRestriction.Clone">
       <summary>
@@ -3776,6 +4325,14 @@
       <param name="left">Left operand.</param>
       <param name="right">Right operand.</param>
       <returns>New combined record restriction.</returns>
+      <remarks>
+            If both parameters are <c>null</c>, result will be <c>null</c>. If one parameter is <c>null</c>
+            and the other parameter is not, the non-null parameter will be returned. Equally, if the
+            <see cref="F:Gemstone.Data.Model.RecordRestriction.FilterExpression" /> of both parameters are <c>null</c>, empty or only whitespace,
+            then the result will be <c>null</c>. If one parameter has a filter expression that is
+            <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
+            the parameter that has a filter expression will be returned.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.RecordRestriction.CombineOr(Gemstone.Data.Model.RecordRestriction,Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -3784,6 +4341,14 @@
       <param name="left">Left operand.</param>
       <param name="right">Right operand.</param>
       <returns>New combined record restriction.</returns>
+      <remarks>
+            If both parameters are <c>null</c>, result will be <c>null</c>. If one parameter is <c>null</c>
+            and the other parameter is not, the non-null parameter will be returned. Equally, if the
+            <see cref="F:Gemstone.Data.Model.RecordRestriction.FilterExpression" /> of both parameters are <c>null</c>, empty or only whitespace,
+            then the result will be <c>null</c>. If one parameter has a filter expression that is
+            <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
+            the parameter that has a filter expression will be returned.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.RecordRestriction.Equals(Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -3806,6 +4371,18 @@
             Defines filter SQL expression for restriction as a composite format string - does not
             include WHERE. When escaping is needed for field names, use standard ANSI quotes.
             </summary>
+      <remarks>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format string will be converted into
+            query parameters where each of the corresponding values in the <see cref="F:Gemstone.Data.Model.RecordRestriction.Parameters" />
+            collection will be applied as <see cref="T:System.Data.IDbDataParameter" /> values to an executed
+            <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.RecordRestriction.GetHashCode">
       <summary>
@@ -3830,6 +4407,14 @@
       <param name="right">
         <see cref="T:Gemstone.Data.Model.RecordRestriction" /> right operand.</param>
       <returns>New combined record restriction.</returns>
+      <remarks>
+            If both parameters are <c>null</c>, result will be <c>null</c>. If one parameter is <c>null</c>
+            and the other parameter is not, the non-null parameter will be returned. Equally, if the
+            <see cref="F:Gemstone.Data.Model.RecordRestriction.FilterExpression" /> of both parameters are <c>null</c>, empty or only whitespace,
+            then the result will be <c>null</c>. If one parameter has a filter expression that is
+            <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
+            the parameter that has a filter expression will be returned.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.RecordRestriction.op_BitwiseAnd(Gemstone.Data.Model.RecordRestriction,Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -3840,6 +4425,14 @@
       <param name="right">
         <see cref="T:Gemstone.Data.Model.RecordRestriction" /> right operand.</param>
       <returns>New combined record restriction.</returns>
+      <remarks>
+            If both parameters are <c>null</c>, result will be <c>null</c>. If one parameter is <c>null</c>
+            and the other parameter is not, the non-null parameter will be returned. Equally, if the
+            <see cref="F:Gemstone.Data.Model.RecordRestriction.FilterExpression" /> of both parameters are <c>null</c>, empty or only whitespace,
+            then the result will be <c>null</c>. If one parameter has a filter expression that is
+            <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
+            the parameter that has a filter expression will be returned.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.RecordRestriction.op_BitwiseOr(Gemstone.Data.Model.RecordRestriction,Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -3850,6 +4443,14 @@
       <param name="right">
         <see cref="T:Gemstone.Data.Model.RecordRestriction" /> right operand.</param>
       <returns>New combined record restriction.</returns>
+      <remarks>
+            If both parameters are <c>null</c>, result will be <c>null</c>. If one parameter is <c>null</c>
+            and the other parameter is not, the non-null parameter will be returned. Equally, if the
+            <see cref="F:Gemstone.Data.Model.RecordRestriction.FilterExpression" /> of both parameters are <c>null</c>, empty or only whitespace,
+            then the result will be <c>null</c>. If one parameter has a filter expression that is
+            <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
+            the parameter that has a filter expression will be returned.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.RecordRestriction.op_Equality(Gemstone.Data.Model.RecordRestriction,Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -3884,6 +4485,13 @@
       <summary>
             Defines restriction parameter values.
             </summary>
+      <remarks>
+            If any of the <see cref="F:Gemstone.Data.Model.RecordRestriction.Parameters" /> reference a table field that is modeled with either an
+            <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the
+            target parameter with the returned value so that the field value will be properly set prior
+            to executing any database function.
+            </remarks>
     </member>
     <member name="T:Gemstone.Data.Model.RootQueryRestrictionAttribute">
       <summary>
@@ -3901,22 +4509,56 @@
             When escaping is needed for field names, use standard ANSI quotes.
             </param>
       <param name="parameters">Restriction parameter values.</param>
+      <remarks>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+      </remarks>
     </member>
     <member name="F:Gemstone.Data.Model.RootQueryRestrictionAttribute.ApplyToDeletes">
       <summary>
             Gets or sets flag that determines if root query restriction should be applied to delete operations.
             </summary>
+      <remarks>
+            If root query restriction only references primary key fields, then this property value should
+            be set to <c>false</c> since default delete operations for a modeled record already work against
+            primary key fields.
+            </remarks>
     </member>
     <member name="F:Gemstone.Data.Model.RootQueryRestrictionAttribute.ApplyToUpdates">
       <summary>
             Gets or sets flag that determines if root query restriction should be applied to update operations.
             </summary>
+      <remarks>
+            If root query restriction only references primary key fields, then this property value should
+            be set to <c>false</c> since default update operations for a modeled record already work against
+            primary key fields.
+            </remarks>
     </member>
     <member name="F:Gemstone.Data.Model.RootQueryRestrictionAttribute.FilterExpression">
       <summary>
             Defines filter SQL expression for restriction as a composite format string - does not
             include WHERE. When escaping is needed for field names, use standard ANSI quotes.
             </summary>
+      <remarks>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format string will be converted into
+            query parameters where each of the corresponding values in the <see cref="F:Gemstone.Data.Model.RootQueryRestrictionAttribute.Parameters" />
+            collection will be applied as <see cref="T:System.Data.IDbDataParameter" /> values to an executed
+            <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+      </remarks>
     </member>
     <member name="F:Gemstone.Data.Model.RootQueryRestrictionAttribute.Parameters">
       <summary>
@@ -3938,11 +4580,25 @@
             Creates a new <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> with specified <paramref name="searchType" />.
             </summary>
       <param name="searchType">Type of search that should be used for field queried.</param>
+      <remarks>
+            Database query functions executed against modeled fields marked with both <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and
+            <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> will only be searched using <see cref="F:Gemstone.Data.Model.SearchType.FullValueMatch" />,
+            regardless of specified <paramref name="searchType" /> as encryption is handled locally by instances of the
+            <see cref="T:Gemstone.Data.Model.TableOperations`1" />. However, the <see cref="M:Gemstone.Data.Model.TableOperations`1.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)" /> function can be used
+            to find data in encrypted fields that are marked for search with a <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
+            </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.SearchableAttribute.SearchType">
       <summary>
             Gets or sets type of search that should be used for field queried.
             </summary>
+      <remarks>
+            Database query functions executed against modeled fields marked with both <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and
+            <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> will only be searched using <see cref="F:Gemstone.Data.Model.SearchType.FullValueMatch" />,
+            regardless of specified value as encryption is handled locally by <see cref="T:Gemstone.Data.Model.TableOperations`1" />. However, the
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)" /> function can be used to find data in encrypted fields that are
+            marked for search with a <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
+            </remarks>
     </member>
     <member name="T:Gemstone.Data.Model.SearchType">
       <summary>
@@ -4035,6 +4691,26 @@
         <see cref="T:Gemstone.Data.AdoDataConnection" /> instance to use for database operations.</param>
       <param name="exceptionHandler">Delegate to handle table operation exceptions.</param>
       <param name="customTokens">Custom run-time tokens to apply to any modeled <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> values.</param>
+      <remarks>
+        <para>
+            When exception handler is provided, table operations will not throw exceptions for database calls, any
+            encountered exceptions will be passed to handler for processing.
+            </para>
+        <para>
+            The <paramref name="customTokens" /> can be used to apply run-time tokens to any defined <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> values,
+            for example, given the following amendment expression applied to a modeled class:
+            <code language="cs">
+            [AmendExpression("TOP {count}", 
+                TargetExpression = TargetExpression.FieldList,
+                AffixPosition = AffixPosition.Prefix,
+                StatementTypes = StatementTypes.SelectSet)]]
+            </code>
+            The <paramref name="customTokens" /> key/value pairs could be set as follows at run-time:
+            <code>
+            int count = 200;
+            customTokens = new[] { new KeyValuePair&lt;string, string&gt;("{count}", $"{count}") };
+            </code></para>
+      </remarks>
       <exception cref="T:System.ArgumentNullException">
         <paramref name="connection" /> cannot be <c>null</c>.</exception>
     </member>
@@ -4045,6 +4721,20 @@
       <param name="connection">
         <see cref="T:Gemstone.Data.AdoDataConnection" /> instance to use for database operations.</param>
       <param name="customTokens">Custom run-time tokens to apply to any modeled <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> values.</param>
+      <remarks>
+            The <paramref name="customTokens" /> can be used to apply run-time tokens to any defined <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> values,
+            for example, given the following amendment expression applied to a modeled class:
+            <code language="cs">
+            [AmendExpression("TOP {count}", 
+                TargetExpression = TargetExpression.FieldList,
+                AffixPosition = AffixPosition.Prefix,
+                StatementTypes = StatementTypes.SelectSet)]]
+            </code>
+            The <paramref name="customTokens" /> key/value pairs could be set as follows at run-time:
+            <code>
+            int count = 200;
+            customTokens = new[] { new KeyValuePair&lt;string, string&gt;("{count}", $"{count}") };
+            </code></remarks>
       <exception cref="T:System.ArgumentNullException">
         <paramref name="connection" /> cannot be <c>null</c>.</exception>
     </member>
@@ -4085,6 +4775,11 @@
             Gets a delegate for the <see cref="M:Gemstone.Data.Model.TableOperations`1.ApplyRecordDefaults(`0)" /> method for specified type <typeparamref name="T" />.
             </summary>
       <returns>Delegate for the <see cref="M:Gemstone.Data.Model.TableOperations`1.ApplyRecordDefaults(`0)" /> method.</returns>
+      <remarks>
+            This method is useful to apply defaults values to an existing type <typeparamref name="T" /> instance when no data
+            connection is available, applying any modeled default values as specified by a <see cref="T:System.ComponentModel.DefaultValueAttribute" />
+            or <see cref="T:Gemstone.Expressions.Model.DefaultValueExpressionAttribute" /> on the model properties.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.ApplyRecordUpdates(`0)">
       <summary>
@@ -4098,21 +4793,59 @@
             Gets a delegate for the <see cref="M:Gemstone.Data.Model.TableOperations`1.ApplyRecordUpdates(`0)" /> method for specified type <typeparamref name="T" />.
             </summary>
       <returns>Delegate for the <see cref="M:Gemstone.Data.Model.TableOperations`1.ApplyRecordUpdates(`0)" /> method.</returns>
+      <remarks>
+            This method is useful to apply update values to an existing type <typeparamref name="T" /> instance when no data
+            connection is available, applying any modeled update values as specified by instances of the
+            <see cref="T:Gemstone.Expressions.Model.UpdateValueExpressionAttribute" /> on the model properties.
+            </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.ApplyRootQueryRestrictionToDeletes">
       <summary>
             Gets or sets flag that determines if <see cref="P:Gemstone.Data.Model.TableOperations`1.RootQueryRestriction" /> should be applied to delete operations.
             </summary>
+      <remarks>
+        <para>
+            If <see cref="P:Gemstone.Data.Model.TableOperations`1.RootQueryRestriction" /> only references primary key fields, then this property value should be set
+            to <c>false</c> since default delete operations for a modeled record already work against primary key fields.
+            </para>
+        <para>
+            This flag can be manually set per <see cref="T:Gemstone.Data.Model.TableOperations`1" /> instance or handled automatically by marking
+            a model with the <see cref="T:Gemstone.Data.Model.RootQueryRestrictionAttribute" /> and assigning a value to the attribute property
+            <see cref="F:Gemstone.Data.Model.RootQueryRestrictionAttribute.ApplyToDeletes" />.
+            </para>
+      </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.ApplyRootQueryRestrictionToUpdates">
       <summary>
             Gets or sets flag that determines if <see cref="P:Gemstone.Data.Model.TableOperations`1.RootQueryRestriction" /> should be applied to update operations.
             </summary>
+      <remarks>
+        <para>
+            If <see cref="P:Gemstone.Data.Model.TableOperations`1.RootQueryRestriction" /> only references primary key fields, then this property value should be set
+            to <c>false</c> since default update operations for a modeled record already work against primary key fields.
+            </para>
+        <para>
+            This flag can be manually set per <see cref="T:Gemstone.Data.Model.TableOperations`1" /> instance or handled automatically by marking
+            a model with the <see cref="T:Gemstone.Data.Model.RootQueryRestrictionAttribute" /> and assigning a value to the attribute property
+            <see cref="F:Gemstone.Data.Model.RootQueryRestrictionAttribute.ApplyToUpdates" />.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.ClearPrimaryKeyCache">
       <summary>
             Clears the primary key cache for this <see cref="T:Gemstone.Data.Model.TableOperations`1" /> instance.
             </summary>
+      <remarks>
+        <para>
+            This method is intended to be used in conjunction with calls to the overloads for
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)" /> which are
+            used for record pagination.
+            </para>
+        <para>
+            If record set is known to have changed outside purview of this class, this method
+            should be called so that primary key cache can be reloaded.
+            </para>
+      </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.Connection">
       <summary>
@@ -4129,6 +4862,12 @@
             <see cref="P:Gemstone.Data.Model.TableOperations`1.ApplyRootQueryRestrictionToDeletes" /> setting.
             </param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </remarks>
       <exception cref="T:System.ArgumentNullException">
         <paramref name="restriction" /> cannot be <c>null</c>.</exception>
     </member>
@@ -4164,11 +4903,37 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.DeleteRecord(Gemstone.Data.Model.RecordRestriction,System.Nullable{System.Boolean})" />.
+            </para>
+      </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.ExceptionHandler">
       <summary>
             Gets or sets delegate used to handle table operation exceptions.
             </summary>
+      <remarks>
+            When exception handler is provided, table operations will not throw exceptions for database calls, any
+            encountered exceptions will be passed to handler for processing. Otherwise, exceptions will be thrown
+            on the call stack.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.FieldHasAttribute``1(System.String)">
       <summary>
@@ -4196,6 +4961,9 @@
             </summary>
       <param name="escaped">Flag that determines if field names should include any escaping as defined in the model; defaults to <c>true</c>.</param>
       <returns>Array of field names.</returns>
+      <remarks>
+            A field name will only be escaped if the model requested escaping with the <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.GetFieldType(System.String)">
       <summary>
@@ -4223,6 +4991,27 @@
             Interpreted value for the specified field, encrypting or returning any intermediate <see cref="T:System.Data.IDbDataParameter" /> value
             as needed.
             </returns>
+      <remarks>
+        <para>
+            This function will need to be used when calling overloads that take a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> or composite format
+            filter expression where the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" /> have been modeled
+            on a field referenced by one of the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameters. Since the record restrictions are used
+            with a free-form expression, the <see cref="T:Gemstone.Data.Model.TableOperations`1" /> class cannot be aware of the fields accessed in the
+            expression without attempting to parse the expression which would be time consuming and error prone; as a result, users
+            will need to be aware to call this function when using record restriction that references fields that are either marked
+            for encryption or use a specific field data-type attribute.
+            </para>
+        <para>
+            If a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter references a field that is modeled with an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />,
+            this function will need to be called, replacing the restriction parameter with the returned value, so that the field data
+            value will be properly encrypted prior to executing the database function.
+            </para>
+        <para>
+            If a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter references a field that is modeled with a <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />,
+            this function will need to be called, replacing the restriction parameter with the returned value, so that the field data
+            type will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.GetPageOfRecords(`0[],System.Int32,System.Int32)">
       <summary>
@@ -4245,6 +5034,9 @@
             </summary>
       <param name="escaped">Flag that determines if field names should include any escaping as defined in the model; defaults to <c>true</c>.</param>
       <returns>Array of primary key field names.</returns>
+      <remarks>
+            A field name will only be escaped if the model requested escaping with the <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.GetPrimaryKeys(System.Data.DataRow)">
       <summary>
@@ -4253,6 +5045,12 @@
       <param name="row">
         <see cref="T:System.Data.DataRow" /> of queried data.</param>
       <returns>Primary key values from the specified <paramref name="row" />.</returns>
+      <remarks>
+            Function returns raw data from <paramref name="row" /> without interpretation, it may be
+            necessary to call <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> for models with primary key
+            fields that are marked with either <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or
+            <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.GetPrimaryKeys(`0)">
       <summary>
@@ -4268,6 +5066,13 @@
       <param name="searchText">Text to search.</param>
       <returns>
         <see cref="T:Gemstone.Data.Model.RecordRestriction" /> based on fields marked with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and specified <paramref name="searchText" />.</returns>
+      <remarks>
+            Any fields marked with both <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> will be automatically managed, i.e.,
+            the returned <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameters will already apply any field based encryption as needed. Database query functions
+            executed for fields marked for encryption will only be searched using <see cref="F:Gemstone.Data.Model.SearchType.FullValueMatch" />, regardless of any otherwise
+            specified value in the <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> as encryption is handled locally. However, the <see cref="M:Gemstone.Data.Model.TableOperations`1.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)" /> function
+            can be used to find data in encrypted fields that are marked for search with a <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
+            </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.HasPrimaryKeyIdentityField">
       <summary>
@@ -4285,6 +5090,9 @@
         <c>true</c> if any <paramref name="record" /> fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> match any of the
             specified <paramref name="searchValues" />; otherwise, <c>false</c>.
             </returns>
+      <remarks>
+            String comparisons will be ordinal ignoring case.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.IsSearchMatch(`0,System.StringComparison,System.String[])">
       <summary>
@@ -4320,6 +5128,10 @@
             Gets a delegate for the <see cref="M:Gemstone.Data.Model.TableOperations`1.LoadRecord(System.Data.DataRow)" /> function for specified type <typeparamref name="T" />.
             </summary>
       <returns>Delegate for the <see cref="M:Gemstone.Data.Model.TableOperations`1.LoadRecord(System.Data.DataRow)" /> function.</returns>
+      <remarks>
+            This method is useful to deserialize a <see cref="T:System.Data.DataRow" /> into a type <typeparamref name="T" /> instance
+            when no data connection is available, e.g., when using a deserialized <see cref="T:System.Data.DataSet" />.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.NewRecord">
       <summary>
@@ -4334,11 +5146,35 @@
             Gets a delegate for the <see cref="M:Gemstone.Data.Model.TableOperations`1.NewRecord" /> function for specified type <typeparamref name="T" />.
             </summary>
       <returns>Delegate for the <see cref="M:Gemstone.Data.Model.TableOperations`1.NewRecord" /> function.</returns>
+      <remarks>
+            This method is useful to create a new type <typeparamref name="T" /> instance when no data connection
+            is available, applying any modeled default values as specified by a <see cref="T:System.ComponentModel.DefaultValueAttribute" />
+            or <see cref="T:Gemstone.Expressions.Model.DefaultValueExpressionAttribute" /> on the model properties.
+            </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.PrimaryKeyCache">
       <summary>
             Gets or sets primary key cache.
             </summary>
+      <remarks>
+        <para>
+            The <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)" /> overloads that include paging parameters
+            cache the sorted and filtered primary keys of queried records between calls so that paging is fast and
+            efficient. Since the primary keys are cached, an instance of the <see cref="T:Gemstone.Data.Model.TableOperations`1" /> should
+            exist per user session when using query functions that support pagination. In web based implementations,
+            the primary cache should be stored with user session state data and then restored between instances of
+            the <see cref="T:Gemstone.Data.Model.TableOperations`1" /> that are created along with a connection that is opened per page.
+            </para>
+        <para>
+            The function <see cref="M:Gemstone.Data.Model.TableOperations`1.ClearPrimaryKeyCache" /> should be called to manually clear cache when table
+            contents are known to have changed. Note that calls to any <see cref="M:Gemstone.Data.Model.TableOperations`1.DeleteRecord(`0)" /> overloads will
+            automatically clear any existing primary key cache.
+            </para>
+        <para>
+            Primary keys values are stored in data table without interpretation, i.e., in their raw form as queried
+            from the database. Primary key data in cache will be encrypted for models with primary key fields that
+            are marked with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /></para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecord(Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -4346,6 +5182,21 @@
             </summary>
       <param name="restriction">Record restriction to apply.</param>
       <returns>A single modeled table record for the queried record.</returns>
+      <remarks>
+        <para>
+            If no record is found for specified <paramref name="restriction" />, <c>null</c> will be returned.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)" />
+            specifying the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter with a limit of 1 record.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecord(System.String,Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -4355,6 +5206,21 @@
       <param name="orderByExpression">Field name expression used for sort order, include ASC or DESC as needed - does not include ORDER BY; defaults to primary keys.</param>
       <param name="restriction">Record restriction to apply.</param>
       <returns>A single modeled table record for the queried record.</returns>
+      <remarks>
+        <para>
+            If no record is found for specified <paramref name="restriction" />, <c>null</c> will be returned.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)" />
+            specifying the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter with a limit of 1 record.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -4366,6 +5232,12 @@
             Record count for the specified <paramref name="restriction" /> - or - total record count
             for the modeled table if <paramref name="restriction" /> is <c>null</c>.
             </returns>
+      <remarks>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(System.String)">
       <summary>
@@ -4374,6 +5246,9 @@
             </summary>
       <param name="searchText">Text to search.</param>
       <returns>Record count for the modeled table based on search parameter.</returns>
+      <remarks>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)" /> where restriction
+            is generated by <see cref="M:Gemstone.Data.Model.TableOperations`1.GetSearchRestriction(System.String)" /></remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCountWhere(System.String,System.Object[])">
       <summary>
@@ -4385,6 +5260,27 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>Record count for the modeled table for the specified parameters.</returns>
+      <remarks>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)" />.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -4392,6 +5288,18 @@
             </summary>
       <param name="restriction">Record restriction to apply.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)" /> only
+            specifying the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)">
       <summary>
@@ -4401,6 +5309,17 @@
       <param name="restriction">Record restriction to apply, if any.</param>
       <param name="limit">Limit of number of record to return.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            If no record <paramref name="restriction" /> or <paramref name="limit" /> is provided, all rows will be returned.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -4412,6 +5331,24 @@
       <param name="pageSize">Current page size.</param>
       <param name="restriction">Record restriction to apply, if any.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            This function is used for record paging. Primary keys are cached server-side, typically per user session,
+            to maintain desired per-page sort order. Call <see cref="M:Gemstone.Data.Model.TableOperations`1.ClearPrimaryKeyCache" /> to manually clear cache
+            when table contents are known to have changed.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If the specified <paramref name="sortField" /> has been marked with <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />,
+            establishing the primary key cache operation will take longer to execute since query data will need to
+            be downloaded locally and decrypted so the proper sort order can be determined.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)">
       <summary>
@@ -4424,6 +5361,22 @@
       <param name="pageSize">Current page size.</param>
       <param name="searchText">Text to search.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            This function is used for record paging. Primary keys are cached server-side, typically per user session,
+            to maintain desired per-page sort order. Call <see cref="M:Gemstone.Data.Model.TableOperations`1.ClearPrimaryKeyCache" /> to manually clear cache
+            when table contents are known to have changed.
+            </para>
+        <para>
+            If the specified <paramref name="sortField" /> has been marked with <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />,
+            establishing the primary key cache operation will take longer to execute since query data will need to
+            be downloaded locally and decrypted so the proper sort order can be determined.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)" /> where restriction
+            is generated by <see cref="M:Gemstone.Data.Model.TableOperations`1.GetSearchRestriction(System.String)" /> using <paramref name="searchText" />.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordsWhere(System.String,System.Object[])">
       <summary>
@@ -4436,6 +5389,28 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)" /> only
+            specifying the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordWhere(System.String,System.Object[])">
       <summary>
@@ -4448,11 +5423,58 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>A single modeled table record for the queried record.</returns>
+      <remarks>
+        <para>
+            If no record is found for specified filter expression and parameters, <c>null</c> will be returned.
+            </para>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,Gemstone.Data.Model.RecordRestriction,System.Int32)" />
+            specifying the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameter with a limit of 1 record.
+            </para>
+      </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.RootQueryRestriction">
       <summary>
             Gets or sets root record restriction that applies to query table operations.
             </summary>
+      <remarks>
+        <para>
+            Defining a root query restriction creates a base query filter that gets applied to all query operations,
+            even when another restriction is applied - in this case the root restriction will be pre-pended to the
+            specified query, e.g.:
+            <code language="cs">
+            restriction = RootQueryRestriction + restriction;
+            </code>
+            A root query restriction is useful to apply a common state to the query operations, e.g., always
+            filtering records for a specific user or context.
+            </para>
+        <para>
+            A root query restriction can be manually assigned to a <see cref="T:Gemstone.Data.Model.TableOperations`1" /> instance or
+            automatically assigned by marking a model with the <see cref="T:Gemstone.Data.Model.RootQueryRestrictionAttribute" />.
+            </para>
+        <para>
+            If any of the <see cref="F:Gemstone.Data.Model.RecordRestriction.Parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)">
       <summary>
@@ -4466,6 +5488,19 @@
       <param name="comparison">
         <see cref="T:System.StringComparison" /> to use when searching string fields; defaults to ordinal ignore case.</param>
       <returns>An array of modeled table row instances for the queried records that match the search.</returns>
+      <remarks>
+        <para>
+            This function searches records locally after query from database, this way <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> functionality will work
+            even with fields that are modeled with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> and use the <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
+            Primary keys for this function will not be cached server-side and this function will be slower and more expensive than similar calls
+            to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)" />. Usage should be restricted to cases searching for field data that has
+            been modeled with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />.
+            </para>
+        <para>
+            This function does not paginate records, instead a full list of search records is returned. User can cache returned records and page
+            through them using the <see cref="M:Gemstone.Data.Model.TableOperations`1.GetPageOfRecords(`0[],System.Int32,System.Int32)" /> function. As a result, usage should be restricted to smaller data sets. 
+            </para>
+      </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.TableName">
       <summary>
@@ -4506,11 +5541,19 @@
             Gets or sets <see cref="T:Gemstone.Expressions.Evaluator.TypeRegistry" /> instance used for evaluating encountered instances
             of the <see cref="T:Gemstone.Expressions.Model.ValueExpressionAttributeBase" /> on modeled table properties.
             </summary>
+      <remarks>
+            Accessing this property will create a unique type registry for the current type <typeparamref name="T" /> which
+            will initially contain the values found in the <see cref="P:Gemstone.Expressions.Model.ValueExpressionParser.DefaultTypeRegistry" />
+            and can be augmented with custom types. Set to <c>null</c> to restore use of the default type registry.
+            </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.UnescapedTableName">
       <summary>
             Gets the table name defined for the modeled table without any escape characters.
             </summary>
+      <remarks>
+            A table name will only be escaped if the model requested escaping with the <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.UpdateRecord(System.Data.DataRow,Gemstone.Data.Model.RecordRestriction)">
       <summary>
@@ -4522,6 +5565,18 @@
         <see cref="T:System.Data.DataRow" /> of queried data to be updated.</param>
       <param name="restriction">Record restriction to apply, if any.</param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+        <para>
+            Record restriction is only used for custom update expressions or in cases where modeled
+            table has no defined primary keys.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.UpdateRecord(`0,Gemstone.Data.Model.RecordRestriction,System.Nullable{System.Boolean})">
       <summary>
@@ -4536,6 +5591,18 @@
             <see cref="P:Gemstone.Data.Model.TableOperations`1.ApplyRootQueryRestrictionToUpdates" /> setting.
             </param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+        <para>
+            Record restriction is only used for custom update expressions or in cases where modeled
+            table has no defined primary keys.
+            </para>
+        <para>
+            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.UpdateRecordWhere(System.Data.DataRow,System.String,System.Object[])">
       <summary>
@@ -4552,6 +5619,31 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+        <para>
+            Record restriction is only used for custom update expressions or in cases where modeled
+            table has no defined primary keys.
+            </para>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.UpdateRecord(System.Data.DataRow,Gemstone.Data.Model.RecordRestriction)" />.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.UpdateRecordWhere(`0,System.String,System.Object[])">
       <summary>
@@ -4567,11 +5659,41 @@
             </param>
       <param name="parameters">Restriction parameter values.</param>
       <returns>Number of rows affected.</returns>
+      <remarks>
+        <para>
+            Record restriction is only used for custom update expressions or in cases where modeled
+            table has no defined primary keys.
+            </para>
+        <para>
+            Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression" />
+            will be converted into query parameters where each of the corresponding values in the
+            <paramref name="parameters" /> collection will be applied as <see cref="T:System.Data.IDbDataParameter" />
+            values to an executed <see cref="T:System.Data.IDbCommand" /> query.
+            </para>
+        <para>
+            If any of the specified <paramref name="parameters" /> reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If needed, field names that are escaped with standard ANSI quotes in the filter expression
+            will be updated to reflect what is defined in the user model.
+            </para>
+        <para>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.UpdateRecord(`0,Gemstone.Data.Model.RecordRestriction,System.Nullable{System.Boolean})" />.
+            </para>
+      </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.UseCaseSensitiveFieldNames">
       <summary>
             Gets or sets flag that determines if field names should be treated as case sensitive. Defaults to <c>false</c>.
             </summary>
+      <remarks>
+            In cases where modeled table fields have applied <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />, this flag will be used
+            to properly update escaped field names that may be case sensitive. For example, escaped field names in Oracle
+            are case sensitive. This value is typically <c>false</c>.
+            </remarks>
     </member>
     <member name="T:Gemstone.Data.Model.TargetExpression">
       <summary>
@@ -4593,6 +5715,17 @@
             Defines an attribute that will request use of the escaped name of a modeled identifier, i.e.,
             a table or field name. Typically needed when identifier names are reserved SQL key words.
             </summary>
+      <remarks>
+            Applying [UseEscapedName] to a modeled table or field with no parameters will specify that an
+            escaped name be used for all database types. Using a specific database type as a parameter
+            to the attribute, e.g., [UseEscapedName(DatabaseType.SQLServer)], means the escaped name will
+            only be applied to the specific database - however, the attribute allows multiple instances
+            on the same identifier so you could specify that escaping only be applied to two databases,
+            for example: [UseEscapedName(DatabaseType.SQLServer), UseEscapedName(DatabaseType.MySQL)].
+            In the event multiple attributes have been applied to a modeled identifier where one instance
+            has specified no target database type and others have, the system will assume to target all
+            databases for escaping the name and ignore the specific targets.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.UseEscapedNameAttribute.#ctor">
       <summary>
@@ -4610,12 +5743,19 @@
       <summary>
             Gets target <see cref="T:Gemstone.Data.DatabaseType" /> for using escaped name.
             </summary>
+      <remarks>
+            When value is <c>null</c>, escaped name will be applied to all database types.
+            </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.UseEscapedNameAttribute.UseAnsiQuotes">
       <summary>
             Gets or sets flag that determines if double quotes should be used as the identifier delimiter,
             per SQL-99 standard, regardless of database type. Defaults to <c>true</c> except for MySQL.
             </summary>
+      <remarks>
+            If <c>true</c>, ANSI standard double-quotes will be used for escaping the identifier; otherwise,
+            the escaping identifier will be based on the connected database type.
+            </remarks>
     </member>
   </members>
 </doc>

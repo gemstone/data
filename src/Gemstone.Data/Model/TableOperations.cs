@@ -23,12 +23,13 @@
 //
 //******************************************************************************************************
 
+// Ignore Spelling: Nullable Unescaped
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -54,7 +55,6 @@ namespace Gemstone.Data.Model
     /// Defines database operations for a modeled table.
     /// </summary>
     /// <typeparam name="T">Modeled table.</typeparam>
-    [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
     public class TableOperations<T> : ITableOperations where T : class, new()
     {
         #region [ Members ]
@@ -71,17 +71,18 @@ namespace Gemstone.Data.Model
 
         private class NullConnection : IDbConnection
         {
-            public string? ConnectionString { get; set; }
+            [AllowNull]
+            public string ConnectionString { get; set; }
             public int ConnectionTimeout { get; } = default;
-            public string? Database { get; } = default;
+            public string Database { get; } = default!;
             public ConnectionState State { get; } = ConnectionState.Open;
             public void Open() {}
             public void Close() {}
             public void Dispose() {}
             public void ChangeDatabase(string databaseName) {}
-            public IDbCommand? CreateCommand() => default;
-            public IDbTransaction? BeginTransaction() => default;
-            public IDbTransaction? BeginTransaction(IsolationLevel il) => default;
+            public IDbCommand CreateCommand() => default!;
+            public IDbTransaction BeginTransaction() => default!;
+            public IDbTransaction BeginTransaction(IsolationLevel il) => default!;
         }
 
         private class IntermediateParameter : IDbDataParameter
@@ -89,8 +90,10 @@ namespace Gemstone.Data.Model
             public DbType DbType { get; set; }
             public ParameterDirection Direction { get; set; }
             public bool IsNullable { get; } = false;
-            public string? ParameterName { get; set; }
-            public string? SourceColumn { get; set; }
+            [AllowNull]
+            public string ParameterName { get; set; } = string.Empty;
+            [AllowNull]
+            public string SourceColumn { get; set; } = string.Empty;
             public DataRowVersion SourceVersion { get; set; }
             public object? Value { get; set; }
             public byte Precision { get; set; }
@@ -152,7 +155,6 @@ namespace Gemstone.Data.Model
         /// customTokens = new[] { new KeyValuePair&lt;string, string&gt;("{count}", $"{count}") };
         /// </code>
         /// </remarks>
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public TableOperations(AdoDataConnection connection, IEnumerable<KeyValuePair<string, string>>? customTokens = default)
         {
             Connection = connection ?? throw new ArgumentNullException(nameof(connection));
@@ -837,7 +839,6 @@ namespace Gemstone.Data.Model
         /// be downloaded locally and decrypted so the proper sort order can be determined.
         /// </para>
         /// </remarks>
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public IEnumerable<T> QueryRecords(string? sortField, bool ascending, int page, int pageSize, RecordRestriction? restriction = null)
         {
             if (string.IsNullOrWhiteSpace(sortField))
@@ -1852,7 +1853,6 @@ namespace Gemstone.Data.Model
         /// <typeparam name="TAttribute">Type of attribute to search for.</typeparam>
         /// <param name="fieldName">Name of field to use for attribute lookup.</param>
         /// <returns><c>true</c> if field has attribute; otherwise, <c>false</c>.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
         public bool FieldHasAttribute<TAttribute>(string fieldName) where TAttribute : Attribute => FieldHasAttribute(fieldName, typeof(TAttribute));
 
         /// <summary>
@@ -2180,8 +2180,8 @@ namespace Gemstone.Data.Model
         private bool FieldIsEncrypted(string fieldName)
         {
             return s_encryptDataTargets is not null &&
-                   s_propertyNames.TryGetValue(fieldName, out string propertyName) &&
-                   s_properties.TryGetValue(propertyName, out PropertyInfo property) &&
+                   s_propertyNames.TryGetValue(fieldName, out string? propertyName) &&
+                   s_properties.TryGetValue(propertyName, out PropertyInfo? property) &&
                    s_encryptDataTargets.ContainsKey(property);
         }
 
@@ -2214,7 +2214,7 @@ namespace Gemstone.Data.Model
         private static readonly Dictionary<DatabaseType, bool>? s_escapedTableNameTargets;
         private static readonly Dictionary<string, Dictionary<DatabaseType, bool>?>? s_escapedFieldNameTargets;
         private static readonly List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>? s_expressionAmendments;
-        private static readonly RootQueryRestrictionAttribute s_rootQueryRestrictionAttribute;
+        private static readonly RootQueryRestrictionAttribute? s_rootQueryRestrictionAttribute;
         private static readonly string s_selectCountSql;
         private static readonly string s_selectSetSql;
         private static readonly string s_selectSetWhereSql;
@@ -2238,7 +2238,6 @@ namespace Gemstone.Data.Model
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
-        [SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline")]
         static TableOperations()
         {
             StringBuilder addNewFields = new();
@@ -2472,7 +2471,6 @@ namespace Gemstone.Data.Model
         /// will initially contain the values found in the <see cref="ValueExpressionParser.DefaultTypeRegistry"/>
         /// and can be augmented with custom types. Set to <c>null</c> to restore use of the default type registry.
         /// </remarks>
-        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public static TypeRegistry TypeRegistry
         {
             get => s_typeRegistry ??= ValueExpressionParser.DefaultTypeRegistry.Clone();

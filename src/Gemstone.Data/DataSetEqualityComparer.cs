@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Gemstone.Data
 {
@@ -144,7 +143,6 @@ namespace Gemstone.Data
         /// <summary>
         /// Default instance of the <see cref="DataSetEqualityComparer"/> class.
         /// </summary>
-        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public static readonly DataSetEqualityComparer Default = new();
     }
 }

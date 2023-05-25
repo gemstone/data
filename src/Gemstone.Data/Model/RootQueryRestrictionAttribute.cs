@@ -25,7 +25,6 @@
 
 using System;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Gemstone.Data.Model
 {
@@ -33,7 +32,6 @@ namespace Gemstone.Data.Model
     /// Defines an attribute that will mark a modeled table with a record restriction that applies
     /// to all query functions for modeled <see cref="TableOperations{T}"/>.
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments")]
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class RootQueryRestrictionAttribute : Attribute
     {

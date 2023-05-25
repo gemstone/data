@@ -170,7 +170,6 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="sql">The SQL statement to be executed.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
         /// <returns>The number of rows affected.</returns>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static int ExecuteNonQuery(this SqlConnection connection, int timeout, string sql, params object[] parameters)
         {
             using SqlCommand command = new(sql, connection) { CommandTimeout = timeout };
@@ -496,7 +495,6 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static object ExecuteScalar(this SqlConnection connection, int timeout, string sql, params object[] parameters)
         {
             using SqlCommand command = new(sql, connection) { CommandTimeout = timeout };
@@ -591,7 +589,6 @@ namespace Gemstone.Data.DataExtensions
         /// </summary>
         /// <param name="connection">The connection used to execute SQL statements.</param>
         /// <param name="scriptReader">The reader used to extract statements from the SQL script.</param>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "CommandText updates are being removed, not accepting user input")]
         public static void ExecuteTSQLScript(this IDbConnection connection, TextReader scriptReader)
         {
             string line = scriptReader.ReadLine();
@@ -642,14 +639,10 @@ namespace Gemstone.Data.DataExtensions
         /// </summary>
         /// <param name="connection">The connection used to execute SQL statements.</param>
         /// <param name="scriptReader">The reader used to extract statements from the SQL script.</param>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "CommandText updates are being removed, not accepting user input")]
         public static void ExecuteMySQLScript(this IDbConnection connection, TextReader scriptReader)
         {
-            string line;
-            string delimiter;
-
-            line = scriptReader.ReadLine();
-            delimiter = ";";
+            string? line = scriptReader.ReadLine();
+            string delimiter = ";";
 
             using IDbCommand command = connection.CreateCommand();
 
@@ -657,8 +650,6 @@ namespace Gemstone.Data.DataExtensions
 
             while (line is not null)
             {
-                string statement;
-
                 if (line.StartsWith("DELIMITER ", StringComparison.OrdinalIgnoreCase))
                 {
                     delimiter = line.Split(' ')[1].Trim();
@@ -667,7 +658,7 @@ namespace Gemstone.Data.DataExtensions
                 {
                     statementBuilder.Append(line);
                     statementBuilder.Append('\n');
-                    statement = statementBuilder.ToString();
+                    string statement = statementBuilder.ToString();
                     statement = s_sqlCommentRegex.Replace(statement, " ").Trim();
 
                     if (statement.EndsWith(delimiter, StringComparison.Ordinal))
@@ -704,12 +695,9 @@ namespace Gemstone.Data.DataExtensions
         /// </summary>
         /// <param name="connection">The connection used to execute SQL statements.</param>
         /// <param name="scriptReader">The reader used to extract statements from the SQL script.</param>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "CommandText updates are being removed, not accepting user input")]
         public static void ExecuteOracleScript(this IDbConnection connection, TextReader scriptReader)
         {
-            string line;
-
-            line = scriptReader.ReadLine();
+            string line = scriptReader.ReadLine();
 
             using IDbCommand command = connection.CreateCommand();
 
@@ -718,18 +706,16 @@ namespace Gemstone.Data.DataExtensions
             while (line is not null)
             {
                 string trimLine = line.Trim();
-                string statement;
-                bool isPlsqlBlock;
 
                 statementBuilder.Append(line);
                 statementBuilder.Append('\n');
-                statement = statementBuilder.ToString();
+                string statement = statementBuilder.ToString();
                 statement = s_sqlCommentRegex.Replace(statement, " ").Trim();
 
                 // Determine whether the statement is a PL/SQL block.
                 // If the statement is a PL/SQL block, the delimiter
                 // is a forward slash. Otherwise, it is a semicolon.
-                isPlsqlBlock = s_plsqlIdentifiers.Any(ident => statement.IndexOf(ident, StringComparison.CurrentCultureIgnoreCase) >= 0);
+                bool isPlsqlBlock = s_plsqlIdentifiers.Any(ident => statement.IndexOf(ident, StringComparison.CurrentCultureIgnoreCase) >= 0);
 
                 // If the statement is a PL/SQL block and the current line is a forward slash,
                 // or if the statement is not a PL/SQL block and the statement in a semicolon,
@@ -1145,7 +1131,6 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
         /// <returns>A <see cref="DataSet"/> object.</returns>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static DataSet RetrieveDataSet(this SqlConnection connection, int timeout, int startRow, int maxRows, string sql, params object[] parameters)
         {
             using SqlCommand command = new(sql, connection) { CommandTimeout = timeout };
@@ -1458,8 +1443,6 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="sourceSql">The SQL statement used initially to populate the <see cref="DataTable"/>.</param>
         /// <param name="connection">The <see cref="SqlConnection"/> to use for updating the underlying data source.</param>
         /// <returns>The number of rows successfully updated from the <see cref="DataTable"/>.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "commandBuilder")]
-        [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static int UpdateData(this SqlConnection connection, DataTable sourceData, string sourceSql)
         {
@@ -1601,7 +1584,6 @@ namespace Gemstone.Data.DataExtensions
         /// </remarks>
         /// <returns>The fully populated parameterized command.</returns>
         /// <exception cref="ArgumentException">Number of <see cref="IDbDataParameter"/> arguments in <paramref name="sql"/> expression, identified by '@', do not match number of supplied parameter <paramref name="values"/>.</exception>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static void AddParametersWithValues(this IDbCommand command, string sql, params object[] values)
         {
             if (values.FirstOrDefault(value => value is IDbDataParameter) is not null)
@@ -1700,10 +1682,10 @@ namespace Gemstone.Data.DataExtensions
         public static DataTable ToDataTable(this string delimitedData, string delimiter, bool header)
         {
             DataTable table = new();
-            string pattern;
 
-            // Regex pattern that will be used to split the delimited data.
-            pattern = $"{Regex.Escape(delimiter)}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))";
+            string pattern =
+                // Regex pattern that will be used to split the delimited data.
+                $"{Regex.Escape(delimiter)}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))";
 
             // Remove any leading and trailing whitespace, carriage returns or line feeds.
             delimitedData = delimitedData.Trim().Trim('\r', '\n').Replace("\n", "");

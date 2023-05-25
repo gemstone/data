@@ -31,12 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Gemstone.EventHandlerExtensions;
 
-#pragma warning disable CA2235
-#pragma warning disable CS8603
-#pragma warning disable CS8604
 #pragma warning disable CS8618
 #pragma warning disable CS8625
 
@@ -276,7 +272,6 @@ namespace Gemstone.Data
         /// <summary>
         /// Close source and destination schema
         /// </summary>
-        [SuppressMessage("Microsoft.Usage", "CA1816:CallGCSuppressFinalizeCorrectly")]
         public virtual void Close()
         {
             if (FromSchema is not null)
@@ -294,8 +289,6 @@ namespace Gemstone.Data
         /// <summary>
         /// Dispose
         /// </summary>
-        [SuppressMessage("Microsoft.Usage", "CA1816:CallGCSuppressFinalizeCorrectly")]
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
         void IDisposable.Dispose()
         {
             Close();

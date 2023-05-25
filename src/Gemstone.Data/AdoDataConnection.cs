@@ -31,7 +31,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -816,7 +815,6 @@ namespace Gemstone.Data
             return string.Format(format, parameters);
         }
 
-        [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")]
         private DatabaseType GetDatabaseType(Type connectionType)
         {
             DatabaseType type = DatabaseType.Other;

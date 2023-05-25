@@ -44,7 +44,6 @@ namespace Gemstone.Data.UnitTests.DataSetExtensions
 
             //Act
             StringBuilder results = new();
-            Ticks stopTime, startTime;
 
             DataSet sourceDataSet = new("source");
             DataTable table = sourceDataSet.Tables.Add("table1");
@@ -57,7 +56,7 @@ namespace Gemstone.Data.UnitTests.DataSetExtensions
             table.Columns.Add("col5", typeof(TimeSpan));
             table.Columns.Add("col6", typeof(byte[]));
 
-            startTime = DateTime.UtcNow.Ticks;
+            Ticks startTime = DateTime.UtcNow.Ticks;
 
             for (int i = 0; i < RowCount; i++)
             {
@@ -122,11 +121,10 @@ namespace Gemstone.Data.UnitTests.DataSetExtensions
                 table.Rows.Add(row);
             }
 
-            stopTime = DateTime.UtcNow.Ticks;
+            Ticks stopTime = DateTime.UtcNow.Ticks;
             results.AppendFormat("Initial random sample dataset created with {0} rows. ({1})\r\n", RowCount, (stopTime - startTime).ToElapsedTimeString(4));
             results.AppendLine();
 
-            FileStream stream;
             string path = FilePath.GetApplicationDataFolder();
 
             if (!Directory.Exists(path))
@@ -136,7 +134,7 @@ namespace Gemstone.Data.UnitTests.DataSetExtensions
 
             startTime = DateTime.UtcNow.Ticks;
 
-            stream = new FileStream(fileName, FileMode.Create);
+            FileStream stream = new(fileName, FileMode.Create);
             sourceDataSet.SerializeToStream(stream);
             stream.Flush();
             stream.Close();
@@ -155,23 +153,19 @@ namespace Gemstone.Data.UnitTests.DataSetExtensions
             results.AppendFormat("Dataset XML serialization time: {0}\r\n", (stopTime - startTime).ToElapsedTimeString(4));
             results.AppendLine();
 
-            DataSet destinationDataSet;
-
             startTime = DateTime.UtcNow.Ticks;
 
             stream = new FileStream(fileName, FileMode.Open);
-            destinationDataSet = stream.DeserializeToDataSet();
+            DataSet destinationDataSet = stream.DeserializeToDataSet();
             stream.Close();
             stream.Dispose();
 
             stopTime = DateTime.UtcNow.Ticks;
             results.AppendFormat("Dataset binary deserialization time: {0}\r\n", (stopTime - startTime).ToElapsedTimeString(4));
 
-            DataSet tempDataSet;
-
             startTime = DateTime.UtcNow.Ticks;
 
-            tempDataSet = new DataSet();
+            DataSet tempDataSet = new();
             tempDataSet.ReadXml(xmlFileName);
 
             stopTime = DateTime.UtcNow.Ticks;

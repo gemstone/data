@@ -35,7 +35,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using Gemstone.Data.DataExtensions;
@@ -43,13 +42,11 @@ using Gemstone.EventHandlerExtensions;
 using Gemstone.IO;
 using Gemstone.Reflection;
 
-#pragma warning disable CA2235
 #pragma warning disable CS8600
 #pragma warning disable CS8601
 #pragma warning disable CS8603
 #pragma warning disable CS8604
 #pragma warning disable CS8618
-#pragma warning disable CS8625
 
 // ReSharper disable InconsistentNaming
 namespace Gemstone.Data
@@ -382,7 +379,6 @@ namespace Gemstone.Data
         /// </summary>
         /// <param name="fromTable">Source table</param>
         /// <param name="toTable">Destination table</param>
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         private void ExecuteInserts(Table fromTable, Table toTable)
         {
             Table sourceTable = UseFromSchemaRi ? fromTable : toTable;
@@ -393,7 +389,6 @@ namespace Gemstone.Data
 
             // Progress process variables
             int progressIndex = 0;
-            int progressTotal;
 
             // Bulk insert variables
             bool useBulkInsert = false;
@@ -440,7 +435,7 @@ namespace Gemstone.Data
                 return;
             }
 
-            progressTotal = fromTable.RowCount;
+            int progressTotal = fromTable.RowCount;
             OnRowProgress(fromTable.Name, 0, progressTotal);
             OnOverallProgress((int)OverallProgress, (int)OverallTotal);
 
@@ -596,14 +591,8 @@ namespace Gemstone.Data
             OnOverallProgress((int)OverallProgress, (int)OverallTotal);
         }
 
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         private void InsertDestinationRecord(Table toTable, Fields fieldCollection, string insertSQLStub, string updateSqlStub, string countSqlStub, bool usingIdentityInsert, Table sourceTable, Field autoIncField, bool skipKeyValuePreservation, IDataReader fromReader)
         {
-            StringBuilder insertSQL;
-            StringBuilder updateSQL;
-            StringBuilder countSQL;
-            StringBuilder whereSQL;
-
             Field lookupField;
             string value;
             bool isPrimary;
@@ -612,10 +601,10 @@ namespace Gemstone.Data
             bool addedFirstUpdateField = false;
 
             // Handle creating SQL for inserts or updates for each row...
-            insertSQL = new StringBuilder(insertSQLStub);
-            updateSQL = new StringBuilder(updateSqlStub);
-            countSQL = new StringBuilder(countSqlStub);
-            whereSQL = new StringBuilder();
+            StringBuilder insertSQL = new(insertSQLStub);
+            StringBuilder updateSQL = new(updateSqlStub);
+            StringBuilder countSQL = new(countSqlStub);
+            StringBuilder whereSQL = new();
 
             // Coerce all field data into proper SQL formats
             foreach (Field field in fieldCollection)
@@ -846,13 +835,12 @@ namespace Gemstone.Data
         private void WriteBulkInsertRecord(Table toTable, Fields fieldCollection, Table sourceTable, string fieldTerminator, string rowTerminator, FileStream bulkInsertFileStream, IDataReader fromReader)
         {
             Field commonField = new("Unused", OleDbType.Integer);
-            byte[] dataRow;
             StringBuilder bulkInsertRow = new();
             string value;
-            bool addedFirstInsertField;
 
-            // Handle creating bulk insert file data for each row...
-            addedFirstInsertField = false;
+            bool addedFirstInsertField =
+                // Handle creating bulk insert file data for each row...
+                false;
 
             // Get all field data to create row for bulk insert
             foreach (Field field in toTable.Fields)
@@ -977,7 +965,7 @@ namespace Gemstone.Data
             bulkInsertRow.Append(rowTerminator);
 
             // Add new row to temporary bulk insert file
-            dataRow = BulkInsertEncoding.GetBytes(bulkInsertRow.ToString());
+            byte[] dataRow = BulkInsertEncoding.GetBytes(bulkInsertRow.ToString());
             bulkInsertFileStream.Write(dataRow, 0, dataRow.Length);
         }
 

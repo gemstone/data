@@ -25,7 +25,6 @@
 
 using System;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Gemstone.Data.Model
 {
@@ -43,7 +42,6 @@ namespace Gemstone.Data.Model
     /// first attribute encountered that does not target a specific database will be considered the default
     /// value for all non-specified database types.
     /// </remarks>
-    [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments")]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public sealed class FieldDataTypeAttribute : Attribute
     {

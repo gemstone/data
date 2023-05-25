@@ -24,7 +24,6 @@
 //******************************************************************************************************
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Gemstone.Data.Model
 {
@@ -132,7 +131,6 @@ namespace Gemstone.Data.Model
     /// </code>
     /// </para>
     /// </remarks>
-    [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public sealed class AmendExpressionAttribute : Attribute
     {

@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Gemstone.IO;
 
@@ -171,7 +170,6 @@ namespace Gemstone.Data.DataSetExtensions
         /// <param name="destination"><see cref="Stream"/> to serialize <see cref="DataSet"/> on.</param>
         /// <param name="assumeStringForUnknownTypes">Flag to determine if unknown column types should be serialized as strings.</param>
         /// <param name="useNullableDataTypes">Flag to determine if extra information should be serialized to support null values.</param>
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public static void SerializeToStream(this DataSet source, Stream destination, bool assumeStringForUnknownTypes = true, bool useNullableDataTypes = true)
         {
             if (source is null)
@@ -344,7 +342,6 @@ namespace Gemstone.Data.DataSetExtensions
         /// Deserializes a <see cref="DataSet"/> from a <see cref="Stream"/>.
         /// </summary>
         /// <param name="source"><see cref="Stream"/> to deserialize <see cref="DataSet"/> from.</param>
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public static DataSet DeserializeToDataSet(this Stream source)
         {
             if (source is null)

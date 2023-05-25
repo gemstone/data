@@ -35,13 +35,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using Gemstone.Data.DataExtensions;
 
-#pragma warning disable CA2235
 #pragma warning disable CS8603
 #pragma warning disable CS8604
 #pragma warning disable CS8618
@@ -177,7 +175,6 @@ namespace Gemstone.Data
     /// </summary>
     [Flags]
     [Serializable]
-    [SuppressMessage("Microsoft.Naming", "CA1714:FlagsEnumsShouldHavePluralNames")]
     public enum TableType
     {
         /// <summary>
@@ -264,7 +261,6 @@ namespace Gemstone.Data
     /// Represents a database field.
     /// </summary>
     [Serializable]
-    [SuppressMessage("Microsoft.Design", "CA1036:OverrideMethodsOnComparableTypes")]
     public class Field : IComparable
     {
         #region [ Members ]
@@ -315,7 +311,6 @@ namespace Gemstone.Data
         /// <summary>
         /// Get <see cref="OleDbType"/> Type
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
         public OleDbType Type { get; set; }
 
         /// <summary>
@@ -459,7 +454,6 @@ namespace Gemstone.Data
         /// <summary>
         /// Change <see cref="Field"/> value to encoded string. It will check <see cref="Type"/>  and <see cref="Parent"/> value before convert to <see cref="OleDbType"/> compatible value
         /// </summary>
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public string SQLEncodedValue
         {
             get
@@ -823,7 +817,6 @@ namespace Gemstone.Data
     /// Represents a collection of <see cref="ForeignKeyField"/> values.
     /// </summary>
     [Serializable]
-    [SuppressMessage("Microsoft.Design", "CA1010:CollectionsShouldImplementGenericInterface")]
     public class ForeignKeyFields : IEnumerable
     {
         #region [ Constructors ]
@@ -1072,7 +1065,6 @@ namespace Gemstone.Data
     /// Get data table information for data processing
     /// </summary>
     [Serializable]
-    [SuppressMessage("Microsoft.Design", "CA1036:OverrideMethodsOnComparableTypes")]
     public class Table : IComparable, IComparable<Table>
     {
         #region [ Members ]
@@ -1244,7 +1236,6 @@ namespace Gemstone.Data
         /// <summary>
         /// Get <see cref="TableType"/>
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
         public TableType Type { get; set; }
 
         /// <summary>
@@ -1363,7 +1354,7 @@ namespace Gemstone.Data
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public int CompareTo(Table other) => Priority.CompareTo(other.Priority);
+        public int CompareTo(Table? other) => Priority.CompareTo(other?.Priority);
 
         /// <summary>
         /// Check for reference flag, whether table has reference in another table
@@ -1449,9 +1440,7 @@ namespace Gemstone.Data
         /// <returns></returns>
         public bool DefinePrimaryKey(string fieldName, int primaryKeyOrdinal = -1, string primaryKeyName = "")
         {
-            Field lookupField;
-
-            lookupField = Fields[fieldName];
+            Field lookupField = Fields[fieldName];
 
             if (lookupField is not null)
             {
@@ -1478,11 +1467,10 @@ namespace Gemstone.Data
         /// <returns></returns>
         public bool DefineForeignKey(string primaryKeyFieldName, string foreignKeyTableName, string foreignKeyFieldName, int foreignKeyOrdinal = -1, string foreignKeyName = "", ReferentialAction foreignKeyUpdateRule = ReferentialAction.NoAction, ReferentialAction foreignKeyDeleteRule = ReferentialAction.NoAction)
         {
-            Field localPrimaryKeyField;
             Table remoteForeignKeyTable;
             Field remoteForeignKeyField;
 
-            localPrimaryKeyField = Fields[primaryKeyFieldName];
+            Field localPrimaryKeyField = Fields[primaryKeyFieldName];
 
             if (localPrimaryKeyField is not null)
             {
@@ -1554,7 +1542,6 @@ namespace Gemstone.Data
         /// <summary>
         /// Calculates row count.
         /// </summary>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public void CalculateRowCount()
         {
             if (Type == TableType.Table)
@@ -1759,7 +1746,6 @@ namespace Gemstone.Data
         /// <summary>
         /// Check for referential order of <see cref="Table"/>
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         public class ReferentialOrderComparer : IComparer<Table>
         {
             #region  [ Properties ]
@@ -1767,7 +1753,6 @@ namespace Gemstone.Data
             /// <summary>
             /// Default property of object
             /// </summary>
-            [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
             public static readonly ReferentialOrderComparer Default = new();
 
             #endregion
@@ -1780,7 +1765,7 @@ namespace Gemstone.Data
             /// <param name="table1">First table to compare.</param>
             /// <param name="table2">Second table to compare.</param>
             /// <returns></returns>
-            public int Compare(Table table1, Table table2)
+            public int Compare(Table? table1, Table? table2)
             {
                 // This function allows tables to be sorted in proper referential integrity process order
                 int result = 0;

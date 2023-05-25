@@ -26,16 +26,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Gemstone.Data.DataExtensions;
 using Gemstone.EventHandlerExtensions;
 
-#pragma warning disable CA2235
-#pragma warning disable CS8603
-#pragma warning disable CS8604
 #pragma warning disable CS8618
-#pragma warning disable CS8625
 
 namespace Gemstone.Data
 {
@@ -179,7 +174,6 @@ namespace Gemstone.Data
         /// </summary>
         /// <param name="fromTable">Source table</param>
         /// <param name="toTable">Destination table</param>
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         private void ExecuteUpdates(Table fromTable, Table toTable)
         {
             Table sourceTable = UseFromSchemaRi ? fromTable : toTable;
@@ -188,7 +182,6 @@ namespace Gemstone.Data
 
             // Progress process variables
             int progress = 0;
-            int totalProgress;
 
             // Bulk update variables
             string updateSQLStub;
@@ -237,7 +230,7 @@ namespace Gemstone.Data
                 return;
             }
 
-            totalProgress = fromTable.RowCount;
+            int totalProgress = fromTable.RowCount;
             OnRowProgress(fromTable.Name, 0, totalProgress);
             OnOverallProgress((int)OverallProgress, (int)OverallTotal);
 

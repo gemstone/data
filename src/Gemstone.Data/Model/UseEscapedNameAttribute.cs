@@ -24,7 +24,6 @@
 //******************************************************************************************************
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Gemstone.Data.Model
 {
@@ -43,7 +42,6 @@ namespace Gemstone.Data.Model
     /// has specified no target database type and others have, the system will assume to target all
     /// databases for escaping the name and ignore the specific targets.
     /// </remarks>
-    [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments")]
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = true)]
     public sealed class UseEscapedNameAttribute : Attribute
     {

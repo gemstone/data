@@ -30,11 +30,7 @@ using System.Text;
 using Gemstone.Data.DataExtensions;
 using Gemstone.EventHandlerExtensions;
 
-#pragma warning disable CA2235
-#pragma warning disable CS8603
-#pragma warning disable CS8604
 #pragma warning disable CS8618
-#pragma warning disable CS8625
 
 namespace Gemstone.Data
 {
@@ -188,7 +184,6 @@ namespace Gemstone.Data
 
             // Progress process variables
             int progress = 0;
-            int totalProgress;
 
             // Bulk delete variables
             string deleteSQLStub;
@@ -236,7 +231,7 @@ namespace Gemstone.Data
                 return;
             }
 
-            totalProgress = fromTable.RowCount;
+            int totalProgress = fromTable.RowCount;
             OnRowProgress(fromTable.Name, 0, totalProgress);
             OnOverallProgress((int)OverallProgress, (int)OverallTotal);
 

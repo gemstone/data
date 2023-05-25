@@ -138,7 +138,7 @@ namespace Gemstone.Data
                 // Lookup table name in destination datasource
                 tableLookup = ToSchema.Tables.FindByMapName(table.MapName);
 
-                if (tableLookup != null)
+                if (tableLookup is not null)
                 {
                     // We can only do Sql updates where key fields are defined...
                     if (table.RowCount > 0 && (UseFromSchemaRi ? table.PrimaryKeyFieldCount : tableLookup.PrimaryKeyFieldCount) > 0)
@@ -207,7 +207,7 @@ namespace Gemstone.Data
                 // Lookup field name in destination table
                 lookupField = toTable.Fields[fld.Name];
 
-                if (lookupField != null)
+                if (lookupField is not null)
                 {
                     // We currently don't handle binary fields...
                     if (!(fld.Type == OleDbType.Binary || fld.Type == OleDbType.LongVarBinary || fld.Type == OleDbType.VarBinary) && !(lookupField.Type == OleDbType.Binary || lookupField.Type == OleDbType.LongVarBinary || lookupField.Type == OleDbType.VarBinary))
@@ -270,7 +270,7 @@ namespace Gemstone.Data
                         // Check to see if this is a key field
                         lookupField = sourceTable.Fields[fld.Name];
 
-                        if (lookupField != null)
+                        if (lookupField is not null)
                             isPrimary = lookupField.IsPrimaryKey;
                         else
                             isPrimary = false;

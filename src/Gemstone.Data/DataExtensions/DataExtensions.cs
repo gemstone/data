@@ -600,7 +600,7 @@ namespace Gemstone.Data.DataExtensions
 
             StringBuilder statementBuilder = new();
 
-            while (line != null)
+            while (line is not null)
             {
                 string trimLine = line.Trim();
                 string statement;
@@ -655,7 +655,7 @@ namespace Gemstone.Data.DataExtensions
 
             StringBuilder statementBuilder = new();
 
-            while (line != null)
+            while (line is not null)
             {
                 string statement;
 
@@ -715,7 +715,7 @@ namespace Gemstone.Data.DataExtensions
 
             StringBuilder statementBuilder = new();
 
-            while (line != null)
+            while (line is not null)
             {
                 string trimLine = line.Trim();
                 string statement;
@@ -1336,7 +1336,7 @@ namespace Gemstone.Data.DataExtensions
         {
             object value = row.Field<object>(field);
 
-            if (value == null || value == DBNull.Value)
+            if (value is null || value == DBNull.Value)
                 return defaultValue;
 
             // If the value is an instance of the given type,
@@ -1385,7 +1385,7 @@ namespace Gemstone.Data.DataExtensions
         {
             object value = row.Field<object>(field);
 
-            if (value == null || value == DBNull.Value)
+            if (value is null || value == DBNull.Value)
                 return defaultValue ?? (type.IsValueType ? Activator.CreateInstance(type) : null);
 
             // If the value is an instance of the given type,
@@ -1420,7 +1420,7 @@ namespace Gemstone.Data.DataExtensions
         {
             object value = row.Field<object>(field);
 
-            if (value == null)
+            if (value is null)
                 return null;
 
             return (T)Convert.ChangeType(value, typeof(T));
@@ -1437,7 +1437,7 @@ namespace Gemstone.Data.DataExtensions
         {
             object value = row.Field<object>(field);
 
-            if (value == null || value == DBNull.Value)
+            if (value is null || value == DBNull.Value)
                 return defaultValue ?? Guid.Empty;
 
             if (value is Guid guidValue)
@@ -1508,7 +1508,7 @@ namespace Gemstone.Data.DataExtensions
         public static void PopulateParameters<TDbCommand>(this TDbCommand command, Action<TDbCommand> deriveParameters, object[] values) where TDbCommand : IDbCommand
         {
             // tmshults 12/10/2004
-            if (values != null)
+            if (values is not null)
             {
                 string commandText = command.CommandText;
 
@@ -1604,7 +1604,7 @@ namespace Gemstone.Data.DataExtensions
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static void AddParametersWithValues(this IDbCommand command, string sql, params object[] values)
         {
-            if (values.FirstOrDefault(value => value is IDbDataParameter) != null)
+            if (values.FirstOrDefault(value => value is IDbDataParameter) is not null)
             {
                 // Values are already parameters.
                 foreach (object param in values)

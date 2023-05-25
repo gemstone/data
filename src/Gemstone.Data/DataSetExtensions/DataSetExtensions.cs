@@ -174,10 +174,10 @@ namespace Gemstone.Data.DataSetExtensions
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public static void SerializeToStream(this DataSet source, Stream destination, bool assumeStringForUnknownTypes = true, bool useNullableDataTypes = true)
         {
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (destination == null)
+            if (destination is null)
                 throw new ArgumentNullException(nameof(destination));
 
             if (!destination.CanWrite)
@@ -323,7 +323,7 @@ namespace Gemstone.Data.DataSetExtensions
                             case DataType.Blob:
                                 byte[] blob = value.NotDBNull<byte[]>();
 
-                                if (blob == null || blob.Length == 0)
+                                if (blob is null || blob.Length == 0)
                                 {
                                     output.Write(0);
                                 }
@@ -347,7 +347,7 @@ namespace Gemstone.Data.DataSetExtensions
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public static DataSet DeserializeToDataSet(this Stream source)
         {
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
             if (!source.CanRead)

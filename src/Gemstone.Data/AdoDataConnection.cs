@@ -404,7 +404,7 @@ namespace Gemstone.Data
                 case DatabaseType.MySQL:
                     Type mySqlScriptType = Connection.GetType().Assembly.GetType("MySql.Data.MySqlClient.MySqlScript");
 
-                    if (mySqlScriptType != null)
+                    if (mySqlScriptType is not null)
                     {
                         object executor = Activator.CreateInstance(mySqlScriptType, Connection, scriptReader.ReadToEnd());
                         MethodInfo executeMethod = executor.GetType().GetMethod("Execute");
@@ -578,7 +578,7 @@ namespace Gemstone.Data
             // whether it is assignable to the return type because this method is
             // sometimes used to return null for value types in default value
             // expressions where nullable types are not supported
-            if (value == null || value == DBNull.Value)
+            if (value is null || value == DBNull.Value)
                 return defaultValue;
 
             // Nullable types cannot be used in type conversion, but we can use Nullable.GetUnderlyingType()

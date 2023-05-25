@@ -170,7 +170,7 @@ namespace Gemstone.Data.Model
             m_searchFilterSql = s_searchFilterSql;
 
             // Establish any modeled root query restriction parameters
-            if (s_rootQueryRestrictionAttribute != null)
+            if (s_rootQueryRestrictionAttribute is not null)
             {
                 RootQueryRestriction = new RecordRestriction(s_rootQueryRestrictionAttribute.FilterExpression, s_rootQueryRestrictionAttribute.Parameters);
                 ApplyRootQueryRestrictionToUpdates = s_rootQueryRestrictionAttribute.ApplyToUpdates;
@@ -182,7 +182,7 @@ namespace Gemstone.Data.Model
             // user model has opted to instead use common database escape delimiters, or no delimiters, that
             // will apply to the active database type and make any needed adjustments. As a result, it will
             // be slightly faster to construct this class when ANSI standard escape delimiters are used.
-            if (s_escapedTableNameTargets != null)
+            if (s_escapedTableNameTargets is not null)
             {
                 string derivedTableName = GetEscapedTableName();
                 string ansiEscapedTableName = $"\"{s_tableName}\"";
@@ -203,7 +203,7 @@ namespace Gemstone.Data.Model
                 }
             }
 
-            if (s_escapedFieldNameTargets != null)
+            if (s_escapedFieldNameTargets is not null)
             {
                 foreach (KeyValuePair<string, Dictionary<DatabaseType, bool>?> escapedFieldNameTarget in s_escapedFieldNameTargets)
                 {
@@ -227,7 +227,7 @@ namespace Gemstone.Data.Model
             }
 
             // Handle any modeled expression amendments
-            if (s_expressionAmendments != null)
+            if (s_expressionAmendments is not null)
             {
                 foreach (Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string> expressionAmendment in s_expressionAmendments)
                 {
@@ -295,7 +295,7 @@ namespace Gemstone.Data.Model
                 m_deleteWhereSql = removeRemainingTokens(m_deleteWhereSql);
 
                 // Execute replacements on any provided custom run-time tokens
-                if (customTokens != null)
+                if (customTokens is not null)
                 {
                     foreach (KeyValuePair<string, string> customToken in customTokens)
                     {
@@ -495,7 +495,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw;
 
                 ExceptionHandler(ex);
@@ -520,7 +520,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw;
 
                 ExceptionHandler(ex);
@@ -548,7 +548,7 @@ namespace Gemstone.Data.Model
             }
             catch (Exception ex)
             {
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw;
 
                 ExceptionHandler(ex);
@@ -679,7 +679,7 @@ namespace Gemstone.Data.Model
 
             try
             {
-                if (RootQueryRestriction != null)
+                if (RootQueryRestriction is not null)
                     restriction = (RootQueryRestriction + restriction)!;
 
                 if (limit < 1)
@@ -712,7 +712,7 @@ namespace Gemstone.Data.Model
             {
                 InvalidOperationException opex = new($"Exception during record query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
 
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw opex;
 
                 ExceptionHandler(opex);
@@ -852,14 +852,14 @@ namespace Gemstone.Data.Model
             // off the record count. Local delete operations automatically clear the primary key cache, however, if record set is known to
             // have changed outside purview of this class, the "ClearPrimaryKeyCache()" method should be manually called so that primary key
             // cache can be reestablished.
-            if (PrimaryKeyCache == null || !sortField.Equals(m_lastSortField, StringComparison.OrdinalIgnoreCase) || restriction != m_lastRestriction)
+            if (PrimaryKeyCache is null || !sortField.Equals(m_lastSortField, StringComparison.OrdinalIgnoreCase) || restriction != m_lastRestriction)
             {
                 string orderByExpression = sortFieldIsEncrypted ? s_fieldNames[s_primaryKeyProperties[0].Name] : $"{sortField}{(ascending ? "" : " DESC")}";
                 string? sqlExpression = null;
 
                 try
                 {
-                    if (RootQueryRestriction != null)
+                    if (RootQueryRestriction is not null)
                         restriction = (RootQueryRestriction + restriction)!;
 
                     if (restriction is null)
@@ -878,7 +878,7 @@ namespace Gemstone.Data.Model
                     {
                         // Reduce properties to load only primary key fields and sort field
                         HashSet<PropertyInfo> properties = new(s_primaryKeyProperties) { sortFieldProperty };
-                        IEnumerable<T> sortResult = LocalOrderBy(PrimaryKeyCache.AsEnumerable().Select(row => LoadRecordFromCachedKeys(row.ItemArray, properties)).Where(record => record != null), sortField, ascending)!;
+                        IEnumerable<T> sortResult = LocalOrderBy(PrimaryKeyCache.AsEnumerable().Select(row => LoadRecordFromCachedKeys(row.ItemArray, properties)).Where(record => record is not null), sortField, ascending)!;
                         DataTable sortedKeyCache = new(s_tableName);
 
                         foreach (DataColumn column in PrimaryKeyCache.Columns)
@@ -894,7 +894,7 @@ namespace Gemstone.Data.Model
                 {
                     InvalidOperationException opex = new($"Exception during record query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
 
-                    if (ExceptionHandler == null)
+                    if (ExceptionHandler is null)
                         throw opex;
 
                     ExceptionHandler(opex);
@@ -907,7 +907,7 @@ namespace Gemstone.Data.Model
             }
 
             // Paginate on cached data rows so paging does no work except to skip through records, then only load records for a given page of data 
-            return PrimaryKeyCache.AsEnumerable().ToPagedList(page, pageSize, PrimaryKeyCache.Rows.Count).Select(row => LoadRecordFromCachedKeys(row.ItemArray)).Where(record => record != null)!;
+            return PrimaryKeyCache.AsEnumerable().ToPagedList(page, pageSize, PrimaryKeyCache.Rows.Count).Select(row => LoadRecordFromCachedKeys(row.ItemArray)).Where(record => record is not null)!;
         }
 
         IEnumerable ITableOperations.QueryRecords(string? sortField, bool ascending, int page, int pageSize, RecordRestriction? restriction) => QueryRecords(sortField, ascending, page, pageSize, restriction);
@@ -945,7 +945,7 @@ namespace Gemstone.Data.Model
 
             try
             {
-                if (RootQueryRestriction != null)
+                if (RootQueryRestriction is not null)
                     restriction = (RootQueryRestriction + restriction)!;
 
                 if (restriction is null)
@@ -963,7 +963,7 @@ namespace Gemstone.Data.Model
             {
                 InvalidOperationException opex = new($"Exception during record count query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
 
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw opex;
 
                 ExceptionHandler(opex);
@@ -1082,7 +1082,7 @@ namespace Gemstone.Data.Model
         /// </returns>
         public bool IsSearchMatch(T? record, StringComparison comparison, params string[] searchValues)
         {
-            if (s_searchTargets == null)
+            if (s_searchTargets is null)
                 return false;
 
             foreach (KeyValuePair<PropertyInfo, SearchType> searchTarget in s_searchTargets)
@@ -1157,7 +1157,7 @@ namespace Gemstone.Data.Model
             {
                 InvalidOperationException opex = new($"Exception during record load for {typeof(T).Name} \"{m_selectRowSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
 
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw opex;
 
                 ExceptionHandler(opex);
@@ -1180,7 +1180,7 @@ namespace Gemstone.Data.Model
             {
                 InvalidOperationException opex = new($"Exception during record load from primary key cache for {typeof(T).Name} \"{m_selectRowSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
 
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw opex;
 
                 ExceptionHandler(opex);
@@ -1217,7 +1217,7 @@ namespace Gemstone.Data.Model
                         object? value = row.ConvertField(s_fieldNames[property.Name], property.PropertyType);
 
                         // TODO: Fix encryption
-                        //if (s_encryptDataTargets != null && value != null && s_encryptDataTargets.TryGetValue(property, out string keyReference))
+                        //if (s_encryptDataTargets is not null && value is not null && s_encryptDataTargets.TryGetValue(property, out string keyReference))
                         //    value = value.ToString().Decrypt(keyReference, CipherStrength.Aes256);
 
                         property.SetValue(record, value, null);
@@ -1226,7 +1226,7 @@ namespace Gemstone.Data.Model
                     {
                         InvalidOperationException opex = new($"Exception during record load field assignment for \"{typeof(T).Name}.{property.Name} = {row[s_fieldNames[property.Name]]}\": {ex.Message}", ex);
 
-                        if (ExceptionHandler == null)
+                        if (ExceptionHandler is null)
                             throw opex;
 
                         ExceptionHandler(opex);
@@ -1239,7 +1239,7 @@ namespace Gemstone.Data.Model
             {
                 InvalidOperationException opex = new($"Exception during record load for {typeof(T).Name} from data row: {ex.Message}", ex);
 
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw opex;
 
                 ExceptionHandler(opex);
@@ -1307,7 +1307,7 @@ namespace Gemstone.Data.Model
             {
                 InvalidOperationException opex = new($"Exception during record delete for {typeof(T).Name} \"{m_deleteSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
 
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw opex;
 
                 ExceptionHandler(opex);
@@ -1356,14 +1356,14 @@ namespace Gemstone.Data.Model
         /// <exception cref="ArgumentNullException"><paramref name="restriction"/> cannot be <c>null</c>.</exception>
         public int DeleteRecord(RecordRestriction? restriction, bool? applyRootQueryRestriction = null)
         {
-            if (restriction == null)
+            if (restriction is null)
                 throw new ArgumentNullException(nameof(restriction));
 
             string? sqlExpression = null;
 
             try
             {
-                if (RootQueryRestriction != null && (applyRootQueryRestriction ?? ApplyRootQueryRestrictionToDeletes))
+                if (RootQueryRestriction is not null && (applyRootQueryRestriction ?? ApplyRootQueryRestrictionToDeletes))
                     restriction = (RootQueryRestriction + restriction)!;
 
                 sqlExpression = $"{m_deleteWhereSql}{UpdateFieldNames(restriction.FilterExpression)}";
@@ -1378,7 +1378,7 @@ namespace Gemstone.Data.Model
             {
                 InvalidOperationException opex = new($"Exception during record delete for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction.Parameters)}\": {ex.Message}", ex);
 
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw opex;
 
                 ExceptionHandler(opex);
@@ -1451,12 +1451,12 @@ namespace Gemstone.Data.Model
             {
                 s_updateRecordInstance(new CurrentScope { Instance = record, TableOperations = this, Connection = Connection });
 
-                if (RootQueryRestriction != null && (applyRootQueryRestriction ?? ApplyRootQueryRestrictionToUpdates))
+                if (RootQueryRestriction is not null && (applyRootQueryRestriction ?? ApplyRootQueryRestrictionToUpdates))
                     restriction = (RootQueryRestriction + restriction)!;
             }
             catch (Exception ex)
             {
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw;
 
                 ExceptionHandler(ex);
@@ -1464,7 +1464,7 @@ namespace Gemstone.Data.Model
                 return 0;
             }
 
-            if (restriction == null)
+            if (restriction is null)
             {
                 try
                 {
@@ -1480,7 +1480,7 @@ namespace Gemstone.Data.Model
                 {
                     InvalidOperationException opex = new($"Exception during record update for {typeof(T).Name} \"{m_updateSql}, {ValueList(values)}\": {ex.Message}", ex);
 
-                    if (ExceptionHandler == null)
+                    if (ExceptionHandler is null)
                         throw opex;
 
                     ExceptionHandler(opex);
@@ -1512,7 +1512,7 @@ namespace Gemstone.Data.Model
             {
                 InvalidOperationException opex = new($"Exception during record update for {typeof(T).Name} \"{sqlExpression}, {ValueList(values)}\": {ex.Message}", ex);
 
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw opex;
 
                 ExceptionHandler(opex);
@@ -1664,7 +1664,7 @@ namespace Gemstone.Data.Model
             {
                 InvalidOperationException opex = new($"Exception during record insert for {typeof(T).Name} \"{m_addNewSql}, {ValueList(values)}\": {ex.Message}", ex);
 
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw opex;
 
                 ExceptionHandler(opex);
@@ -1725,7 +1725,7 @@ namespace Gemstone.Data.Model
             {
                 InvalidOperationException opex = new($"Exception loading primary key fields for {typeof(T).Name} \"{s_primaryKeyProperties.Select(property => property.Name).ToDelimitedString(", ")}\": {ex.Message}", ex);
 
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw opex;
 
                 ExceptionHandler(opex);
@@ -1768,7 +1768,7 @@ namespace Gemstone.Data.Model
             {
                 InvalidOperationException opex = new($"Exception loading primary key fields for {typeof(T).Name} \"{s_primaryKeyProperties.Select(property => property.Name).ToDelimitedString(", ")}\": {ex.Message}", ex);
 
-                if (ExceptionHandler == null)
+                if (ExceptionHandler is null)
                     throw opex;
 
                 ExceptionHandler(opex);
@@ -1928,7 +1928,7 @@ namespace Gemstone.Data.Model
         /// </remarks>
         public object? GetInterpretedFieldValue(string fieldName, object? value)
         {
-            if (s_fieldDataTypeTargets == null && s_encryptDataTargets == null)
+            if (s_fieldDataTypeTargets is null && s_encryptDataTargets is null)
                 return value;
 
             if (s_propertyNames.TryGetValue(fieldName, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo property))
@@ -1974,12 +1974,12 @@ namespace Gemstone.Data.Model
 
             string[] searchValues = searchText.RemoveDuplicateWhiteSpace().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            if (searchValues.Length == 1 && s_encryptedSearchTargets == null)
+            if (searchValues.Length == 1 && s_encryptedSearchTargets is null)
                 return new RecordRestriction(m_searchFilterSql, $"%{searchText}%", searchText);
 
             StringBuilder searchValueFilter = new();
 
-            if (s_encryptedSearchTargets == null)
+            if (s_encryptedSearchTargets is null)
             {
                 for (int i = 0; i < searchValues.Length * 2; i += 2)
                 {
@@ -2057,7 +2057,7 @@ namespace Gemstone.Data.Model
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private object?[] GetInterpretedPrimaryKeys(object[] primaryKeys, bool skipEncryption = false)
         {
-            if (s_fieldDataTypeTargets == null && s_encryptDataTargets == null)
+            if (s_fieldDataTypeTargets is null && s_encryptDataTargets is null)
                 return primaryKeys;
 
             object?[] interpretedKeys = new object[s_primaryKeyProperties.Length];
@@ -2078,7 +2078,7 @@ namespace Gemstone.Data.Model
             if (value is char && Connection.DatabaseType == DatabaseType.SQLite)
                 value = value.ToString();
 
-            if (s_fieldDataTypeTargets == null && s_encryptDataTargets == null)
+            if (s_fieldDataTypeTargets is null && s_encryptDataTargets is null)
                 return value;
 
             return GetInterpretedValue(property, value);
@@ -2088,10 +2088,10 @@ namespace Gemstone.Data.Model
         private object? GetInterpretedValue(PropertyInfo property, object? value, bool skipEncryption = false)
         {
             // TODO: Fix encryption
-            //if (!skipEncryption && s_encryptDataTargets != null && value != null && s_encryptDataTargets.TryGetValue(property, out string keyReference))
+            //if (!skipEncryption && s_encryptDataTargets is not null && value is not null && s_encryptDataTargets.TryGetValue(property, out string keyReference))
             //    value = value.ToString().Encrypt(keyReference, CipherStrength.Aes256);
 
-            if (s_fieldDataTypeTargets != null && s_fieldDataTypeTargets.TryGetValue(property, out Dictionary<DatabaseType, DbType>? fieldDataTypeTargets) && fieldDataTypeTargets != null && fieldDataTypeTargets.TryGetValue(Connection.DatabaseType, out DbType fieldDataType))
+            if (s_fieldDataTypeTargets is not null && s_fieldDataTypeTargets.TryGetValue(property, out Dictionary<DatabaseType, DbType>? fieldDataTypeTargets) && fieldDataTypeTargets is not null && fieldDataTypeTargets.TryGetValue(Connection.DatabaseType, out DbType fieldDataType))
             {
                 return new IntermediateParameter
                 {
@@ -2107,7 +2107,7 @@ namespace Gemstone.Data.Model
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private string GetEscapedTableName()
         {
-            if (s_escapedTableNameTargets == null)
+            if (s_escapedTableNameTargets is null)
                 return s_tableName;
 
             if (s_escapedTableNameTargets.TryGetValue(Connection.DatabaseType, out bool useAnsiQuotes))
@@ -2120,10 +2120,10 @@ namespace Gemstone.Data.Model
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private string GetEscapedFieldName(string fieldName, Dictionary<DatabaseType, bool>? escapedFieldNameTargets = null)
         {
-            if (s_escapedFieldNameTargets == null)
+            if (s_escapedFieldNameTargets is null)
                 return fieldName;
 
-            if (escapedFieldNameTargets == null && !s_escapedFieldNameTargets.TryGetValue(fieldName, out escapedFieldNameTargets) || escapedFieldNameTargets == null)
+            if (escapedFieldNameTargets is null && !s_escapedFieldNameTargets.TryGetValue(fieldName, out escapedFieldNameTargets) || escapedFieldNameTargets is null)
                 return fieldName;
 
             if (escapedFieldNameTargets.TryGetValue(Connection.DatabaseType, out bool useAnsiQuotes))
@@ -2136,7 +2136,7 @@ namespace Gemstone.Data.Model
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private string GetUnescapedFieldName(string fieldName)
         {
-            if (s_escapedFieldNameTargets == null)
+            if (s_escapedFieldNameTargets is null)
                 return fieldName;
 
             if (!s_escapedFieldNameTargets.TryGetValue(fieldName, out _))
@@ -2152,7 +2152,7 @@ namespace Gemstone.Data.Model
             if (filterExpression is null)
                 return default;
 
-            if (s_escapedFieldNameTargets != null)
+            if (s_escapedFieldNameTargets is not null)
             {
                 foreach (KeyValuePair<string, Dictionary<DatabaseType, bool>?> escapedFieldNameTarget in s_escapedFieldNameTargets)
                 {
@@ -2179,7 +2179,7 @@ namespace Gemstone.Data.Model
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool FieldIsEncrypted(string fieldName)
         {
-            return s_encryptDataTargets != null &&
+            return s_encryptDataTargets is not null &&
                    s_propertyNames.TryGetValue(fieldName, out string propertyName) &&
                    s_properties.TryGetValue(propertyName, out PropertyInfo property) &&
                    s_encryptDataTargets.ContainsKey(property);
@@ -2318,7 +2318,7 @@ namespace Gemstone.Data.Model
                     fieldName = $"\"{fieldName}\"";
                 }
 
-                if (primaryKeyAttribute != null)
+                if (primaryKeyAttribute is not null)
                 {
                     if (primaryKeyAttribute.IsIdentity)
                     {
@@ -2344,7 +2344,7 @@ namespace Gemstone.Data.Model
                     updateProperties.Add(property);
                 }
 
-                if (searchableAttribute != null)
+                if (searchableAttribute is not null)
                 {
                     if (searchFilterSql.Length > 0)
                         searchFilterSql.Append(" OR ");
@@ -2417,10 +2417,10 @@ namespace Gemstone.Data.Model
             // the common database delimiters, or no delimiters, be applicable for an active database connection
             string tableName = s_tableName;
 
-            if (s_escapedTableNameTargets != null)
+            if (s_escapedTableNameTargets is not null)
                 tableName = $"\"{tableName}\"";
 
-            if (s_expressionAmendments != null)
+            if (s_expressionAmendments is not null)
             {
                 // Add tokens to primary expressions for easy replacement
                 tableName = $"{TableNamePrefixToken}{tableName}{TableNameSuffixToken}";
@@ -2546,7 +2546,7 @@ namespace Gemstone.Data.Model
 
         private static string GetFieldName(PropertyInfo property)
         {
-            if (property.TryGetAttribute(out FieldNameAttribute fieldNameAttribute) && fieldNameAttribute != null && !string.IsNullOrEmpty(fieldNameAttribute.FieldName))
+            if (property.TryGetAttribute(out FieldNameAttribute fieldNameAttribute) && fieldNameAttribute is not null && !string.IsNullOrEmpty(fieldNameAttribute.FieldName))
                 return fieldNameAttribute.FieldName;
 
             return property.Name;
@@ -2554,17 +2554,17 @@ namespace Gemstone.Data.Model
 
         private static Dictionary<DatabaseType, DbType>? DeriveFieldDataTypeTargets(FieldDataTypeAttribute[] fieldDataTypeAttributes)
         {
-            if (fieldDataTypeAttributes == null || fieldDataTypeAttributes.Length == 0)
+            if (fieldDataTypeAttributes is null || fieldDataTypeAttributes.Length == 0)
                 return null;
 
             DatabaseType[] databaseTypes;
             DbType defaultFieldDataType;
 
             // If any attribute has no database target type specified, then all database types are assumed
-            if (fieldDataTypeAttributes.Any(attribute => attribute.TargetDatabaseType == null))
+            if (fieldDataTypeAttributes.Any(attribute => attribute.TargetDatabaseType is null))
             {
                 databaseTypes = Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().ToArray();
-                defaultFieldDataType = fieldDataTypeAttributes.First(attribute => attribute.TargetDatabaseType == null).FieldDataType;
+                defaultFieldDataType = fieldDataTypeAttributes.First(attribute => attribute.TargetDatabaseType is null).FieldDataType;
             }
             else
             {
@@ -2585,14 +2585,14 @@ namespace Gemstone.Data.Model
 
         private static Dictionary<DatabaseType, bool>? DeriveEscapedNameTargets(UseEscapedNameAttribute[] useEscapedNameAttributes)
         {
-            if (useEscapedNameAttributes == null || useEscapedNameAttributes.Length == 0)
+            if (useEscapedNameAttributes is null || useEscapedNameAttributes.Length == 0)
                 return null;
 
             DatabaseType[] databaseTypes;
             bool allDatabasesTargeted = false;
 
             // If any attribute has no database target type specified, then all database types are assumed
-            if (useEscapedNameAttributes.Any(attribute => attribute.TargetDatabaseType == null))
+            if (useEscapedNameAttributes.Any(attribute => attribute.TargetDatabaseType is null))
             {
                 allDatabasesTargeted = true;
                 databaseTypes = Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().ToArray();
@@ -2616,7 +2616,7 @@ namespace Gemstone.Data.Model
 
         private static List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>? DeriveExpressionAmendments(AmendExpressionAttribute[] amendExpressionAttributes)
         {
-            if (amendExpressionAttributes == null || amendExpressionAttributes.Length == 0)
+            if (amendExpressionAttributes is null || amendExpressionAttributes.Length == 0)
                 return null;
 
             List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> typedExpressionAmendments = new();
@@ -2625,13 +2625,13 @@ namespace Gemstone.Data.Model
 
             foreach (AmendExpressionAttribute attribute in amendExpressionAttributes)
             {
-                if (attribute == null)
+                if (attribute is null)
                     continue;
 
                 DatabaseType[] databaseTypes;
 
                 // If any attribute has no database target type specified, then all database types are assumed
-                if (attribute.TargetDatabaseType == null)
+                if (attribute.TargetDatabaseType is null)
                 {
                     databaseTypes = Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().ToArray();
                     expressionAmendments = untypedExpressionAmendments;
@@ -2659,7 +2659,7 @@ namespace Gemstone.Data.Model
 
         private static string ValueList(IReadOnlyList<object?>? values)
         {
-            if (values == null)
+            if (values is null)
                 return string.Empty;
 
             StringBuilder delimitedString = new();

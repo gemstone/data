@@ -232,7 +232,7 @@ namespace Gemstone.Data
                     // Lookup table name in destination data source
                     tableLookup = ToSchema.Tables.FindByMapName(allSourceTables[x].MapName);
 
-                    if (tableLookup != null)
+                    if (tableLookup is not null)
                     {
                         if (ClearTable(tableLookup) && tableLookup.HasAutoIncField)
                             ResetAutoIncValues(tableLookup);
@@ -265,7 +265,7 @@ namespace Gemstone.Data
                 // Lookup table name in destination data source
                 tableLookup = ToSchema.Tables.FindByMapName(table.MapName);
 
-                if (tableLookup != null)
+                if (tableLookup is not null)
                 {
                     if (table.RowCount > 0)
                     {
@@ -410,7 +410,7 @@ namespace Gemstone.Data
                 // Lookup field name in destination table                
                 lookupField = toTable.Fields[field.Name];
 
-                if (lookupField != null)
+                if (lookupField is not null)
                 {
                     // We currently don't handle binary fields...
                     if (!(field.Type == OleDbType.Binary || field.Type == OleDbType.LongVarBinary || field.Type == OleDbType.VarBinary) && !(lookupField.Type == OleDbType.Binary || lookupField.Type == OleDbType.LongVarBinary || lookupField.Type == OleDbType.VarBinary))
@@ -502,12 +502,12 @@ namespace Gemstone.Data
             else
             {
                 // Order by auto increment field to help preserve the original value while transferring data to destination table
-                if (autoIncField != null)
+                if (autoIncField is not null)
                     selectString += $" ORDER BY {FromSchema.SQLEscapeName(autoIncField.Name)}";
             }
 
             // We use an optimization available to some databases when we are preserving the original primary key values
-            if (!skipKeyValuePreservation && PreserveAutoIncValues && autoIncField != null)
+            if (!skipKeyValuePreservation && PreserveAutoIncValues && autoIncField is not null)
             {
                 switch (ToSchema.DataSourceType)
                 {
@@ -589,7 +589,7 @@ namespace Gemstone.Data
                 ResetAutoIncValues(toTable);
             }
 
-            if (useBulkInsert && bulkInsertFileStream != null)
+            if (useBulkInsert && bulkInsertFileStream is not null)
                 CompleteBulkInsert(toTable, progressIndex, bulkInsertFile, bulkInsertFileStream);
 
             OnRowProgress(fromTable.Name, progressTotal, progressTotal);
@@ -636,7 +636,7 @@ namespace Gemstone.Data
                 // If this field is auto-inc we need to track original value
                 if (field.AutoIncrement)
                 {
-                    if (autoIncField != null)
+                    if (autoIncField is not null)
                     {
                         // Even if database supports multiple auto-inc fields, we can only support automatic
                         // ID translation for one because the identity SQL can only return one value...
@@ -657,7 +657,7 @@ namespace Gemstone.Data
                     // Reference source field to check RI properties
                     lookupField = sourceTable.Fields[field.Name];
 
-                    if (lookupField != null)
+                    if (lookupField is not null)
                     {
                         // Check for cases where a NULL value is not allowed
                         if (!lookupField.AllowsNulls && value.Equals("NULL", StringComparison.CurrentCultureIgnoreCase))
@@ -713,15 +713,15 @@ namespace Gemstone.Data
 
             insertSQL.Append(")");
 
-            if (autoIncField != null || whereSQL.Length == 0)
+            if (autoIncField is not null || whereSQL.Length == 0)
             {
                 try
                 {
                     // Insert record into destination table
-                    if (addedFirstInsertField || autoIncField != null)
+                    if (addedFirstInsertField || autoIncField is not null)
                     {
                         // Added check to preserve ID number for auto-inc fields
-                        if (!usingIdentityInsert && !skipKeyValuePreservation && PreserveAutoIncValues && autoIncField != null)
+                        if (!usingIdentityInsert && !skipKeyValuePreservation && PreserveAutoIncValues && autoIncField is not null)
                         {
                             int toTableRowCount = int.Parse(ToNonNullString(toTable.Connection.ExecuteScalar($"SELECT MAX({autoIncField.SQLEscapedName}) FROM {toTable.SQLEscapedName}", Timeout), "0")) + 1;
                             int sourceTablePrimaryFieldValue = int.Parse(ToNonNullString(autoIncField.Value, "0"));
@@ -750,7 +750,7 @@ namespace Gemstone.Data
                     }
 
                     // Save new destination auto-inc value
-                    if (autoIncField != null)
+                    if (autoIncField is not null)
                     {
                         try
                         {
@@ -827,7 +827,7 @@ namespace Gemstone.Data
 
             // We only attempt a bulk insert if the destination data source type is SQL Server and we are inserting
             // fields into a table that has no auto-inc fields with foreign key dependencies (or user forces procedure)
-            bool useBulkInsert = ForceBulkInsert || parentSchema.DataSourceType == DatabaseType.SQLServer && (autoIncField == null || TableCollection.Count == 1);
+            bool useBulkInsert = ForceBulkInsert || parentSchema.DataSourceType == DatabaseType.SQLServer && (autoIncField is null || TableCollection.Count == 1);
 
             if (useBulkInsert)
             {
@@ -862,7 +862,7 @@ namespace Gemstone.Data
                     // Lookup field in common field list
                     commonField = fieldCollection[field.Name];
 
-                    if (commonField != null)
+                    if (commonField is not null)
                     {
                         // Found it, so use it...
                         commonField.Value = fromReader[field.Name];
@@ -876,7 +876,7 @@ namespace Gemstone.Data
                 }
                 catch (Exception ex)
                 {
-                    if (commonField != null)
+                    if (commonField is not null)
                     {
                         commonField.Value = "";
                         OnSQLFailure($"Failed to get field value for '{toTable.Name}.{commonField.Name}'", ex);
@@ -887,7 +887,7 @@ namespace Gemstone.Data
                     }
                 }
 
-                if (commonField == null)
+                if (commonField is null)
                     continue;
 
                 // Get translated auto-inc value for field if possible...
@@ -1042,7 +1042,7 @@ namespace Gemstone.Data
         internal object DereferenceValue(Table sourceTable, string fieldName, object value, ArrayList? fieldStack = null)
         {
             // No need to attempt to deference null value
-            if (Convert.IsDBNull(value) || value == null)
+            if (Convert.IsDBNull(value) || value is null)
                 return value;
 
             // If this field is referenced as a foreign key field by a primary key field that is auto-incremented, we
@@ -1056,7 +1056,7 @@ namespace Gemstone.Data
                 if (referenceByField.AutoIncrement)
                 {
                     // Return new auto-inc value
-                    if (referenceByField.AutoIncrementTranslations == null)
+                    if (referenceByField.AutoIncrementTranslations is null)
                         return value;
 
                     object tempValue = referenceByField.AutoIncrementTranslations[Convert.ToString(value)];

@@ -215,7 +215,7 @@ namespace Gemstone.Data.UnitTests.DataSetExtensions
                         {
                             byte[] bytes = sourceRow[j] as byte[];
 
-                            if (bytes != null)
+                            if (bytes is not null)
                                 Assert.IsTrue(bytes.CompareTo((byte[])destinationRow[j]) == 0);
                             else
                                 Assert.AreEqual(sourceRow[j], destinationRow[j]);

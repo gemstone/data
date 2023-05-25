@@ -426,7 +426,7 @@ namespace Gemstone.Data
         /// <summary>
         /// Get or set foreign key flag. if <see cref="Field"/> is <see cref="ReferencedBy"/> then true else false
         /// </summary>
-        public bool IsForeignKey => ReferencedBy != null;
+        public bool IsForeignKey => ReferencedBy is not null;
 
         /// <summary>
         /// Get or set <see cref="Fields"/> parent
@@ -1316,7 +1316,7 @@ namespace Gemstone.Data
         /// <summary>
         /// Gets flag that determines if the <see cref="Table"/> has an auto-increment field.
         /// </summary>
-        public bool HasAutoIncField => AutoIncField != null;
+        public bool HasAutoIncField => AutoIncField is not null;
 
         /// <summary>
         /// Gets auto-increment field for the <see cref="Table"/>, if any.
@@ -1453,7 +1453,7 @@ namespace Gemstone.Data
 
             lookupField = Fields[fieldName];
 
-            if (lookupField != null)
+            if (lookupField is not null)
             {
                 lookupField.IsPrimaryKey = true;
                 lookupField.PrimaryKeyOrdinal = primaryKeyOrdinal == -1 ? PrimaryKeyFieldCount + 1 : primaryKeyOrdinal;
@@ -1484,15 +1484,15 @@ namespace Gemstone.Data
 
             localPrimaryKeyField = Fields[primaryKeyFieldName];
 
-            if (localPrimaryKeyField != null)
+            if (localPrimaryKeyField is not null)
             {
                 remoteForeignKeyTable = m_parent[foreignKeyTableName];
 
-                if (remoteForeignKeyTable != null)
+                if (remoteForeignKeyTable is not null)
                 {
                     remoteForeignKeyField = remoteForeignKeyTable.Fields[foreignKeyFieldName];
 
-                    if (remoteForeignKeyField != null)
+                    if (remoteForeignKeyField is not null)
                     {
                         ForeignKeyField localForeignKeyField = new(localPrimaryKeyField.ForeignKeys);
 
@@ -1537,7 +1537,7 @@ namespace Gemstone.Data
                     break;
 
                 case DatabaseType.PostgreSQL:
-                    if (AutoIncField != null)
+                    if (AutoIncField is not null)
                         IdentitySQL = $"SELECT currval(pg_get_serial_sequence('{Name.ToLower()}', '{AutoIncField.Name.ToLower()}'))";
                     else
                         IdentitySQL = "SELECT lastval()";
@@ -1980,7 +1980,7 @@ namespace Gemstone.Data
 
             if (isAdoConnection)
             {
-                if (deserializedSchema == null)
+                if (deserializedSchema is null)
                     throw new InvalidOperationException("Cannot use an ADO style connection with out a serialized schema.\r\nValidate that the \"serializedSchema\" connection string parameter exists and refers to an existing file.");
 
                 // Reference table collection from deserialized collection
@@ -2073,7 +2073,7 @@ namespace Gemstone.Data
 
         //    OleDbConnection oledbSchemaConnection = m_schemaConnection as OleDbConnection;
 
-        //    if (oledbSchemaConnection == null)
+        //    if (oledbSchemaConnection is null)
         //        throw new NullReferenceException("Current connection is an ADO style connection, OLE DB connection expected");
 
         //    // Attach to schema connection state change event
@@ -2082,7 +2082,7 @@ namespace Gemstone.Data
         //    // Load all tables and views into the schema
         //    DataTable schemaTable = oledbSchemaConnection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables_Info, null);
 
-        //    if (schemaTable == null)
+        //    if (schemaTable is null)
         //        throw new NullReferenceException("Failed to retrieve OLE DB schema table for OleDbSchemaGuid.Tables_Info");
 
         //    for (x = 0; x < schemaTable.Rows.Count; x++)
@@ -2130,7 +2130,7 @@ namespace Gemstone.Data
         //            // Load all column data into the schema
         //            DataTable currentTable = oledbSchemaConnection.GetOleDbSchemaTable(OleDbSchemaGuid.Columns, new object[] { null, null, table.Name });
 
-        //            if (currentTable != null)
+        //            if (currentTable is not null)
         //            {
         //                for (y = 0; y < currentTable.Rows.Count; y++)
         //                {
@@ -2169,7 +2169,7 @@ namespace Gemstone.Data
         //            {
         //                DataTable primaryKeyTable = oledbSchemaConnection.GetOleDbSchemaTable(OleDbSchemaGuid.Primary_Keys, new object[] { null, null, table.Name });
 
-        //                if (primaryKeyTable != null)
+        //                if (primaryKeyTable is not null)
         //                {
         //                    for (y = 0; y <= primaryKeyTable.Rows.Count - 1; y++)
         //                    {
@@ -2197,7 +2197,7 @@ namespace Gemstone.Data
         //        {
         //            DataTable foreignKeyTable = oledbSchemaConnection.GetOleDbSchemaTable(OleDbSchemaGuid.Foreign_Keys, new object[] { null, null, table.Name });
 
-        //            if (foreignKeyTable != null)
+        //            if (foreignKeyTable is not null)
         //            {
         //                for (x = 0; x <= foreignKeyTable.Rows.Count - 1; x++)
         //                {
@@ -2266,7 +2266,7 @@ namespace Gemstone.Data
         /// </summary>
         public void Close()
         {
-            if (m_schemaConnection != null)
+            if (m_schemaConnection is not null)
             {
                 try
                 {

@@ -279,10 +279,10 @@ namespace Gemstone.Data
         [SuppressMessage("Microsoft.Usage", "CA1816:CallGCSuppressFinalizeCorrectly")]
         public virtual void Close()
         {
-            if (FromSchema != null)
+            if (FromSchema is not null)
                 FromSchema.Close();
 
-            if (ToSchema != null)
+            if (ToSchema is not null)
                 ToSchema.Close();
 
             FromSchema = null;
@@ -327,7 +327,7 @@ namespace Gemstone.Data
                     // Lookup table name in destination data source by map name
                     lookupTable = ToSchema.Tables.FindByMapName(table.MapName);
 
-                    if (lookupTable != null)
+                    if (lookupTable is not null)
                     {
                         // If user requested to use referential integrity of destination tables then
                         // we use process priority of those tables instead...

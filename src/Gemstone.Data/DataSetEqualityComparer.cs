@@ -54,7 +54,7 @@ namespace Gemstone.Data
                 return true;
 
             // Test for null
-            if (x == null || y == null)
+            if (x is null || y is null)
                 return false;
 
             // Check that the number of tables match
@@ -119,7 +119,7 @@ namespace Gemstone.Data
         {
             int hashCode = 0;
 
-            if (obj == null)
+            if (obj is null)
                 throw new ArgumentNullException(nameof(obj));
 
             // This method is required by IEqualityComparer<T> - although the following 
@@ -132,7 +132,7 @@ namespace Gemstone.Data
                     {
                         object field = row[column];
 
-                        if (field != null)
+                        if (field is not null)
                             hashCode ^= field.GetHashCode();
                     }
                 }

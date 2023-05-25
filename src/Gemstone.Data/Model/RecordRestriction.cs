@@ -154,7 +154,7 @@ namespace Gemstone.Data.Model
         /// <returns><c>true</c> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <c>false</c>.</returns>
         public bool Equals(RecordRestriction? other)
         {
-            if (other == null)
+            if (other is null)
                 return false;
 
             if (ReferenceEquals(this, other))

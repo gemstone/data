@@ -1308,7 +1308,7 @@ namespace Gemstone.Data
         /// <summary>
         /// Get flag that determines if the table has any foreign keys.
         /// </summary>
-        public bool ReferencedByForeignKeys => Fields.Any(field => field.IsPrimaryKey && field.ForeignKeys.Count > 0);
+        public bool ReferencedByForeignKeys => Fields.Any(field => field is { IsPrimaryKey: true, ForeignKeys.Count: > 0 });
 
         /// <summary>
         /// Get flag of any foreign key <see cref="Field"/>

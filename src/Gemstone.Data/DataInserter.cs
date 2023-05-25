@@ -451,20 +451,17 @@ namespace Gemstone.Data
                 {
                     lookupField = sourceTable.Fields[field.Name];
 
-                    if (lookupField != null)
-                    {
+                    if (lookupField is { AutoIncrement: true, ForeignKeys.Count: > 0 })
                         // We need only track auto inc translations when field is referenced by foreign keys
-                        if (lookupField.AutoIncrement && lookupField.ForeignKeys.Count > 0)
-                        {
-                            // Create a new hash-table to hold auto-inc translations
-                            lookupField.AutoIncrementTranslations = new Hashtable();
+                    {
+                        // Create a new hash-table to hold auto-inc translations
+                        lookupField.AutoIncrementTranslations = new Hashtable();
 
-                            // Create a new auto-inc field to hold source value
-                            autoIncField = new Field(field.Name, lookupField.Type);
-                            autoIncField.AutoIncrementTranslations = lookupField.AutoIncrementTranslations;
+                        // Create a new auto-inc field to hold source value
+                        autoIncField = new Field(field.Name, lookupField.Type);
+                        autoIncField.AutoIncrementTranslations = lookupField.AutoIncrementTranslations;
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -667,7 +664,7 @@ namespace Gemstone.Data
                             value = lookupField.NonNullNativeValue;
 
                         // Check for possible values that should be interpreted as NULL values in nullable foreign key fields
-                        if (lookupField.AllowsNulls && lookupField.IsForeignKey && value.Equals(lookupField.NonNullNativeValue, StringComparison.OrdinalIgnoreCase))
+                        if (lookupField is { AllowsNulls: true, IsForeignKey: true } && value.Equals(lookupField.NonNullNativeValue, StringComparison.OrdinalIgnoreCase))
                             value = "NULL";
 
                         // Check to see if this is a key field
@@ -1052,47 +1049,44 @@ namespace Gemstone.Data
             // translate the auto-inc value if possible
             Field lookupField = sourceTable.Fields[fieldName];
 
-            if (lookupField != null)
+            if (lookupField is { IsForeignKey: true })
             {
-                if (lookupField.IsForeignKey)
+                Field referenceByField = lookupField.ReferencedBy;
+
+                if (referenceByField.AutoIncrement)
                 {
-                    Field referenceByField = lookupField.ReferencedBy;
+                    // Return new auto-inc value
+                    if (referenceByField.AutoIncrementTranslations == null)
+                        return value;
 
-                    if (referenceByField.AutoIncrement)
+                    object tempValue = referenceByField.AutoIncrementTranslations[Convert.ToString(value)];
+
+                    return tempValue ?? value;
+                }
+
+                bool inStack = false;
+                int x;
+
+                if (fieldStack == null)
+                    fieldStack = new ArrayList();
+
+                // We don't want to circle back on ourselves
+                for (x = 0; x <= fieldStack.Count - 1; x++)
+                {
+                    if (ReferenceEquals(lookupField.ReferencedBy, fieldStack[x]))
                     {
-                        // Return new auto-inc value
-                        if (referenceByField.AutoIncrementTranslations == null)
-                            return value;
+                        inStack = true;
 
-                        object tempValue = referenceByField.AutoIncrementTranslations[Convert.ToString(value)];
-
-                        return tempValue ?? value;
+                        break;
                     }
+                }
 
-                    bool inStack = false;
-                    int x;
+                // Traverse path to parent auto-inc field if it exists
+                if (!inStack)
+                {
+                    fieldStack.Add(lookupField.ReferencedBy);
 
-                    if (fieldStack == null)
-                        fieldStack = new ArrayList();
-
-                    // We don't want to circle back on ourselves
-                    for (x = 0; x <= fieldStack.Count - 1; x++)
-                    {
-                        if (ReferenceEquals(lookupField.ReferencedBy, fieldStack[x]))
-                        {
-                            inStack = true;
-
-                            break;
-                        }
-                    }
-
-                    // Traverse path to parent auto-inc field if it exists
-                    if (!inStack)
-                    {
-                        fieldStack.Add(lookupField.ReferencedBy);
-
-                        return DereferenceValue(referenceByField.Table, referenceByField.Name, value, fieldStack);
-                    }
+                    return DereferenceValue(referenceByField.Table, referenceByField.Name, value, fieldStack);
                 }
             }
 

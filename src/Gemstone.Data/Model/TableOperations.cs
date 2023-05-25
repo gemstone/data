@@ -2274,7 +2274,7 @@ namespace Gemstone.Data.Model
             typeof(T).TryGetAttribute(out s_rootQueryRestrictionAttribute);
 
             s_properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(property => property.CanRead && property.CanWrite)
+                .Where(property => property is { CanRead: true, CanWrite: true })
                 .Where(property => !property.AttributeExists<PropertyInfo, NonRecordFieldAttribute>())
                 .ToDictionary(property => property.Name, StringComparer.OrdinalIgnoreCase);
 
@@ -2612,7 +2612,7 @@ namespace Gemstone.Data.Model
             foreach (DatabaseType databaseType in databaseTypes)
             {
                 UseEscapedNameAttribute useEscapedNameAttribute = useEscapedNameAttributes.FirstOrDefault(attribute => attribute.TargetDatabaseType == databaseType);
-                bool useAnsiQuotes = useEscapedNameAttribute != null && useEscapedNameAttribute.UseAnsiQuotes || allDatabasesTargeted && databaseType != DatabaseType.MySQL;
+                bool useAnsiQuotes = useEscapedNameAttribute is { UseAnsiQuotes: true } || allDatabasesTargeted && databaseType != DatabaseType.MySQL;
                 escapedNameTargets[databaseType] = useAnsiQuotes;
             }
 

@@ -996,8 +996,7 @@ namespace Gemstone.Data
         /// <param name="newField">Field to add.</param>
         public void Add(Field newField)
         {
-            if (newField.Parent == null)
-                newField.Parent = this;
+            newField.Parent ??= this;
 
             FieldDictionary.Add(newField.Name, newField);
             FieldList.Add(newField);
@@ -1045,8 +1044,7 @@ namespace Gemstone.Data
         /// <returns></returns>
         public string GetList(bool returnAutoInc = true, Func<string, string>? sqlEscapeFunction = null)
         {
-            if (sqlEscapeFunction == null)
-                sqlEscapeFunction = Parent.Parent.Parent.SQLEscapeName;
+            sqlEscapeFunction ??= Parent.Parent.Parent.SQLEscapeName;
 
             StringBuilder fieldList = new();
 
@@ -1377,8 +1375,7 @@ namespace Gemstone.Data
         {
             Table table;
 
-            if (tableStack == null)
-                tableStack = new List<Table>();
+            tableStack ??= new List<Table>();
 
             tableStack.Add(this);
 
@@ -1644,8 +1641,7 @@ namespace Gemstone.Data
         /// <param name="table">Table to add.</param>
         public void Add(Table table)
         {
-            if (table.Parent == null)
-                table.Parent = this;
+            table.Parent ??= this;
 
             TableDictionary.Add(table.Name, table);
             TableList.Add(table);

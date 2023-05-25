@@ -1067,8 +1067,7 @@ namespace Gemstone.Data
                 bool inStack = false;
                 int x;
 
-                if (fieldStack == null)
-                    fieldStack = new ArrayList();
+                fieldStack ??= new ArrayList();
 
                 // We don't want to circle back on ourselves
                 for (x = 0; x <= fieldStack.Count - 1; x++)

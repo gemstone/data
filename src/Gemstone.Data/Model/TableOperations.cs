@@ -2293,8 +2293,7 @@ namespace Gemstone.Data.Model
 
                 if (property.TryGetAttribute(out EncryptDataAttribute encryptDataAttribute) && property.PropertyType == typeof(string))
                 {
-                    if (s_encryptDataTargets == null)
-                        s_encryptDataTargets = new Dictionary<PropertyInfo, string>();
+                    s_encryptDataTargets ??= new Dictionary<PropertyInfo, string>();
 
                     s_encryptDataTargets[property] = encryptDataAttribute.KeyReference;
                     targetedForEncryption = true;
@@ -2302,16 +2301,14 @@ namespace Gemstone.Data.Model
 
                 if (property.TryGetAttributes(out FieldDataTypeAttribute[] fieldDataTypeAttributes))
                 {
-                    if (s_fieldDataTypeTargets == null)
-                        s_fieldDataTypeTargets = new Dictionary<PropertyInfo, Dictionary<DatabaseType, DbType>?>();
+                    s_fieldDataTypeTargets ??= new Dictionary<PropertyInfo, Dictionary<DatabaseType, DbType>?>();
 
                     s_fieldDataTypeTargets[property] = DeriveFieldDataTypeTargets(fieldDataTypeAttributes);
                 }
 
                 if (property.TryGetAttributes(out useEscapedNameAttributes))
                 {
-                    if (s_escapedFieldNameTargets == null)
-                        s_escapedFieldNameTargets = new Dictionary<string, Dictionary<DatabaseType, bool>?>(StringComparer.OrdinalIgnoreCase);
+                    s_escapedFieldNameTargets ??= new Dictionary<string, Dictionary<DatabaseType, bool>?>(StringComparer.OrdinalIgnoreCase);
 
                     s_escapedFieldNameTargets[fieldName] = DeriveEscapedNameTargets(useEscapedNameAttributes);
 
@@ -2354,8 +2351,7 @@ namespace Gemstone.Data.Model
 
                     if (targetedForEncryption)
                     {
-                        if (s_encryptedSearchTargets == null)
-                            s_encryptedSearchTargets = new List<PropertyInfo>();
+                        s_encryptedSearchTargets ??= new List<PropertyInfo>();
 
                         s_encryptedSearchTargets.Add(property);
 
@@ -2377,8 +2373,7 @@ namespace Gemstone.Data.Model
                             searchFilterSql.Append($"{fieldName}={{1}}");
                     }
 
-                    if (s_searchTargets == null)
-                        s_searchTargets = new Dictionary<PropertyInfo, SearchType>();
+                    s_searchTargets ??= new Dictionary<PropertyInfo, SearchType>();
 
                     s_searchTargets[property] = searchableAttribute.SearchType;
                 }

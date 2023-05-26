@@ -1272,22 +1272,22 @@ namespace Gemstone.Data
         /// <summary>
         /// Check for object is view
         /// </summary>
-        public bool IsView => Type == TableType.View || Type == TableType.SystemView;
+        public bool IsView => Type is TableType.View or TableType.SystemView;
 
         /// <summary>
         /// Check for system tables and system views
         /// </summary>
-        public bool IsSystem => Type == TableType.SystemTable || Type == TableType.SystemView;
+        public bool IsSystem => Type is TableType.SystemTable or TableType.SystemView;
 
         /// <summary>
         /// Get flag for <see cref="TableType"/>  for temp
         /// </summary>
-        public bool IsTemporary => Type == TableType.GlobalTemp || Type == TableType.LocalTemp;
+        public bool IsTemporary => Type is TableType.GlobalTemp or TableType.LocalTemp;
 
         /// <summary>
         /// Get flag for <see cref="TableType"/> alias or link
         /// </summary>
-        public bool IsLinked => Type == TableType.Alias || Type == TableType.Link;
+        public bool IsLinked => Type is TableType.Alias or TableType.Link;
 
         /// <summary>
         /// Get count for primary key <see cref="Field"/>

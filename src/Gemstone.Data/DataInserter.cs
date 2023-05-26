@@ -408,7 +408,7 @@ namespace Gemstone.Data
                 if (lookupField is not null)
                 {
                     // We currently don't handle binary fields...
-                    if (!(field.Type == OleDbType.Binary || field.Type == OleDbType.LongVarBinary || field.Type == OleDbType.VarBinary) && !(lookupField.Type == OleDbType.Binary || lookupField.Type == OleDbType.LongVarBinary || lookupField.Type == OleDbType.VarBinary))
+                    if (!(field.Type is OleDbType.Binary or OleDbType.LongVarBinary or OleDbType.VarBinary) && !(lookupField.Type is OleDbType.Binary or OleDbType.LongVarBinary or OleDbType.VarBinary))
                     {
                         // Copy field information from destination field
                         if (UseFromSchemaRi)
@@ -484,7 +484,7 @@ namespace Gemstone.Data
                         if (string.Compare(sourceTable.Name, foreignKey.ForeignKey.Table.Name, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             // If Oracle, force it to sort NULLs at a higher level - note coalesce may fail for non-integer based primary keys for self-referencing tables
-                            if (FromSchema.DataSourceType == DatabaseType.Oracle || FromSchema.DataSourceType == DatabaseType.PostgreSQL)
+                            if (FromSchema.DataSourceType is DatabaseType.Oracle or DatabaseType.PostgreSQL)
                                 selectString += $"{(index > 0 ? ", " : "")}COALESCE({FromSchema.SQLEscapeName(foreignKey.ForeignKey.Name)}, 0)";
                             else
                                 selectString += (index > 0 ? ", " : "") + FromSchema.SQLEscapeName(foreignKey.ForeignKey.Name);

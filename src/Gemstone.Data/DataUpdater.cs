@@ -203,7 +203,7 @@ namespace Gemstone.Data
                 if (lookupField is not null)
                 {
                     // We currently don't handle binary fields...
-                    if (!(fld.Type == OleDbType.Binary || fld.Type == OleDbType.LongVarBinary || fld.Type == OleDbType.VarBinary) && !(lookupField.Type == OleDbType.Binary || lookupField.Type == OleDbType.LongVarBinary || lookupField.Type == OleDbType.VarBinary))
+                    if (!(fld.Type is OleDbType.Binary or OleDbType.LongVarBinary or OleDbType.VarBinary) && !(lookupField.Type is OleDbType.Binary or OleDbType.LongVarBinary or OleDbType.VarBinary))
                     {
                         // Copy field information from destination field
                         if (UseFromSchemaRi)

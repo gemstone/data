@@ -875,7 +875,7 @@ namespace Gemstone.Data.Model
                     }
 
                     // If sort field is encrypted, execute a local sort and update primary key cache
-                    if (sortFieldIsEncrypted && s_propertyNames.TryGetValue(sortField, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo sortFieldProperty))
+                    if (sortFieldIsEncrypted && s_propertyNames.TryGetValue(sortField, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? sortFieldProperty))
                     {
                         // Reduce properties to load only primary key fields and sort field
                         HashSet<PropertyInfo> properties = new(s_primaryKeyProperties) { sortFieldProperty };
@@ -1171,7 +1171,7 @@ namespace Gemstone.Data.Model
 
         // Cached keys are not decrypted, so any needed record interpretation steps should skip encryption
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private T? LoadRecordFromCachedKeys(object[] primaryKeys, IEnumerable<PropertyInfo>? properties = null)
+        private T? LoadRecordFromCachedKeys(object?[] primaryKeys, IEnumerable<PropertyInfo>? properties = null)
         {
             try
             {
@@ -1505,7 +1505,7 @@ namespace Gemstone.Data.Model
                 for (int i = 0; i < restriction.Parameters.Length; i++)
                     updateWhereOffsets.Add($"{{{updateFieldIndex + i}}}");
 
-                sqlExpression = $"{m_updateWhereSql}{string.Format(UpdateFieldNames(restriction.FilterExpression), updateWhereOffsets.ToArray())}";
+                sqlExpression = $"{m_updateWhereSql}{string.Format(UpdateFieldNames(restriction.FilterExpression)!, updateWhereOffsets.ToArray())}";
 
                 return Connection.ExecuteNonQuery(sqlExpression, values.ToArray());
             }
@@ -1718,7 +1718,7 @@ namespace Gemstone.Data.Model
                 List<object> values = new();
 
                 foreach (PropertyInfo property in s_primaryKeyProperties)
-                    values.Add(property.GetValue(record));
+                    values.Add(property.GetValue(record)!);
 
                 return values.ToArray();
             }
@@ -1816,9 +1816,9 @@ namespace Gemstone.Data.Model
         /// <param name="fieldName">Name of field to use for attribute lookup.</param>
         /// <param name="attribute">Attribute that was found, if any.</param>
         /// <returns><c>true</c> if attribute was found; otherwise, <c>false</c>.</returns>
-        public bool TryGetFieldAttribute<TAttribute>(string fieldName, out TAttribute attribute) where TAttribute : Attribute
+        public bool TryGetFieldAttribute<TAttribute>(string fieldName, out TAttribute? attribute) where TAttribute : Attribute
         {
-            if (s_propertyNames.TryGetValue(fieldName, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo property) && property.TryGetAttribute(out attribute))
+            if (s_propertyNames.TryGetValue(fieldName, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? property) && property.TryGetAttribute(out attribute))
                 return true;
 
             attribute = default!;
@@ -1839,7 +1839,7 @@ namespace Gemstone.Data.Model
             if (!attributeType.IsInstanceOfType(typeof(Attribute)))
                 throw new ArgumentException($"The specified type \"{attributeType.Name}\" is not an Attribute.", nameof(attributeType));
 
-            if (s_propertyNames.TryGetValue(fieldName, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo property) && property.TryGetAttribute(attributeType, out attribute))
+            if (s_propertyNames.TryGetValue(fieldName, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? property) && property.TryGetAttribute(attributeType, out attribute))
                 return true;
 
             attribute = default;
@@ -1867,7 +1867,7 @@ namespace Gemstone.Data.Model
             if (!attributeType.IsSubclassOf(typeof(Attribute)))
                 throw new ArgumentException($"The specified type \"{attributeType.Name}\" is not an Attribute.", nameof(attributeType));
 
-            if (s_propertyNames.TryGetValue(fieldName, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo property) && s_attributes.TryGetValue(property, out HashSet<Type> attributes))
+            if (s_propertyNames.TryGetValue(fieldName, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? property) && s_attributes.TryGetValue(property, out HashSet<Type>? attributes))
                 return attributes.Contains(attributeType);
 
             return false;
@@ -1881,7 +1881,7 @@ namespace Gemstone.Data.Model
         /// <returns>Field value or <c>null</c> if field is not found.</returns>
         public object? GetFieldValue(T? record, string fieldName)
         {
-            if (s_propertyNames.TryGetValue(fieldName, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo property))
+            if (s_propertyNames.TryGetValue(fieldName, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? property))
                 return property.GetValue(record);
 
             return typeof(T).GetProperty(fieldName)?.GetValue(record);
@@ -1931,7 +1931,7 @@ namespace Gemstone.Data.Model
             if (s_fieldDataTypeTargets is null && s_encryptDataTargets is null)
                 return value;
 
-            if (s_propertyNames.TryGetValue(fieldName, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo property))
+            if (s_propertyNames.TryGetValue(fieldName, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? property))
                 return GetInterpretedValue(property, value);
 
             return value;
@@ -1944,7 +1944,7 @@ namespace Gemstone.Data.Model
         /// <returns>Field <see cref="Type"/> or <c>null</c> if field is not found.</returns>
         public Type? GetFieldType(string fieldName)
         {
-            if (s_propertyNames.TryGetValue(fieldName, out string propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo property))
+            if (s_propertyNames.TryGetValue(fieldName, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? property))
                 return property.PropertyType;
 
             return default;
@@ -2055,7 +2055,7 @@ namespace Gemstone.Data.Model
         // Derive raw or encrypted field values or IDbCommandParameter values with specific DbType if
         // a primary key field data type has been targeted for specific database type
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private object?[] GetInterpretedPrimaryKeys(object[] primaryKeys, bool skipEncryption = false)
+        private object?[] GetInterpretedPrimaryKeys(object?[] primaryKeys, bool skipEncryption = false)
         {
             if (s_fieldDataTypeTargets is null && s_encryptDataTargets is null)
                 return primaryKeys;
@@ -2073,7 +2073,7 @@ namespace Gemstone.Data.Model
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private object? GetInterpretedPropertyValue(PropertyInfo property, T record)
         {
-            object value = property.GetValue(record);
+            object? value = property.GetValue(record);
 
             if (value is char && Connection.DatabaseType == DatabaseType.SQLite)
                 value = value.ToString();
@@ -2258,16 +2258,16 @@ namespace Gemstone.Data.Model
             s_tableName = typeof(T).Name;
 
             // Check for overridden table name
-            if (typeof(T).TryGetAttribute(out TableNameAttribute tableNameAttribute) && !string.IsNullOrWhiteSpace(tableNameAttribute.TableName))
+            if (typeof(T).TryGetAttribute(out TableNameAttribute? tableNameAttribute) && !string.IsNullOrWhiteSpace(tableNameAttribute?.TableName))
                 s_tableName = tableNameAttribute.TableName;
 
             // Check for escaped table name targets
-            if (typeof(T).TryGetAttributes(out UseEscapedNameAttribute[] useEscapedNameAttributes))
-                s_escapedTableNameTargets = DeriveEscapedNameTargets(useEscapedNameAttributes);
+            if (typeof(T).TryGetAttributes(out UseEscapedNameAttribute[]? useEscapedNameAttributes))
+                s_escapedTableNameTargets = DeriveEscapedNameTargets(useEscapedNameAttributes!);
 
             // Check for expression amendments
-            if (typeof(T).TryGetAttributes(out AmendExpressionAttribute[] amendExpressionAttributes))
-                s_expressionAmendments = DeriveExpressionAmendments(amendExpressionAttributes);
+            if (typeof(T).TryGetAttributes(out AmendExpressionAttribute[]? amendExpressionAttributes))
+                s_expressionAmendments = DeriveExpressionAmendments(amendExpressionAttributes!);
 
             // Check for root query restriction
             typeof(T).TryGetAttribute(out s_rootQueryRestrictionAttribute);
@@ -2287,29 +2287,29 @@ namespace Gemstone.Data.Model
                 string fieldName = s_fieldNames[property.Name];
                 bool targetedForEncryption = false;
 
-                property.TryGetAttribute(out PrimaryKeyAttribute primaryKeyAttribute);
-                property.TryGetAttribute(out SearchableAttribute searchableAttribute);
+                property.TryGetAttribute(out PrimaryKeyAttribute? primaryKeyAttribute);
+                property.TryGetAttribute(out SearchableAttribute? searchableAttribute);
 
-                if (property.TryGetAttribute(out EncryptDataAttribute encryptDataAttribute) && property.PropertyType == typeof(string))
+                if (property.TryGetAttribute(out EncryptDataAttribute? encryptDataAttribute) && property.PropertyType == typeof(string))
                 {
                     s_encryptDataTargets ??= new Dictionary<PropertyInfo, string>();
 
-                    s_encryptDataTargets[property] = encryptDataAttribute.KeyReference;
+                    s_encryptDataTargets[property] = encryptDataAttribute!.KeyReference;
                     targetedForEncryption = true;
                 }
 
-                if (property.TryGetAttributes(out FieldDataTypeAttribute[] fieldDataTypeAttributes))
+                if (property.TryGetAttributes(out FieldDataTypeAttribute[]? fieldDataTypeAttributes))
                 {
                     s_fieldDataTypeTargets ??= new Dictionary<PropertyInfo, Dictionary<DatabaseType, DbType>?>();
 
-                    s_fieldDataTypeTargets[property] = DeriveFieldDataTypeTargets(fieldDataTypeAttributes);
+                    s_fieldDataTypeTargets[property] = DeriveFieldDataTypeTargets(fieldDataTypeAttributes!);
                 }
 
                 if (property.TryGetAttributes(out useEscapedNameAttributes))
                 {
                     s_escapedFieldNameTargets ??= new Dictionary<string, Dictionary<DatabaseType, bool>?>(StringComparer.OrdinalIgnoreCase);
 
-                    s_escapedFieldNameTargets[fieldName] = DeriveEscapedNameTargets(useEscapedNameAttributes);
+                    s_escapedFieldNameTargets[fieldName] = DeriveEscapedNameTargets(useEscapedNameAttributes!);
 
                     // If any database has been targeted for escaping the field name, pre-apply the standard ANSI escaped
                     // field name in the static SQL expressions. This will provide a unique replaceable identifier should
@@ -2544,13 +2544,13 @@ namespace Gemstone.Data.Model
 
         private static string GetFieldName(PropertyInfo property)
         {
-            if (property.TryGetAttribute(out FieldNameAttribute fieldNameAttribute) && fieldNameAttribute is not null && !string.IsNullOrEmpty(fieldNameAttribute.FieldName))
+            if (property.TryGetAttribute(out FieldNameAttribute? fieldNameAttribute) && fieldNameAttribute is not null && !string.IsNullOrEmpty(fieldNameAttribute.FieldName))
                 return fieldNameAttribute.FieldName;
 
             return property.Name;
         }
 
-        private static Dictionary<DatabaseType, DbType>? DeriveFieldDataTypeTargets(FieldDataTypeAttribute[] fieldDataTypeAttributes)
+        private static Dictionary<DatabaseType, DbType>? DeriveFieldDataTypeTargets(FieldDataTypeAttribute[]? fieldDataTypeAttributes)
         {
             if (fieldDataTypeAttributes is null || fieldDataTypeAttributes.Length == 0)
                 return null;
@@ -2574,14 +2574,14 @@ namespace Gemstone.Data.Model
 
             foreach (DatabaseType databaseType in databaseTypes)
             {
-                FieldDataTypeAttribute fieldDataTypeAttribute = fieldDataTypeAttributes.FirstOrDefault(attribute => attribute.TargetDatabaseType == databaseType);
+                FieldDataTypeAttribute? fieldDataTypeAttribute = fieldDataTypeAttributes.FirstOrDefault(attribute => attribute.TargetDatabaseType == databaseType);
                 fieldDataTypes[databaseType] = fieldDataTypeAttribute?.FieldDataType ?? defaultFieldDataType;
             }
 
             return fieldDataTypes;
         }
 
-        private static Dictionary<DatabaseType, bool>? DeriveEscapedNameTargets(UseEscapedNameAttribute[] useEscapedNameAttributes)
+        private static Dictionary<DatabaseType, bool>? DeriveEscapedNameTargets(UseEscapedNameAttribute[]? useEscapedNameAttributes)
         {
             if (useEscapedNameAttributes is null || useEscapedNameAttributes.Length == 0)
                 return null;
@@ -2604,7 +2604,7 @@ namespace Gemstone.Data.Model
 
             foreach (DatabaseType databaseType in databaseTypes)
             {
-                UseEscapedNameAttribute useEscapedNameAttribute = useEscapedNameAttributes.FirstOrDefault(attribute => attribute.TargetDatabaseType == databaseType);
+                UseEscapedNameAttribute? useEscapedNameAttribute = useEscapedNameAttributes.FirstOrDefault(attribute => attribute.TargetDatabaseType == databaseType);
                 bool useAnsiQuotes = useEscapedNameAttribute is { UseAnsiQuotes: true } || allDatabasesTargeted && databaseType != DatabaseType.MySQL;
                 escapedNameTargets[databaseType] = useAnsiQuotes;
             }
@@ -2612,7 +2612,7 @@ namespace Gemstone.Data.Model
             return escapedNameTargets;
         }
 
-        private static List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>? DeriveExpressionAmendments(AmendExpressionAttribute[] amendExpressionAttributes)
+        private static List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>? DeriveExpressionAmendments(AmendExpressionAttribute[]? amendExpressionAttributes)
         {
             if (amendExpressionAttributes is null || amendExpressionAttributes.Length == 0)
                 return null;

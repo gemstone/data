@@ -99,8 +99,6 @@ namespace Gemstone.Data
         public override void Execute()
         {
             List<Table> tablesList = new();
-            Table tableLookup;
-            Table table;
             int x;
 
             if (TableCollection.Count == 0)
@@ -130,10 +128,10 @@ namespace Gemstone.Data
             // referential integrity order...
             for (x = tablesList.Count - 1; x >= 0; x--)
             {
-                table = tablesList[x];
+                Table? table = tablesList[x];
 
                 // Lookup table name in destination data source
-                tableLookup = ToSchema.Tables.FindByMapName(table.MapName);
+                Table? tableLookup = ToSchema.Tables.FindByMapName(table.MapName);
 
                 if (tableLookup is not null)
                 {
@@ -179,8 +177,7 @@ namespace Gemstone.Data
         private void ExecuteDeletes(Table fromTable, Table toTable)
         {
             Table sourceTable = UseFromSchemaRi ? fromTable : toTable;
-            Field lookupField;
-            Field commonField;
+            Field? lookupField;
 
             // Progress process variables
             int progress = 0;
@@ -207,6 +204,8 @@ namespace Gemstone.Data
                     if (!(field.Type is OleDbType.Binary or OleDbType.LongVarBinary or OleDbType.VarBinary) && !(lookupField.Type is OleDbType.Binary or OleDbType.LongVarBinary or OleDbType.VarBinary))
                     {
                         // Copy field information from destination field
+                        Field? commonField;
+
                         if (UseFromSchemaRi)
                         {
                             commonField = new Field(field.Name, field.Type);

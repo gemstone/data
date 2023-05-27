@@ -299,8 +299,6 @@ namespace Gemstone.Data
         /// </summary>
         public virtual void Analyze()
         {
-            Table lookupTable;
-
             FromSchema.ImmediateClose = false;
             FromSchema.Analyze();
 
@@ -315,22 +313,22 @@ namespace Gemstone.Data
             foreach (Table table in FromSchema.Tables)
             {
                 // Bypass excluded tables
-                if (ExcludedTables.BinarySearch(table.MapName) < 0)
-                {
-                    // Lookup table name in destination data source by map name
-                    lookupTable = ToSchema.Tables.FindByMapName(table.MapName);
+                if (ExcludedTables.BinarySearch(table.MapName) >= 0)
+                    continue;
 
-                    if (lookupTable is not null)
-                    {
-                        // If user requested to use referential integrity of destination tables then
-                        // we use process priority of those tables instead...
-                        if (!UseFromSchemaRi)
-                            table.Priority = lookupTable.Priority;
+                // Lookup table name in destination data source by map name
+                Table? lookupTable = ToSchema.Tables.FindByMapName(table.MapName);
 
-                        table.Process = true;
-                        TableCollection.Add(table);
-                    }
-                }
+                if (lookupTable is null)
+                    continue;
+
+                // If user requested to use referential integrity of destination tables then
+                // we use process priority of those tables instead...
+                if (!UseFromSchemaRi)
+                    table.Priority = lookupTable.Priority;
+
+                table.Process = true;
+                TableCollection.Add(table);
             }
         }
 

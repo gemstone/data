@@ -50,7 +50,7 @@ namespace Gemstone.Data
         /// <summary>
         /// Disposed event.
         /// </summary>
-        public event EventHandler Disposed;
+        public event EventHandler? Disposed;
 
         #endregion
 
@@ -99,7 +99,6 @@ namespace Gemstone.Data
         public override void Execute()
         {
             List<Table> tablesList = new();
-            Table tableLookup;
             int x;
 
             if (TableCollection.Count == 0)
@@ -131,7 +130,7 @@ namespace Gemstone.Data
                 Table table = tablesList[x];
 
                 // Lookup table name in destination datasource
-                tableLookup = ToSchema.Tables.FindByMapName(table.MapName);
+                Table? tableLookup = ToSchema.Tables.FindByMapName(table.MapName);
 
                 if (tableLookup is not null)
                 {
@@ -177,8 +176,7 @@ namespace Gemstone.Data
         private void ExecuteUpdates(Table fromTable, Table toTable)
         {
             Table sourceTable = UseFromSchemaRi ? fromTable : toTable;
-            Field lookupField;
-            Field commonField;
+            Field? lookupField;
 
             // Progress process variables
             int progress = 0;
@@ -206,6 +204,7 @@ namespace Gemstone.Data
                     if (!(fld.Type is OleDbType.Binary or OleDbType.LongVarBinary or OleDbType.VarBinary) && !(lookupField.Type is OleDbType.Binary or OleDbType.LongVarBinary or OleDbType.VarBinary))
                     {
                         // Copy field information from destination field
+                        Field? commonField;
                         if (UseFromSchemaRi)
                         {
                             commonField = new Field(fld.Name, fld.Type);

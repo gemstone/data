@@ -465,7 +465,7 @@ namespace Gemstone.Data
                     try
                     {
                         // Attempt to get string based source field value
-                        encodedValue = Value.ToString().Trim();
+                        encodedValue = Value.ToString()!.Trim();
 
                         // Format field value based on field's data type
                         switch (Type)
@@ -864,7 +864,7 @@ namespace Gemstone.Data
         {
             get
             {
-                FieldDictionary.TryGetValue(name, out ForeignKeyField lookup);
+                FieldDictionary.TryGetValue(name, out ForeignKeyField? lookup);
                 return lookup;
             }
         }
@@ -958,18 +958,18 @@ namespace Gemstone.Data
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public Field this[int index] => index < 0 || index >= FieldList.Count ? null : FieldList[index];
+        public Field? this[int index] => index < 0 || index >= FieldList.Count ? null : FieldList[index];
 
         /// <summary>
         /// Indexer property of Field by Name
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public Field this[string name]
+        public Field? this[string name]
         {
             get
             {
-                FieldDictionary.TryGetValue(name, out Field lookup);
+                FieldDictionary.TryGetValue(name, out Field? lookup);
                 return lookup;
             }
         }
@@ -1440,7 +1440,7 @@ namespace Gemstone.Data
         /// <returns></returns>
         public bool DefinePrimaryKey(string fieldName, int primaryKeyOrdinal = -1, string primaryKeyName = "")
         {
-            Field lookupField = Fields[fieldName];
+            Field? lookupField = Fields[fieldName];
 
             if (lookupField is not null)
             {
@@ -1467,39 +1467,30 @@ namespace Gemstone.Data
         /// <returns></returns>
         public bool DefineForeignKey(string primaryKeyFieldName, string foreignKeyTableName, string foreignKeyFieldName, int foreignKeyOrdinal = -1, string foreignKeyName = "", ReferentialAction foreignKeyUpdateRule = ReferentialAction.NoAction, ReferentialAction foreignKeyDeleteRule = ReferentialAction.NoAction)
         {
-            Table remoteForeignKeyTable;
-            Field remoteForeignKeyField;
+            Field? localPrimaryKeyField = Fields[primaryKeyFieldName];
 
-            Field localPrimaryKeyField = Fields[primaryKeyFieldName];
+            if (localPrimaryKeyField is null)
+                return false;
 
-            if (localPrimaryKeyField is not null)
-            {
-                remoteForeignKeyTable = m_parent[foreignKeyTableName];
+            Table? remoteForeignKeyTable = m_parent[foreignKeyTableName];
+            Field? remoteForeignKeyField = remoteForeignKeyTable?.Fields[foreignKeyFieldName];
 
-                if (remoteForeignKeyTable is not null)
-                {
-                    remoteForeignKeyField = remoteForeignKeyTable.Fields[foreignKeyFieldName];
+            if (remoteForeignKeyField == null)
+                return false;
+                
+            ForeignKeyField localForeignKeyField = new(localPrimaryKeyField.ForeignKeys);
 
-                    if (remoteForeignKeyField is not null)
-                    {
-                        ForeignKeyField localForeignKeyField = new(localPrimaryKeyField.ForeignKeys);
+            localForeignKeyField.PrimaryKey = localPrimaryKeyField;
+            localForeignKeyField.ForeignKey = remoteForeignKeyField;
+            localForeignKeyField.ForeignKey.ReferencedBy = localForeignKeyField.PrimaryKey;
+            localForeignKeyField.Ordinal = foreignKeyOrdinal == -1 ? localPrimaryKeyField.ForeignKeys.Count + 1 : foreignKeyOrdinal;
+            localForeignKeyField.KeyName = foreignKeyName;
+            localForeignKeyField.UpdateRule = foreignKeyUpdateRule;
+            localForeignKeyField.DeleteRule = foreignKeyDeleteRule;
 
-                        localForeignKeyField.PrimaryKey = localPrimaryKeyField;
-                        localForeignKeyField.ForeignKey = remoteForeignKeyField;
-                        localForeignKeyField.ForeignKey.ReferencedBy = localForeignKeyField.PrimaryKey;
-                        localForeignKeyField.Ordinal = foreignKeyOrdinal == -1 ? localPrimaryKeyField.ForeignKeys.Count + 1 : foreignKeyOrdinal;
-                        localForeignKeyField.KeyName = foreignKeyName;
-                        localForeignKeyField.UpdateRule = foreignKeyUpdateRule;
-                        localForeignKeyField.DeleteRule = foreignKeyDeleteRule;
+            localPrimaryKeyField.ForeignKeys.Add(localForeignKeyField);
 
-                        localPrimaryKeyField.ForeignKeys.Add(localForeignKeyField);
-
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -1667,7 +1658,7 @@ namespace Gemstone.Data
         /// </summary>
         /// <param name="index">Index of table</param>
         /// <returns>Table at index.</returns>
-        public Table this[int index]
+        public Table? this[int index]
         {
             get
             {
@@ -1683,12 +1674,11 @@ namespace Gemstone.Data
         /// </summary>
         /// <param name="name">Table name.</param>
         /// <returns>Table with specified name.</returns>
-        public Table this[string name]
+        public Table? this[string name]
         {
             get
             {
-                TableDictionary.TryGetValue(name, out Table lookup);
-
+                TableDictionary.TryGetValue(name, out Table? lookup);
                 return lookup;
             }
         }
@@ -1698,7 +1688,7 @@ namespace Gemstone.Data
         /// </summary>
         /// <param name="mapName">Mapped table name.</param>
         /// <returns>Table with mapped name.</returns>
-        public Table FindByMapName(string mapName)
+        public Table? FindByMapName(string mapName)
         {
             foreach (Table table in TableList)
             {

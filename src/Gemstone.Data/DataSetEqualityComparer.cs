@@ -46,7 +46,7 @@ namespace Gemstone.Data
         /// </returns>
         /// <param name="x">The first object of type <see cref="T:System.Data.DataSet"/> to compare.</param>
         /// <param name="y">The second object of type <see cref="T:System.Data.DataSet"/> to compare.</param>
-        public bool Equals(DataSet x, DataSet y)
+        public bool Equals(DataSet? x, DataSet? y)
         {
             // If the two data sets are the same object, they are equal
             if (x == y)
@@ -66,7 +66,7 @@ namespace Gemstone.Data
                 if (!y.Tables.Contains(xTable.TableName))
                     return false;
 
-                DataTable yTable = y.Tables[xTable.TableName];
+                DataTable yTable = y.Tables[xTable.TableName]!;
 
                 // Check that both tables have the same number of rows
                 if (xTable.Rows.Count != yTable.Rows.Count)

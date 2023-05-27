@@ -202,7 +202,7 @@ namespace Gemstone.Data
             try
             {
                 // Open ADO.NET provider connection
-                Connection = (IDbConnection)Activator.CreateInstance(connectionType);
+                Connection = (IDbConnection)Activator.CreateInstance(connectionType)!;
                 Connection.ConnectionString = connectionString;
                 Connection.Open();
             }
@@ -227,7 +227,7 @@ namespace Gemstone.Data
         // Creates a new AdoDataConnection, optionally opening connection.
         private AdoDataConnection(string connectionString, string dataProviderString, bool openConnection)
         {
-            Type connectionType;
+            Type? connectionType;
 
             if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentNullException(nameof(connectionString), "Parameter cannot be null or empty");
@@ -265,7 +265,7 @@ namespace Gemstone.Data
             try
             {
                 // Open ADO.NET provider connection
-                Connection = (IDbConnection)Activator.CreateInstance(connectionType);
+                Connection = (IDbConnection)Activator.CreateInstance(connectionType)!;
                 Connection.ConnectionString = connectionString;
                 Connection.Open();
             }
@@ -401,13 +401,13 @@ namespace Gemstone.Data
                     break;
 
                 case DatabaseType.MySQL:
-                    Type mySqlScriptType = Connection.GetType().Assembly.GetType("MySql.Data.MySqlClient.MySqlScript");
+                    Type? mySqlScriptType = Connection.GetType().Assembly.GetType("MySql.Data.MySqlClient.MySqlScript");
 
                     if (mySqlScriptType is not null)
                     {
-                        object executor = Activator.CreateInstance(mySqlScriptType, Connection, scriptReader.ReadToEnd());
-                        MethodInfo executeMethod = executor.GetType().GetMethod("Execute");
-                        executeMethod?.Invoke(executor, null);
+                        object executor = Activator.CreateInstance(mySqlScriptType, Connection, scriptReader.ReadToEnd())!;
+                        MethodInfo executeMethod = executor.GetType().GetMethod("Execute")!;
+                        executeMethod.Invoke(executor, null);
                     }
                     else
                     {
@@ -586,7 +586,7 @@ namespace Gemstone.Data
 
             // Handle Guids
             if (type == typeof(Guid))
-                return System.Guid.Parse(value.ToString());
+                return System.Guid.Parse(value.ToString()!);
 
             // Handle string types that may have a converter function (e.g., Enums)
             if (value is string)
@@ -797,7 +797,7 @@ namespace Gemstone.Data
             if (IsSQLServer)
                 return row.Field<Guid>(fieldName);
 
-            return System.Guid.Parse(row.Field<object>(fieldName).ToString());
+            return System.Guid.Parse(row.Field<object>(fieldName)?.ToString() ?? System.Guid.Empty.ToString());
         }
 
         /// <summary>
@@ -921,7 +921,7 @@ namespace Gemstone.Data
             if (!typeof(IDbConnection).IsAssignableFrom(connectionType))
                 throw new ArgumentException("Connection type must implement the IDbConnection interface", nameof(connectionType));
 
-            Dictionary<string, string> settings = new() { ["AssemblyName"] = connectionType.Assembly.FullName, ["ConnectionType"] = connectionType.FullName };
+            Dictionary<string, string> settings = new() { ["AssemblyName"] = connectionType.Assembly.FullName!, ["ConnectionType"] = connectionType.FullName! };
 
             return settings.JoinKeyValuePairs();
         }

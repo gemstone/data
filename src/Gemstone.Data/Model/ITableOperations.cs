@@ -808,7 +808,7 @@ namespace Gemstone.Data.Model
         /// <param name="fieldName">Name of field to use for attribute lookup.</param>
         /// <param name="attribute">Attribute that was found, if any.</param>
         /// <returns><c>true</c> if attribute was found; otherwise, <c>false</c>.</returns>
-        bool TryGetFieldAttribute<TAttribute>(string fieldName, out TAttribute attribute) where TAttribute : Attribute;
+        bool TryGetFieldAttribute<TAttribute>(string fieldName, out TAttribute? attribute) where TAttribute : Attribute;
 
         /// <summary>
         /// Attempts to get the specified <paramref name="attributeType"/> for a field.

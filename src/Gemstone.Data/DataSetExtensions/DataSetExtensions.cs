@@ -527,7 +527,7 @@ namespace Gemstone.Data.DataSetExtensions
         /// <returns>Object <see cref="Type"/> derived from given <see cref="DataType"/>.</returns>
         public static Type DeriveColumnType(this DataType dataType) => s_supportedDataTypes[(int)dataType];
 
-        private static string NotDBNullString(this object value) => value == DBNull.Value ? "" : value.ToString();
+        private static string NotDBNullString(this object value) => value == DBNull.Value ? "" : value.ToString()!;
 
         private static T NotDBNull<T>(this object value, T defaultValue) => value == DBNull.Value ? defaultValue : (T)value;
 

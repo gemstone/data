@@ -412,7 +412,7 @@ namespace Gemstone.Data.DataExtensions
             public long GetInt64(int i) => Reader.GetInt64(i);
             public string GetName(int i) => Reader.GetName(i);
             public int GetOrdinal(string name) => Reader.GetOrdinal(name);
-            public DataTable GetSchemaTable() => Reader.GetSchemaTable();
+            public DataTable? GetSchemaTable() => Reader.GetSchemaTable();
             public string GetString(int i) => Reader.GetString(i);
             public object GetValue(int i) => Reader.GetValue(i);
             public int GetValues(object[] values) => Reader.GetValues(values);
@@ -421,11 +421,11 @@ namespace Gemstone.Data.DataExtensions
             public bool Read() => Reader.Read();
             public void Close() => Reader.Close();
 
-            public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length) =>
-                Reader.GetBytes(i, fieldOffset, buffer, bufferoffset, length);
+            public long GetBytes(int i, long fieldOffset, byte[]? buffer, int bufferOffset, int length) =>
+                Reader.GetBytes(i, fieldOffset, buffer, bufferOffset, length);
 
-            public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length) =>
-                Reader.GetChars(i, fieldoffset, buffer, bufferoffset, length);
+            public long GetChars(int i, long fieldOffset, char[]? buffer, int bufferOffset, int length) =>
+                Reader.GetChars(i, fieldOffset, buffer, bufferOffset, length);
 
             public void Dispose()
             {
@@ -449,7 +449,7 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
         /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
-        public static object ExecuteScalar<TConnection>(this TConnection connection, string sql, params object[] parameters) where TConnection : IDbConnection
+        public static object? ExecuteScalar<TConnection>(this TConnection connection, string sql, params object[] parameters) where TConnection : IDbConnection
         {
             return connection.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
         }
@@ -464,7 +464,7 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
         /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
-        public static object ExecuteScalar<TConnection>(this TConnection connection, int timeout, string sql, params object[] parameters) where TConnection : IDbConnection
+        public static object? ExecuteScalar<TConnection>(this TConnection connection, int timeout, string sql, params object[] parameters) where TConnection : IDbConnection
         {
             using IDbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
@@ -481,7 +481,7 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public static object ExecuteScalar(this SqlConnection connection, string sql, params object[] parameters)
+        public static object? ExecuteScalar(this SqlConnection connection, string sql, params object[] parameters)
         {
             return connection.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
         }
@@ -495,7 +495,7 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public static object ExecuteScalar(this SqlConnection connection, int timeout, string sql, params object[] parameters)
+        public static object? ExecuteScalar(this SqlConnection connection, int timeout, string sql, params object[] parameters)
         {
             using SqlCommand command = new(sql, connection) { CommandTimeout = timeout };
             command.PopulateParameters(parameters);
@@ -511,7 +511,7 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public static object ExecuteScalar(this IDbCommand command, string sql, params object[] parameters)
+        public static object? ExecuteScalar(this IDbCommand command, string sql, params object[] parameters)
         {
             return command.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
         }
@@ -525,7 +525,7 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public static object ExecuteScalar(this IDbCommand command, int timeout, string sql, params object[] parameters)
+        public static object? ExecuteScalar(this IDbCommand command, int timeout, string sql, params object[] parameters)
         {
             command.CommandTimeout = timeout;
             command.Parameters.Clear();
@@ -542,7 +542,7 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public static object ExecuteScalar(this SqlCommand command, string sql, params object[] parameters)
+        public static object? ExecuteScalar(this SqlCommand command, string sql, params object[] parameters)
         {
             return command.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
         }
@@ -556,7 +556,7 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
         /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
         /// <returns>Value in the first column of the first row in the result set.</returns>
-        public static object ExecuteScalar(this SqlCommand command, int timeout, string sql, params object[] parameters)
+        public static object? ExecuteScalar(this SqlCommand command, int timeout, string sql, params object[] parameters)
         {
             if (!string.IsNullOrWhiteSpace(sql))
                 command.CommandText = sql;
@@ -591,7 +591,7 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="scriptReader">The reader used to extract statements from the SQL script.</param>
         public static void ExecuteTSQLScript(this IDbConnection connection, TextReader scriptReader)
         {
-            string line = scriptReader.ReadLine();
+            string? line = scriptReader.ReadLine();
 
             using IDbCommand command = connection.CreateCommand();
 
@@ -600,12 +600,11 @@ namespace Gemstone.Data.DataExtensions
             while (line is not null)
             {
                 string trimLine = line.Trim();
-                string statement;
 
                 if (trimLine == "GO")
                 {
                     // Remove comments and execute the statement.
-                    statement = statementBuilder.ToString();
+                    string statement = statementBuilder.ToString();
                     command.CommandText = s_sqlCommentRegex.Replace(statement, " ").Trim();
                     command.ExecuteNonQuery();
                     statementBuilder.Clear();
@@ -697,7 +696,7 @@ namespace Gemstone.Data.DataExtensions
         /// <param name="scriptReader">The reader used to extract statements from the SQL script.</param>
         public static void ExecuteOracleScript(this IDbConnection connection, TextReader scriptReader)
         {
-            string line = scriptReader.ReadLine();
+            string? line = scriptReader.ReadLine();
 
             using IDbCommand command = connection.CreateCommand();
 
@@ -1319,7 +1318,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>The value, of type T, of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
         public static T ConvertField<T>(this DataRow row, string field, T defaultValue)
         {
-            object value = row.Field<object>(field);
+            object? value = row.Field<object>(field);
 
             if (value is null || value == DBNull.Value)
                 return defaultValue;
@@ -1337,11 +1336,11 @@ namespace Gemstone.Data.DataExtensions
 
             // Handle Guids as a special case since they do not implement IConvertible
             if (underlyingType == typeof(Guid))
-                return (T)(object)Guid.Parse(value.ToString());
+                return (T)(object)Guid.Parse(value.ToString() ?? "");
 
             // Handle enums as a special case since they do not implement IConvertible
             if (underlyingType.IsEnum)
-                return (T)Enum.Parse(underlyingType, value.ToString());
+                return (T)Enum.Parse(underlyingType, value.ToString() ?? "");
 
             return (T)Convert.ChangeType(value, underlyingType);
         }
@@ -1368,7 +1367,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>The value of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
         public static object? ConvertField(this DataRow row, string field, Type type, object? defaultValue)
         {
-            object value = row.Field<object>(field);
+            object? value = row.Field<object>(field);
 
             if (value is null || value == DBNull.Value)
                 return defaultValue ?? (type.IsValueType ? Activator.CreateInstance(type) : null);
@@ -1384,11 +1383,11 @@ namespace Gemstone.Data.DataExtensions
 
             // Handle Guids as a special case since they do not implement IConvertible
             if (underlyingType == typeof(Guid))
-                return Guid.Parse(value.ToString());
+                return Guid.Parse(value.ToString() ?? "");
 
             // Handle enums as a special case since they do not implement IConvertible
             if (underlyingType.IsEnum)
-                return Enum.Parse(underlyingType, value.ToString());
+                return Enum.Parse(underlyingType, value.ToString() ?? "");
 
             return Convert.ChangeType(value, underlyingType);
         }
@@ -1403,7 +1402,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>The value, of type T, of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
         public static T? ConvertNullableField<T>(this DataRow row, string field) where T : struct
         {
-            object value = row.Field<object>(field);
+            object? value = row.Field<object>(field);
 
             if (value is null)
                 return null;
@@ -1420,7 +1419,7 @@ namespace Gemstone.Data.DataExtensions
         /// <returns>The <see cref="Guid"/> value of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
         public static Guid ConvertGuidField(this DataRow row, string field, Guid? defaultValue = null)
         {
-            object value = row.Field<object>(field);
+            object? value = row.Field<object>(field);
 
             if (value is null || value == DBNull.Value)
                 return defaultValue ?? Guid.Empty;
@@ -1428,7 +1427,7 @@ namespace Gemstone.Data.DataExtensions
             if (value is Guid guidValue)
                 return guidValue;
 
-            return Guid.Parse(value.ToString());
+            return Guid.Parse(value.ToString() ?? "");
         }
 
         #endregion
@@ -1488,48 +1487,48 @@ namespace Gemstone.Data.DataExtensions
         /// Number of <see cref="IDbDataParameter"/> arguments in <see cref="IDbCommand.CommandText"/> of this <paramref name="command"/>, identified by '@', do not match number of supplied parameter <paramref name="values"/> -or-
         /// You have supplied more <paramref name="values"/> than parameters listed for the stored procedure.
         /// </exception>
-        public static void PopulateParameters<TDbCommand>(this TDbCommand command, Action<TDbCommand> deriveParameters, object[] values) where TDbCommand : IDbCommand
+        public static void PopulateParameters<TDbCommand>(this TDbCommand command, Action<TDbCommand> deriveParameters, object[]? values) where TDbCommand : IDbCommand
         {
             // tmshults 12/10/2004
-            if (values is not null)
+            if (values is null)
+                return;
+
+            string commandText = command.CommandText;
+
+            if (string.IsNullOrEmpty(commandText))
+                throw new ArgumentNullException(nameof(command), "command.CommandText is null");
+
+            // Add parameters for standard SQL expressions (i.e., non stored procedure expressions)
+            if (!IsStoredProcedure(commandText))
             {
-                string commandText = command.CommandText;
-
-                if (string.IsNullOrEmpty(commandText))
-                    throw new ArgumentNullException(nameof(command), "command.CommandText is null");
-
-                // Add parameters for standard SQL expressions (i.e., non stored procedure expressions)
-                if (!IsStoredProcedure(commandText))
-                {
-                    command.AddParametersWithValues(commandText, values);
-                    return;
-                }
-
-                command.CommandType = CommandType.StoredProcedure;
-
-                // Makes quick query to db to find the parameters for the StoredProc, and then creates them for
-                // the command. The DeriveParameters() is only for commands with CommandType of StoredProcedure.
-                deriveParameters(command);
-
-                // Removes the ReturnValue Parameter.
-                command.Parameters.RemoveAt(0);
-
-                // Checks to see if the Parameters found match the Values provided.
-                if (command.Parameters.Count != values.Length)
-                {
-                    // If there are more values than parameters, throws an error.
-                    if (values.Length > command.Parameters.Count)
-                        throw new ArgumentException("You have supplied more values than parameters listed for the stored procedure");
-
-                    // Otherwise, assume that the missing values are for Parameters that have default values,
-                    // and the code uses the default. To do this fill the extended ParamValue as Nothing/Null.
-                    Array.Resize(ref values, command.Parameters.Count); // Makes the Values array match the Parameters of the Stored Proc.
-                }
-
-                // Assigns the values to the Parameters.
-                for (int i = 0; i < command.Parameters.Count; i++)
-                    ((DbParameter)command.Parameters[i]).Value = values[i];
+                command.AddParametersWithValues(commandText, values);
+                return;
             }
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            // Makes quick query to db to find the parameters for the StoredProc, and then creates them for
+            // the command. The DeriveParameters() is only for commands with CommandType of StoredProcedure.
+            deriveParameters(command);
+
+            // Removes the ReturnValue Parameter.
+            command.Parameters.RemoveAt(0);
+
+            // Checks to see if the Parameters found match the Values provided.
+            if (command.Parameters.Count != values.Length)
+            {
+                // If there are more values than parameters, throws an error.
+                if (values.Length > command.Parameters.Count)
+                    throw new ArgumentException("You have supplied more values than parameters listed for the stored procedure");
+
+                // Otherwise, assume that the missing values are for Parameters that have default values,
+                // and the code uses the default. To do this fill the extended ParamValue as Nothing/Null.
+                Array.Resize(ref values, command.Parameters.Count); // Makes the Values array match the Parameters of the Stored Proc.
+            }
+
+            // Assigns the values to the Parameters.
+            for (int i = 0; i < command.Parameters.Count; i++)
+                ((DbParameter)command.Parameters[i]!).Value = values[i];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1701,8 +1700,8 @@ namespace Gemstone.Data.DataExtensions
             if (header)
             {
                 // Uses the first row as header row.
-                for (int i = 0; i < headers.Length; i++)
-                    table.Columns.Add(new DataColumn(headers[i].Trim('\"'))); //Remove any leading and trailing quotes from the column name.
+                foreach (string columnName in headers)
+                    table.Columns.Add(new DataColumn(columnName.Trim('\"'))); //Remove any leading and trailing quotes from the column name.
 
                 cursor++;
             }

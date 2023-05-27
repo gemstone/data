@@ -362,7 +362,7 @@ namespace Gemstone.Data.Model
             // ReSharper disable once CoVariantArrayConversion
             object[] offsetArgs = Enumerable.Range(leftLength, rightLength).Select(index => $"{{{index}}}").ToArray();
 
-            return new RecordRestriction($"({left.FilterExpression}) {operation} ({string.Format(right.FilterExpression, offsetArgs)})", parameters);
+            return new RecordRestriction($"({left.FilterExpression}) {operation} ({string.Format(right.FilterExpression!, offsetArgs)})", parameters);
         }
 
         #endregion

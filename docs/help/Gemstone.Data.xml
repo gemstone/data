@@ -3120,7 +3120,7 @@
             parameter to the attribute, e.g., <c>[AmendExpression("WITH (NOLOCK)", DatabaseType.SQLServer)]</c>, means the
             amendment text will only be applied to the specific database - however, the attribute allows multiple instances
             on the same identifier so you could specify that amendment application only be applied to two databases:
-            <code>
+            <code language="cs">
             [AmendExpression("AS T1", DatabaseType.SQLServer), AmendExpression("AS T1", DatabaseType.MySQL)]
             </code>
             Other parameters exist to fully customize target expression, set affix position and specify statement types:
@@ -5458,7 +5458,7 @@
             Defining a root query restriction creates a base query filter that gets applied to all query operations,
             even when another restriction is applied - in this case the root restriction will be pre-pended to the
             specified query, e.g.:
-            <code language="cs">
+            <code>
             restriction = RootQueryRestriction + restriction;
             </code>
             A root query restriction is useful to apply a common state to the query operations, e.g., always

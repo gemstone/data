@@ -3120,9 +3120,16 @@
             parameter to the attribute, e.g., <c>[AmendExpression("WITH (NOLOCK)", DatabaseType.SQLServer)]</c>, means the
             amendment text will only be applied to the specific database - however, the attribute allows multiple instances
             on the same identifier so you could specify that amendment application only be applied to two databases:
-            <codeSnippetGroup><code language="cs" codeLanguage="CSharp" style="cs">@@_SHFB_1</code></codeSnippetGroup>
+            <code>
+            [AmendExpression("AS T1", DatabaseType.SQLServer), AmendExpression("AS T1", DatabaseType.MySQL)]
+            </code>
             Other parameters exist to fully customize target expression, set affix position and specify statement types:
-            <codeSnippetGroup><code language="cs" codeLanguage="CSharp" style="cs">@@_SHFB_2</code></codeSnippetGroup></para>
+            <code>
+            [AmendExpression("TOP 200",
+                TargetExpression = TargetExpression.FieldList,
+                AffixPosition = AffixPosition.Prefix,
+                StatementTypes = StatementTypes.SelectSet)]
+            </code></para>
       </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.AmendExpressionAttribute.#ctor(System.String)">

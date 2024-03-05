@@ -111,7 +111,7 @@ namespace Gemstone.Data.Model
         #region [ Methods ]
 
         /// <summary>
-        /// Generates a <see cref="RecordRestriction"/> that corresponds to this <see cref="RecordFilter"/>.
+        /// Generates a <see cref="RecordRestriction"/> that corresponds to this <see cref="RecordFilter{T}"/>.
         /// </summary>
         public RecordRestriction GenerateRestriction()
         {
@@ -133,7 +133,7 @@ namespace Gemstone.Data.Model
                 {
                     return (RecordRestriction)transform.Invoke(null, new object[] { this });
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // use default implementation
                 }

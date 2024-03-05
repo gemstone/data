@@ -42,7 +42,7 @@ namespace Gemstone.Data.Model
     /// For Backend Restrictions <see cref="RecordRestriction"/> should be used.
     /// This is inteded to be used for user initiated seraches and filters in the User Interface.
     /// </remarks>
-    public class RecordFilter<T> where T : class, new ()
+    public class RecordFilter<T>: IRecordFilter where T : class, new ()
     {
         #region [ Members ]
 
@@ -119,6 +119,8 @@ namespace Gemstone.Data.Model
             IEnumerable<string> fields = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
                     .Where(property => property is { CanRead: true, CanWrite: true })
                     .Select(property => property.Name).ToArray();
+
+            //property.TryGetAttribute(out SearchableAttribute? searchableAttribute);
 
             if (!fields.Contains(FieldName))
                 throw new ArgumentException($"{FieldName} is not a valid field for {typeof(T).Name}");

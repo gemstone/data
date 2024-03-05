@@ -106,6 +106,14 @@ namespace Gemstone.Data.Model
             }
         }
 
+        /// <summary>
+        /// Indicates whether this <see cref="RecordFilter{T}"/> will work on encrypted fields.
+        /// </summary>
+        public bool SupportsEncrypted => s_encryptedOperators.Contains(m_operator);
+
+        /// <inheritdoc/>
+        public PropertyInfo? ModelProperty => typeof(T).GetProperty(FieldName);
+
         #endregion
 
         #region [ Methods ]
@@ -161,11 +169,7 @@ namespace Gemstone.Data.Model
 
         private bool IsValidField(string fieldName)
         {
-            IEnumerable<string> fields = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                  .Where(property => property is { CanRead: true, CanWrite: true })
-                  .Select(property => property.Name).ToArray();
-
-            if (fields.Contains(FieldName))
+            if (ModelProperty is not null)
                 return true;
 
             if (typeof(T).TryGetAttribute(out SearchableAttribute? searchableAttribute))
@@ -190,6 +194,7 @@ namespace Gemstone.Data.Model
 
         private static readonly string[] s_validOperators = { "=", "<>", "<", ">", "IN", "NOT IN", "LIKE", "NOT LIKE", "<=", ">=" };
         private static readonly string[] s_groupOperators = { "IN", "NOT IN" };
+        private static readonly string[] s_encryptedOperators = { "IN", "NOT IN", "=", "<>" };
         #endregion
     }
 }

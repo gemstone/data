@@ -1052,9 +1052,16 @@ namespace Gemstone.Data.Model
             bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
             string? orderByExpression = sortFieldIsEncrypted ? null : $"{sortField}{(ascending ? "" : " DESC")}";
 
-            RecordRestriction restriction = recordFilters.Aggregate<IRecordFilter,RecordRestriction>(null,(r, f) => f.GenerateRestriction() + r);
+            RecordRestriction restriction = recordFilters.Where(r => r.SupportsEncrypted || (r.ModelProperty is null) ||  !s_encryptDataTargets.ContainsKey(r.ModelProperty))
+                .Aggregate<IRecordFilter,RecordRestriction>(null,(r, f) => f.GenerateRestriction() + r);
 
             IEnumerable<T?> queryResult = QueryRecords(orderByExpression, restriction);
+            IEnumerable<IRecordFilter> encryptedFilters = recordFilters.Where(r => !r.SupportsEncrypted && (r.ModelProperty is not null) && s_encryptDataTargets.ContainsKey(r.ModelProperty));
+
+            if (encryptedFilters.Any())
+            {
+                throw new NotImplementedException("Encryption is not implemented.");
+            }
 
             if (sortFieldIsEncrypted)
                 queryResult = LocalOrderBy(queryResult, sortField, ascending, comparison.GetComparer());

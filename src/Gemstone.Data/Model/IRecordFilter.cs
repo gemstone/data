@@ -61,6 +61,18 @@ namespace Gemstone.Data.Model
         /// </summary>
         public string Operator { get; set; }
 
+        /// <summary>
+        /// Indicates whether this <see cref="IRecordFilter"/> will work on encrypted fields.
+        /// </summary>
+        public bool SupportsEncrypted { get; }
+
+        /// <summary>
+        /// The <see cref="PropertyInfo"/> of the Model that this <see cref="IRecordFilter"/> applies to.
+        /// </summary>
+        /// <remarks>
+        /// This will return null if the <see cref="IRecordFilter"/> is not associated with a Property.
+        /// </remarks>
+        public PropertyInfo? ModelProperty { get; }
         #endregion
 
         #region [ Methods ]

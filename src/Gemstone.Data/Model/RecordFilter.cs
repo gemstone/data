@@ -119,6 +119,25 @@ namespace Gemstone.Data.Model
             if (!IsValidField(FieldName))
                 throw new ArgumentException($"{FieldName} is not a valid field for {typeof(T).Name}");
 
+            IEnumerable<MethodInfo> transforms = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static)
+              .Where((method) => method.AttributeExists<MethodInfo, SearchExtensionAttribute>());
+
+            MethodInfo? transform = transforms.FirstOrDefault(t =>
+            {
+                t.TryGetAttribute(out SearchExtensionAttribute searchExtension);
+                return new Regex(searchExtension.FieldMatch).Match(FieldName).Success;
+            });
+
+            if (transform is not null)
+                try
+                {
+                    return (RecordRestriction)transform.Invoke(null, new object[] { this });
+                }
+                catch (Exception ex)
+                {
+                    // use default implementation
+                }
+
             if (s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase))
             {
                 if (SearchParameter is not Array)

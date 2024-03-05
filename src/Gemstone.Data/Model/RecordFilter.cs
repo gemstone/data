@@ -27,6 +27,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using Gemstone.ArrayExtensions;
 using Gemstone.Collections.CollectionExtensions;
 using Gemstone.Reflection.MemberInfoExtensions;
@@ -115,14 +116,7 @@ namespace Gemstone.Data.Model
         public RecordRestriction GenerateRestriction()
         {
 
-            // FieldName has to be in the C# Model
-            IEnumerable<string> fields = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                    .Where(property => property is { CanRead: true, CanWrite: true })
-                    .Select(property => property.Name).ToArray();
-
-            //property.TryGetAttribute(out SearchableAttribute? searchableAttribute);
-
-            if (!fields.Contains(FieldName))
+            if (!IsValidField(FieldName))
                 throw new ArgumentException($"{FieldName} is not a valid field for {typeof(T).Name}");
 
             if (s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase))
@@ -146,7 +140,29 @@ namespace Gemstone.Data.Model
             return new RecordRestriction($"{FieldName} {m_operator} {{0}}", SearchParameter);
         }
 
+        private bool IsValidField(string fieldName)
+        {
+            IEnumerable<string> fields = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                  .Where(property => property is { CanRead: true, CanWrite: true })
+                  .Select(property => property.Name).ToArray();
 
+            if (fields.Contains(FieldName))
+                return true;
+
+            if (typeof(T).TryGetAttribute(out SearchableAttribute? searchableAttribute))
+            {
+                if (searchableAttribute.FieldNames.Contains(FieldName))
+                    return true;
+            }
+
+            IEnumerable<MethodInfo> transforms = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .Where((method) => method.AttributeExists<MethodInfo, SearchExtensionAttribute>());
+
+            return transforms.Any(t => {
+                t.TryGetAttribute(out SearchExtensionAttribute searchExtension);
+                return new Regex(searchExtension.FieldMatch).Match(fieldName).Success;
+            });
+        }
         #endregion
 
         #region [ Static ]

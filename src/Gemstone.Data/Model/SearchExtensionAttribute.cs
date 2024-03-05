@@ -1,7 +1,7 @@
 ﻿//******************************************************************************************************
-//  SearchableAttribute.cs - Gbtc
+//  SearchExtensionAttribute.cs - Gbtc
 //
-//  Copyright © 2016, Grid Protection Alliance.  All Rights Reserved.
+//  Copyright © 2024, Grid Protection Alliance.  All Rights Reserved.
 //
 //  Licensed to the Grid Protection Alliance (GPA) under one or more contributor license agreements. See
 //  the NOTICE file distributed with this work for additional information regarding copyright ownership.
@@ -16,10 +16,8 @@
 //
 //  Code Modification History:
 //  ----------------------------------------------------------------------------------------------------
-//  08/20/2016 - J. Ritchie Carroll
+//  03/05/2024 - C. Lackner
 //       Generated original version of source code.
-//  12/13/2019 - J. Ritchie Carroll
-//      Migrated to Gemstone libraries.
 //
 //******************************************************************************************************
 
@@ -29,24 +27,21 @@ namespace Gemstone.Data.Model
 {
  
     /// <summary>
-    /// Defines an attribute that will mark additional Fields in the Database as searchable field.
+    /// Defines an attribute that marks methods that are used to transform <see cref="IRecordFilter"/> into <see cref="RecordRestriction"/>.
     /// </summary>
-    /// <remarks>
-    /// All modeled Fields are automatically Searchable so this only applys to fields that are not modeled.
-    ///</remarks>
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class SearchableAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed class SearchExtensionAttribute : Attribute
     {
        
         /// <summary>
-        /// The FieldNames that are searchable.
+        /// The string used to match FieldNames this applies to.
         /// </summary>
-        public string[] FieldNames { get; set; }
+        public string FieldMatch { get; set; }
 
         /// <summary>
-        /// Creates a new <see cref="SearchableAttribute"/>.
+        /// Creates a new <see cref="SearchExtensionAttribute"/>.
         /// </summary>
-        public SearchableAttribute(params string[] fields) => FieldNames = fields;
+        public SearchExtensionAttribute(string fieldMatch) => FieldMatch = fieldMatch;
 
     }
 }

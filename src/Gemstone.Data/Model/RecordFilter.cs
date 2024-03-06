@@ -26,13 +26,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using Gemstone.ArrayExtensions;
 using Gemstone.Collections.CollectionExtensions;
 using Gemstone.Reflection.MemberInfoExtensions;
-using Gemstone.StringExtensions;
-using Gemstone.Units;
 
 namespace Gemstone.Data.Model
 {
@@ -43,36 +39,26 @@ namespace Gemstone.Data.Model
     /// For Backend Restrictions <see cref="RecordRestriction"/> should be used.
     /// This is inteded to be used for user initiated seraches and filters in the User Interface.
     /// </remarks>
-    public class RecordFilter<T>: IRecordFilter where T : class, new ()
+    public class RecordFilter<T> : IRecordFilter where T : class, new()
     {
         #region [ Members ]
 
         // Fields
+        private string m_operator = s_validOperators[0];
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private string m_operator;
+        #endregion
+
+        #region [ Properties ]
 
         /// <summary>
         /// Gets or sets the Name of the field to be searched.
         /// </summary>
-        public string FieldName { get; set; }
+        public string FieldName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the value to be searched for.
         /// </summary>
         public object? SearchParameter { get; set; }
-
-        #endregion
-
-        #region [ Constructors ]
-
-        
-
-        #endregion
-
-        #region [ Properties ]
 
         /// <summary>
         /// Gets or sets the Operator to be used for the Search.
@@ -123,45 +109,47 @@ namespace Gemstone.Data.Model
         /// </summary>
         public RecordRestriction GenerateRestriction()
         {
-
             if (!IsValidField(FieldName))
                 throw new ArgumentException($"{FieldName} is not a valid field for {typeof(T).Name}");
 
-            IEnumerable<MethodInfo> transforms = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static)
-              .Where((method) => method.AttributeExists<MethodInfo, SearchExtensionAttribute>());
+            IEnumerable<MethodInfo> methods = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static);
 
-            MethodInfo? transform = transforms.FirstOrDefault(t =>
-            {
-                t.TryGetAttribute(out SearchExtensionAttribute searchExtension);
-                return new Regex(searchExtension.FieldMatch).Match(FieldName).Success;
-            });
+            MethodInfo? transform = methods.FirstOrDefault(t =>
+                t.TryGetAttribute(out SearchExtensionAttribute? searchExtension) &&
+                Regex.IsMatch(FieldName, searchExtension.FieldMatch));
 
             if (transform is not null)
+            {
                 try
                 {
-                    return (RecordRestriction)transform.Invoke(null, new object[] { this });
+                    if (transform.Invoke(null, [this]) is RecordRestriction recordRestriction)
+                        return recordRestriction;
                 }
-                catch (Exception)
+                catch
                 {
-                    // use default implementation
+                    // Fall through to normal search if not debugging
+#if DEBUG
+                    throw;
+#endif
                 }
+            }
 
             if (s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase))
             {
-                if (SearchParameter is not Array)
+                if (SearchParameter is not object[] searchParameter)
                 {
-                    SearchParameter = new object[] { SearchParameter };
+                    searchParameter = SearchParameter is not null
+                        ? [SearchParameter]
+                        : [];
                 }
 
-                int nParameters = ((Array)SearchParameter).Length;
+                int nParameters = searchParameter.Length;
 
                 string[] parameters = new string[nParameters];
-                for (int i =0; i < nParameters; i++)
-                {
+                for (int i = 0; i < nParameters; i++)
                     parameters[i] = $"{{{i}}}";
-                }
-                return new RecordRestriction($"{FieldName} {m_operator} ({string.Join(',', parameters)})", SearchParameter);
 
+                return new RecordRestriction($"{FieldName} {m_operator} ({string.Join(',', parameters)})", searchParameter);
             }
 
             return new RecordRestriction($"{FieldName} {m_operator} {{0}}", SearchParameter);
@@ -178,23 +166,22 @@ namespace Gemstone.Data.Model
                     return true;
             }
 
-            IEnumerable<MethodInfo> transforms = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .Where((method) => method.AttributeExists<MethodInfo, SearchExtensionAttribute>());
+            IEnumerable<MethodInfo> methods = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static);
 
-            return transforms.Any(t => {
-                t.TryGetAttribute(out SearchExtensionAttribute searchExtension);
-                return new Regex(searchExtension.FieldMatch).Match(fieldName).Success;
-            });
+            return methods.Any(m =>
+                m.TryGetAttribute(out SearchExtensionAttribute? searchExtension) &&
+                Regex.IsMatch(fieldName, searchExtension.FieldMatch));
         }
+
         #endregion
 
         #region [ Static ]
 
-        // Static Methods
+        // Static Fields
+        private static readonly string[] s_validOperators = ["=", "<>", "<", ">", "IN", "NOT IN", "LIKE", "NOT LIKE", "<=", ">="];
+        private static readonly string[] s_groupOperators = ["IN", "NOT IN"];
+        private static readonly string[] s_encryptedOperators = ["IN", "NOT IN", "=", "<>"];
 
-        private static readonly string[] s_validOperators = { "=", "<>", "<", ">", "IN", "NOT IN", "LIKE", "NOT LIKE", "<=", ">=" };
-        private static readonly string[] s_groupOperators = { "IN", "NOT IN" };
-        private static readonly string[] s_encryptedOperators = { "IN", "NOT IN", "=", "<>" };
         #endregion
     }
 }

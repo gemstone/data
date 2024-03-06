@@ -19,7 +19,7 @@
 //  08/20/2016 - J. Ritchie Carroll
 //       Generated original version of source code.
 //  12/13/2019 - J. Ritchie Carroll
-//      Migrated to Gemstone libraries.
+//       Migrated to Gemstone libraries.
 //
 //******************************************************************************************************
 
@@ -27,26 +27,18 @@ using System;
 
 namespace Gemstone.Data.Model
 {
- 
     /// <summary>
-    /// Defines an attribute that will mark additional Fields in the Database as searchable field.
+    /// Defines an attribute that will mark additional fields in the database as searchable field.
     /// </summary>
     /// <remarks>
-    /// All modeled Fields are automatically Searchable so this only applys to fields that are not modeled.
-    ///</remarks>
+    /// All modeled fields are automatically searchable so this only applies to fields that are not modeled.
+    /// </remarks>
     [AttributeUsage(AttributeTargets.Class)]
-    public sealed class SearchableAttribute : Attribute
+    public sealed class SearchableAttribute(params string[] fields) : Attribute
     {
-       
         /// <summary>
         /// The FieldNames that are searchable.
         /// </summary>
-        public string[] FieldNames { get; set; }
-
-        /// <summary>
-        /// Creates a new <see cref="SearchableAttribute"/>.
-        /// </summary>
-        public SearchableAttribute(params string[] fields) => FieldNames = fields;
-
+        public string[] FieldNames { get; } = fields;
     }
 }

@@ -21,17 +21,7 @@
 //
 //******************************************************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using Gemstone.ArrayExtensions;
-using Gemstone.Collections.CollectionExtensions;
-using Gemstone.Reflection.MemberInfoExtensions;
-using Gemstone.StringExtensions;
-using Gemstone.Units;
 
 namespace Gemstone.Data.Model
 {
@@ -73,6 +63,7 @@ namespace Gemstone.Data.Model
         /// This will return null if the <see cref="IRecordFilter"/> is not associated with a Property.
         /// </remarks>
         public PropertyInfo? ModelProperty { get; }
+
         #endregion
 
         #region [ Methods ]
@@ -83,6 +74,5 @@ namespace Gemstone.Data.Model
         public RecordRestriction GenerateRestriction();
         
         #endregion
-
     }
 }

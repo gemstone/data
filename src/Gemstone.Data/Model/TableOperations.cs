@@ -839,11 +839,13 @@ namespace Gemstone.Data.Model
         public IEnumerable<T> QueryRecords(string? sortField, bool ascending, int page, int pageSize, params RecordRestriction?[]? restrictions)
         {
             RecordRestriction? restriction = null;
+
             if (restrictions is not null)
             {
                 foreach (RecordRestriction? r in restrictions)
                     restriction += r;
             }
+
             if (string.IsNullOrWhiteSpace(sortField))
                 sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
 
@@ -946,15 +948,13 @@ namespace Gemstone.Data.Model
         public int QueryRecordCount(params RecordRestriction?[]? restrictions)
         {
             string? sqlExpression = null;
-
-            RecordRestriction restriction = null;
+            RecordRestriction? restriction = null;
            
             if (restrictions is not null)
             {
                 foreach (RecordRestriction? r in restrictions)
                     restriction += r;
             }
-            
 
             try
             {
@@ -1048,20 +1048,26 @@ namespace Gemstone.Data.Model
             if (string.IsNullOrWhiteSpace(sortField))
                 sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
 
-
             bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
             string? orderByExpression = sortFieldIsEncrypted ? null : $"{sortField}{(ascending ? "" : " DESC")}";
 
-            RecordRestriction restriction = recordFilters.Where(r => r.SupportsEncrypted || (r.ModelProperty is null) ||  !s_encryptDataTargets.ContainsKey(r.ModelProperty))
-                .Aggregate<IRecordFilter,RecordRestriction>(null,(r, f) => f.GenerateRestriction() + r);
+            IEnumerable<IRecordFilter> validFilters = recordFilters.Where(f => f is not null)!;
+
+            static bool IsEncrypted(IRecordFilter filter) =>
+                filter.SupportsEncrypted &&
+                filter.ModelProperty is not null &&
+                s_encryptDataTargets is not null &&
+                s_encryptDataTargets.ContainsKey(filter.ModelProperty);
+
+            RecordRestriction? restriction = validFilters
+                .Where(f => !IsEncrypted(f))
+                .Aggregate((RecordRestriction?)null, (r, f) => f.GenerateRestriction() + r);
 
             IEnumerable<T?> queryResult = QueryRecords(orderByExpression, restriction);
-            IEnumerable<IRecordFilter> encryptedFilters = recordFilters.Where(r => !r.SupportsEncrypted && (r.ModelProperty is not null) && s_encryptDataTargets.ContainsKey(r.ModelProperty));
+            IEnumerable<IRecordFilter> encryptedFilters = validFilters.Where(IsEncrypted);
 
             if (encryptedFilters.Any())
-            {
                 throw new NotImplementedException("Encryption is not implemented.");
-            }
 
             if (sortFieldIsEncrypted)
                 queryResult = LocalOrderBy(queryResult, sortField, ascending, comparison.GetComparer());
@@ -1918,10 +1924,11 @@ namespace Gemstone.Data.Model
             if (recordFilters is null)
                 return null;
 
-           return recordFilters.Select(recordFilter => recordFilter?.GenerateRestriction())
-                    .Where(restriction => restriction is not null)
-                    .OfType<RecordRestriction>().ToArray();
-            
+            return recordFilters
+                .Where(recordFilter => recordFilter is not null)
+                .Select(recordFilter => recordFilter!.GenerateRestriction())
+                .ToArray();
+
             //ToDO: Add Logic to deal with Encrypted Fields
         }
 

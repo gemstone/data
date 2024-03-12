@@ -1,7 +1,7 @@
 ﻿//******************************************************************************************************
-//  SearchableAttribute.cs - Gbtc
+//  SearchExtensionAttribute.cs - Gbtc
 //
-//  Copyright © 2016, Grid Protection Alliance.  All Rights Reserved.
+//  Copyright © 2024, Grid Protection Alliance.  All Rights Reserved.
 //
 //  Licensed to the Grid Protection Alliance (GPA) under one or more contributor license agreements. See
 //  the NOTICE file distributed with this work for additional information regarding copyright ownership.
@@ -16,10 +16,8 @@
 //
 //  Code Modification History:
 //  ----------------------------------------------------------------------------------------------------
-//  08/20/2016 - J. Ritchie Carroll
+//  03/05/2024 - C. Lackner
 //       Generated original version of source code.
-//  12/13/2019 - J. Ritchie Carroll
-//       Migrated to Gemstone libraries.
 //
 //******************************************************************************************************
 
@@ -28,17 +26,14 @@ using System;
 namespace Gemstone.Data.Model
 {
     /// <summary>
-    /// Defines an attribute that will mark additional fields in the database as searchable field.
+    /// Defines an attribute that marks methods that are used to transform <see cref="IRecordFilter"/> into <see cref="RecordRestriction"/>.
     /// </summary>
-    /// <remarks>
-    /// All modeled fields are automatically searchable so this only applies to fields that are not modeled.
-    /// </remarks>
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class SearchableAttribute(params string[] fields) : Attribute
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed class SearchExtensionAttribute(string fieldMatch) : Attribute
     {
         /// <summary>
-        /// The FieldNames that are searchable.
+        /// The string used to match FieldNames this applies to.
         /// </summary>
-        public string[] FieldNames { get; } = fields;
+        public string FieldMatch { get; } = fieldMatch;
     }
 }

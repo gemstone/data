@@ -176,6 +176,15 @@ namespace Gemstone.Data
         #region [ Constructors ]
 
         /// <summary>
+        /// Creates and opens a new <see cref="AdoDataConnection"/> from specified <paramref name="settings"/>.
+        /// </summary>
+        /// <param name="settings">Settings instance.</param>
+        public AdoDataConnection(Settings settings)
+            : this(settings.ConnectionString, settings.DataProviderString)
+        {
+        }
+
+        /// <summary>
         /// Creates and opens a new <see cref="AdoDataConnection"/> from specified <paramref name="connectionString"/> and <paramref name="dataProviderString"/>.
         /// </summary>
         /// <param name="connectionString">Database specific ADO connection string.</param>

@@ -3267,6 +3267,56 @@
             Gets field name to use for property.
             </summary>
     </member>
+    <member name="T:Gemstone.Data.Model.IRecordFilter">
+      <summary>
+            Defines an interface for a filter that can be applied to queries.
+            </summary>
+      <remarks>
+            For Backend Restrictions <see cref="T:Gemstone.Data.Model.RecordRestriction" /> should be used.
+            This is inteded to be used for user initiated seraches and filters in the User Interface.
+            </remarks>
+    </member>
+    <member name="P:Gemstone.Data.Model.IRecordFilter.FieldName">
+      <summary>
+            The Name of the field to be searched.
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.IRecordFilter.GenerateRestriction">
+      <summary>
+            Generates a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> that corresponds to this <see cref="T:Gemstone.Data.Model.IRecordFilter" />.
+            </summary>
+      <returns>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>returns</parameter>
+            <parameter>M:Gemstone.Data.Model.IRecordFilter.GenerateRestriction</parameter>
+          </include>
+        </markup>
+      </returns>
+    </member>
+    <member name="P:Gemstone.Data.Model.IRecordFilter.ModelProperty">
+      <summary>
+            The <see cref="T:System.Reflection.PropertyInfo" /> of the Model that this <see cref="T:Gemstone.Data.Model.IRecordFilter" /> applies to.
+            </summary>
+      <remarks>
+            This will return null if the <see cref="T:Gemstone.Data.Model.IRecordFilter" /> is not associated with a Property.
+            </remarks>
+    </member>
+    <member name="P:Gemstone.Data.Model.IRecordFilter.Operator">
+      <summary>
+            The Operator to be used for the Search.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.IRecordFilter.SearchParameter">
+      <summary>
+            The value to be searched for.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.IRecordFilter.SupportsEncrypted">
+      <summary>
+            Indicates whether this <see cref="T:Gemstone.Data.Model.IRecordFilter" /> will work on encrypted fields.
+            </summary>
+    </member>
     <member name="T:Gemstone.Data.Model.ITableOperations">
       <summary>
             Defines a common interface for implementations of <see cref="T:Gemstone.Data.Model.TableOperations`1" />.
@@ -3350,7 +3400,7 @@
       <remarks>
         <para>
             This method is intended to be used in conjunction with calls to the overloads for
-            <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)" /> which are
+            <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction[])" /> which are
             used for record pagination.
             </para>
         <para>
@@ -3566,54 +3616,27 @@
       <param name="record">Record of data to retrieve primary keys from.</param>
       <returns>Primary key values from the specified <paramref name="record" />.</returns>
     </member>
-    <member name="M:Gemstone.Data.Model.ITableOperations.GetSearchRestriction(System.String)">
+    <member name="M:Gemstone.Data.Model.ITableOperations.GetSearchRestrictions(Gemstone.Data.Model.IRecordFilter[])">
       <summary>
-            Generates a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> based on fields marked with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and specified <paramref name="searchText" />.
+            Generates a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> based on <paramref name="recordFilters" />.
             </summary>
-      <param name="searchText">Text to search.</param>
+      <param name="recordFilters">
+        <see cref="T:Gemstone.Data.Model.IRecordFilter" /> to search.</param>
       <returns>
-        <see cref="T:Gemstone.Data.Model.RecordRestriction" /> based on fields marked with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and specified <paramref name="searchText" />.</returns>
+        <see cref="T:Gemstone.Data.Model.RecordRestriction" /> based on fields marked with <see cref="T:Gemstone.Data.Model.SearchableAttribute" />, Property Names and specified <paramref name="recordFilters" />.
+            </returns>
       <remarks>
-            Any fields marked with both <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> will be automatically managed, i.e.,
+            Any fields marked with <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> will be automatically managed, i.e.,
             the returned <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameters will already apply any field based encryption as needed. Database query functions
-            executed for fields marked for encryption will only be searched using <see cref="F:Gemstone.Data.Model.SearchType.FullValueMatch" />, regardless of any otherwise
-            specified value in the <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> as encryption is handled locally. However, the <see cref="M:Gemstone.Data.Model.ITableOperations.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)" /> function
-            can be used to find data in encrypted fields that are marked for search with a <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
+            executed for fields marked for encryption will only be searched using = and =/= , regardless of any otherwise
+            specified value in the <see cref="T:Gemstone.Data.Model.IRecordFilter" /> as encryption is handled locally. However, the <see cref="M:Gemstone.Data.Model.ITableOperations.SearchRecords(System.String,System.Boolean,System.StringComparison,Gemstone.Data.Model.IRecordFilter[])" /> function
+            can be used to find data in encrypted fields that are marked for search with other limits.
             </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.ITableOperations.HasPrimaryKeyIdentityField">
       <summary>
             Gets flag that determines if modeled table has a primary key that is an identity field.
             </summary>
-    </member>
-    <member name="M:Gemstone.Data.Model.ITableOperations.IsSearchMatch(System.Object,System.String[])">
-      <summary>
-            Determines if any <paramref name="record" /> fields modeled with the <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> match any of the
-            specified <paramref name="searchValues" />.
-            </summary>
-      <param name="record">Modeled table record.</param>
-      <param name="searchValues">Values to search.</param>
-      <returns>
-        <c>true</c> if any <paramref name="record" /> fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> match any of the
-            specified <paramref name="searchValues" />; otherwise, <c>false</c>.
-            </returns>
-      <remarks>
-            String comparisons will be ordinal ignoring case.
-            </remarks>
-    </member>
-    <member name="M:Gemstone.Data.Model.ITableOperations.IsSearchMatch(System.Object,System.StringComparison,System.String[])">
-      <summary>
-            Determines if any <paramref name="record" /> fields modeled with the <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> match any of the
-            specified <paramref name="searchValues" />.
-            </summary>
-      <param name="record">Modeled table record.</param>
-      <param name="comparison">
-        <see cref="T:System.StringComparison" /> to use when searching string fields.</param>
-      <param name="searchValues">Values to search.</param>
-      <returns>
-        <c>true</c> if any <paramref name="record" /> fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> match any of the
-            specified <paramref name="searchValues" />; otherwise, <c>false</c>.
-            </returns>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.LoadRecord(System.Data.DataRow)">
       <summary>
@@ -3644,7 +3667,7 @@
             </summary>
       <remarks>
         <para>
-            The <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)" /> overloads that include paging parameters
+            The <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.IRecordFilter[])" /> overloads that include paging parameters
             cache the sorted and filtered primary keys of queried records between calls so that paging is fast and
             efficient. Since the primary keys are cached, an instance of the <see cref="T:Gemstone.Data.Model.TableOperations`1" /> should
             exist per user session when using query functions that support pagination. In web based implementations,
@@ -3708,33 +3731,34 @@
             </para>
       </remarks>
     </member>
-    <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)">
-      <summary>
-            Gets the record count for the specified <paramref name="restriction" /> - or - total record
-            count for the modeled table if <paramref name="restriction" /> is <c>null</c>.
-            </summary>
-      <param name="restriction">Record restriction to apply, if any.</param>
-      <returns>
-            Record count for the specified <paramref name="restriction" /> - or - total record count
-            for the modeled table if <paramref name="restriction" /> is <c>null</c>.
-            </returns>
-      <remarks>
-            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
-            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
-            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
-            returned value so that the field value will be properly set prior to executing the database function.
-            </remarks>
-    </member>
-    <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(System.String)">
+    <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(Gemstone.Data.Model.IRecordFilter[])">
       <summary>
             Gets the record count for the modeled table based on search parameter.
             Search executed against fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" />.
             </summary>
-      <param name="searchText">Text to search.</param>
+      <param name="recordFilter">
+        <see cref="T:Gemstone.Data.Model.IRecordFilter" /> to be filtered by</param>
       <returns>Record count for the modeled table based on search parameter.</returns>
       <remarks>
-            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)" /> where restriction
-            is generated by <see cref="M:Gemstone.Data.Model.ITableOperations.GetSearchRestriction(System.String)" /></remarks>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(Gemstone.Data.Model.RecordRestriction[])" /> where restriction
+            is generated by <see cref="M:Gemstone.Data.Model.ITableOperations.GetSearchRestrictions(Gemstone.Data.Model.IRecordFilter[])" /></remarks>
+    </member>
+    <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(Gemstone.Data.Model.RecordRestriction[])">
+      <summary>
+            Gets the record count for the specified <paramref name="restrictions" /> - or - total record
+            count for the modeled table if <paramref name="restrictions" /> is <c>null</c>.
+            </summary>
+      <param name="restrictions">Record restrictions to apply, if any.</param>
+      <returns>
+            Record count for the specified <paramref name="restrictions" /> - or - total record count
+            for the modeled table if no <see cref="T:Gemstone.Data.Model.RecordRestriction" /> is provided.
+            </returns>
+      <remarks>
+            If any of the <paramref name="restrictions" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecordCountWhere(System.String,System.Object[])">
       <summary>
@@ -3764,7 +3788,7 @@
             will be updated to reflect what is defined in the user model.
             </para>
         <para>
-            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)" />.
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecordCount(Gemstone.Data.Model.RecordRestriction[])" />.
             </para>
       </remarks>
     </member>
@@ -3807,36 +3831,7 @@
             </para>
       </remarks>
     </member>
-    <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)">
-      <summary>
-            Queries database and returns modeled table records for the specified sorting and paging parameters.
-            </summary>
-      <param name="sortField">Field name to order-by.</param>
-      <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
-      <param name="page">Page number of records to return (1-based).</param>
-      <param name="pageSize">Current page size.</param>
-      <param name="restriction">Record restriction to apply, if any.</param>
-      <returns>An enumerable of modeled table row instances for queried records.</returns>
-      <remarks>
-        <para>
-            This function is used for record paging. Primary keys are cached server-side, typically per user session,
-            to maintain desired per-page sort order. Call <see cref="M:Gemstone.Data.Model.ITableOperations.ClearPrimaryKeyCache" /> to manually clear cache
-            when table contents are known to have changed.
-            </para>
-        <para>
-            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
-            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
-            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
-            returned value so that the field value will be properly set prior to executing the database function.
-            </para>
-        <para>
-            If the specified <paramref name="sortField" /> has been marked with <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />,
-            establishing the primary key cache operation will take longer to execute since query data will need to
-            be downloaded locally and decrypted so the proper sort order can be determined.
-            </para>
-      </remarks>
-    </member>
-    <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)">
+    <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.IRecordFilter[])">
       <summary>
             Queries database and returns modeled table records for the specified sorting, paging and search parameters.
             Search executed against fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" />.
@@ -3845,7 +3840,8 @@
       <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
       <param name="page">Page number of records to return (1-based).</param>
       <param name="pageSize">Current page size.</param>
-      <param name="searchText">Text to search.</param>
+      <param name="filters">
+        <see cref="T:Gemstone.Data.Model.IRecordFilter" /> to be applied /&gt;.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
       <remarks>
         <para>
@@ -3859,8 +3855,37 @@
             be downloaded locally and decrypted so the proper sort order can be determined.
             </para>
         <para>
-            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)" /> where restriction
-            is generated by <see cref="M:Gemstone.Data.Model.ITableOperations.GetSearchRestriction(System.String)" /> using <paramref name="searchText" />.
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction[])" /> where restriction
+            is generated by <see cref="M:Gemstone.Data.Model.ITableOperations.GetSearchRestrictions(Gemstone.Data.Model.IRecordFilter[])" /> using <paramref name="filters" />.
+            </para>
+      </remarks>
+    </member>
+    <member name="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction[])">
+      <summary>
+            Queries database and returns modeled table records for the specified sorting and paging parameters.
+            </summary>
+      <param name="sortField">Field name to order-by.</param>
+      <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+      <param name="page">Page number of records to return (1-based).</param>
+      <param name="pageSize">Current page size.</param>
+      <param name="restrictions">Record restrictions to apply, if any.</param>
+      <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            This function is used for record paging. Primary keys are cached server-side, typically per user session,
+            to maintain desired per-page sort order. Call <see cref="M:Gemstone.Data.Model.ITableOperations.ClearPrimaryKeyCache" /> to manually clear cache
+            when table contents are known to have changed.
+            </para>
+        <para>
+            If any of the <paramref name="restrictions" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.ITableOperations.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If the specified <paramref name="sortField" /> has been marked with <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />,
+            establishing the primary key cache operation will take longer to execute since query data will need to
+            be downloaded locally and decrypted so the proper sort order can be determined.
             </para>
       </remarks>
     </member>
@@ -3962,7 +3987,7 @@
             </para>
       </remarks>
     </member>
-    <member name="M:Gemstone.Data.Model.ITableOperations.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)">
+    <member name="M:Gemstone.Data.Model.ITableOperations.SearchRecords(System.String,System.Boolean,System.StringComparison,Gemstone.Data.Model.IRecordFilter[])">
       <summary>
             Locally searches retrieved table records after queried from database for the specified sorting and search parameters.
             Search executed against fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" />.
@@ -3970,16 +3995,16 @@
             </summary>
       <param name="sortField">Field name to order-by.</param>
       <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
-      <param name="searchText">Text to search.</param>
+      <param name="recordFilter">Record Filters to be applied.</param>
       <param name="comparison">
         <see cref="T:System.StringComparison" /> to use when searching string fields; defaults to ordinal ignore case.</param>
       <returns>An array of modeled table row instances for the queried records that match the search.</returns>
       <remarks>
         <para>
-            This function searches records locally after query from database, this way <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> functionality will work
-            even with fields that are modeled with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> and use the <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
+            This function searches records locally after query from database, this way Search functionality will work
+            even with fields that are modeled with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> and use restrictions not being = or =/=.
             Primary keys for this function will not be cached server-side and this function will be slower and more expensive than similar calls
-            to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)" />. Usage should be restricted to cases searching for field data that has
+            to <see cref="M:Gemstone.Data.Model.ITableOperations.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.IRecordFilter[])" />. Usage should be restricted to cases searching for field data that has
             been modeled with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />.
             </para>
         <para>
@@ -4206,6 +4231,90 @@
     <member name="P:Gemstone.Data.Model.PrimaryKeyAttribute.IsIdentity">
       <summary>
             Gets flag that determines if primary key field is an identity field.
+            </summary>
+    </member>
+    <member name="T:Gemstone.Data.Model.RecordFilter`1">
+      <summary>
+            Defines a filter that can be applied to queries.
+            </summary>
+      <typeparam name="T">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>typeparam</parameter>
+            <parameter>T</parameter>
+            <parameter>T:Gemstone.Data.Model.RecordFilter`1</parameter>
+          </include>
+        </markup>
+      </typeparam>
+      <remarks>
+            For Backend Restrictions <see cref="T:Gemstone.Data.Model.RecordRestriction" /> should be used.
+            This is inteded to be used for user initiated seraches and filters in the User Interface.
+            </remarks>
+    </member>
+    <member name="M:Gemstone.Data.Model.RecordFilter`1.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Gemstone.Data.Model.RecordFilter`1</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.RecordFilter`1.FieldName">
+      <summary>
+            Gets or sets the Name of the field to be searched.
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.RecordFilter`1.GenerateRestriction">
+      <summary>
+            Generates a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> that corresponds to this <see cref="T:Gemstone.Data.Model.RecordFilter`1" />.
+            </summary>
+      <returns>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>returns</parameter>
+            <parameter>M:Gemstone.Data.Model.RecordFilter`1.GenerateRestriction</parameter>
+          </include>
+        </markup>
+      </returns>
+    </member>
+    <member name="P:Gemstone.Data.Model.RecordFilter`1.ModelProperty">
+      <summary>
+            The <see cref="T:System.Reflection.PropertyInfo" /> of the Model that this <see cref="T:Gemstone.Data.Model.IRecordFilter" /> applies to.
+            </summary>
+      <remarks>
+            This will return null if the <see cref="T:Gemstone.Data.Model.IRecordFilter" /> is not associated with a Property.
+            </remarks>
+    </member>
+    <member name="P:Gemstone.Data.Model.RecordFilter`1.Operator">
+      <summary>
+             Gets or sets the Operator to be used for the Search.
+             </summary>
+      <remarks>
+        <para>The list of supported operators includes:</para>
+        <list type="bullet">
+          <item>=</item>
+          <item>&lt;&gt;</item>
+          <item>&lt;</item>
+          <item>&gt;</item>
+          <item>IN</item>
+          <item>NOT IN</item>
+          <item>LIKE</item>
+          <item>NOT LIKE</item>
+          <item>&lt;=</item>
+          <item>&gt;=</item>
+        </list>
+      </remarks>
+      <exception cref="T:System.NotSupportedException">Attempted to assign an operator that is not supported.</exception>
+    </member>
+    <member name="P:Gemstone.Data.Model.RecordFilter`1.SearchParameter">
+      <summary>
+            Gets or sets the value to be searched for.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.RecordFilter`1.SupportsEncrypted">
+      <summary>
+            Indicates whether this <see cref="T:Gemstone.Data.Model.RecordFilter`1" /> will work on encrypted fields.
             </summary>
     </member>
     <member name="T:Gemstone.Data.Model.RecordOperation">
@@ -4567,57 +4676,56 @@
     </member>
     <member name="T:Gemstone.Data.Model.SearchableAttribute">
       <summary>
-            Defines an attribute that will mark a property as a searchable field for a modeled table.
-            </summary>
-    </member>
-    <member name="M:Gemstone.Data.Model.SearchableAttribute.#ctor">
-      <summary>
-            Creates a new <see cref="T:Gemstone.Data.Model.SearchableAttribute" />.
-            </summary>
-    </member>
-    <member name="M:Gemstone.Data.Model.SearchableAttribute.#ctor(Gemstone.Data.Model.SearchType)">
-      <summary>
-            Creates a new <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> with specified <paramref name="searchType" />.
-            </summary>
-      <param name="searchType">Type of search that should be used for field queried.</param>
-      <remarks>
-            Database query functions executed against modeled fields marked with both <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and
-            <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> will only be searched using <see cref="F:Gemstone.Data.Model.SearchType.FullValueMatch" />,
-            regardless of specified <paramref name="searchType" /> as encryption is handled locally by instances of the
-            <see cref="T:Gemstone.Data.Model.TableOperations`1" />. However, the <see cref="M:Gemstone.Data.Model.TableOperations`1.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)" /> function can be used
-            to find data in encrypted fields that are marked for search with a <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
-            </remarks>
-    </member>
-    <member name="P:Gemstone.Data.Model.SearchableAttribute.SearchType">
-      <summary>
-            Gets or sets type of search that should be used for field queried.
+            Defines an attribute that will mark additional fields in the database as searchable field.
             </summary>
       <remarks>
-            Database query functions executed against modeled fields marked with both <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and
-            <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> will only be searched using <see cref="F:Gemstone.Data.Model.SearchType.FullValueMatch" />,
-            regardless of specified value as encryption is handled locally by <see cref="T:Gemstone.Data.Model.TableOperations`1" />. However, the
-            <see cref="M:Gemstone.Data.Model.TableOperations`1.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)" /> function can be used to find data in encrypted fields that are
-            marked for search with a <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
+            All modeled fields are automatically searchable so this only applies to fields that are not modeled.
             </remarks>
     </member>
-    <member name="T:Gemstone.Data.Model.SearchType">
+    <member name="M:Gemstone.Data.Model.SearchableAttribute.#ctor(System.String[])">
       <summary>
-            Represents types of searches available for <see cref="T:Gemstone.Data.Model.SearchableAttribute" />.
+            Defines an attribute that will mark additional fields in the database as searchable field.
+            </summary>
+      <param name="fields">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>fields</parameter>
+            <parameter>M:Gemstone.Data.Model.SearchableAttribute.#ctor(System.String[])</parameter>
+          </include>
+        </markup>
+      </param>
+      <remarks>
+            All modeled fields are automatically searchable so this only applies to fields that are not modeled.
+            </remarks>
+    </member>
+    <member name="P:Gemstone.Data.Model.SearchableAttribute.FieldNames">
+      <summary>
+            The FieldNames that are searchable.
             </summary>
     </member>
-    <member name="F:Gemstone.Data.Model.SearchType.Default">
+    <member name="T:Gemstone.Data.Model.SearchExtensionAttribute">
       <summary>
-            Use default search type for field type.
+            Defines an attribute that marks methods that are used to transform <see cref="T:Gemstone.Data.Model.IRecordFilter" /> into <see cref="T:Gemstone.Data.Model.RecordRestriction" />.
             </summary>
     </member>
-    <member name="F:Gemstone.Data.Model.SearchType.LikeExpression">
+    <member name="M:Gemstone.Data.Model.SearchExtensionAttribute.#ctor(System.String)">
       <summary>
-            Use SQL LIKE expression to match field.
+            Defines an attribute that marks methods that are used to transform <see cref="T:Gemstone.Data.Model.IRecordFilter" /> into <see cref="T:Gemstone.Data.Model.RecordRestriction" />.
             </summary>
+      <param name="fieldMatch">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>fieldMatch</parameter>
+            <parameter>M:Gemstone.Data.Model.SearchExtensionAttribute.#ctor(System.String)</parameter>
+          </include>
+        </markup>
+      </param>
     </member>
-    <member name="F:Gemstone.Data.Model.SearchType.FullValueMatch">
+    <member name="P:Gemstone.Data.Model.SearchExtensionAttribute.FieldMatch">
       <summary>
-            Match full text of field.
+            The string used to match FieldNames this applies to.
             </summary>
     </member>
     <member name="T:Gemstone.Data.Model.StatementTypes">
@@ -4699,7 +4807,7 @@
         <para>
             The <paramref name="customTokens" /> can be used to apply run-time tokens to any defined <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> values,
             for example, given the following amendment expression applied to a modeled class:
-            <code>
+            <code language="cs">
             [AmendExpression("TOP {count}", 
                 TargetExpression = TargetExpression.FieldList,
                 AffixPosition = AffixPosition.Prefix,
@@ -4838,7 +4946,7 @@
       <remarks>
         <para>
             This method is intended to be used in conjunction with calls to the overloads for
-            <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)" /> which are
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction[])" /> which are
             used for record pagination.
             </para>
         <para>
@@ -5059,54 +5167,25 @@
       <param name="record">Record of data to retrieve primary keys from.</param>
       <returns>Primary key values from the specified <paramref name="record" />.</returns>
     </member>
-    <member name="M:Gemstone.Data.Model.TableOperations`1.GetSearchRestriction(System.String)">
+    <member name="M:Gemstone.Data.Model.TableOperations`1.GetSearchRestrictions(Gemstone.Data.Model.IRecordFilter[])">
       <summary>
-            Generates a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> based on fields marked with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and specified <paramref name="searchText" />.
+            Generates a <see cref="T:Gemstone.Data.Model.RecordRestriction" /> based on <paramref name="recordFilters" />.
             </summary>
-      <param name="searchText">Text to search.</param>
+      <param name="recordFilters">Filters to be used.</param>
       <returns>
-        <see cref="T:Gemstone.Data.Model.RecordRestriction" /> based on fields marked with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and specified <paramref name="searchText" />.</returns>
+        <see cref="T:Gemstone.Data.Model.RecordRestriction" /> based on specified <paramref name="recordFilters" />.</returns>
       <remarks>
-            Any fields marked with both <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> and <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> will be automatically managed, i.e.,
+            Any fields marked with <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> will be automatically managed, i.e.,
             the returned <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameters will already apply any field based encryption as needed. Database query functions
-            executed for fields marked for encryption will only be searched using <see cref="F:Gemstone.Data.Model.SearchType.FullValueMatch" />, regardless of any otherwise
-            specified value in the <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> as encryption is handled locally. However, the <see cref="M:Gemstone.Data.Model.TableOperations`1.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)" /> function
-            can be used to find data in encrypted fields that are marked for search with a <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
+            executed for fields marked for encryption will only be searched using =, =/=, regardless of any otherwise
+            specified value in the <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> as encryption is handled locally. However, the <see cref="M:Gemstone.Data.Model.TableOperations`1.SearchRecords(System.String,System.Boolean,System.StringComparison,Gemstone.Data.Model.IRecordFilter[])" /> function
+            can be used to find data in encrypted fields.
             </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.HasPrimaryKeyIdentityField">
       <summary>
             Gets flag that determines if modeled table has a primary key that is an identity field.
             </summary>
-    </member>
-    <member name="M:Gemstone.Data.Model.TableOperations`1.IsSearchMatch(`0,System.String[])">
-      <summary>
-            Determines if any <paramref name="record" /> fields modeled with the <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> match any of the
-            specified <paramref name="searchValues" />.
-            </summary>
-      <param name="record">Modeled table record.</param>
-      <param name="searchValues">Values to search.</param>
-      <returns>
-        <c>true</c> if any <paramref name="record" /> fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> match any of the
-            specified <paramref name="searchValues" />; otherwise, <c>false</c>.
-            </returns>
-      <remarks>
-            String comparisons will be ordinal ignoring case.
-            </remarks>
-    </member>
-    <member name="M:Gemstone.Data.Model.TableOperations`1.IsSearchMatch(`0,System.StringComparison,System.String[])">
-      <summary>
-            Determines if any <paramref name="record" /> fields modeled with the <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> match any of the
-            specified <paramref name="searchValues" />.
-            </summary>
-      <param name="record">Modeled table record.</param>
-      <param name="comparison">
-        <see cref="T:System.StringComparison" /> to use when searching string fields.</param>
-      <param name="searchValues">Values to search.</param>
-      <returns>
-        <c>true</c> if any <paramref name="record" /> fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> match any of the
-            specified <paramref name="searchValues" />; otherwise, <c>false</c>.
-            </returns>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.LoadRecord(System.Data.DataRow)">
       <summary>
@@ -5158,7 +5237,7 @@
             </summary>
       <remarks>
         <para>
-            The <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)" /> overloads that include paging parameters
+            The <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.IRecordFilter[])" /> overloads that include paging parameters
             cache the sorted and filtered primary keys of queried records between calls so that paging is fast and
             efficient. Since the primary keys are cached, an instance of the <see cref="T:Gemstone.Data.Model.TableOperations`1" /> should
             exist per user session when using query functions that support pagination. In web based implementations,
@@ -5222,33 +5301,33 @@
             </para>
       </remarks>
     </member>
-    <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)">
-      <summary>
-            Gets the record count for the specified <paramref name="restriction" /> - or - total record
-            count for the modeled table if <paramref name="restriction" /> is <c>null</c>.
-            </summary>
-      <param name="restriction">Record restriction to apply, if any.</param>
-      <returns>
-            Record count for the specified <paramref name="restriction" /> - or - total record count
-            for the modeled table if <paramref name="restriction" /> is <c>null</c>.
-            </returns>
-      <remarks>
-            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
-            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
-            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
-            returned value so that the field value will be properly set prior to executing the database function.
-            </remarks>
-    </member>
-    <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(System.String)">
+    <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(Gemstone.Data.Model.IRecordFilter[])">
       <summary>
             Gets the record count for the modeled table based on search parameter.
             Search executed against fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" />.
             </summary>
-      <param name="searchText">Text to search.</param>
+      <param name="recordFilter">Text to search.</param>
       <returns>Record count for the modeled table based on search parameter.</returns>
       <remarks>
-            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)" /> where restriction
-            is generated by <see cref="M:Gemstone.Data.Model.TableOperations`1.GetSearchRestriction(System.String)" /></remarks>
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(Gemstone.Data.Model.RecordRestriction[])" /> where restriction
+            is generated by <see cref="M:Gemstone.Data.Model.TableOperations`1.GetSearchRestrictions(Gemstone.Data.Model.IRecordFilter[])" /></remarks>
+    </member>
+    <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(Gemstone.Data.Model.RecordRestriction[])">
+      <summary>
+            Gets the record count for the specified <paramref name="restrictions" /> - or - total record
+            count for the modeled table if <paramref name="restrictions" /> is <c>null</c>.
+            </summary>
+      <param name="restrictions">Record restriction to apply, if any.</param>
+      <returns>
+            Record count for the specified <paramref name="restrictions" /> - or - total record count
+            for the modeled table if <paramref name="restrictions" /> is <c>null</c>.
+            </returns>
+      <remarks>
+            If any of the <paramref name="restrictions" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCountWhere(System.String,System.Object[])">
       <summary>
@@ -5278,7 +5357,7 @@
             will be updated to reflect what is defined in the user model.
             </para>
         <para>
-            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(Gemstone.Data.Model.RecordRestriction)" />.
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(Gemstone.Data.Model.RecordRestriction[])" />.
             </para>
       </remarks>
     </member>
@@ -5321,36 +5400,7 @@
             </para>
       </remarks>
     </member>
-    <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)">
-      <summary>
-            Queries database and returns modeled table records for the specified sorting and paging parameters.
-            </summary>
-      <param name="sortField">Field name to order-by.</param>
-      <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
-      <param name="page">Page number of records to return (1-based).</param>
-      <param name="pageSize">Current page size.</param>
-      <param name="restriction">Record restriction to apply, if any.</param>
-      <returns>An enumerable of modeled table row instances for queried records.</returns>
-      <remarks>
-        <para>
-            This function is used for record paging. Primary keys are cached server-side, typically per user session,
-            to maintain desired per-page sort order. Call <see cref="M:Gemstone.Data.Model.TableOperations`1.ClearPrimaryKeyCache" /> to manually clear cache
-            when table contents are known to have changed.
-            </para>
-        <para>
-            If any of the <paramref name="restriction" /> parameters reference a table field that is modeled with
-            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
-            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
-            returned value so that the field value will be properly set prior to executing the database function.
-            </para>
-        <para>
-            If the specified <paramref name="sortField" /> has been marked with <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />,
-            establishing the primary key cache operation will take longer to execute since query data will need to
-            be downloaded locally and decrypted so the proper sort order can be determined.
-            </para>
-      </remarks>
-    </member>
-    <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)">
+    <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.IRecordFilter[])">
       <summary>
             Queries database and returns modeled table records for the specified sorting, paging and search parameters.
             Search executed against fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" />.
@@ -5359,7 +5409,7 @@
       <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
       <param name="page">Page number of records to return (1-based).</param>
       <param name="pageSize">Current page size.</param>
-      <param name="searchText">Text to search.</param>
+      <param name="recordFilter">Record Filters to be applied.</param>
       <returns>An enumerable of modeled table row instances for queried records.</returns>
       <remarks>
         <para>
@@ -5373,8 +5423,37 @@
             be downloaded locally and decrypted so the proper sort order can be determined.
             </para>
         <para>
-            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction)" /> where restriction
-            is generated by <see cref="M:Gemstone.Data.Model.TableOperations`1.GetSearchRestriction(System.String)" /> using <paramref name="searchText" />.
+            This is a convenience call to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction[])" /> where restriction
+            is generated by <see cref="M:Gemstone.Data.Model.TableOperations`1.GetSearchRestrictions(Gemstone.Data.Model.IRecordFilter[])" /> using <paramref name="recordFilter" />.
+            </para>
+      </remarks>
+    </member>
+    <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.RecordRestriction[])">
+      <summary>
+            Queries database and returns modeled table records for the specified sorting and paging parameters.
+            </summary>
+      <param name="sortField">Field name to order-by.</param>
+      <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+      <param name="page">Page number of records to return (1-based).</param>
+      <param name="pageSize">Current page size.</param>
+      <param name="restrictions">Record restriction to apply, if any.</param>
+      <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            This function is used for record paging. Primary keys are cached server-side, typically per user session,
+            to maintain desired per-page sort order. Call <see cref="M:Gemstone.Data.Model.TableOperations`1.ClearPrimaryKeyCache" /> to manually clear cache
+            when table contents are known to have changed.
+            </para>
+        <para>
+            If any of the <paramref name="restrictions" /> parameters reference a table field that is modeled with
+            either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
+            <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
+            returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+        <para>
+            If the specified <paramref name="sortField" /> has been marked with <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />,
+            establishing the primary key cache operation will take longer to execute since query data will need to
+            be downloaded locally and decrypted so the proper sort order can be determined.
             </para>
       </remarks>
     </member>
@@ -5476,7 +5555,7 @@
             </para>
       </remarks>
     </member>
-    <member name="M:Gemstone.Data.Model.TableOperations`1.SearchRecords(System.String,System.Boolean,System.String,System.StringComparison)">
+    <member name="M:Gemstone.Data.Model.TableOperations`1.SearchRecords(System.String,System.Boolean,System.StringComparison,Gemstone.Data.Model.IRecordFilter[])">
       <summary>
             Locally searches retrieved table records after queried from database for the specified sorting and search parameters.
             Search executed against fields modeled with <see cref="T:Gemstone.Data.Model.SearchableAttribute" />.
@@ -5484,16 +5563,16 @@
             </summary>
       <param name="sortField">Field name to order-by.</param>
       <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
-      <param name="searchText">Text to search.</param>
+      <param name="recordFilters">Record Filters to be applied.</param>
       <param name="comparison">
         <see cref="T:System.StringComparison" /> to use when searching string fields; defaults to ordinal ignore case.</param>
       <returns>An array of modeled table row instances for the queried records that match the search.</returns>
       <remarks>
         <para>
-            This function searches records locally after query from database, this way <see cref="T:Gemstone.Data.Model.SearchableAttribute" /> functionality will work
-            even with fields that are modeled with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> and use the <see cref="F:Gemstone.Data.Model.SearchType.LikeExpression" />.
+            This function searches records locally after query from database, this way Search functionality will work
+            even with fields that are modeled with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> and use restrictions not being = or =/=.
             Primary keys for this function will not be cached server-side and this function will be slower and more expensive than similar calls
-            to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,System.String)" />. Usage should be restricted to cases searching for field data that has
+            to <see cref="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32,Gemstone.Data.Model.IRecordFilter[])" />. Usage should be restricted to cases searching for field data that has
             been modeled with the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />.
             </para>
         <para>

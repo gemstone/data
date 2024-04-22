@@ -27,59 +27,59 @@ using Microsoft.Extensions.Configuration;
 
 namespace Gemstone.Data;
 
-/// <summary>
-/// Defines data specific system settings for an application.
-/// </summary>
-public class Settings : Configuration.Settings
-{
-    /// <summary>
-    /// Default value for <see cref="ConnectionString"/> property.
-    /// </summary>
-    public const string DefaultConnectionString = "Data Source=localhost; Initial Catalog=gemstone; Integrated Security=SSPI";
+///// <summary>
+///// Defines data specific system settings for an application.
+///// </summary>
+//public class Settings : Configuration.Settings
+//{
+//    /// <summary>
+//    /// Default value for <see cref="ConnectionString"/> property.
+//    /// </summary>
+//    public const string DefaultConnectionString = "Data Source=localhost; Initial Catalog=gemstone; Integrated Security=SSPI";
 
-    /// <summary>
-    /// Default value for <see cref="DataProviderString"/> property.
-    /// </summary>
-    public const string DefaultDataProviderString = "AssemblyName=Microsoft.Data.SqlClient; ConnectionType=Microsoft.Data.SqlClient.SqlConnection";
+//    /// <summary>
+//    /// Default value for <see cref="DataProviderString"/> property.
+//    /// </summary>
+//    public const string DefaultDataProviderString = "AssemblyName=Microsoft.Data.SqlClient; ConnectionType=Microsoft.Data.SqlClient.SqlConnection";
 
-    /// <summary>
-    /// Gets or sets the connection string used to connect to the data source.
-    /// </summary>
-    public string ConnectionString { get; set; } = DefaultConnectionString;
+//    /// <summary>
+//    /// Gets or sets the connection string used to connect to the data source.
+//    /// </summary>
+//    public string ConnectionString { get; set; } = DefaultConnectionString;
 
-    /// <summary>
-    /// Gets or sets the data provider string used to connect to the data source.
-    /// </summary>
-    public string DataProviderString { get; set; } = DefaultDataProviderString;
+//    /// <summary>
+//    /// Gets or sets the data provider string used to connect to the data source.
+//    /// </summary>
+//    public string DataProviderString { get; set; } = DefaultDataProviderString;
 
-    /// <inheritdoc/>
-    public override void Initialize(IConfiguration configuration)
-    {
-        base.Initialize(configuration);
+//    /// <inheritdoc/>
+//    public override void Initialize(IConfiguration configuration)
+//    {
+//        base.Initialize(configuration);
 
-        IConfigurationSection settings = Configuration.GetSection(SystemSettings);
+//        IConfigurationSection settings = Configuration.GetSection(SystemSettings);
 
-        ConnectionString = settings[nameof(ConnectionString)].ToNonNullNorWhiteSpace(DefaultConnectionString);
-        DataProviderString = settings[nameof(DataProviderString)].ToNonNullNorWhiteSpace(DefaultDataProviderString);
-    }
+//        ConnectionString = settings[nameof(ConnectionString)].ToNonNullNorWhiteSpace(DefaultConnectionString);
+//        DataProviderString = settings[nameof(DataProviderString)].ToNonNullNorWhiteSpace(DefaultDataProviderString);
+//    }
 
-    /// <summary>
-    /// Configures the <see cref="IAppSettingsBuilder"/> for <see cref="Settings"/>.
-    /// </summary>
-    /// <param name="builder">Builder used to configure settings.</param>
-    public virtual void ConfigureAppSettings(IAppSettingsBuilder builder)
-    {
-        builder.Add($"{SystemSettings}:{nameof(ConnectionString)}", DefaultConnectionString, "Defines the connection string used to connect to the data source.");
-        builder.Add($"{SystemSettings}:{nameof(DataProviderString)}", DefaultDataProviderString, "Defines the data provider string used to connect to the data source.");
+//    /// <summary>
+//    /// Configures the <see cref="IAppSettingsBuilder"/> for <see cref="Settings"/>.
+//    /// </summary>
+//    /// <param name="builder">Builder used to configure settings.</param>
+//    public virtual void ConfigureAppSettings(IAppSettingsBuilder builder)
+//    {
+//        builder.Add($"{SystemSettings}:{nameof(ConnectionString)}", DefaultConnectionString, "Defines the connection string used to connect to the data source.");
+//        builder.Add($"{SystemSettings}:{nameof(DataProviderString)}", DefaultDataProviderString, "Defines the data provider string used to connect to the data source.");
 
-        SwitchMappings[$"--{nameof(ConnectionString)}"] = $"{SystemSettings}:{nameof(ConnectionString)}";
-        SwitchMappings[$"--{nameof(DataProviderString)}"] = $"{SystemSettings}:{nameof(DataProviderString)}";
-        SwitchMappings["-c"] = $"{SystemSettings}:{nameof(ConnectionString)}";
-        SwitchMappings["-p"] = $"{SystemSettings}:{nameof(DataProviderString)}";
-    }
+//        SwitchMappings[$"--{nameof(ConnectionString)}"] = $"{SystemSettings}:{nameof(ConnectionString)}";
+//        SwitchMappings[$"--{nameof(DataProviderString)}"] = $"{SystemSettings}:{nameof(DataProviderString)}";
+//        SwitchMappings["-c"] = $"{SystemSettings}:{nameof(ConnectionString)}";
+//        SwitchMappings["-p"] = $"{SystemSettings}:{nameof(DataProviderString)}";
+//    }
 
-    /// <summary>
-    /// Gets the default instance of <see cref="Settings"/>.
-    /// </summary>
-    public new static Settings Instance => (Settings)Gemstone.Configuration.Settings.Instance;
-}
+//    /// <summary>
+//    /// Gets the default instance of <see cref="Settings"/>.
+//    /// </summary>
+//    public new static Settings Instance => (Settings)Gemstone.Configuration.Settings.Instance;
+//}

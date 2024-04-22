@@ -20,7 +20,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>GPA;Gemstone;library;data</PackageTags>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <Nullable>enable</Nullable>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -40,6 +40,8 @@
 
   <PropertyGroup Condition="'$(Configuration)'=='Development'">
     <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -61,11 +63,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\src\Gemstone\Gemstone.Common.csproj" Condition="'$(Configuration)'=='Development'" />
-    <PackageReference Include="Gemstone.Common" Version="1.0.108" Condition="'$(Configuration)'!='Development'" />
+    <PackageReference Include="Gemstone.Common" Version="1.0.110" Condition="'$(Configuration)'!='Development'" />
     <ProjectReference Include="..\..\..\configuration\src\Gemstone.Configuration\Gemstone.Configuration.csproj" />
 
     <ProjectReference Include="..\..\..\configuration\src\Gemstone.Configuration\Gemstone.Configuration.csproj" Condition="'$(Configuration)'=='Development'" />
-    <PackageReference Include="Gemstone.Configuration" Version="1.0.108" Condition="'$(Configuration)'!='Development'" />
+    <PackageReference Include="Gemstone.Configuration" Version="1.0.110" Condition="'$(Configuration)'!='Development'" />
 
     <ProjectReference Include="..\..\..\expressions\src\Gemstone.Expressions\Gemstone.Expressions.csproj" Condition="'$(Configuration)'=='Development'" />
     <PackageReference Include="Gemstone.Expressions" Version="1.0.110" Condition="'$(Configuration)'!='Development'" />

@@ -54,6 +54,6 @@ public class SchemaMigrationAttribute : MigrationAttribute
     
     private static long CalculateValue(int branchNumber, int year, int month, int day)
     {
-        return branchNumber * 1000000000000L + year * 100000000L + month * 1000000L + day * 10000L;
+        return branchNumber * 10000_00_00_0000L + year * 100_00_0000L + month * 100_0000L + day * 10000L;
     }
 }

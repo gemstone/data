@@ -23,56 +23,55 @@
 
 using System.Reflection;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an interface for a filter that can be applied to queries.
+/// </summary>
+/// <remarks>
+/// For Backend Restrictions <see cref="RecordRestriction"/> should be used.
+/// This is inteded to be used for user initiated seraches and filters in the User Interface.
+/// </remarks>
+public interface IRecordFilter
 {
+    #region [ Properties ]
+
     /// <summary>
-    /// Defines an interface for a filter that can be applied to queries.
+    /// The Name of the field to be searched.
+    /// </summary>
+    string FieldName { get; set; }
+
+    /// <summary>
+    /// The value to be searched for.
+    /// </summary>
+    object? SearchParameter { get; set; }
+
+    /// <summary>
+    /// The Operator to be used for the Search.
+    /// </summary>
+    public string Operator { get; set; }
+
+    /// <summary>
+    /// Indicates whether this <see cref="IRecordFilter"/> will work on encrypted fields.
+    /// </summary>
+    public bool SupportsEncrypted { get; }
+
+    /// <summary>
+    /// The <see cref="PropertyInfo"/> of the Model that this <see cref="IRecordFilter"/> applies to.
     /// </summary>
     /// <remarks>
-    /// For Backend Restrictions <see cref="RecordRestriction"/> should be used.
-    /// This is inteded to be used for user initiated seraches and filters in the User Interface.
+    /// This will return null if the <see cref="IRecordFilter"/> is not associated with a Property.
     /// </remarks>
-    public interface IRecordFilter
-    {
-        #region [ Properties ]
+    public PropertyInfo? ModelProperty { get; }
 
-        /// <summary>
-        /// The Name of the field to be searched.
-        /// </summary>
-        string FieldName { get; set; }
+    #endregion
 
-        /// <summary>
-        /// The value to be searched for.
-        /// </summary>
-        object? SearchParameter { get; set; }
+    #region [ Methods ]
 
-        /// <summary>
-        /// The Operator to be used for the Search.
-        /// </summary>
-        public string Operator { get; set; }
-
-        /// <summary>
-        /// Indicates whether this <see cref="IRecordFilter"/> will work on encrypted fields.
-        /// </summary>
-        public bool SupportsEncrypted { get; }
-
-        /// <summary>
-        /// The <see cref="PropertyInfo"/> of the Model that this <see cref="IRecordFilter"/> applies to.
-        /// </summary>
-        /// <remarks>
-        /// This will return null if the <see cref="IRecordFilter"/> is not associated with a Property.
-        /// </remarks>
-        public PropertyInfo? ModelProperty { get; }
-
-        #endregion
-
-        #region [ Methods ]
-
-        /// <summary>
-        /// Generates a <see cref="RecordRestriction"/> that corresponds to this <see cref="IRecordFilter"/>.
-        /// </summary>
-        public RecordRestriction GenerateRestriction();
+    /// <summary>
+    /// Generates a <see cref="RecordRestriction"/> that corresponds to this <see cref="IRecordFilter"/>.
+    /// </summary>
+    public RecordRestriction GenerateRestriction();
         
-        #endregion
-    }
+    #endregion
 }

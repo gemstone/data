@@ -23,29 +23,28 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that will allows a top number of results to be returned when queried
+/// </summary>
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class PageSizeAttribute : Attribute
 {
     /// <summary>
-    /// Defines an attribute that will allows a top number of results to be returned when queried
+    /// Gets field name to use for property.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class PageSizeAttribute : Attribute
+    public int Limit
     {
-        /// <summary>
-        /// Gets field name to use for property.
-        /// </summary>
-        public int Limit
-        {
-            get;
-        }
+        get;
+    }
 
-        /// <summary>
-        /// Creates a new <see cref="PageSizeAttribute"/>.
-        /// </summary>
-        /// <param name="limit">Number of top records to return per Page.</param>
-        public PageSizeAttribute(int limit)
-        {
+    /// <summary>
+    /// Creates a new <see cref="PageSizeAttribute"/>.
+    /// </summary>
+    /// <param name="limit">Number of top records to return per Page.</param>
+    public PageSizeAttribute(int limit)
+    {
             Limit = limit;
         }
-    }
 }

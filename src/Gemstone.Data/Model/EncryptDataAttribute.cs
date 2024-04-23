@@ -25,47 +25,46 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that provides encryption of text field contents for a modeled table.
+/// </summary>
+/// <remarks>
+/// Application of attribute is only valid on <see cref="string"/> properties; attribute will be
+/// ignored if applied to properties of other types.
+/// </remarks>
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class EncryptDataAttribute : Attribute
 {
     /// <summary>
-    /// Defines an attribute that provides encryption of text field contents for a modeled table.
+    /// Default key reference value.
     /// </summary>
-    /// <remarks>
-    /// Application of attribute is only valid on <see cref="string"/> properties; attribute will be
-    /// ignored if applied to properties of other types.
-    /// </remarks>
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class EncryptDataAttribute : Attribute
+    public const string DefaultKeyReference = "DefaultTableOperationsKey";
+
+    /// <summary>
+    /// Gets reference name used to lookup encryption key and initialization vector;
+    /// new keys will be created for reference if it does not exist.
+    /// </summary>
+    public string KeyReference { get; }
+
+    /// <summary>
+    /// Creates a new <see cref="EncryptDataAttribute"/>.
+    /// </summary>
+    public EncryptDataAttribute()
     {
-        /// <summary>
-        /// Default key reference value.
-        /// </summary>
-        public const string DefaultKeyReference = "DefaultTableOperationsKey";
-
-        /// <summary>
-        /// Gets reference name used to lookup encryption key and initialization vector;
-        /// new keys will be created for reference if it does not exist.
-        /// </summary>
-        public string KeyReference { get; }
-
-        /// <summary>
-        /// Creates a new <see cref="EncryptDataAttribute"/>.
-        /// </summary>
-        public EncryptDataAttribute()
-        {
             KeyReference = DefaultKeyReference;
         }
 
-        /// <summary>
-        /// Creates a new <see cref="EncryptDataAttribute"/> with a specified <paramref name="keyReference"/> value.
-        /// </summary>
-        /// <param name="keyReference">Reference name used to lookup encryption key and initialization vector.</param>
-        public EncryptDataAttribute(string keyReference)
-        {
+    /// <summary>
+    /// Creates a new <see cref="EncryptDataAttribute"/> with a specified <paramref name="keyReference"/> value.
+    /// </summary>
+    /// <param name="keyReference">Reference name used to lookup encryption key and initialization vector.</param>
+    public EncryptDataAttribute(string keyReference)
+    {
             if (string.IsNullOrWhiteSpace(keyReference))
                 throw new ArgumentNullException(nameof(keyReference), "Key reference cannot be null, empty or whitespace.");
 
             KeyReference = keyReference;
         }
-    }
 }

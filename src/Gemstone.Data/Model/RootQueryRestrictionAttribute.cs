@@ -26,93 +26,92 @@
 using System;
 using System.Data;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that will mark a modeled table with a record restriction that applies
+/// to all query functions for modeled <see cref="TableOperations{T}"/>.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class RootQueryRestrictionAttribute : Attribute
 {
+    #region [ Members ]
+
+    // Fields
+
     /// <summary>
-    /// Defines an attribute that will mark a modeled table with a record restriction that applies
-    /// to all query functions for modeled <see cref="TableOperations{T}"/>.
+    /// Defines filter SQL expression for restriction as a composite format string - does not
+    /// include WHERE. When escaping is needed for field names, use standard ANSI quotes.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class RootQueryRestrictionAttribute : Attribute
+    /// <remarks>
+    /// <para>
+    /// Each indexed parameter, e.g., "{0}", in the composite format string will be converted into
+    /// query parameters where each of the corresponding values in the <see cref="Parameters"/>
+    /// collection will be applied as <see cref="IDbDataParameter"/> values to an executed
+    /// <see cref="IDbCommand"/> query.
+    /// </para>
+    /// <para>
+    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
+    /// will be updated to reflect what is defined in the user model.
+    /// </para>
+    /// </remarks>
+    public readonly string FilterExpression;
+
+    /// <summary>
+    /// Defines restriction parameter values.
+    /// </summary>
+    public readonly object?[] Parameters;
+
+    /// <summary>
+    /// Gets or sets flag that determines if root query restriction should be applied to update operations.
+    /// </summary>
+    /// <remarks>
+    /// If root query restriction only references primary key fields, then this property value should
+    /// be set to <c>false</c> since default update operations for a modeled record already work against
+    /// primary key fields.
+    /// </remarks>
+    public bool ApplyToUpdates;
+
+    /// <summary>
+    /// Gets or sets flag that determines if root query restriction should be applied to delete operations.
+    /// </summary>
+    /// <remarks>
+    /// If root query restriction only references primary key fields, then this property value should
+    /// be set to <c>false</c> since default delete operations for a modeled record already work against
+    /// primary key fields.
+    /// </remarks>
+    public bool ApplyToDeletes;
+
+    #endregion
+
+    #region [ Constructors ]
+
+    /// <summary>
+    /// Creates a new parameterized <see cref="RootQueryRestrictionAttribute"/> with the specified
+    /// SQL filter expression and parameters.
+    /// </summary>
+    /// <param name="filterExpression">
+    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
+    /// When escaping is needed for field names, use standard ANSI quotes.
+    /// </param>
+    /// <param name="parameters">Restriction parameter values.</param>
+    /// <remarks>
+    /// <para>
+    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
+    /// will be converted into query parameters where each of the corresponding values in the
+    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
+    /// values to an executed <see cref="IDbCommand"/> query.
+    /// </para>
+    /// <para>
+    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
+    /// will be updated to reflect what is defined in the user model.
+    /// </para>
+    /// </remarks>
+    public RootQueryRestrictionAttribute(string filterExpression, params object?[]? parameters)
     {
-        #region [ Members ]
-
-        // Fields
-
-        /// <summary>
-        /// Defines filter SQL expression for restriction as a composite format string - does not
-        /// include WHERE. When escaping is needed for field names, use standard ANSI quotes.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// Each indexed parameter, e.g., "{0}", in the composite format string will be converted into
-        /// query parameters where each of the corresponding values in the <see cref="Parameters"/>
-        /// collection will be applied as <see cref="IDbDataParameter"/> values to an executed
-        /// <see cref="IDbCommand"/> query.
-        /// </para>
-        /// <para>
-        /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
-        /// will be updated to reflect what is defined in the user model.
-        /// </para>
-        /// </remarks>
-        public readonly string FilterExpression;
-
-        /// <summary>
-        /// Defines restriction parameter values.
-        /// </summary>
-        public readonly object?[] Parameters;
-
-        /// <summary>
-        /// Gets or sets flag that determines if root query restriction should be applied to update operations.
-        /// </summary>
-        /// <remarks>
-        /// If root query restriction only references primary key fields, then this property value should
-        /// be set to <c>false</c> since default update operations for a modeled record already work against
-        /// primary key fields.
-        /// </remarks>
-        public bool ApplyToUpdates;
-
-        /// <summary>
-        /// Gets or sets flag that determines if root query restriction should be applied to delete operations.
-        /// </summary>
-        /// <remarks>
-        /// If root query restriction only references primary key fields, then this property value should
-        /// be set to <c>false</c> since default delete operations for a modeled record already work against
-        /// primary key fields.
-        /// </remarks>
-        public bool ApplyToDeletes;
-
-        #endregion
-
-        #region [ Constructors ]
-
-        /// <summary>
-        /// Creates a new parameterized <see cref="RootQueryRestrictionAttribute"/> with the specified
-        /// SQL filter expression and parameters.
-        /// </summary>
-        /// <param name="filterExpression">
-        /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
-        /// When escaping is needed for field names, use standard ANSI quotes.
-        /// </param>
-        /// <param name="parameters">Restriction parameter values.</param>
-        /// <remarks>
-        /// <para>
-        /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
-        /// will be converted into query parameters where each of the corresponding values in the
-        /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
-        /// values to an executed <see cref="IDbCommand"/> query.
-        /// </para>
-        /// <para>
-        /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
-        /// will be updated to reflect what is defined in the user model.
-        /// </para>
-        /// </remarks>
-        public RootQueryRestrictionAttribute(string filterExpression, params object?[]? parameters)
-        {
-            FilterExpression = filterExpression ?? throw new ArgumentNullException(nameof(filterExpression));
-            Parameters = parameters ?? Array.Empty<object>();
-        }
-
-        #endregion
+        FilterExpression = filterExpression ?? throw new ArgumentNullException(nameof(filterExpression));
+        Parameters = parameters ?? Array.Empty<object>();
     }
+
+    #endregion
 }

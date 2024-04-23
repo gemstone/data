@@ -23,29 +23,28 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that will allow setting GET function roles for a modeled table.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public sealed class GetRolesAttribute : Attribute
 {
     /// <summary>
-    /// Defines an attribute that will allow setting GET function roles for a modeled table.
+    /// Gets field name to use for property.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public sealed class GetRolesAttribute : Attribute
+    public string Roles
     {
-        /// <summary>
-        /// Gets field name to use for property.
-        /// </summary>
-        public string Roles
-        {
-            get;
-        }
+        get;
+    }
 
-        /// <summary>
-        /// Creates a new <see cref="GetRolesAttribute"/>.
-        /// </summary>
-        /// <param name="roles">Comma separated string of roles allowed for GET functions.</param>
-        public GetRolesAttribute(string roles)
-        {
-            Roles = roles;
-        }
+    /// <summary>
+    /// Creates a new <see cref="GetRolesAttribute"/>.
+    /// </summary>
+    /// <param name="roles">Comma separated string of roles allowed for GET functions.</param>
+    public GetRolesAttribute(string roles)
+    {
+        Roles = roles;
     }
 }

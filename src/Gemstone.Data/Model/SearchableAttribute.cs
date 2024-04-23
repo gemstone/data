@@ -25,20 +25,19 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that will mark additional fields in the database as searchable field.
+/// </summary>
+/// <remarks>
+/// All modeled fields are automatically searchable so this only applies to fields that are not modeled.
+/// </remarks>
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class SearchableAttribute(params string[] fields) : Attribute
 {
     /// <summary>
-    /// Defines an attribute that will mark additional fields in the database as searchable field.
+    /// The FieldNames that are searchable.
     /// </summary>
-    /// <remarks>
-    /// All modeled fields are automatically searchable so this only applies to fields that are not modeled.
-    /// </remarks>
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class SearchableAttribute(params string[] fields) : Attribute
-    {
-        /// <summary>
-        /// The FieldNames that are searchable.
-        /// </summary>
-        public string[] FieldNames { get; } = fields;
-    }
+    public string[] FieldNames { get; } = fields;
 }

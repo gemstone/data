@@ -30,116 +30,116 @@ using System.IO;
 using Gemstone.IO;
 
 // ReSharper disable InconsistentNaming
-namespace Gemstone.Data.DataSetExtensions
+namespace Gemstone.Data.DataSetExtensions;
+
+/// <summary>
+/// Data types available to a <see cref="DataSet"/> object.
+/// </summary>
+public enum DataType : byte
 {
     /// <summary>
-    /// Data types available to a <see cref="DataSet"/> object.
+    /// Boolean data type, <see cref="Boolean"/>.
     /// </summary>
-    public enum DataType : byte
-    {
-        /// <summary>
-        /// Boolean data type, <see cref="Boolean"/>.
-        /// </summary>
-        Boolean,
-
-        /// <summary>
-        /// Unsigned 8-bit byte data type, <see cref="Byte"/>.
-        /// </summary>
-        Byte,
-
-        /// <summary>
-        /// 16-bit character data type, <see cref="Char"/>.
-        /// </summary>
-        Char,
-
-        /// <summary>
-        /// Date/time data type, <see cref="DateTime"/>.
-        /// </summary>
-        DateTime,
-
-        /// <summary>
-        /// Decimal data type, <see cref="Decimal"/>.
-        /// </summary>
-        Decimal,
-
-        /// <summary>
-        /// 64-bit double precision floating point numeric data type, <see cref="Double"/>.
-        /// </summary>
-        Double,
-
-        /// <summary>
-        /// Unsigned 128-bit Guid integer data type, <see cref="Guid"/>.
-        /// </summary>
-        Guid,
-
-        /// <summary>
-        /// Signed 16-bit integer data type, <see cref="Int16"/>.
-        /// </summary>
-        Int16,
-
-        /// <summary>
-        /// Signed 32-bit integer data type, <see cref="Int32"/>.
-        /// </summary>
-        Int32,
-
-        /// <summary>
-        /// Signed 64-bit integer data type, <see cref="Int64"/>
-        /// </summary>
-        Int64,
-
-        /// <summary>
-        /// Signed byte data type, <see cref="SByte"/>.
-        /// </summary>
-        SByte,
-
-        /// <summary>
-        /// 32-bit single precision floating point numeric data type, <see cref="Single"/>.
-        /// </summary>
-        Single,
-
-        /// <summary>
-        /// Character array data type, <see cref="String"/>.
-        /// </summary>
-        String,
-
-        /// <summary>
-        /// Time-span data type, <see cref="TimeSpan"/>.
-        /// </summary>
-        TimeSpan,
-
-        /// <summary>
-        /// Unsigned 16-bit integer data type, <see cref="UInt16"/>.
-        /// </summary>
-        UInt16,
-
-        /// <summary>
-        /// Unsigned 32-bit integer data type, <see cref="UInt32"/>.
-        /// </summary>
-        UInt32,
-
-        /// <summary>
-        /// Unsigned 64-bit integer data type, <see cref="UInt64"/>.
-        /// </summary>
-        UInt64,
-
-        /// <summary>
-        /// Unsigned byte array data type.
-        /// </summary>
-        Blob,
-
-        /// <summary>
-        /// User defined/other data type.
-        /// </summary>
-        Object
-    }
+    Boolean,
 
     /// <summary>
-    /// Defines extension functions related to <see cref="DataSet"/> instances.
+    /// Unsigned 8-bit byte data type, <see cref="Byte"/>.
     /// </summary>
-    public static class DataSetExtensions
-    {
-        // Constant array of supported data types
-        private static readonly Type[] s_supportedDataTypes =
+    Byte,
+
+    /// <summary>
+    /// 16-bit character data type, <see cref="Char"/>.
+    /// </summary>
+    Char,
+
+    /// <summary>
+    /// Date/time data type, <see cref="DateTime"/>.
+    /// </summary>
+    DateTime,
+
+    /// <summary>
+    /// Decimal data type, <see cref="Decimal"/>.
+    /// </summary>
+    Decimal,
+
+    /// <summary>
+    /// 64-bit double precision floating point numeric data type, <see cref="Double"/>.
+    /// </summary>
+    Double,
+
+    /// <summary>
+    /// Unsigned 128-bit Guid integer data type, <see cref="Guid"/>.
+    /// </summary>
+    Guid,
+
+    /// <summary>
+    /// Signed 16-bit integer data type, <see cref="Int16"/>.
+    /// </summary>
+    Int16,
+
+    /// <summary>
+    /// Signed 32-bit integer data type, <see cref="Int32"/>.
+    /// </summary>
+    Int32,
+
+    /// <summary>
+    /// Signed 64-bit integer data type, <see cref="Int64"/>
+    /// </summary>
+    Int64,
+
+    /// <summary>
+    /// Signed byte data type, <see cref="SByte"/>.
+    /// </summary>
+    SByte,
+
+    /// <summary>
+    /// 32-bit single precision floating point numeric data type, <see cref="Single"/>.
+    /// </summary>
+    Single,
+
+    /// <summary>
+    /// Character array data type, <see cref="String"/>.
+    /// </summary>
+    String,
+
+    /// <summary>
+    /// Time-span data type, <see cref="TimeSpan"/>.
+    /// </summary>
+    TimeSpan,
+
+    /// <summary>
+    /// Unsigned 16-bit integer data type, <see cref="UInt16"/>.
+    /// </summary>
+    UInt16,
+
+    /// <summary>
+    /// Unsigned 32-bit integer data type, <see cref="UInt32"/>.
+    /// </summary>
+    UInt32,
+
+    /// <summary>
+    /// Unsigned 64-bit integer data type, <see cref="UInt64"/>.
+    /// </summary>
+    UInt64,
+
+    /// <summary>
+    /// Unsigned byte array data type.
+    /// </summary>
+    Blob,
+
+    /// <summary>
+    /// User defined/other data type.
+    /// </summary>
+    Object
+}
+
+/// <summary>
+/// Defines extension functions related to <see cref="DataSet"/> instances.
+/// </summary>
+public static class DataSetExtensions
+{
+    // Constant array of supported data types
+    private static readonly Type[] s_supportedDataTypes =
         {
             // This must match DataType enum order
             typeof(bool),
@@ -163,15 +163,15 @@ namespace Gemstone.Data.DataSetExtensions
             typeof(object)
         };
 
-        /// <summary>
-        /// Serializes a <see cref="DataSet"/> to a destination <see cref="Stream"/>.
-        /// </summary>
-        /// <param name="source"><see cref="DataSet"/> to serialize.</param>
-        /// <param name="destination"><see cref="Stream"/> to serialize <see cref="DataSet"/> on.</param>
-        /// <param name="assumeStringForUnknownTypes">Flag to determine if unknown column types should be serialized as strings.</param>
-        /// <param name="useNullableDataTypes">Flag to determine if extra information should be serialized to support null values.</param>
-        public static void SerializeToStream(this DataSet source, Stream destination, bool assumeStringForUnknownTypes = true, bool useNullableDataTypes = true)
-        {
+    /// <summary>
+    /// Serializes a <see cref="DataSet"/> to a destination <see cref="Stream"/>.
+    /// </summary>
+    /// <param name="source"><see cref="DataSet"/> to serialize.</param>
+    /// <param name="destination"><see cref="Stream"/> to serialize <see cref="DataSet"/> on.</param>
+    /// <param name="assumeStringForUnknownTypes">Flag to determine if unknown column types should be serialized as strings.</param>
+    /// <param name="useNullableDataTypes">Flag to determine if extra information should be serialized to support null values.</param>
+    public static void SerializeToStream(this DataSet source, Stream destination, bool assumeStringForUnknownTypes = true, bool useNullableDataTypes = true)
+    {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
@@ -338,12 +338,12 @@ namespace Gemstone.Data.DataSetExtensions
             }
         }
 
-        /// <summary>
-        /// Deserializes a <see cref="DataSet"/> from a <see cref="Stream"/>.
-        /// </summary>
-        /// <param name="source"><see cref="Stream"/> to deserialize <see cref="DataSet"/> from.</param>
-        public static DataSet DeserializeToDataSet(this Stream source)
-        {
+    /// <summary>
+    /// Deserializes a <see cref="DataSet"/> from a <see cref="Stream"/>.
+    /// </summary>
+    /// <param name="source"><see cref="Stream"/> to deserialize <see cref="DataSet"/> from.</param>
+    public static DataSet DeserializeToDataSet(this Stream source)
+    {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
@@ -501,14 +501,14 @@ namespace Gemstone.Data.DataSetExtensions
             return dataset;
         }
 
-        /// <summary>
-        /// Attempts to derive <see cref="DataType"/> based on object <see cref="Type"/>.
-        /// </summary>
-        /// <param name="objectType"><see cref="Type"/> of object to test.</param>
-        /// <returns>Derived <see cref="DataType"/> based on object <see cref="Type"/> if matched; otherwise <see cref="DataType.Object"/>.</returns>
-        /// <param name="assumeStringForUnknownTypes">Flag to determine if unknown column types should be serialized as strings.</param>
-        public static DataType GetDataType(this Type objectType, bool assumeStringForUnknownTypes = true)
-        {
+    /// <summary>
+    /// Attempts to derive <see cref="DataType"/> based on object <see cref="Type"/>.
+    /// </summary>
+    /// <param name="objectType"><see cref="Type"/> of object to test.</param>
+    /// <returns>Derived <see cref="DataType"/> based on object <see cref="Type"/> if matched; otherwise <see cref="DataType.Object"/>.</returns>
+    /// <param name="assumeStringForUnknownTypes">Flag to determine if unknown column types should be serialized as strings.</param>
+    public static DataType GetDataType(this Type objectType, bool assumeStringForUnknownTypes = true)
+    {
             DataType dataType = DataType.Object;
 
             for (int i = 0; i < s_supportedDataTypes.Length; i++)
@@ -520,17 +520,16 @@ namespace Gemstone.Data.DataSetExtensions
             return assumeStringForUnknownTypes ? dataType == DataType.Object ? DataType.String : dataType : dataType;
         }
 
-        /// <summary>
-        /// Gets column object <see cref="Type"/> from given <see cref="DataType"/>.
-        /// </summary>
-        /// <param name="dataType"><see cref="DataType"/> to derive object <see cref="Type"/> from.</param>
-        /// <returns>Object <see cref="Type"/> derived from given <see cref="DataType"/>.</returns>
-        public static Type DeriveColumnType(this DataType dataType) => s_supportedDataTypes[(int)dataType];
+    /// <summary>
+    /// Gets column object <see cref="Type"/> from given <see cref="DataType"/>.
+    /// </summary>
+    /// <param name="dataType"><see cref="DataType"/> to derive object <see cref="Type"/> from.</param>
+    /// <returns>Object <see cref="Type"/> derived from given <see cref="DataType"/>.</returns>
+    public static Type DeriveColumnType(this DataType dataType) => s_supportedDataTypes[(int)dataType];
 
-        private static string NotDBNullString(this object value) => value == DBNull.Value ? "" : value.ToString()!;
+    private static string NotDBNullString(this object value) => value == DBNull.Value ? "" : value.ToString()!;
 
-        private static T NotDBNull<T>(this object value, T defaultValue) => value == DBNull.Value ? defaultValue : (T)value;
+    private static T NotDBNull<T>(this object value, T defaultValue) => value == DBNull.Value ? defaultValue : (T)value;
 
-        private static T NotDBNull<T>(this object value) => value.NotDBNull(default(T)!);
-    }
+    private static T NotDBNull<T>(this object value) => value.NotDBNull(default(T)!);
 }

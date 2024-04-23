@@ -25,24 +25,23 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that will allow a custom table name for a modeled table instead of using
+/// the class name.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class TableNameAttribute : Attribute
 {
     /// <summary>
-    /// Defines an attribute that will allow a custom table name for a modeled table instead of using
-    /// the class name.
+    /// Gets field name to use for property.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class TableNameAttribute : Attribute
-    {
-        /// <summary>
-        /// Gets field name to use for property.
-        /// </summary>
-        public string TableName { get; }
+    public string TableName { get; }
 
-        /// <summary>
-        /// Creates a new <see cref="TableNameAttribute"/>.
-        /// </summary>
-        /// <param name="tableName">Table name to use for class.</param>
-        public TableNameAttribute(string tableName) => TableName = tableName;
-    }
+    /// <summary>
+    /// Creates a new <see cref="TableNameAttribute"/>.
+    /// </summary>
+    /// <param name="tableName">Table name to use for class.</param>
+    public TableNameAttribute(string tableName) => TableName = tableName;
 }

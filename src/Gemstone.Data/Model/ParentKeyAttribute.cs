@@ -24,29 +24,28 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that will allow a foreign key in the model to point back to parent table 
+/// </summary>
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+public sealed class ParentKeyAttribute : Attribute
 {
     /// <summary>
-    /// Defines an attribute that will allow a foreign key in the model to point back to parent table 
+    /// Gets field name to use for property.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public sealed class ParentKeyAttribute : Attribute
+    public Type Model
     {
-        /// <summary>
-        /// Gets field name to use for property.
-        /// </summary>
-        public Type Model
-        {
-            get;
-        }
+        get;
+    }
 
-        /// <summary>
-        /// Creates a new <see cref="ParentKeyAttribute"/>.
-        /// </summary>
-        /// <param name="model">Type of modeled table that key points back to.</param>
-        public ParentKeyAttribute(Type model)
-        {
-            Model = model;
-        }
+    /// <summary>
+    /// Creates a new <see cref="ParentKeyAttribute"/>.
+    /// </summary>
+    /// <param name="model">Type of modeled table that key points back to.</param>
+    public ParentKeyAttribute(Type model)
+    {
+        Model = model;
     }
 }

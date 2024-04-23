@@ -23,17 +23,16 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that marks methods that are used to transform <see cref="IRecordFilter"/> into <see cref="RecordRestriction"/>.
+/// </summary>
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class SearchExtensionAttribute(string fieldMatch) : Attribute
 {
     /// <summary>
-    /// Defines an attribute that marks methods that are used to transform <see cref="IRecordFilter"/> into <see cref="RecordRestriction"/>.
+    /// The string used to match FieldNames this applies to.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
-    public sealed class SearchExtensionAttribute(string fieldMatch) : Attribute
-    {
-        /// <summary>
-        /// The string used to match FieldNames this applies to.
-        /// </summary>
-        public string FieldMatch { get; } = fieldMatch;
-    }
+    public string FieldMatch { get; } = fieldMatch;
 }

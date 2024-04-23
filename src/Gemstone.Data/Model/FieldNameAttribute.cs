@@ -25,27 +25,26 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that will allow a custom field name for a modeled table instead of using
+/// the property name.
+/// </summary>
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class FieldNameAttribute : Attribute
 {
     /// <summary>
-    /// Defines an attribute that will allow a custom field name for a modeled table instead of using
-    /// the property name.
+    /// Gets field name to use for property.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class FieldNameAttribute : Attribute
-    {
-        /// <summary>
-        /// Gets field name to use for property.
-        /// </summary>
-        public string FieldName { get; }
+    public string FieldName { get; }
 
-        /// <summary>
-        /// Creates a new <see cref="FieldNameAttribute"/>.
-        /// </summary>
-        /// <param name="fieldName">Field name to use for property.</param>
-        public FieldNameAttribute(string fieldName)
-        {
+    /// <summary>
+    /// Creates a new <see cref="FieldNameAttribute"/>.
+    /// </summary>
+    /// <param name="fieldName">Field name to use for property.</param>
+    public FieldNameAttribute(string fieldName)
+    {
             FieldName = fieldName;
         }
-    }
 }

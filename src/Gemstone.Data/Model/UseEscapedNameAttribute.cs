@@ -25,62 +25,61 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that will request use of the escaped name of a modeled identifier, i.e.,
+/// a table or field name. Typically needed when identifier names are reserved SQL key words.
+/// </summary>
+/// <remarks>
+/// Applying [UseEscapedName] to a modeled table or field with no parameters will specify that an
+/// escaped name be used for all database types. Using a specific database type as a parameter
+/// to the attribute, e.g., [UseEscapedName(DatabaseType.SQLServer)], means the escaped name will
+/// only be applied to the specific database - however, the attribute allows multiple instances
+/// on the same identifier so you could specify that escaping only be applied to two databases,
+/// for example: [UseEscapedName(DatabaseType.SQLServer), UseEscapedName(DatabaseType.MySQL)].
+/// In the event multiple attributes have been applied to a modeled identifier where one instance
+/// has specified no target database type and others have, the system will assume to target all
+/// databases for escaping the name and ignore the specific targets.
+/// </remarks>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = true)]
+public sealed class UseEscapedNameAttribute : Attribute
 {
     /// <summary>
-    /// Defines an attribute that will request use of the escaped name of a modeled identifier, i.e.,
-    /// a table or field name. Typically needed when identifier names are reserved SQL key words.
+    /// Gets target <see cref="DatabaseType"/> for using escaped name.
     /// </summary>
     /// <remarks>
-    /// Applying [UseEscapedName] to a modeled table or field with no parameters will specify that an
-    /// escaped name be used for all database types. Using a specific database type as a parameter
-    /// to the attribute, e.g., [UseEscapedName(DatabaseType.SQLServer)], means the escaped name will
-    /// only be applied to the specific database - however, the attribute allows multiple instances
-    /// on the same identifier so you could specify that escaping only be applied to two databases,
-    /// for example: [UseEscapedName(DatabaseType.SQLServer), UseEscapedName(DatabaseType.MySQL)].
-    /// In the event multiple attributes have been applied to a modeled identifier where one instance
-    /// has specified no target database type and others have, the system will assume to target all
-    /// databases for escaping the name and ignore the specific targets.
+    /// When value is <c>null</c>, escaped name will be applied to all database types.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = true)]
-    public sealed class UseEscapedNameAttribute : Attribute
+    public DatabaseType? TargetDatabaseType { get; }
+
+    /// <summary>
+    /// Gets or sets flag that determines if double quotes should be used as the identifier delimiter,
+    /// per SQL-99 standard, regardless of database type. Defaults to <c>true</c> except for MySQL.
+    /// </summary>
+    /// <remarks>
+    /// If <c>true</c>, ANSI standard double-quotes will be used for escaping the identifier; otherwise,
+    /// the escaping identifier will be based on the connected database type.
+    /// </remarks>
+    public bool UseAnsiQuotes { get; set; }
+
+    /// <summary>
+    /// Creates a new <see cref="UseEscapedNameAttribute"/> that will request use of escaped name for any database.
+    /// </summary>
+    public UseEscapedNameAttribute()
     {
-        /// <summary>
-        /// Gets target <see cref="DatabaseType"/> for using escaped name.
-        /// </summary>
-        /// <remarks>
-        /// When value is <c>null</c>, escaped name will be applied to all database types.
-        /// </remarks>
-        public DatabaseType? TargetDatabaseType { get; }
+        TargetDatabaseType = null;
+        UseAnsiQuotes = true;
+    }
 
-        /// <summary>
-        /// Gets or sets flag that determines if double quotes should be used as the identifier delimiter,
-        /// per SQL-99 standard, regardless of database type. Defaults to <c>true</c> except for MySQL.
-        /// </summary>
-        /// <remarks>
-        /// If <c>true</c>, ANSI standard double-quotes will be used for escaping the identifier; otherwise,
-        /// the escaping identifier will be based on the connected database type.
-        /// </remarks>
-        public bool UseAnsiQuotes { get; set; }
-
-        /// <summary>
-        /// Creates a new <see cref="UseEscapedNameAttribute"/> that will request use of escaped name for any database.
-        /// </summary>
-        public UseEscapedNameAttribute()
-        {
-            TargetDatabaseType = null;
-            UseAnsiQuotes = true;
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="UseEscapedNameAttribute"/> that will request use of escaped name for the
-        /// specified <see cref="DatabaseType"/>.
-        /// </summary>
-        /// <param name="targetDatabaseType">Target <see cref="DatabaseType"/> for escaping identifier.</param>
-        public UseEscapedNameAttribute(DatabaseType targetDatabaseType)
-        {
-            TargetDatabaseType = targetDatabaseType;
-            UseAnsiQuotes = targetDatabaseType != DatabaseType.MySQL;
-        }
+    /// <summary>
+    /// Creates a new <see cref="UseEscapedNameAttribute"/> that will request use of escaped name for the
+    /// specified <see cref="DatabaseType"/>.
+    /// </summary>
+    /// <param name="targetDatabaseType">Target <see cref="DatabaseType"/> for escaping identifier.</param>
+    public UseEscapedNameAttribute(DatabaseType targetDatabaseType)
+    {
+        TargetDatabaseType = targetDatabaseType;
+        UseAnsiQuotes = targetDatabaseType != DatabaseType.MySQL;
     }
 }

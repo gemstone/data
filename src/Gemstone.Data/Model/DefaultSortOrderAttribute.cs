@@ -23,30 +23,29 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that will allow a default sort field in the model
+/// </summary>
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+public sealed class DefaultSortOrderAttribute : Attribute
 {
     /// <summary>
-    /// Defines an attribute that will allow a default sort field in the model
+    /// Gets field name to use for property.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public sealed class DefaultSortOrderAttribute : Attribute
+    public bool Ascending
     {
-        /// <summary>
-        /// Gets field name to use for property.
-        /// </summary>
-        public bool Ascending
-        {
-            get;
-        }
+        get;
+    }
 
 
-        /// <summary>
-        /// Creates a new <see cref="DefaultSortOrderAttribute"/>.
-        /// </summary>
-        /// <param name="ascending">Direction of sort</param>
-        public DefaultSortOrderAttribute(bool ascending = true)
-        {
-            Ascending = ascending;
-        }
+    /// <summary>
+    /// Creates a new <see cref="DefaultSortOrderAttribute"/>.
+    /// </summary>
+    /// <param name="ascending">Direction of sort</param>
+    public DefaultSortOrderAttribute(bool ascending = true)
+    {
+        Ascending = ascending;
     }
 }

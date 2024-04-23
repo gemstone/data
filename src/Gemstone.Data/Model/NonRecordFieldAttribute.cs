@@ -25,13 +25,12 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Defines an attribute that will mark a property to not be serialized as a record field.
+/// </summary>
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class NonRecordFieldAttribute : Attribute
 {
-    /// <summary>
-    /// Defines an attribute that will mark a property to not be serialized as a record field.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class NonRecordFieldAttribute : Attribute
-    {
-    }
 }

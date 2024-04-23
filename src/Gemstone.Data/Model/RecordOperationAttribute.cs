@@ -25,78 +25,77 @@
 
 using System;
 
-namespace Gemstone.Data.Model
+namespace Gemstone.Data.Model;
+
+/// <summary>
+/// Record operations for modeled tables.
+/// </summary>
+public enum RecordOperation
 {
     /// <summary>
-    /// Record operations for modeled tables.
+    /// Operation for getting record count.
     /// </summary>
-    public enum RecordOperation
-    {
-        /// <summary>
-        /// Operation for getting record count.
-        /// </summary>
-        QueryRecordCount,
-
-        /// <summary>
-        /// Operation for retrieving paged records.
-        /// </summary>
-        QueryRecords,
-
-        /// <summary>
-        /// Operation for deleting records.
-        /// </summary>
-        /// <remarks>
-        /// Delete rights should be derived from methods marked with this operation.
-        /// </remarks>
-        DeleteRecord,
-
-        /// <summary>
-        /// Operation for creating a new record, i.e., instantiating a new modeled table record instance.
-        /// </summary>
-        CreateNewRecord,
-
-        /// <summary>
-        /// Operation for adding records.
-        /// </summary>
-        /// <remarks>
-        /// Add rights should be derived from methods marked with this operation.
-        /// </remarks>
-        AddNewRecord,
-
-        /// <summary>
-        /// Operation for updating records.
-        /// </summary>
-        /// <remarks>
-        /// Update rights should be derived from methods marked with this operation.
-        /// </remarks>
-        UpdateRecord
-    }
+    QueryRecordCount,
 
     /// <summary>
-    /// Defines an attribute that marks a method as a specific <see cref="RecordOperation"/> for a modeled table.
+    /// Operation for retrieving paged records.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
-    public sealed class RecordOperationAttribute : Attribute
+    QueryRecords,
+
+    /// <summary>
+    /// Operation for deleting records.
+    /// </summary>
+    /// <remarks>
+    /// Delete rights should be derived from methods marked with this operation.
+    /// </remarks>
+    DeleteRecord,
+
+    /// <summary>
+    /// Operation for creating a new record, i.e., instantiating a new modeled table record instance.
+    /// </summary>
+    CreateNewRecord,
+
+    /// <summary>
+    /// Operation for adding records.
+    /// </summary>
+    /// <remarks>
+    /// Add rights should be derived from methods marked with this operation.
+    /// </remarks>
+    AddNewRecord,
+
+    /// <summary>
+    /// Operation for updating records.
+    /// </summary>
+    /// <remarks>
+    /// Update rights should be derived from methods marked with this operation.
+    /// </remarks>
+    UpdateRecord
+}
+
+/// <summary>
+/// Defines an attribute that marks a method as a specific <see cref="RecordOperation"/> for a modeled table.
+/// </summary>
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class RecordOperationAttribute : Attribute
+{
+    /// <summary>
+    /// Gets or sets <see cref="Type"/> of modeled table.
+    /// </summary>
+    public Type ModelType { get; }
+
+    /// <summary>
+    /// Gets or sets <see cref="RecordOperation"/> the method represents.
+    /// </summary>
+    public RecordOperation Operation { get; }
+
+    /// <summary>
+    /// Creates a new <see cref="RecordOperationAttribute"/>
+    /// </summary>
+    /// <param name="modelType">The <see cref="Type"/> of modeled table.</param>
+    /// <param name="operation">The <see cref="RecordOperation"/> the method represents.</param>
+    public RecordOperationAttribute(Type modelType, RecordOperation operation)
     {
-        /// <summary>
-        /// Gets or sets <see cref="Type"/> of modeled table.
-        /// </summary>
-        public Type ModelType { get; }
-
-        /// <summary>
-        /// Gets or sets <see cref="RecordOperation"/> the method represents.
-        /// </summary>
-        public RecordOperation Operation { get; }
-
-        /// <summary>
-        /// Creates a new <see cref="RecordOperationAttribute"/>
-        /// </summary>
-        /// <param name="modelType">The <see cref="Type"/> of modeled table.</param>
-        /// <param name="operation">The <see cref="RecordOperation"/> the method represents.</param>
-        public RecordOperationAttribute(Type modelType, RecordOperation operation)
-        {
             ModelType = modelType;
             Operation = operation;
         }
-    }
 }

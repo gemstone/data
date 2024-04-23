@@ -29,7 +29,7 @@ namespace Gemstone.Data.SchemaMigration;
 /// Defines an attribute that will mark a class as the target of a database schema migration.
 /// </summary>
 /// <remarks>
-/// In Gemstone, use this instead of <see cref="MigrationAttribute"/> for consistent versioning.
+/// In Gemstone, use this instead of the Fluent  <see cref="MigrationAttribute"/> for consistent versioning.
 /// </remarks>
 public class SchemaMigrationAttribute : MigrationAttribute
 {

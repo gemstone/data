@@ -12,25 +12,19 @@
             Example connection and data provider strings:
             <list type="table"><listheader><term>Database type</term><description>Example connection string / data provider string</description></listheader><item><term>SQL Server</term><description>
                     ConnectionString = "Data Source=serverName; Initial Catalog=databaseName; User ID=userName; Password=password"<br />
-                    DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.SqlClient.SqlConnection"
-                    </description></item><item><term>Oracle</term><description>
-                    ConnectionString = "Data Source=tnsName; User ID=schemaUserName; Password=schemaPassword"<br />
-                    DataProviderString = "AssemblyName={Oracle.DataAccess, Version=2.112.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342}; ConnectionType=Oracle.DataAccess.Client.OracleConnection"
-                    </description></item><item><term>MySQL</term><description>
-                    ConnectionString = "Server=serverName; Database=databaseName; Uid=root; Pwd=password; allow user variables = true"<br />
-                    DataProviderString = "AssemblyName={MySql.Data, Version=6.3.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d}; ConnectionType=MySql.Data.MySqlClient.MySqlConnection"
+                    DataProviderString = "AssemblyName=Microsoft.Data.SqlClient; ConnectionType=Microsoft.Data.SqlClient.SqlConnection"
                     </description></item><item><term>SQLite</term><description>
                     ConnectionString = "Data Source=databaseName.db; Version=3; Foreign Keys=True; FailIfMissing=True"<br />
-                    DataProviderString = "AssemblyName={System.Data.SQLite, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139}; ConnectionType=System.Data.SQLite.SQLiteConnection"
-                    </description></item><item><term>SQLite (Mono native driver)</term><description>
-                    ConnectionString = "Data Source=./databaseName.db; Version=3; Foreign Keys=True; FailIfMissing=True"<br />
-                    DataProviderString = "AssemblyName={Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756}; ConnectionType=Mono.Data.Sqlite.SqliteConnection"
-                    </description></item><item><term>Access / OleDB</term><description>
-                    ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=databaseName.mdb"<br />
-                    DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.OleDb.OleDbConnection"
-                    </description></item><item><term>ODBC Connection</term><description>
-                    ConnectionString = "Driver={SQL Server Native Client 10.0}; Server=serverName; Database=databaseName; Uid=userName; Pwd=password"<br />
-                    DataProviderString = "AssemblyName={System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089}; ConnectionType=System.Data.Odbc.OdbcConnection"
+                    DataProviderString = "AssemblyName=Microsoft.Data.Sqlite; ConnectionType=Microsoft.Data.Sqlite.SqliteConnection"
+                    </description></item><item><term>PostgreSQL</term><description>
+                    ConnectionString = "Host=localhost; Database=DatabaseName; Username=postgres; Password=password"<br />
+                    DataProviderString = "AssemblyName=Npgsql; ConnectionType=Npgsql.NpgsqlConnection"
+                    </description></item><item><term>MySQL</term><description>
+                    ConnectionString = "Server=serverName; Database=databaseName; Uid=root; Pwd=password; allow user variables = true"<br />
+                    DataProviderString = "AssemblyName=MySql.Data; ConnectionType=MySql.Data.MySqlClient.MySqlConnection"
+                    </description></item><item><term>Oracle</term><description>
+                    ConnectionString = "Data Source=tnsName; User ID=schemaUserName; Password=schemaPassword"<br />
+                    DataProviderString = "AssemblyName=Oracle.ManagedDataAccess; ConnectionType=Oracle.ManagedDataAccess.Client.OracleConnection"
                     </description></item></list>
             Example configuration file that defines connection settings:
             <code language="cs">
@@ -50,6 +44,12 @@
               &lt;/startup&gt;
             &lt;/configuration&gt;
             </code></remarks>
+    </member>
+    <member name="M:Gemstone.Data.AdoDataConnection.#ctor(Gemstone.Configuration.Settings)">
+      <summary>
+            Creates and opens a new <see cref="T:Gemstone.Data.AdoDataConnection" /> from specified <paramref name="settings" />.
+            </summary>
+      <param name="settings">Settings instance.</param>
     </member>
     <member name="M:Gemstone.Data.AdoDataConnection.#ctor(System.Data.IDbConnection,System.Boolean)">
       <summary>
@@ -106,6 +106,13 @@
       <summary>
             Gets or sets default timeout for <see cref="T:Gemstone.Data.AdoDataConnection" /> data operations.
             </summary>
+    </member>
+    <member name="M:Gemstone.Data.AdoDataConnection.DefineSettings(Gemstone.Configuration.Settings,System.String)">
+      <summary>
+            Establishes default settings for the config file.
+            </summary>
+      <param name="settings">Settings instance used to hold configuration.</param>
+      <param name="settingsCategory">The config file settings category under which the settings are defined.</param>
     </member>
     <member name="M:Gemstone.Data.AdoDataConnection.Dispose">
       <summary>
@@ -3175,6 +3182,22 @@
             Gets or sets target expression for amendment application; defaults to <see cref="F:Gemstone.Data.Model.TargetExpression.TableName" />.
             </summary>
     </member>
+    <member name="T:Gemstone.Data.Model.DefaultSortOrderAttribute">
+      <summary>
+            Defines an attribute that will allow a default sort field in the model
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.DefaultSortOrderAttribute.#ctor(System.Boolean)">
+      <summary>
+            Creates a new <see cref="T:Gemstone.Data.Model.DefaultSortOrderAttribute" />.
+            </summary>
+      <param name="ascending">Direction of sort</param>
+    </member>
+    <member name="P:Gemstone.Data.Model.DefaultSortOrderAttribute.Ascending">
+      <summary>
+            Gets field name to use for property.
+            </summary>
+    </member>
     <member name="T:Gemstone.Data.Model.EncryptDataAttribute">
       <summary>
             Defines an attribute that provides encryption of text field contents for a modeled table.
@@ -3263,6 +3286,22 @@
       <param name="fieldName">Field name to use for property.</param>
     </member>
     <member name="P:Gemstone.Data.Model.FieldNameAttribute.FieldName">
+      <summary>
+            Gets field name to use for property.
+            </summary>
+    </member>
+    <member name="T:Gemstone.Data.Model.GetRolesAttribute">
+      <summary>
+            Defines an attribute that will allow setting GET function roles for a modeled table.
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.GetRolesAttribute.#ctor(System.String)">
+      <summary>
+            Creates a new <see cref="T:Gemstone.Data.Model.GetRolesAttribute" />.
+            </summary>
+      <param name="roles">Comma separated string of roles allowed for GET functions.</param>
+    </member>
+    <member name="P:Gemstone.Data.Model.GetRolesAttribute.Roles">
       <summary>
             Gets field name to use for property.
             </summary>
@@ -4209,6 +4248,38 @@
         </markup>
       </summary>
     </member>
+    <member name="T:Gemstone.Data.Model.PageSizeAttribute">
+      <summary>
+            Defines an attribute that will allows a top number of results to be returned when queried
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.PageSizeAttribute.#ctor(System.Int32)">
+      <summary>
+            Creates a new <see cref="T:Gemstone.Data.Model.PageSizeAttribute" />.
+            </summary>
+      <param name="limit">Number of top records to return per Page.</param>
+    </member>
+    <member name="P:Gemstone.Data.Model.PageSizeAttribute.Limit">
+      <summary>
+            Gets field name to use for property.
+            </summary>
+    </member>
+    <member name="T:Gemstone.Data.Model.ParentKeyAttribute">
+      <summary>
+            Defines an attribute that will allow a foreign key in the model to point back to parent table 
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.ParentKeyAttribute.#ctor(System.Type)">
+      <summary>
+            Creates a new <see cref="T:Gemstone.Data.Model.ParentKeyAttribute" />.
+            </summary>
+      <param name="model">Type of modeled table that key points back to.</param>
+    </member>
+    <member name="P:Gemstone.Data.Model.ParentKeyAttribute.Model">
+      <summary>
+            Gets field name to use for property.
+            </summary>
+    </member>
     <member name="T:Gemstone.Data.Model.PrimaryKeyAttribute">
       <summary>
             Defines an attribute that will mark a property as a primary key field for a modeled table.
@@ -4807,7 +4878,7 @@
         <para>
             The <paramref name="customTokens" /> can be used to apply run-time tokens to any defined <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> values,
             for example, given the following amendment expression applied to a modeled class:
-            <code language="cs">
+            <code>
             [AmendExpression("TOP {count}", 
                 TargetExpression = TargetExpression.FieldList,
                 AffixPosition = AffixPosition.Prefix,
@@ -5835,6 +5906,29 @@
             If <c>true</c>, ANSI standard double-quotes will be used for escaping the identifier; otherwise,
             the escaping identifier will be based on the connected database type.
             </remarks>
+    </member>
+    <member name="T:Gemstone.Data.SchemaMigration.SchemaMigrationAttribute">
+      <summary>
+            Defines an attribute that will mark a class as the target of a database schema migration.
+            </summary>
+      <remarks>
+            In Gemstone, use this instead of the Fluent  <see cref="T:FluentMigrator.MigrationAttribute" /> for consistent versioning.
+            </remarks>
+    </member>
+    <member name="M:Gemstone.Data.SchemaMigration.SchemaMigrationAttribute.#ctor(System.Int32,System.Int32,System.Int32,System.Int32,System.String)">
+      <summary>
+            Creates a new <see cref="T:Gemstone.Data.SchemaMigration.SchemaMigrationAttribute" />.
+            </summary>
+      <param name="branchNumber">Branch number of the migration.</param>
+      <param name="year">Year of the migration.</param>
+      <param name="month">Month of the migration.</param>
+      <param name="day">Day of the migration.</param>
+      <param name="author">Author of the migration.</param>
+    </member>
+    <member name="P:Gemstone.Data.SchemaMigration.SchemaMigrationAttribute.Author">
+      <summary>
+            Gets the author of the migration.
+            </summary>
     </member>
   </members>
 </doc>

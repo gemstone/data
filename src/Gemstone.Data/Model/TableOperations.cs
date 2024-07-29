@@ -23,8 +23,6 @@
 //
 //******************************************************************************************************
 
-// Ignore Spelling: Nullable Unescaped
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,6 +40,7 @@ using Gemstone.Expressions.Model;
 using Gemstone.Reflection.MemberInfoExtensions;
 using Gemstone.StringExtensions;
 
+// ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
 // ReSharper disable UnusedMember.Global
 // ReSharper disable StaticMemberInGenericType
 // ReSharper disable UnusedMember.Local
@@ -63,10 +62,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private class CurrentScope : ValueExpressionScopeBase<T>
     {
         // Define instance variables exposed to ValueExpressionAttributeBase expressions
-#pragma warning disable 169, 414, 649, CS8618
+        #pragma warning disable 169, 414, 649, CS8618
         public TableOperations<T> TableOperations;
         public AdoDataConnection Connection;
-#pragma warning restore 169, 414, 649, CS8618
+        #pragma warning restore 169, 414, 649, CS8618
     }
 
     private class NullConnection : IDbConnection
@@ -225,92 +224,95 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             }
         }
 
+        if (s_expressionAmendments is null)
+            return;
+
         // Handle any modeled expression amendments
-        if (s_expressionAmendments is not null)
+        foreach (Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string> expressionAmendment in s_expressionAmendments)
         {
-            foreach (Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string> expressionAmendment in s_expressionAmendments)
+            // See if expression amendment applies to current database type
+            if (expressionAmendment.Item1 != Connection.DatabaseType)
+                continue;
+
+            // Get expression amendment properties
+            TargetExpression targetExpression = expressionAmendment.Item2;
+            StatementTypes statementTypes = expressionAmendment.Item3;
+            AffixPosition affixPosition = expressionAmendment.Item4;
+            string amendmentText = expressionAmendment.Item5;
+            string tableNameToken = affixPosition == AffixPosition.Prefix ? TableNamePrefixToken : TableNameSuffixToken;
+            string fieldListToken = affixPosition == AffixPosition.Prefix ? FieldListPrefixToken : FieldListSuffixToken;
+            string targetToken = targetExpression == TargetExpression.TableName ? tableNameToken : fieldListToken;
+
+            // Apply amendment to target statement types
+            if (statementTypes.HasFlag(StatementTypes.SelectCount) && targetExpression == TargetExpression.TableName)
+                m_selectCountSql = m_selectCountSql.Replace(targetToken, amendmentText);
+
+            if (statementTypes.HasFlag(StatementTypes.SelectSet))
             {
-                // See if expression amendment applies to current database type
-                if (expressionAmendment.Item1 != Connection.DatabaseType)
-                    continue;
-
-                // Get expression amendment properties
-                TargetExpression targetExpression = expressionAmendment.Item2;
-                StatementTypes statementTypes = expressionAmendment.Item3;
-                AffixPosition affixPosition = expressionAmendment.Item4;
-                string amendmentText = expressionAmendment.Item5;
-                string tableNameToken = affixPosition == AffixPosition.Prefix ? TableNamePrefixToken : TableNameSuffixToken;
-                string fieldListToken = affixPosition == AffixPosition.Prefix ? FieldListPrefixToken : FieldListSuffixToken;
-                string targetToken = targetExpression == TargetExpression.TableName ? tableNameToken : fieldListToken;
-
-                // Apply amendment to target statement types
-                if (statementTypes.HasFlag(StatementTypes.SelectCount) && targetExpression == TargetExpression.TableName)
-                    m_selectCountSql = m_selectCountSql.Replace(targetToken, amendmentText);
-
-                if (statementTypes.HasFlag(StatementTypes.SelectSet))
-                {
-                    m_selectSetSql = m_selectSetSql.Replace(targetToken, amendmentText);
-                    m_selectSetWhereSql = m_selectSetWhereSql.Replace(targetToken, amendmentText);
-                    m_selectKeysSql = m_selectKeysSql.Replace(targetToken, amendmentText);
-                    m_selectKeysWhereSql = m_selectKeysWhereSql.Replace(targetToken, amendmentText);
-                }
-
-                if (statementTypes.HasFlag(StatementTypes.SelectRow))
-                    m_selectRowSql = m_selectRowSql.Replace(targetToken, amendmentText);
-
-                if (statementTypes.HasFlag(StatementTypes.Insert))
-                    m_addNewSql = m_addNewSql.Replace(targetToken, amendmentText);
-
-                if (statementTypes.HasFlag(StatementTypes.Update))
-                {
-                    m_updateSql = m_updateSql.Replace(targetToken, amendmentText);
-                    m_updateWhereSql = m_updateWhereSql.Replace(targetToken, amendmentText);
-                }
-
-                if (statementTypes.HasFlag(StatementTypes.Delete))
-                {
-                    m_deleteSql = m_deleteSql.Replace(targetToken, amendmentText);
-                    m_deleteWhereSql = m_deleteWhereSql.Replace(targetToken, amendmentText);
-                }
+                m_selectSetSql = m_selectSetSql.Replace(targetToken, amendmentText);
+                m_selectSetWhereSql = m_selectSetWhereSql.Replace(targetToken, amendmentText);
+                m_selectKeysSql = m_selectKeysSql.Replace(targetToken, amendmentText);
+                m_selectKeysWhereSql = m_selectKeysWhereSql.Replace(targetToken, amendmentText);
             }
 
-            // Remove any remaining tokens from instance expressions
-            static string removeRemainingTokens(string sql) => sql
+            if (statementTypes.HasFlag(StatementTypes.SelectRow))
+                m_selectRowSql = m_selectRowSql.Replace(targetToken, amendmentText);
+
+            if (statementTypes.HasFlag(StatementTypes.Insert))
+                m_addNewSql = m_addNewSql.Replace(targetToken, amendmentText);
+
+            if (statementTypes.HasFlag(StatementTypes.Update))
+            {
+                m_updateSql = m_updateSql.Replace(targetToken, amendmentText);
+                m_updateWhereSql = m_updateWhereSql.Replace(targetToken, amendmentText);
+            }
+
+            if (statementTypes.HasFlag(StatementTypes.Delete))
+            {
+                m_deleteSql = m_deleteSql.Replace(targetToken, amendmentText);
+                m_deleteWhereSql = m_deleteWhereSql.Replace(targetToken, amendmentText);
+            }
+        }
+
+        // Remove any remaining tokens from instance expressions
+        static string removeRemainingTokens(string sql)
+        {
+            return sql
                 .Replace(TableNamePrefixToken, "")
                 .Replace(TableNameSuffixToken, "")
                 .Replace(FieldListPrefixToken, "")
                 .Replace(FieldListSuffixToken, "");
+        }
 
-            m_selectCountSql = removeRemainingTokens(m_selectCountSql);
-            m_selectSetSql = removeRemainingTokens(m_selectSetSql);
-            m_selectSetWhereSql = removeRemainingTokens(m_selectSetWhereSql);
-            m_selectKeysSql = removeRemainingTokens(m_selectKeysSql);
-            m_selectKeysWhereSql = removeRemainingTokens(m_selectKeysWhereSql);
-            m_selectRowSql = removeRemainingTokens(m_selectRowSql);
-            m_addNewSql = removeRemainingTokens(m_addNewSql);
-            m_updateSql = removeRemainingTokens(m_updateSql);
-            m_updateWhereSql = removeRemainingTokens(m_updateWhereSql);
-            m_deleteSql = removeRemainingTokens(m_deleteSql);
-            m_deleteWhereSql = removeRemainingTokens(m_deleteWhereSql);
+        m_selectCountSql = removeRemainingTokens(m_selectCountSql);
+        m_selectSetSql = removeRemainingTokens(m_selectSetSql);
+        m_selectSetWhereSql = removeRemainingTokens(m_selectSetWhereSql);
+        m_selectKeysSql = removeRemainingTokens(m_selectKeysSql);
+        m_selectKeysWhereSql = removeRemainingTokens(m_selectKeysWhereSql);
+        m_selectRowSql = removeRemainingTokens(m_selectRowSql);
+        m_addNewSql = removeRemainingTokens(m_addNewSql);
+        m_updateSql = removeRemainingTokens(m_updateSql);
+        m_updateWhereSql = removeRemainingTokens(m_updateWhereSql);
+        m_deleteSql = removeRemainingTokens(m_deleteSql);
+        m_deleteWhereSql = removeRemainingTokens(m_deleteWhereSql);
 
-            // Execute replacements on any provided custom run-time tokens
-            if (customTokens is not null)
-            {
-                foreach (KeyValuePair<string, string> customToken in customTokens)
-                {
-                    m_selectCountSql = m_selectCountSql.Replace(customToken.Key, customToken.Value);
-                    m_selectSetSql = m_selectSetSql.Replace(customToken.Key, customToken.Value);
-                    m_selectSetWhereSql = m_selectSetWhereSql.Replace(customToken.Key, customToken.Value);
-                    m_selectKeysSql = m_selectKeysSql.Replace(customToken.Key, customToken.Value);
-                    m_selectKeysWhereSql = m_selectKeysWhereSql.Replace(customToken.Key, customToken.Value);
-                    m_selectRowSql = m_selectRowSql.Replace(customToken.Key, customToken.Value);
-                    m_addNewSql = m_addNewSql.Replace(customToken.Key, customToken.Value);
-                    m_updateSql = m_updateSql.Replace(customToken.Key, customToken.Value);
-                    m_updateWhereSql = m_updateWhereSql.Replace(customToken.Key, customToken.Value);
-                    m_deleteSql = m_deleteSql.Replace(customToken.Key, customToken.Value);
-                    m_deleteWhereSql = m_deleteWhereSql.Replace(customToken.Key, customToken.Value);
-                }
-            }
+        if (customTokens is null)
+            return;
+
+        // Execute replacements on any provided custom run-time tokens
+        foreach (KeyValuePair<string, string> customToken in customTokens)
+        {
+            m_selectCountSql = m_selectCountSql.Replace(customToken.Key, customToken.Value);
+            m_selectSetSql = m_selectSetSql.Replace(customToken.Key, customToken.Value);
+            m_selectSetWhereSql = m_selectSetWhereSql.Replace(customToken.Key, customToken.Value);
+            m_selectKeysSql = m_selectKeysSql.Replace(customToken.Key, customToken.Value);
+            m_selectKeysWhereSql = m_selectKeysWhereSql.Replace(customToken.Key, customToken.Value);
+            m_selectRowSql = m_selectRowSql.Replace(customToken.Key, customToken.Value);
+            m_addNewSql = m_addNewSql.Replace(customToken.Key, customToken.Value);
+            m_updateSql = m_updateSql.Replace(customToken.Key, customToken.Value);
+            m_updateWhereSql = m_updateWhereSql.Replace(customToken.Key, customToken.Value);
+            m_deleteSql = m_deleteSql.Replace(customToken.Key, customToken.Value);
+            m_deleteWhereSql = m_deleteWhereSql.Replace(customToken.Key, customToken.Value);
         }
     }
 
@@ -343,7 +345,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </remarks>
     /// <exception cref="ArgumentNullException"><paramref name="connection"/> cannot be <c>null</c>.</exception>
     public TableOperations(AdoDataConnection connection, Action<Exception> exceptionHandler, IEnumerable<KeyValuePair<string, string>>? customTokens = default)
-        : this(connection, customTokens) => ExceptionHandler = exceptionHandler;
+        : this(connection, customTokens)
+    {
+        ExceptionHandler = exceptionHandler;
+    }
 
     #endregion
 
@@ -383,12 +388,12 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     public Action<Exception>? ExceptionHandler { get; set; }
 
     /// <summary>
-    /// Gets or sets flag that determines if field names should be treated as case sensitive. Defaults to <c>false</c>.
+    /// Gets or sets flag that determines if field names should be treated as case-sensitive. Defaults to <c>false</c>.
     /// </summary>
     /// <remarks>
     /// In cases where modeled table fields have applied <see cref="UseEscapedNameAttribute"/>, this flag will be used
-    /// to properly update escaped field names that may be case sensitive. For example, escaped field names in Oracle
-    /// are case sensitive. This value is typically <c>false</c>.
+    /// to properly update escaped field names that may be case-sensitive. For example, escaped field names in Oracle
+    /// are case-sensitive. This value is typically <c>false</c>.
     /// </remarks>
     public bool UseCaseSensitiveFieldNames { get; set; }
 
@@ -503,7 +508,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         }
     }
 
-    object? ITableOperations.NewRecord() => NewRecord();
+    object? ITableOperations.NewRecord()
+    {
+        return NewRecord();
+    }
 
     /// <summary>
     /// Applies the default values on the specified modeled table <paramref name="record"/>
@@ -582,9 +590,15 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// returned value so that the field value will be properly set prior to executing the database function.
     /// </para>
     /// </remarks>
-    public T? QueryRecord(RecordRestriction? restriction) => QueryRecord(null, restriction);
+    public T? QueryRecord(RecordRestriction? restriction)
+    {
+        return QueryRecord(null, restriction);
+    }
 
-    object? ITableOperations.QueryRecord(RecordRestriction? restriction) => QueryRecord(restriction);
+    object? ITableOperations.QueryRecord(RecordRestriction? restriction)
+    {
+        return QueryRecord(restriction);
+    }
 
     /// <summary>
     /// Queries database and returns a single modeled table record for the specified <paramref name="restriction"/>,
@@ -608,9 +622,15 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// returned value so that the field value will be properly set prior to executing the database function.
     /// </para>
     /// </remarks>
-    public T? QueryRecord(string? orderByExpression, RecordRestriction? restriction) => QueryRecords(orderByExpression, restriction, 1).FirstOrDefault();
+    public T? QueryRecord(string? orderByExpression, RecordRestriction? restriction)
+    {
+        return QueryRecords(orderByExpression, restriction, 1).FirstOrDefault();
+    }
 
-    object? ITableOperations.QueryRecord(string? orderByExpression, RecordRestriction? restriction) => QueryRecord(orderByExpression, restriction);
+    object? ITableOperations.QueryRecord(string? orderByExpression, RecordRestriction? restriction)
+    {
+        return QueryRecord(orderByExpression, restriction);
+    }
 
     /// <summary>
     /// Queries database and returns a single modeled table record for the specified SQL filter
@@ -647,9 +667,15 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
     /// </para>
     /// </remarks>
-    public T? QueryRecordWhere(string? filterExpression, params object?[] parameters) => QueryRecord(new RecordRestriction(filterExpression, parameters));
+    public T? QueryRecordWhere(string? filterExpression, params object?[] parameters)
+    {
+        return QueryRecord(new RecordRestriction(filterExpression, parameters));
+    }
 
-    object? ITableOperations.QueryRecordWhere(string? filterExpression, params object?[] parameters) => QueryRecordWhere(filterExpression, parameters);
+    object? ITableOperations.QueryRecordWhere(string? filterExpression, params object?[] parameters)
+    {
+        return QueryRecordWhere(filterExpression, parameters);
+    }
 
     /// <summary>
     /// Queries database and returns modeled table records for the specified parameters.
@@ -720,7 +746,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         }
     }
 
-    IEnumerable ITableOperations.QueryRecords(string? orderByExpression, RecordRestriction? restriction, int limit) => QueryRecords(orderByExpression, restriction, limit);
+    IEnumerable ITableOperations.QueryRecords(string? orderByExpression, RecordRestriction? restriction, int limit)
+    {
+        return QueryRecords(orderByExpression, restriction, limit);
+    }
 
     /// <summary>
     /// Queries database and returns modeled table records for the specified <paramref name="restriction"/>.
@@ -739,9 +768,15 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// returned value so that the field value will be properly set prior to executing the database function.
     /// </para>
     /// </remarks>
-    public IEnumerable<T?> QueryRecords(RecordRestriction? restriction) => QueryRecords(null, restriction);
+    public IEnumerable<T?> QueryRecords(RecordRestriction? restriction)
+    {
+        return QueryRecords(null, restriction);
+    }
 
-    IEnumerable ITableOperations.QueryRecords(RecordRestriction? restriction) => QueryRecords(restriction);
+    IEnumerable ITableOperations.QueryRecords(RecordRestriction? restriction)
+    {
+        return QueryRecords(restriction);
+    }
 
     /// <summary>
     /// Queries database and returns modeled table records for the specified SQL filter expression
@@ -775,9 +810,40 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// specifying the <see cref="RecordRestriction"/> parameter.
     /// </para>
     /// </remarks>
-    public IEnumerable<T?> QueryRecordsWhere(string? filterExpression, params object?[] parameters) => QueryRecords(new RecordRestriction(filterExpression, parameters));
+    public IEnumerable<T?> QueryRecordsWhere(string? filterExpression, params object?[] parameters)
+    {
+        return QueryRecords(new RecordRestriction(filterExpression, parameters));
+    }
 
-    IEnumerable ITableOperations.QueryRecordsWhere(string? filterExpression, params object?[] parameters) => QueryRecordsWhere(filterExpression, parameters);
+    IEnumerable ITableOperations.QueryRecordsWhere(string? filterExpression, params object?[] parameters)
+    {
+        return QueryRecordsWhere(filterExpression, parameters);
+    }
+
+    /// <summary>
+    /// Queries database and returns modeled table records for the specified sorting and paging parameters.
+    /// </summary>
+    /// <param name="sortField">Field name to order-by.</param>
+    /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+    /// <param name="page">Page number of records to return (1-based).</param>
+    /// <param name="pageSize">Current page size.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// This function is used for record paging. Primary keys are cached server-side, typically per user session,
+    /// to maintain desired per-page sort order. Call <see cref="ClearPrimaryKeyCache"/> to manually clear cache
+    /// when table contents are known to have changed.
+    /// </para>
+    /// <para>
+    /// If the specified <paramref name="sortField"/> has been marked with <see cref="EncryptDataAttribute"/>,
+    /// establishing the primary key cache operation will take longer to execute since query data will need to
+    /// be downloaded locally and decrypted so the proper sort order can be determined.
+    /// </para>
+    /// </remarks>
+    public IEnumerable<T> QueryRecords(string? sortField, bool ascending, int page, int pageSize)
+    {
+        return QueryRecords(sortField, ascending, page, pageSize, (RecordRestriction?[]?)null);
+    }
 
     /// <summary>
     /// Queries database and returns modeled table records for the specified sorting, paging and search parameters.
@@ -805,9 +871,15 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// is generated by <see cref="GetSearchRestrictions(IRecordFilter[])"/> using <paramref name="recordFilter"/>.
     /// </para>
     /// </remarks>
-    public IEnumerable<T> QueryRecords(string? sortField, bool ascending, int page, int pageSize, params IRecordFilter?[]? recordFilter) => QueryRecords(sortField, ascending, page, pageSize, GetSearchRestrictions(recordFilter));
+    public IEnumerable<T> QueryRecords(string? sortField, bool ascending, int page, int pageSize, params IRecordFilter?[]? recordFilter)
+    {
+        return QueryRecords(sortField, ascending, page, pageSize, GetSearchRestrictions(recordFilter));
+    }
 
-    IEnumerable ITableOperations.QueryRecords(string? sortField, bool ascending, int page, int pageSize, params IRecordFilter?[]? recordFilter) => QueryRecords(sortField, ascending, page, pageSize, recordFilter);
+    IEnumerable ITableOperations.QueryRecords(string? sortField, bool ascending, int page, int pageSize, params IRecordFilter?[]? recordFilter)
+    {
+        return QueryRecords(sortField, ascending, page, pageSize, recordFilter);
+    }
 
     /// <summary>
     /// Queries database and returns modeled table records for the specified sorting and paging parameters.
@@ -883,7 +955,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
                 if (sortFieldIsEncrypted && s_propertyNames.TryGetValue(sortField, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? sortFieldProperty))
                 {
                     // Reduce properties to load only primary key fields and sort field
-                    HashSet<PropertyInfo> properties = new(s_primaryKeyProperties) { sortFieldProperty };
+                    HashSet<PropertyInfo> properties = [..s_primaryKeyProperties, sortFieldProperty];
                     IEnumerable<T> sortResult = LocalOrderBy(PrimaryKeyCache.AsEnumerable().Select(row => LoadRecordFromCachedKeys(row.ItemArray, properties)).Where(record => record is not null), sortField, ascending)!;
                     DataTable sortedKeyCache = new(s_tableName);
 
@@ -916,7 +988,21 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return PrimaryKeyCache.AsEnumerable().ToPagedList(page, pageSize, PrimaryKeyCache.Rows.Count).Select(row => LoadRecordFromCachedKeys(row.ItemArray)).Where(record => record is not null)!;
     }
 
-    IEnumerable ITableOperations.QueryRecords(string? sortField, bool ascending, int page, int pageSize, params RecordRestriction?[]? restrictions) => QueryRecords(sortField, ascending, page, pageSize, restrictions);
+    IEnumerable ITableOperations.QueryRecords(string? sortField, bool ascending, int page, int pageSize, params RecordRestriction?[]? restrictions)
+    {
+        return QueryRecords(sortField, ascending, page, pageSize, restrictions);
+    }
+
+    /// <summary>
+    /// Gets total record count for the modeled table.
+    /// </summary>
+    /// <returns>
+    /// Total record count for the modeled table.
+    /// </returns>
+    public int QueryRecordCount()
+    {
+        return QueryRecordCount((RecordRestriction?[]?)null);
+    }
 
     /// <summary>
     /// Gets the record count for the modeled table based on search parameter.
@@ -928,7 +1014,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// This is a convenience call to <see cref="QueryRecordCount(RecordRestriction[])"/> where restriction
     /// is generated by <see cref="GetSearchRestrictions(IRecordFilter[])"/>
     /// </remarks>
-    public int QueryRecordCount(params IRecordFilter?[]? recordFilter) => QueryRecordCount(GetSearchRestrictions(recordFilter));
+    public int QueryRecordCount(params IRecordFilter?[]? recordFilter)
+    {
+        return QueryRecordCount(GetSearchRestrictions(recordFilter));
+    }
 
     /// <summary>
     /// Gets the record count for the specified <paramref name="restrictions"/> - or - total record
@@ -1015,7 +1104,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// This is a convenience call to <see cref="QueryRecordCount(RecordRestriction[])"/>.
     /// </para>
     /// </remarks>
-    public int QueryRecordCountWhere(string? filterExpression, params object?[] parameters) => QueryRecordCount(new RecordRestriction(filterExpression, parameters));
+    public int QueryRecordCountWhere(string? filterExpression, params object?[] parameters)
+    {
+        return QueryRecordCount(new RecordRestriction(filterExpression, parameters));
+    }
 
     /// <summary>
     /// Locally searches retrieved table records after queried from database for the specified sorting and search parameters.
@@ -1051,32 +1143,34 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
         string? orderByExpression = sortFieldIsEncrypted ? null : $"{sortField}{(ascending ? "" : " DESC")}";
 
-        IEnumerable<IRecordFilter> validFilters = recordFilters.Where(f => f is not null)!;
+        IRecordFilter[] validFilters = recordFilters.Where(filter => filter is not null).ToArray()!;
 
-        static bool IsEncrypted(IRecordFilter filter) =>
-            filter.SupportsEncrypted &&
-            filter.ModelProperty is not null &&
-            s_encryptDataTargets is not null &&
-            s_encryptDataTargets.ContainsKey(filter.ModelProperty);
+        if (validFilters.Any(isEncrypted))
+            throw new NotImplementedException("Encryption is not implemented.");
 
         RecordRestriction? restriction = validFilters
-            .Where(f => !IsEncrypted(f))
-            .Aggregate((RecordRestriction?)null, (r, f) => f.GenerateRestriction() + r);
+            .Aggregate((RecordRestriction?)null, (restriction, filter) => filter.GenerateRestriction() + restriction);
 
         IEnumerable<T?> queryResult = QueryRecords(orderByExpression, restriction);
-        IEnumerable<IRecordFilter> encryptedFilters = validFilters.Where(IsEncrypted);
-
-        if (encryptedFilters.Any())
-            throw new NotImplementedException("Encryption is not implemented.");
 
         if (sortFieldIsEncrypted)
             queryResult = LocalOrderBy(queryResult, sortField, ascending, comparison.GetComparer());
 
         return queryResult.ToArray();
+
+        static bool isEncrypted(IRecordFilter filter)
+        {
+            return filter is { SupportsEncrypted: true, ModelProperty: not null } &&
+                   s_encryptDataTargets is not null &&
+                   s_encryptDataTargets.ContainsKey(filter.ModelProperty);
+        }
     }
 
     // ReSharper disable once CoVariantArrayConversion
-    object?[]? ITableOperations.SearchRecords(string sortField, bool ascending, StringComparison comparison, params IRecordFilter?[]? recordFilter) => SearchRecords(sortField, ascending, comparison, recordFilter);
+    object?[]? ITableOperations.SearchRecords(string sortField, bool ascending, StringComparison comparison, params IRecordFilter?[]? recordFilter)
+    {
+        return SearchRecords(sortField, ascending, comparison, recordFilter);
+    }
 
 
     /// <summary>
@@ -1086,7 +1180,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <param name="page">Desired page of records.</param>
     /// <param name="pageSize">Desired page size.</param>
     /// <returns>A page of records.</returns>
-    public IEnumerable<T> GetPageOfRecords(T[] records, int page, int pageSize) => records.ToPagedList(page, pageSize, records.Length);
+    public IEnumerable<T> GetPageOfRecords(T[] records, int page, int pageSize)
+    {
+        return records.ToPagedList(page, pageSize, records.Length);
+    }
 
     IEnumerable ITableOperations.GetPageOfRecords(object[] records, int page, int pageSize)
     {
@@ -1124,7 +1221,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         }
     }
 
-    object? ITableOperations.LoadRecord(params object[] primaryKeys) => LoadRecord(primaryKeys);
+    object? ITableOperations.LoadRecord(params object[] primaryKeys)
+    {
+        return LoadRecord(primaryKeys);
+    }
 
     // Cached keys are not decrypted, so any needed record interpretation steps should skip encryption
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1152,9 +1252,15 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </summary>
     /// <param name="row"><see cref="DataRow"/> of queried data to be loaded.</param>
     /// <returns>New modeled table record queried from the specified <paramref name="row"/>.</returns>
-    public T? LoadRecord(DataRow row) => LoadRecord(row, s_properties.Values);
+    public T? LoadRecord(DataRow row)
+    {
+        return LoadRecord(row, s_properties.Values);
+    }
 
-    private T LoadRecordWithKeys(DataRow row) => LoadRecord(row, s_properties.Values, true)!;
+    private T LoadRecordWithKeys(DataRow row)
+    {
+        return LoadRecord(row, s_properties.Values, true)!;
+    }
 
     // This is the primary function where records are loaded from a DataRow into a modeled record of type T
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1206,7 +1312,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         }
     }
 
-    object? ITableOperations.LoadRecord(DataRow row) => LoadRecord(row);
+    object? ITableOperations.LoadRecord(DataRow row)
+    {
+        return LoadRecord(row);
+    }
 
     /// <summary>
     /// Converts the given collection of <paramref name="records"/> into a <see cref="DataTable"/>.
@@ -1279,7 +1388,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </summary>
     /// <param name="record">Record to delete.</param>
     /// <returns>Number of rows affected.</returns>
-    public int DeleteRecord(T record) => DeleteRecord(GetPrimaryKeys(record));
+    public int DeleteRecord(T record)
+    {
+        return DeleteRecord(GetPrimaryKeys(record));
+    }
 
     int ITableOperations.DeleteRecord(object value)
     {
@@ -1294,7 +1406,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </summary>
     /// <param name="row"><see cref="DataRow"/> of queried data to be deleted.</param>
     /// <returns>Number of rows affected.</returns>
-    public int DeleteRecord(DataRow row) => DeleteRecord(GetPrimaryKeys(row));
+    public int DeleteRecord(DataRow row)
+    {
+        return DeleteRecord(GetPrimaryKeys(row));
+    }
 
     /// <summary>
     /// Deletes the records referenced by the specified <paramref name="restriction"/>.
@@ -1375,7 +1490,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// This is a convenience call to <see cref="DeleteRecord(RecordRestriction, bool?)"/>.
     /// </para>
     /// </remarks>
-    public int DeleteRecordWhere(string filterExpression, params object?[] parameters) => DeleteRecord(new RecordRestriction(filterExpression, parameters));
+    public int DeleteRecordWhere(string filterExpression, params object?[] parameters)
+    {
+        return DeleteRecord(new RecordRestriction(filterExpression, parameters));
+    }
 
     /// <summary>
     /// Updates the database with the specified modeled table <paramref name="record"/>,
@@ -1403,7 +1521,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </remarks>
     public int UpdateRecord(T record, RecordRestriction? restriction = null, bool? applyRootQueryRestriction = null)
     {
-        List<object?> values = new();
+        List<object?> values = [];
 
         try
         {
@@ -1456,7 +1574,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
             values.AddRange(restriction.Parameters);
 
-            List<object> updateWhereOffsets = new();
+            List<object> updateWhereOffsets = [];
             int updateFieldIndex = s_updateProperties.Length;
 
             for (int i = 0; i < restriction.Parameters.Length; i++)
@@ -1525,7 +1643,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// This is a convenience call to <see cref="UpdateRecord(T, RecordRestriction, bool?)"/>.
     /// </para>
     /// </remarks>
-    public int UpdateRecordWhere(T record, string filterExpression, params object?[] parameters) => UpdateRecord(record, new RecordRestriction(filterExpression, parameters));
+    public int UpdateRecordWhere(T record, string filterExpression, params object?[] parameters)
+    {
+        return UpdateRecord(record, new RecordRestriction(filterExpression, parameters));
+    }
 
     int ITableOperations.UpdateRecordWhere(object value, string filterExpression, params object?[] parameters)
     {
@@ -1555,7 +1676,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// returned value so that the field value will be properly set prior to executing the database function.
     /// </para>
     /// </remarks>
-    public int UpdateRecord(DataRow row, RecordRestriction? restriction = null) => UpdateRecord(LoadRecordWithKeys(row), restriction);
+    public int UpdateRecord(DataRow row, RecordRestriction? restriction = null)
+    {
+        return UpdateRecord(LoadRecordWithKeys(row), restriction);
+    }
 
     /// <summary>
     /// Updates the database with the specified <paramref name="row"/> referenced by the
@@ -1595,7 +1719,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// This is a convenience call to <see cref="UpdateRecord(DataRow, RecordRestriction)"/>.
     /// </para>
     /// </remarks>
-    public int UpdateRecordWhere(DataRow row, string filterExpression, params object?[] parameters) => UpdateRecord(row, new RecordRestriction(filterExpression, parameters));
+    public int UpdateRecordWhere(DataRow row, string filterExpression, params object?[] parameters)
+    {
+        return UpdateRecord(row, new RecordRestriction(filterExpression, parameters));
+    }
 
     /// <summary>
     /// Adds the specified modeled table <paramref name="record"/> to the database.
@@ -1604,7 +1731,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <returns>Number of rows affected.</returns>
     public int AddNewRecord(T record)
     {
-        List<object?> values = new();
+        List<object?> values = [];
 
         try
         {
@@ -1644,7 +1771,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </summary>
     /// <param name="row"><see cref="DataRow"/> of queried data to be added.</param>
     /// <returns>Number of rows affected.</returns>
-    public int AddNewRecord(DataRow row) => AddNewRecord(LoadRecordWithKeys(row));
+    public int AddNewRecord(DataRow row)
+    {
+        return AddNewRecord(LoadRecordWithKeys(row));
+    }
 
     /// <summary>
     /// Adds the specified modeled table <paramref name="record"/> to the database if the
@@ -1653,7 +1783,12 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </summary>
     /// <param name="record">Record to add or update.</param>
     /// <returns>Number of rows affected.</returns>
-    public int AddNewOrUpdateRecord(T record) => s_primaryKeyProperties.All(property => Common.IsDefaultValue(property.GetValue(record))) ? AddNewRecord(record) : UpdateRecord(record);
+    public int AddNewOrUpdateRecord(T record)
+    {
+        return s_primaryKeyProperties.All(property => Common.IsDefaultValue(property.GetValue(record)))
+            ? AddNewRecord(record)
+            : UpdateRecord(record);
+    }
 
     int ITableOperations.AddNewOrUpdateRecord(object value)
     {
@@ -1672,7 +1807,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     {
         try
         {
-            List<object> values = new();
+            List<object> values = [];
 
             foreach (PropertyInfo property in s_primaryKeyProperties)
                 values.Add(property.GetValue(record)!);
@@ -1688,7 +1823,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
             ExceptionHandler(opex);
 
-            return Array.Empty<object>();
+            return [];
         }
     }
 
@@ -1715,7 +1850,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     {
         try
         {
-            List<object> values = new();
+            List<object> values = [];
 
             foreach (PropertyInfo property in s_primaryKeyProperties)
                 values.Add(row[s_fieldNames[property.Name]]);
@@ -1731,7 +1866,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
             ExceptionHandler(opex);
 
-            return Array.Empty<object>();
+            return [];
         }
     }
 
@@ -1810,7 +1945,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <typeparam name="TAttribute">Type of attribute to search for.</typeparam>
     /// <param name="fieldName">Name of field to use for attribute lookup.</param>
     /// <returns><c>true</c> if field has attribute; otherwise, <c>false</c>.</returns>
-    public bool FieldHasAttribute<TAttribute>(string fieldName) where TAttribute : Attribute => FieldHasAttribute(fieldName, typeof(TAttribute));
+    public bool FieldHasAttribute<TAttribute>(string fieldName) where TAttribute : Attribute
+    {
+        return FieldHasAttribute(fieldName, typeof(TAttribute));
+    }
 
     /// <summary>
     /// Determines if the specified field has an associated attribute.
@@ -1868,7 +2006,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// filter expression where the <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/> have been modeled
     /// on a field referenced by one of the <see cref="RecordRestriction"/> parameters. Since the record restrictions are used
     /// with a free-form expression, the <see cref="TableOperations{T}"/> class cannot be aware of the fields accessed in the
-    /// expression without attempting to parse the expression which would be time consuming and error prone; as a result, users
+    /// expression without attempting to parse the expression which would be time-consuming and error-prone; as a result, users
     /// will need to be aware to call this function when using record restriction that references fields that are either marked
     /// for encryption or use a specific field data-type attribute.
     /// </para>
@@ -1921,22 +2059,21 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </remarks>
     public RecordRestriction[]? GetSearchRestrictions(params IRecordFilter?[]? recordFilters)
     {
-        if (recordFilters is null)
-            return null;
-
-        return recordFilters
-            .Where(recordFilter => recordFilter is not null)
+        return recordFilters?.Where(recordFilter => recordFilter is not null)
             .Select(recordFilter => recordFilter!.GenerateRestriction())
             .ToArray();
 
-        //ToDO: Add Logic to deal with Encrypted Fields
+        // TODO: Add logic to deal with encrypted Fields
     }
 
     /// <summary>
     /// Calculates the size of the current primary key cache, in number of records.
     /// </summary>
     /// <returns>Number of records in the current primary key cache.</returns>
-    public int GetPrimaryKeyCacheSize() => PrimaryKeyCache?.Rows.Count ?? 0;
+    public int GetPrimaryKeyCacheSize()
+    {
+        return PrimaryKeyCache?.Rows.Count ?? 0;
+    }
 
     /// <summary>
     /// Clears the primary key cache for this <see cref="TableOperations{T}"/> instance.
@@ -1952,7 +2089,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// should be called so that primary key cache can be reloaded.
     /// </para>
     /// </remarks>
-    public void ClearPrimaryKeyCache() => PrimaryKeyCache = null;
+    public void ClearPrimaryKeyCache()
+    {
+        PrimaryKeyCache = null;
+    }
 
     // Derive raw or encrypted field values or IDbCommandParameter values with specific DbType if
     // a primary key field data type has been targeted for specific database type
@@ -1987,6 +2127,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    // ReSharper disable once UnusedParameter.Local
     private object? GetInterpretedValue(PropertyInfo property, object? value, bool skipEncryption = false)
     {
         // TODO: Fix encryption
@@ -2134,9 +2275,6 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private static TypeRegistry? s_typeRegistry;
 
     // Static Constructor
-    [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-    [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
-    [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
     static TableOperations()
     {
         StringBuilder addNewFields = new();
@@ -2145,9 +2283,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         StringBuilder whereFormat = new();
         StringBuilder allFields = new("*");
         StringBuilder primaryKeyFields = new();
-        List<PropertyInfo> addNewProperties = new();
-        List<PropertyInfo> updateProperties = new();
-        List<PropertyInfo> primaryKeyProperties = new();
+        List<PropertyInfo> addNewProperties = [];
+        List<PropertyInfo> updateProperties = [];
+        List<PropertyInfo> primaryKeyProperties = [];
         int primaryKeyIndex = 0;
         int addNewFieldIndex = 0;
         int updateFieldIndex = 0;
@@ -2156,7 +2294,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         s_tableName = typeof(T).Name;
 
         // Check for overridden table name
-        if (typeof(T).TryGetAttribute(out TableNameAttribute? tableNameAttribute) && !string.IsNullOrWhiteSpace(tableNameAttribute?.TableName))
+        if (typeof(T).TryGetAttribute(out TableNameAttribute? tableNameAttribute) && !string.IsNullOrWhiteSpace(tableNameAttribute.TableName))
             s_tableName = tableNameAttribute.TableName;
 
         // Check for escaped table name targets
@@ -2189,21 +2327,18 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             if (property.TryGetAttribute(out EncryptDataAttribute? encryptDataAttribute) && property.PropertyType == typeof(string))
             {
                 s_encryptDataTargets ??= new Dictionary<PropertyInfo, string>();
-
-                s_encryptDataTargets[property] = encryptDataAttribute!.KeyReference;
+                s_encryptDataTargets[property] = encryptDataAttribute.KeyReference;
             }
 
             if (property.TryGetAttributes(out FieldDataTypeAttribute[]? fieldDataTypeAttributes))
             {
                 s_fieldDataTypeTargets ??= new Dictionary<PropertyInfo, Dictionary<DatabaseType, DbType>?>();
-
                 s_fieldDataTypeTargets[property] = DeriveFieldDataTypeTargets(fieldDataTypeAttributes!);
             }
 
             if (property.TryGetAttributes(out useEscapedNameAttributes))
             {
                 s_escapedFieldNameTargets ??= new Dictionary<string, Dictionary<DatabaseType, bool>?>(StringComparer.OrdinalIgnoreCase);
-
                 s_escapedFieldNameTargets[fieldName] = DeriveEscapedNameTargets(useEscapedNameAttributes!);
 
                 // If any database has been targeted for escaping the field name, pre-apply the standard ANSI escaped
@@ -2212,7 +2347,15 @@ public class TableOperations<T> : ITableOperations where T : class, new()
                 fieldName = $"\"{fieldName}\"";
             }
 
-            if (primaryKeyAttribute is not null)
+            if (primaryKeyAttribute is null)
+            {
+                addNewFields.Append($"{(addNewFields.Length > 0 ? ", " : "")}{fieldName}");
+                addNewFormat.Append($"{(addNewFormat.Length > 0 ? ", " : "")}{{{addNewFieldIndex++}}}");
+                updateFormat.Append($"{(updateFormat.Length > 0 ? ", " : "")}{fieldName}={{{updateFieldIndex++}}}");
+                addNewProperties.Add(property);
+                updateProperties.Add(property);
+            }
+            else
             {
                 if (primaryKeyAttribute.IsIdentity)
                 {
@@ -2229,16 +2372,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
                 primaryKeyFields.Append($"{(primaryKeyFields.Length > 0 ? ", " : "")}{fieldName}");
                 primaryKeyProperties.Add(property);
             }
-            else
-            {
-                addNewFields.Append($"{(addNewFields.Length > 0 ? ", " : "")}{fieldName}");
-                addNewFormat.Append($"{(addNewFormat.Length > 0 ? ", " : "")}{{{addNewFieldIndex++}}}");
-                updateFormat.Append($"{(updateFormat.Length > 0 ? ", " : "")}{fieldName}={{{updateFieldIndex++}}}");
-                addNewProperties.Add(property);
-                updateProperties.Add(property);
-            }
 
-            s_attributes.Add(property, new HashSet<Type>(property.CustomAttributes.Select(attributeData => attributeData.AttributeType)));
+            s_attributes.Add(property, [..property.CustomAttributes.Select(attributeData => attributeData.AttributeType)]);
         }
 
         // Have to assume all fields are primary when none are specified
@@ -2267,7 +2402,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             s_primaryKeyFields = primaryKeyFields.ToString();
         }
 
-        List<object> updateWhereOffsets = new();
+        List<object> updateWhereOffsets = [];
 
         for (int i = 0; i < primaryKeyIndex; i++)
             updateWhereOffsets.Add($"{{{updateFieldIndex + i}}}");
@@ -2303,8 +2438,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         s_addNewSql = string.Format(AddNewSqlFormat, tableName, addNewFields, addNewFormat);
         s_updateSql = string.Format(UpdateSqlFormat, tableName, updateFormat, string.Format(whereFormat.ToString(), updateWhereOffsets.ToArray()));
         s_deleteSql = string.Format(DeleteSqlFormat, tableName, whereFormat);
-        s_updateWhereSql = s_updateSql.Substring(0, s_updateSql.IndexOf(" WHERE ", StringComparison.Ordinal) + 7);
-        s_deleteWhereSql = s_deleteSql.Substring(0, s_deleteSql.IndexOf(" WHERE ", StringComparison.Ordinal) + 7);
+        s_updateWhereSql = s_updateSql[..(s_updateSql.IndexOf(" WHERE ", StringComparison.Ordinal) + 7)];
+        s_deleteWhereSql = s_deleteSql[..(s_deleteSql.IndexOf(" WHERE ", StringComparison.Ordinal) + 7)];
 
         s_addNewProperties = addNewProperties.ToArray();
         s_updateProperties = updateProperties.ToArray();
@@ -2350,7 +2485,6 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     public static Func<DataRow, T?> LoadRecordFunction()
     {
         using AdoDataConnection connection = new(default!, typeof(NullConnection));
-
         return new TableOperations<T>(connection).LoadRecord;
     }
 
@@ -2366,7 +2500,6 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     public static Func<T?> NewRecordFunction()
     {
         using AdoDataConnection connection = new(default!, typeof(NullConnection));
-
         return new TableOperations<T>(connection).NewRecord;
     }
 
@@ -2382,7 +2515,6 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     public static Action<T> ApplyRecordDefaultsFunction()
     {
         using AdoDataConnection connection = new(default!, typeof(NullConnection));
-
         return new TableOperations<T>(connection).ApplyRecordDefaults;
     }
 
@@ -2398,13 +2530,12 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     public static Action<T> ApplyRecordUpdatesFunction()
     {
         using AdoDataConnection connection = new(default!, typeof(NullConnection));
-
         return new TableOperations<T>(connection).ApplyRecordUpdates;
     }
 
     private static string GetFieldName(PropertyInfo property)
     {
-        if (property.TryGetAttribute(out FieldNameAttribute? fieldNameAttribute) && fieldNameAttribute is not null && !string.IsNullOrEmpty(fieldNameAttribute.FieldName))
+        if (property.TryGetAttribute(out FieldNameAttribute? fieldNameAttribute) && !string.IsNullOrEmpty(fieldNameAttribute.FieldName))
             return fieldNameAttribute.FieldName;
 
         return property.Name;
@@ -2472,16 +2603,16 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return escapedNameTargets;
     }
 
-    private static List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>? DeriveExpressionAmendments(AmendExpressionAttribute[]? amendExpressionAttributes)
+    private static List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>? DeriveExpressionAmendments(AmendExpressionAttribute?[]? amendExpressionAttributes)
     {
         if (amendExpressionAttributes is null || amendExpressionAttributes.Length == 0)
             return null;
 
-        List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> typedExpressionAmendments = new();
-        List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> untypedExpressionAmendments = new();
+        List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> typedExpressionAmendments = [];
+        List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> untypedExpressionAmendments = [];
         List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> expressionAmendments;
 
-        foreach (AmendExpressionAttribute attribute in amendExpressionAttributes)
+        foreach (AmendExpressionAttribute? attribute in amendExpressionAttributes)
         {
             if (attribute is null)
                 continue;
@@ -2496,7 +2627,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             }
             else
             {
-                databaseTypes = new[] { attribute.TargetDatabaseType.Value };
+                databaseTypes = [attribute.TargetDatabaseType.Value];
                 expressionAmendments = typedExpressionAmendments;
             }
 
@@ -2509,7 +2640,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         }
 
         // Sort expression amendments with a specified database type higher in the execution order to allow for database specific overrides
-        expressionAmendments = new List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>(typedExpressionAmendments);
+        expressionAmendments = [..typedExpressionAmendments];
         expressionAmendments.AddRange(untypedExpressionAmendments);
 
         return expressionAmendments.Count > 0 ? expressionAmendments : null; //-V3022
@@ -2527,7 +2658,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             if (delimitedString.Length > 0)
                 delimitedString.Append(", ");
 
-            delimitedString.AppendFormat("{0}:{1}", i, values[i]?.ToString() ?? "null");
+            delimitedString.Append($"{i}:{values[i]?.ToString() ?? "null"}");
         }
 
         return delimitedString.ToString();

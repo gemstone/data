@@ -29,25 +29,25 @@ namespace Gemstone.Data.Model;
 /// Defines an interface for a filter that can be applied to queries.
 /// </summary>
 /// <remarks>
-/// For Backend Restrictions <see cref="RecordRestriction"/> should be used.
-/// This is inteded to be used for user initiated seraches and filters in the User Interface.
+/// For backend restrictions <see cref="RecordRestriction"/> should be used. This interface
+/// is intended to be used for user initiated searches and filters from a UI.
 /// </remarks>
 public interface IRecordFilter
 {
     #region [ Properties ]
 
     /// <summary>
-    /// The Name of the field to be searched.
+    /// The name of the field to be searched.
     /// </summary>
     string FieldName { get; set; }
 
     /// <summary>
-    /// The value to be searched for.
+    /// The value to be searched.
     /// </summary>
     object? SearchParameter { get; set; }
 
     /// <summary>
-    /// The Operator to be used for the Search.
+    /// The operator to be used for the search.
     /// </summary>
     public string Operator { get; set; }
 
@@ -60,7 +60,7 @@ public interface IRecordFilter
     /// The <see cref="PropertyInfo"/> of the Model that this <see cref="IRecordFilter"/> applies to.
     /// </summary>
     /// <remarks>
-    /// This will return null if the <see cref="IRecordFilter"/> is not associated with a Property.
+    /// This will return <c>null</c> if the <see cref="IRecordFilter"/> is not associated with a property.
     /// </remarks>
     public PropertyInfo? ModelProperty { get; }
 

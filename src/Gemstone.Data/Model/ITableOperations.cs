@@ -66,12 +66,12 @@ public interface ITableOperations
     Action<Exception>? ExceptionHandler { get; set; }
 
     /// <summary>
-    /// Gets or sets flag that determines if field names should be treated as case sensitive. Defaults to <c>false</c>.
+    /// Gets or sets flag that determines if field names should be treated as case-sensitive. Defaults to <c>false</c>.
     /// </summary>
     /// <remarks>
     /// In cases where modeled table fields have applied <see cref="UseEscapedNameAttribute"/>, this flag will be used
-    /// to properly update escaped field names that may be case sensitive. For example, escaped field names in Oracle
-    /// are case sensitive. This value is typically <c>false</c>.
+    /// to properly update escaped field names that may be case-sensitive. For example, escaped field names in Oracle
+    /// are case-sensitive. This value is typically <c>false</c>.
     /// </remarks>
     bool UseCaseSensitiveFieldNames { get; set; }
 

@@ -3311,13 +3311,13 @@
             Defines an interface for a filter that can be applied to queries.
             </summary>
       <remarks>
-            For Backend Restrictions <see cref="T:Gemstone.Data.Model.RecordRestriction" /> should be used.
-            This is inteded to be used for user initiated seraches and filters in the User Interface.
+            For backend restrictions <see cref="T:Gemstone.Data.Model.RecordRestriction" /> should be used. This interface
+            is intended to be used for user initiated searches and filters from a UI.
             </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.IRecordFilter.FieldName">
       <summary>
-            The Name of the field to be searched.
+            The name of the field to be searched.
             </summary>
     </member>
     <member name="M:Gemstone.Data.Model.IRecordFilter.GenerateRestriction">
@@ -3338,17 +3338,17 @@
             The <see cref="T:System.Reflection.PropertyInfo" /> of the Model that this <see cref="T:Gemstone.Data.Model.IRecordFilter" /> applies to.
             </summary>
       <remarks>
-            This will return null if the <see cref="T:Gemstone.Data.Model.IRecordFilter" /> is not associated with a Property.
+            This will return <c>null</c> if the <see cref="T:Gemstone.Data.Model.IRecordFilter" /> is not associated with a property.
             </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.IRecordFilter.Operator">
       <summary>
-            The Operator to be used for the Search.
+            The operator to be used for the search.
             </summary>
     </member>
     <member name="P:Gemstone.Data.Model.IRecordFilter.SearchParameter">
       <summary>
-            The value to be searched for.
+            The value to be searched.
             </summary>
     </member>
     <member name="P:Gemstone.Data.Model.IRecordFilter.SupportsEncrypted">
@@ -4226,12 +4226,12 @@
     </member>
     <member name="P:Gemstone.Data.Model.ITableOperations.UseCaseSensitiveFieldNames">
       <summary>
-            Gets or sets flag that determines if field names should be treated as case sensitive. Defaults to <c>false</c>.
+            Gets or sets flag that determines if field names should be treated as case-sensitive. Defaults to <c>false</c>.
             </summary>
       <remarks>
             In cases where modeled table fields have applied <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />, this flag will be used
-            to properly update escaped field names that may be case sensitive. For example, escaped field names in Oracle
-            are case sensitive. This value is typically <c>false</c>.
+            to properly update escaped field names that may be case-sensitive. For example, escaped field names in Oracle
+            are case-sensitive. This value is typically <c>false</c>.
             </remarks>
     </member>
     <member name="T:Gemstone.Data.Model.NonRecordFieldAttribute">
@@ -4354,7 +4354,7 @@
             The <see cref="T:System.Reflection.PropertyInfo" /> of the Model that this <see cref="T:Gemstone.Data.Model.IRecordFilter" /> applies to.
             </summary>
       <remarks>
-            This will return null if the <see cref="T:Gemstone.Data.Model.IRecordFilter" /> is not associated with a Property.
+            This will return <c>null</c> if the <see cref="T:Gemstone.Data.Model.IRecordFilter" /> is not associated with a property.
             </remarks>
     </member>
     <member name="P:Gemstone.Data.Model.RecordFilter`1.Operator">
@@ -5176,7 +5176,7 @@
             filter expression where the <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" /> have been modeled
             on a field referenced by one of the <see cref="T:Gemstone.Data.Model.RecordRestriction" /> parameters. Since the record restrictions are used
             with a free-form expression, the <see cref="T:Gemstone.Data.Model.TableOperations`1" /> class cannot be aware of the fields accessed in the
-            expression without attempting to parse the expression which would be time consuming and error prone; as a result, users
+            expression without attempting to parse the expression which would be time-consuming and error-prone; as a result, users
             will need to be aware to call this function when using record restriction that references fields that are either marked
             for encryption or use a specific field data-type attribute.
             </para>
@@ -5372,6 +5372,14 @@
             </para>
       </remarks>
     </member>
+    <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount">
+      <summary>
+            Gets total record count for the modeled table.
+            </summary>
+      <returns>
+            Total record count for the modeled table.
+            </returns>
+    </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecordCount(Gemstone.Data.Model.IRecordFilter[])">
       <summary>
             Gets the record count for the modeled table based on search parameter.
@@ -5468,6 +5476,28 @@
             either an <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" /> or <see cref="T:Gemstone.Data.Model.FieldDataTypeAttribute" />, then the function
             <see cref="M:Gemstone.Data.Model.TableOperations`1.GetInterpretedFieldValue(System.String,System.Object)" /> will need to be called, replacing the target parameter with the
             returned value so that the field value will be properly set prior to executing the database function.
+            </para>
+      </remarks>
+    </member>
+    <member name="M:Gemstone.Data.Model.TableOperations`1.QueryRecords(System.String,System.Boolean,System.Int32,System.Int32)">
+      <summary>
+            Queries database and returns modeled table records for the specified sorting and paging parameters.
+            </summary>
+      <param name="sortField">Field name to order-by.</param>
+      <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+      <param name="page">Page number of records to return (1-based).</param>
+      <param name="pageSize">Current page size.</param>
+      <returns>An enumerable of modeled table row instances for queried records.</returns>
+      <remarks>
+        <para>
+            This function is used for record paging. Primary keys are cached server-side, typically per user session,
+            to maintain desired per-page sort order. Call <see cref="M:Gemstone.Data.Model.TableOperations`1.ClearPrimaryKeyCache" /> to manually clear cache
+            when table contents are known to have changed.
+            </para>
+        <para>
+            If the specified <paramref name="sortField" /> has been marked with <see cref="T:Gemstone.Data.Model.EncryptDataAttribute" />,
+            establishing the primary key cache operation will take longer to execute since query data will need to
+            be downloaded locally and decrypted so the proper sort order can be determined.
             </para>
       </remarks>
     </member>
@@ -5837,12 +5867,12 @@
     </member>
     <member name="P:Gemstone.Data.Model.TableOperations`1.UseCaseSensitiveFieldNames">
       <summary>
-            Gets or sets flag that determines if field names should be treated as case sensitive. Defaults to <c>false</c>.
+            Gets or sets flag that determines if field names should be treated as case-sensitive. Defaults to <c>false</c>.
             </summary>
       <remarks>
             In cases where modeled table fields have applied <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />, this flag will be used
-            to properly update escaped field names that may be case sensitive. For example, escaped field names in Oracle
-            are case sensitive. This value is typically <c>false</c>.
+            to properly update escaped field names that may be case-sensitive. For example, escaped field names in Oracle
+            are case-sensitive. This value is typically <c>false</c>.
             </remarks>
     </member>
     <member name="T:Gemstone.Data.Model.TargetExpression">

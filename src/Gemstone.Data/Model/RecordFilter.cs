@@ -20,6 +20,8 @@
 //       Generated original version of source code.
 //
 //******************************************************************************************************
+// ReSharper disable StaticMemberInGenericType
+// ReSharper disable RedundantCatchClause
 
 using System;
 using System.Collections.Generic;
@@ -34,8 +36,8 @@ namespace Gemstone.Data.Model;
 /// Defines a filter that can be applied to queries.
 /// </summary>
 /// <remarks>
-/// For Backend Restrictions <see cref="RecordRestriction"/> should be used.
-/// This is inteded to be used for user initiated seraches and filters in the User Interface.
+/// For backend restrictions <see cref="RecordRestriction"/> should be used. This class
+/// is intended to be used for user initiated searches and filters in the user interface.
 /// </remarks>
 public class RecordFilter<T> : IRecordFilter where T : class, new()
 {
@@ -48,36 +50,13 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
 
     #region [ Properties ]
 
-    /// <summary>
-    /// Gets or sets the Name of the field to be searched.
-    /// </summary>
+    /// <inheritdoc/>
     public string FieldName { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets or sets the value to be searched for.
-    /// </summary>
+    /// <inheritdoc/>
     public object? SearchParameter { get; set; }
 
-    /// <summary>
-    /// Gets or sets the Operator to be used for the Search.
-    /// </summary>
-    /// <remarks>
-    /// <para>The list of supported operators includes:</para>
-    ///
-    /// <list type="bullet">
-    ///   <item>=</item>
-    ///   <item><![CDATA[<>]]></item>
-    ///   <item><![CDATA[<]]></item>
-    ///   <item><![CDATA[>]]></item>
-    ///   <item>IN</item>
-    ///   <item>NOT IN</item>
-    ///   <item>LIKE</item>
-    ///   <item>NOT LIKE</item>
-    ///   <item><![CDATA[<=]]></item>
-    ///   <item><![CDATA[>=]]></item>
-    /// </list>
-    /// </remarks>
-    /// <exception cref="NotSupportedException">Attempted to assign an operator that is not supported.</exception>
+    /// <inheritdoc/>
     public string Operator
     {
         get => m_operator;
@@ -90,9 +69,7 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
         }
     }
 
-    /// <summary>
-    /// Indicates whether this <see cref="RecordFilter{T}"/> will work on encrypted fields.
-    /// </summary>
+    /// <inheritdoc/>
     public bool SupportsEncrypted => s_encryptedOperators.Contains(m_operator);
 
     /// <inheritdoc/>
@@ -102,18 +79,16 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
 
     #region [ Methods ]
 
-    /// <summary>
-    /// Generates a <see cref="RecordRestriction"/> that corresponds to this <see cref="RecordFilter{T}"/>.
-    /// </summary>
-    public RecordRestriction GenerateRestriction()
+    /// <inheritdoc/>
+    public RecordRestriction GenerateRestriction(ITableOperations tableOperations)
     {
         if (!IsValidField(FieldName))
             throw new ArgumentException($"{FieldName} is not a valid field for {typeof(T).Name}");
 
         IEnumerable<MethodInfo> methods = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static);
 
-        MethodInfo? transform = methods.FirstOrDefault(t =>
-            t.TryGetAttribute(out SearchExtensionAttribute? searchExtension) &&
+        MethodInfo? transform = methods.FirstOrDefault(info =>
+            info.TryGetAttribute(out SearchExtensionAttribute? searchExtension) &&
             Regex.IsMatch(FieldName, searchExtension.FieldMatch));
 
         if (transform is not null)
@@ -126,31 +101,34 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
             catch
             {
                 // Fall through to normal search if not debugging
-#if DEBUG
+            #if DEBUG
                 throw;
-#endif
+            #endif
             }
         }
 
-        if (s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase))
-        {
-            if (SearchParameter is not object[] searchParameter)
-            {
-                searchParameter = SearchParameter is not null
-                    ? [SearchParameter]
-                    : [];
-            }
+        if (SearchParameter is not object?[] searchParameters) 
+            searchParameters = SearchParameter is not null ? [SearchParameter] : [];
 
-            int nParameters = searchParameter.Length;
+        int parameterCount = searchParameters.Length;
 
-            string[] parameters = new string[nParameters];
-            for (int i = 0; i < nParameters; i++)
-                parameters[i] = $"{{{i}}}";
+        if (parameterCount == 0)
+            return new RecordRestriction($"{FieldName} {m_operator} NULL");
 
-            return new RecordRestriction($"{FieldName} {m_operator} ({string.Join(',', parameters)})", searchParameter);
-        }
+        // Convert search parameters to the interpreted value for the specified field, i.e., encrypting or
+        // returning any intermediate IDbDataParameter value as needed:
+        for (int i = 0; i < parameterCount; i++) 
+            searchParameters[i] = tableOperations.GetInterpretedFieldValue(FieldName, searchParameters[i]);
 
-        return new RecordRestriction($"{FieldName} {m_operator} {{0}}", SearchParameter);
+        if (!s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase))
+            return new RecordRestriction($"{FieldName} {m_operator} {{0}}", searchParameters);
+
+        string[] parameters = new string[parameterCount];
+
+        for (int i = 0; i < parameterCount; i++)
+            parameters[i] = $"{{{i}}}";
+
+        return new RecordRestriction($"{FieldName} {m_operator} ({string.Join(',', parameters)})", searchParameters);
     }
 
     private bool IsValidField(string fieldName)
@@ -166,8 +144,8 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
 
         IEnumerable<MethodInfo> methods = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static);
 
-        return methods.Any(m =>
-            m.TryGetAttribute(out SearchExtensionAttribute? searchExtension) &&
+        return methods.Any(info =>
+            info.TryGetAttribute(out SearchExtensionAttribute? searchExtension) &&
             Regex.IsMatch(fieldName, searchExtension.FieldMatch));
     }
 

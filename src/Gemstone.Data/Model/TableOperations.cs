@@ -22,6 +22,13 @@
 //      Migrated to Gemstone libraries.
 //
 //******************************************************************************************************
+// ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+// ReSharper disable UnusedMember.Global
+// ReSharper disable StaticMemberInGenericType
+// ReSharper disable UnusedMember.Local
+// ReSharper disable AssignNullToNotNullAttribute
+// ReSharper disable NotAccessedField.Local
+// ReSharper disable ArrangeRedundantParentheses
 
 using System;
 using System.Collections;
@@ -38,15 +45,8 @@ using Gemstone.Data.DataExtensions;
 using Gemstone.Expressions.Evaluator;
 using Gemstone.Expressions.Model;
 using Gemstone.Reflection.MemberInfoExtensions;
+using Gemstone.Security.Cryptography;
 using Gemstone.StringExtensions;
-
-// ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-// ReSharper disable UnusedMember.Global
-// ReSharper disable StaticMemberInGenericType
-// ReSharper disable UnusedMember.Local
-// ReSharper disable AssignNullToNotNullAttribute
-// ReSharper disable NotAccessedField.Local
-// ReSharper disable ArrangeRedundantParentheses
 
 namespace Gemstone.Data.Model;
 
@@ -354,131 +354,34 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
     #region [ Properties ]
 
-    /// <summary>
-    /// Gets <see cref="AdoDataConnection"/> instance associated with this <see cref="TableOperations{T}"/> used for database operations.
-    /// </summary>
+    /// <inheritdoc/>
     public AdoDataConnection Connection { get; }
 
-    /// <summary>
-    /// Gets the table name defined for the modeled table, includes any escaping as defined in model.
-    /// </summary>
+    /// <inheritdoc/>
     public string TableName => GetEscapedTableName();
 
-    /// <summary>
-    /// Gets the table name defined for the modeled table without any escape characters.
-    /// </summary>
-    /// <remarks>
-    /// A table name will only be escaped if the model requested escaping with the <see cref="UseEscapedNameAttribute"/>.
-    /// </remarks>
+    /// <inheritdoc/>
     public string UnescapedTableName => s_tableName;
 
-    /// <summary>
-    /// Gets flag that determines if modeled table has a primary key that is an identity field.
-    /// </summary>
+    /// <inheritdoc/>
     public bool HasPrimaryKeyIdentityField => s_hasPrimaryKeyIdentityField;
 
-    /// <summary>
-    /// Gets or sets delegate used to handle table operation exceptions.
-    /// </summary>
-    /// <remarks>
-    /// When exception handler is provided, table operations will not throw exceptions for database calls, any
-    /// encountered exceptions will be passed to handler for processing. Otherwise, exceptions will be thrown
-    /// on the call stack.
-    /// </remarks>
+    /// <inheritdoc/>
     public Action<Exception>? ExceptionHandler { get; set; }
 
-    /// <summary>
-    /// Gets or sets flag that determines if field names should be treated as case-sensitive. Defaults to <c>false</c>.
-    /// </summary>
-    /// <remarks>
-    /// In cases where modeled table fields have applied <see cref="UseEscapedNameAttribute"/>, this flag will be used
-    /// to properly update escaped field names that may be case-sensitive. For example, escaped field names in Oracle
-    /// are case-sensitive. This value is typically <c>false</c>.
-    /// </remarks>
+    /// <inheritdoc/>
     public bool UseCaseSensitiveFieldNames { get; set; }
 
-    /// <summary>
-    /// Gets or sets primary key cache.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// The <see cref="QueryRecords(string, bool, int, int, IRecordFilter[])"/> overloads that include paging parameters
-    /// cache the sorted and filtered primary keys of queried records between calls so that paging is fast and
-    /// efficient. Since the primary keys are cached, an instance of the <see cref="TableOperations{T}"/> should
-    /// exist per user session when using query functions that support pagination. In web based implementations,
-    /// the primary cache should be stored with user session state data and then restored between instances of
-    /// the <see cref="TableOperations{T}"/> that are created along with a connection that is opened per page.
-    /// </para>
-    /// <para>
-    /// The function <see cref="ClearPrimaryKeyCache"/> should be called to manually clear cache when table
-    /// contents are known to have changed. Note that calls to any <see cref="DeleteRecord(T)"/> overloads will
-    /// automatically clear any existing primary key cache.
-    /// </para>
-    /// <para>
-    /// Primary keys values are stored in data table without interpretation, i.e., in their raw form as queried
-    /// from the database. Primary key data in cache will be encrypted for models with primary key fields that
-    /// are marked with the <see cref="EncryptDataAttribute"/>
-    /// </para>
-    /// </remarks>
+    /// <inheritdoc/>
     public DataTable? PrimaryKeyCache { get; set; }
 
-    /// <summary>
-    /// Gets or sets root record restriction that applies to query table operations.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// Defining a root query restriction creates a base query filter that gets applied to all query operations,
-    /// even when another restriction is applied - in this case the root restriction will be pre-pended to the
-    /// specified query, e.g.:
-    /// <code>
-    /// restriction = RootQueryRestriction + restriction;
-    /// </code>
-    /// A root query restriction is useful to apply a common state to the query operations, e.g., always
-    /// filtering records for a specific user or context.
-    /// </para>
-    /// <para>
-    /// A root query restriction can be manually assigned to a <see cref="TableOperations{T}"/> instance or
-    /// automatically assigned by marking a model with the <see cref="RootQueryRestrictionAttribute"/>.
-    /// </para>
-    /// <para>
-    /// If any of the <see cref="RecordRestriction.Parameters"/> reference a table field that is modeled with
-    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
-    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
-    /// returned value so that the field value will be properly set prior to executing the database function.
-    /// </para>
-    /// </remarks>
+    /// <inheritdoc/>
     public RecordRestriction? RootQueryRestriction { get; set; }
 
-    /// <summary>
-    /// Gets or sets flag that determines if <see cref="RootQueryRestriction"/> should be applied to update operations.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// If <see cref="RootQueryRestriction"/> only references primary key fields, then this property value should be set
-    /// to <c>false</c> since default update operations for a modeled record already work against primary key fields.
-    /// </para>
-    /// <para>
-    /// This flag can be manually set per <see cref="TableOperations{T}"/> instance or handled automatically by marking
-    /// a model with the <see cref="RootQueryRestrictionAttribute"/> and assigning a value to the attribute property
-    /// <see cref="RootQueryRestrictionAttribute.ApplyToUpdates"/>.
-    /// </para>
-    /// </remarks>
+    /// <inheritdoc/>
     public bool ApplyRootQueryRestrictionToUpdates { get; set; }
 
-    /// <summary>
-    /// Gets or sets flag that determines if <see cref="RootQueryRestriction"/> should be applied to delete operations.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// If <see cref="RootQueryRestriction"/> only references primary key fields, then this property value should be set
-    /// to <c>false</c> since default delete operations for a modeled record already work against primary key fields.
-    /// </para>
-    /// <para>
-    /// This flag can be manually set per <see cref="TableOperations{T}"/> instance or handled automatically by marking
-    /// a model with the <see cref="RootQueryRestrictionAttribute"/> and assigning a value to the attribute property
-    /// <see cref="RootQueryRestrictionAttribute.ApplyToDeletes"/>.
-    /// </para>
-    /// </remarks>
+    /// <inheritdoc/>
     public bool ApplyRootQueryRestrictionToDeletes { get; set; }
 
     #endregion
@@ -713,7 +616,6 @@ public class TableOperations<T> : ITableOperations where T : class, new()
                 if (restriction is null)
                 {
                     sqlExpression = string.Format(m_selectSetSql, orderByExpression);
-
                     return Connection.RetrieveData(sqlExpression).AsEnumerable().Select(LoadRecord);
                 }
 
@@ -725,7 +627,6 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             if (restriction is null)
             {
                 sqlExpression = string.Format(m_selectSetSql, orderByExpression);
-
                 return Connection.RetrieveData(sqlExpression).AsEnumerable().Take(limit).Select(LoadRecord);
             }
 
@@ -843,6 +744,11 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     public IEnumerable<T> QueryRecords(string? sortField, bool ascending, int page, int pageSize)
     {
         return QueryRecords(sortField, ascending, page, pageSize, (RecordRestriction?[]?)null);
+    }
+
+    IEnumerable ITableOperations.QueryRecords(string? sortField, bool ascending, int page, int pageSize)
+    {
+        return QueryRecords(sortField, ascending, page, pageSize);
     }
 
     /// <summary>
@@ -993,47 +899,19 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return QueryRecords(sortField, ascending, page, pageSize, restrictions);
     }
 
-    /// <summary>
-    /// Gets total record count for the modeled table.
-    /// </summary>
-    /// <returns>
-    /// Total record count for the modeled table.
-    /// </returns>
+    /// <inheritdoc/>
     public int QueryRecordCount()
     {
         return QueryRecordCount((RecordRestriction?[]?)null);
     }
 
-    /// <summary>
-    /// Gets the record count for the modeled table based on search parameter.
-    /// Search executed against fields modeled with <see cref="SearchableAttribute"/>.
-    /// </summary>
-    /// <param name="recordFilter">Text to search.</param>
-    /// <returns>Record count for the modeled table based on search parameter.</returns>
-    /// <remarks>
-    /// This is a convenience call to <see cref="QueryRecordCount(RecordRestriction[])"/> where restriction
-    /// is generated by <see cref="GetSearchRestrictions(IRecordFilter[])"/>
-    /// </remarks>
+    /// <inheritdoc/>
     public int QueryRecordCount(params IRecordFilter?[]? recordFilter)
     {
         return QueryRecordCount(GetSearchRestrictions(recordFilter));
     }
 
-    /// <summary>
-    /// Gets the record count for the specified <paramref name="restrictions"/> - or - total record
-    /// count for the modeled table if <paramref name="restrictions"/> is <c>null</c>.
-    /// </summary>
-    /// <param name="restrictions">Record restriction to apply, if any.</param>
-    /// <returns>
-    /// Record count for the specified <paramref name="restrictions"/> - or - total record count
-    /// for the modeled table if <paramref name="restrictions"/> is <c>null</c>.
-    /// </returns>
-    /// <remarks>
-    /// If any of the <paramref name="restrictions"/> parameters reference a table field that is modeled with
-    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
-    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
-    /// returned value so that the field value will be properly set prior to executing the database function.
-    /// </remarks>
+    /// <inheritdoc/>
     public int QueryRecordCount(params RecordRestriction?[]? restrictions)
     {
         string? sqlExpression = null;
@@ -1074,36 +952,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         }
     }
 
-    /// <summary>
-    /// Gets the record count for the modeled table for the specified SQL filter expression and parameters.
-    /// </summary>
-    /// <param name="filterExpression">
-    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
-    /// When escaping is needed for field names, use standard ANSI quotes.
-    /// </param>
-    /// <param name="parameters">Restriction parameter values.</param>
-    /// <returns>Record count for the modeled table for the specified parameters.</returns>
-    /// <remarks>
-    /// <para>
-    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
-    /// will be converted into query parameters where each of the corresponding values in the
-    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
-    /// values to an executed <see cref="IDbCommand"/> query.
-    /// </para>
-    /// <para>
-    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
-    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
-    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
-    /// returned value so that the field value will be properly set prior to executing the database function.
-    /// </para>
-    /// <para>
-    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
-    /// will be updated to reflect what is defined in the user model.
-    /// </para>
-    /// <para>
-    /// This is a convenience call to <see cref="QueryRecordCount(RecordRestriction[])"/>.
-    /// </para>
-    /// </remarks>
+    /// <inheritdoc/>
     public int QueryRecordCountWhere(string? filterExpression, params object?[] parameters)
     {
         return QueryRecordCount(new RecordRestriction(filterExpression, parameters));
@@ -1145,11 +994,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
         IRecordFilter[] validFilters = recordFilters.Where(filter => filter is not null).ToArray()!;
 
-        if (validFilters.Any(isEncrypted))
-            throw new NotImplementedException("Encryption is not implemented.");
-
-        RecordRestriction? restriction = validFilters
-            .Aggregate((RecordRestriction?)null, (restriction, filter) => filter.GenerateRestriction() + restriction);
+        RecordRestriction? restriction = validFilters.Aggregate((RecordRestriction?)null, (restriction, filter) => 
+            filter.GenerateRestriction(this) + restriction);
 
         IEnumerable<T?> queryResult = QueryRecords(orderByExpression, restriction);
 
@@ -1157,13 +1003,6 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             queryResult = LocalOrderBy(queryResult, sortField, ascending, comparison.GetComparer());
 
         return queryResult.ToArray();
-
-        static bool isEncrypted(IRecordFilter filter)
-        {
-            return filter is { SupportsEncrypted: true, ModelProperty: not null } &&
-                   s_encryptDataTargets is not null &&
-                   s_encryptDataTargets.ContainsKey(filter.ModelProperty);
-        }
     }
 
     // ReSharper disable once CoVariantArrayConversion
@@ -1280,9 +1119,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
                 {
                     object? value = row.ConvertField(s_fieldNames[property.Name], property.PropertyType);
 
-                    // TODO: Fix encryption
-                    //if (s_encryptDataTargets is not null && value is not null && s_encryptDataTargets.TryGetValue(property, out string keyReference))
-                    //    value = value.ToString().Decrypt(keyReference, CipherStrength.Aes256);
+                    if (s_encryptDataTargets is not null && value is not null && s_encryptDataTargets.TryGetValue(property, out string? keyReference))
+                        value = value.ToString()!.Decrypt(keyReference, CipherStrength.Aes256);
 
                     property.SetValue(record, value, null);
                 }
@@ -1354,11 +1192,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         }
     }
 
-    /// <summary>
-    /// Deletes the record referenced by the specified <paramref name="primaryKeys"/>.
-    /// </summary>
-    /// <param name="primaryKeys">Primary keys values of the record to load.</param>
-    /// <returns>Number of rows affected.</returns>
+    /// <inheritdoc/>
     public int DeleteRecord(params object[] primaryKeys)
     {
         try
@@ -1401,32 +1235,13 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return DeleteRecord(record);
     }
 
-    /// <summary>
-    /// Deletes the record referenced by the specified <paramref name="row"/>.
-    /// </summary>
-    /// <param name="row"><see cref="DataRow"/> of queried data to be deleted.</param>
-    /// <returns>Number of rows affected.</returns>
+    /// <inheritdoc/>
     public int DeleteRecord(DataRow row)
     {
         return DeleteRecord(GetPrimaryKeys(row));
     }
 
-    /// <summary>
-    /// Deletes the records referenced by the specified <paramref name="restriction"/>.
-    /// </summary>
-    /// <param name="restriction">Record restriction to apply</param>
-    /// <param name="applyRootQueryRestriction">
-    /// Flag that determines if any existing <see cref="RootQueryRestriction"/> should be applied. Defaults to
-    /// <see cref="ApplyRootQueryRestrictionToDeletes"/> setting.
-    /// </param>
-    /// <returns>Number of rows affected.</returns>
-    /// <remarks>
-    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
-    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
-    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
-    /// returned value so that the field value will be properly set prior to executing the database function.
-    /// </remarks>
-    /// <exception cref="ArgumentNullException"><paramref name="restriction"/> cannot be <c>null</c>.</exception>
+    /// <inheritdoc/>
     public int DeleteRecord(RecordRestriction? restriction, bool? applyRootQueryRestriction = null)
     {
         if (restriction is null)
@@ -1460,36 +1275,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         }
     }
 
-    /// <summary>
-    /// Deletes the records referenced by the specified SQL filter expression and parameters.
-    /// </summary>
-    /// <param name="filterExpression">
-    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
-    /// When escaping is needed for field names, use standard ANSI quotes.
-    /// </param>
-    /// <param name="parameters">Restriction parameter values.</param>
-    /// <returns>Number of rows affected.</returns>
-    /// <remarks>
-    /// <para>
-    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
-    /// will be converted into query parameters where each of the corresponding values in the
-    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
-    /// values to an executed <see cref="IDbCommand"/> query.
-    /// </para>
-    /// <para>
-    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
-    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
-    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
-    /// returned value so that the field value will be properly set prior to executing the database function.
-    /// </para>
-    /// <para>
-    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
-    /// will be updated to reflect what is defined in the user model.
-    /// </para>
-    /// <para>
-    /// This is a convenience call to <see cref="DeleteRecord(RecordRestriction, bool?)"/>.
-    /// </para>
-    /// </remarks>
+    /// <inheritdoc/>
     public int DeleteRecordWhere(string filterExpression, params object?[] parameters)
     {
         return DeleteRecord(new RecordRestriction(filterExpression, parameters));
@@ -1656,69 +1442,13 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return UpdateRecordWhere(record, filterExpression, parameters);
     }
 
-    /// <summary>
-    /// Updates the database with the specified <paramref name="row"/>, any model properties
-    /// marked with <see cref="UpdateValueExpressionAttribute"/> will be evaluated and applied
-    /// before the record is provided to the data source.
-    /// </summary>
-    /// <param name="row"><see cref="DataRow"/> of queried data to be updated.</param>
-    /// <param name="restriction">Record restriction to apply, if any.</param>
-    /// <returns>Number of rows affected.</returns>
-    /// <remarks>
-    /// <para>
-    /// Record restriction is only used for custom update expressions or in cases where modeled
-    /// table has no defined primary keys.
-    /// </para>
-    /// <para>
-    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
-    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
-    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
-    /// returned value so that the field value will be properly set prior to executing the database function.
-    /// </para>
-    /// </remarks>
+    /// <inheritdoc/>
     public int UpdateRecord(DataRow row, RecordRestriction? restriction = null)
     {
         return UpdateRecord(LoadRecordWithKeys(row), restriction);
     }
 
-    /// <summary>
-    /// Updates the database with the specified <paramref name="row"/> referenced by the
-    /// specified SQL filter expression and parameters, any model properties marked with
-    /// <see cref="UpdateValueExpressionAttribute"/> will be evaluated and applied before
-    /// the record is provided to the data source.
-    /// </summary>
-    /// <param name="row"><see cref="DataRow"/> of queried data to be updated.</param>
-    /// <param name="filterExpression">
-    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
-    /// When escaping is needed for field names, use standard ANSI quotes.
-    /// </param>
-    /// <param name="parameters">Restriction parameter values.</param>
-    /// <returns>Number of rows affected.</returns>
-    /// <remarks>
-    /// <para>
-    /// Record restriction is only used for custom update expressions or in cases where modeled
-    /// table has no defined primary keys.
-    /// </para>
-    /// <para>
-    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
-    /// will be converted into query parameters where each of the corresponding values in the
-    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
-    /// values to an executed <see cref="IDbCommand"/> query.
-    /// </para>
-    /// <para>
-    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
-    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
-    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
-    /// returned value so that the field value will be properly set prior to executing the database function.
-    /// </para>
-    /// <para>
-    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
-    /// will be updated to reflect what is defined in the user model.
-    /// </para>
-    /// <para>
-    /// This is a convenience call to <see cref="UpdateRecord(DataRow, RecordRestriction)"/>.
-    /// </para>
-    /// </remarks>
+    /// <inheritdoc/>
     public int UpdateRecordWhere(DataRow row, string filterExpression, params object?[] parameters)
     {
         return UpdateRecord(row, new RecordRestriction(filterExpression, parameters));
@@ -1766,11 +1496,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return AddNewRecord(record);
     }
 
-    /// <summary>
-    /// Adds the specified <paramref name="row"/> to the database.
-    /// </summary>
-    /// <param name="row"><see cref="DataRow"/> of queried data to be added.</param>
-    /// <returns>Number of rows affected.</returns>
+    /// <inheritdoc/>
     public int AddNewRecord(DataRow row)
     {
         return AddNewRecord(LoadRecordWithKeys(row));
@@ -1835,17 +1561,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return GetPrimaryKeys(record);
     }
 
-    /// <summary>
-    /// Gets the primary key values from the specified <paramref name="row"/>.
-    /// </summary>
-    /// <param name="row"><see cref="DataRow"/> of queried data.</param>
-    /// <returns>Primary key values from the specified <paramref name="row"/>.</returns>
-    /// <remarks>
-    /// Function returns raw data from <paramref name="row"/> without interpretation, it may be
-    /// necessary to call <see cref="GetInterpretedFieldValue"/> for models with primary key
-    /// fields that are marked with either <see cref="EncryptDataAttribute"/> or
-    /// <see cref="FieldDataTypeAttribute"/>.
-    /// </remarks>
+    /// <inheritdoc/>
     public object[] GetPrimaryKeys(DataRow row)
     {
         try
@@ -1870,14 +1586,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         }
     }
 
-    /// <summary>
-    /// Gets the field names for the table; if <paramref name="escaped"/> is <c>true</c>, also includes any escaping as defined in model.
-    /// </summary>
-    /// <param name="escaped">Flag that determines if field names should include any escaping as defined in the model; defaults to <c>true</c>.</param>
-    /// <returns>Array of field names.</returns>
-    /// <remarks>
-    /// A field name will only be escaped if the model requested escaping with the <see cref="UseEscapedNameAttribute"/>.
-    /// </remarks>
+    /// <inheritdoc/>
     public string[] GetFieldNames(bool escaped = true)
     {
         // Fields in the field names dictionary are stored in unescaped format
@@ -1886,14 +1595,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             s_fieldNames.Values.ToArray();
     }
 
-    /// <summary>
-    /// Get the primary key field names for the table; if <paramref name="escaped"/> is <c>true</c>, also includes any escaping as defined in model.
-    /// </summary>
-    /// <param name="escaped">Flag that determines if field names should include any escaping as defined in the model; defaults to <c>true</c>.</param>
-    /// <returns>Array of primary key field names.</returns>
-    /// <remarks>
-    /// A field name will only be escaped if the model requested escaping with the <see cref="UseEscapedNameAttribute"/>.
-    /// </remarks>
+    /// <inheritdoc/>
     public string[] GetPrimaryKeyFieldNames(bool escaped = true)
     {
         return escaped ?
@@ -1901,13 +1603,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             s_primaryKeyFields.Split(',').Select(fieldName => GetUnescapedFieldName(fieldName.Trim())).ToArray();
     }
 
-    /// <summary>
-    /// Attempts to get the specified <paramref name="attribute"/> for a field.
-    /// </summary>
-    /// <typeparam name="TAttribute">Type of attribute to attempt to get.</typeparam>
-    /// <param name="fieldName">Name of field to use for attribute lookup.</param>
-    /// <param name="attribute">Attribute that was found, if any.</param>
-    /// <returns><c>true</c> if attribute was found; otherwise, <c>false</c>.</returns>
+    /// <inheritdoc/>
     public bool TryGetFieldAttribute<TAttribute>(string fieldName, out TAttribute? attribute) where TAttribute : Attribute
     {
         if (s_propertyNames.TryGetValue(fieldName, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? property) && property.TryGetAttribute(out attribute))
@@ -1918,14 +1614,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return false;
     }
 
-    /// <summary>
-    /// Attempts to get the specified <paramref name="attributeType"/> for a field.
-    /// </summary>
-    /// <param name="fieldName">Name of field to use for attribute lookup.</param>
-    /// <param name="attributeType">Type of attribute to attempt to get.</param>
-    /// <param name="attribute">Attribute that was found, if any.</param>
-    /// <returns><c>true</c> if attribute was found; otherwise, <c>false</c>.</returns>
-    /// <exception cref="ArgumentException"><paramref name="attributeType"/> is not an <see cref="Attribute"/>.</exception>
+    /// <inheritdoc/>
     public bool TryGetFieldAttribute(string fieldName, Type attributeType, out Attribute? attribute)
     {
         if (!attributeType.IsInstanceOfType(typeof(Attribute)))
@@ -1939,24 +1628,13 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return false;
     }
 
-    /// <summary>
-    /// Determines if the specified field has an associated attribute.
-    /// </summary>
-    /// <typeparam name="TAttribute">Type of attribute to search for.</typeparam>
-    /// <param name="fieldName">Name of field to use for attribute lookup.</param>
-    /// <returns><c>true</c> if field has attribute; otherwise, <c>false</c>.</returns>
+    /// <inheritdoc/>
     public bool FieldHasAttribute<TAttribute>(string fieldName) where TAttribute : Attribute
     {
         return FieldHasAttribute(fieldName, typeof(TAttribute));
     }
 
-    /// <summary>
-    /// Determines if the specified field has an associated attribute.
-    /// </summary>
-    /// <param name="fieldName">Name of field to use for attribute lookup.</param>
-    /// <param name="attributeType">Type of attribute to search for.</param>
-    /// <returns><c>true</c> if field has attribute; otherwise, <c>false</c>.</returns>
-    /// <exception cref="ArgumentException"><paramref name="attributeType"/> is not an <see cref="Attribute"/>.</exception>
+    /// <inheritdoc/>
     public bool FieldHasAttribute(string fieldName, Type attributeType)
     {
         if (!attributeType.IsSubclassOf(typeof(Attribute)))
@@ -1990,37 +1668,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return GetFieldValue(record, fieldName);
     }
 
-    /// <summary>
-    /// Gets the interpreted value for the specified field, encrypting or returning any intermediate <see cref="IDbDataParameter"/>
-    /// value as needed.
-    /// </summary>
-    /// <param name="fieldName">Field name to retrieve.</param>
-    /// <param name="value">Field value to use.</param>
-    /// <returns>
-    /// Interpreted value for the specified field, encrypting or returning any intermediate <see cref="IDbDataParameter"/> value
-    /// as needed.
-    /// </returns>
-    /// <remarks>
-    /// <para>
-    /// This function will need to be used when calling overloads that take a <see cref="RecordRestriction"/> or composite format
-    /// filter expression where the <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/> have been modeled
-    /// on a field referenced by one of the <see cref="RecordRestriction"/> parameters. Since the record restrictions are used
-    /// with a free-form expression, the <see cref="TableOperations{T}"/> class cannot be aware of the fields accessed in the
-    /// expression without attempting to parse the expression which would be time-consuming and error-prone; as a result, users
-    /// will need to be aware to call this function when using record restriction that references fields that are either marked
-    /// for encryption or use a specific field data-type attribute.
-    /// </para>
-    /// <para>
-    /// If a <see cref="RecordRestriction"/> parameter references a field that is modeled with an <see cref="EncryptDataAttribute"/>,
-    /// this function will need to be called, replacing the restriction parameter with the returned value, so that the field data
-    /// value will be properly encrypted prior to executing the database function.
-    /// </para>
-    /// <para>
-    /// If a <see cref="RecordRestriction"/> parameter references a field that is modeled with a <see cref="FieldDataTypeAttribute"/>,
-    /// this function will need to be called, replacing the restriction parameter with the returned value, so that the field data
-    /// type will be properly set prior to executing the database function.
-    /// </para>
-    /// </remarks>
+    /// <inheritdoc/>
     public object? GetInterpretedFieldValue(string fieldName, object? value)
     {
         if (s_fieldDataTypeTargets is null && s_encryptDataTargets is null)
@@ -2032,11 +1680,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return value;
     }
 
-    /// <summary>
-    /// Gets the <see cref="Type"/> for the specified field.
-    /// </summary>
-    /// <param name="fieldName">Field name to retrieve.</param>
-    /// <returns>Field <see cref="Type"/> or <c>null</c> if field is not found.</returns>
+    /// <inheritdoc/>
     public Type? GetFieldType(string fieldName)
     {
         if (s_propertyNames.TryGetValue(fieldName, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? property))
@@ -2045,50 +1689,21 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return default;
     }
 
-    /// <summary>
-    /// Generates a <see cref="RecordRestriction"/> based on <paramref name="recordFilters"/>.
-    /// </summary>
-    /// <param name="recordFilters">Filters to be used.</param>
-    /// <returns><see cref="RecordRestriction"/> based on specified <paramref name="recordFilters"/>.</returns>
-    /// <remarks>
-    /// Any fields marked with <see cref="EncryptDataAttribute"/> will be automatically managed, i.e.,
-    /// the returned <see cref="RecordRestriction"/> parameters will already apply any field based encryption as needed. Database query functions
-    /// executed for fields marked for encryption will only be searched using =, =/=, regardless of any otherwise
-    /// specified value in the <see cref="SearchableAttribute"/> as encryption is handled locally. However, the <see cref="SearchRecords"/> function
-    /// can be used to find data in encrypted fields.
-    /// </remarks>
+    /// <inheritdoc/>
     public RecordRestriction[]? GetSearchRestrictions(params IRecordFilter?[]? recordFilters)
     {
         return recordFilters?.Where(recordFilter => recordFilter is not null)
-            .Select(recordFilter => recordFilter!.GenerateRestriction())
+            .Select(recordFilter => recordFilter!.GenerateRestriction(this))
             .ToArray();
-
-        // TODO: Add logic to deal with encrypted Fields
     }
 
-    /// <summary>
-    /// Calculates the size of the current primary key cache, in number of records.
-    /// </summary>
-    /// <returns>Number of records in the current primary key cache.</returns>
+    /// <inheritdoc/>
     public int GetPrimaryKeyCacheSize()
     {
         return PrimaryKeyCache?.Rows.Count ?? 0;
     }
 
-    /// <summary>
-    /// Clears the primary key cache for this <see cref="TableOperations{T}"/> instance.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// This method is intended to be used in conjunction with calls to the overloads for
-    /// <see cref="QueryRecords(string, bool, int, int, RecordRestriction[])"/> which are
-    /// used for record pagination.
-    /// </para>
-    /// <para>
-    /// If record set is known to have changed outside purview of this class, this method
-    /// should be called so that primary key cache can be reloaded.
-    /// </para>
-    /// </remarks>
+    /// <inheritdoc/>
     public void ClearPrimaryKeyCache()
     {
         PrimaryKeyCache = null;
@@ -2130,9 +1745,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     // ReSharper disable once UnusedParameter.Local
     private object? GetInterpretedValue(PropertyInfo property, object? value, bool skipEncryption = false)
     {
-        // TODO: Fix encryption
-        //if (!skipEncryption && s_encryptDataTargets is not null && value is not null && s_encryptDataTargets.TryGetValue(property, out string keyReference))
-        //    value = value.ToString().Encrypt(keyReference, CipherStrength.Aes256);
+        if (!skipEncryption && s_encryptDataTargets is not null && value is not null && s_encryptDataTargets.TryGetValue(property, out string? keyReference))
+            value = value.ToString()!.Encrypt(keyReference, CipherStrength.Aes256);
 
         if (s_fieldDataTypeTargets is not null && s_fieldDataTypeTargets.TryGetValue(property, out Dictionary<DatabaseType, DbType>? fieldDataTypeTargets) && fieldDataTypeTargets is not null && fieldDataTypeTargets.TryGetValue(Connection.DatabaseType, out DbType fieldDataType))
         {

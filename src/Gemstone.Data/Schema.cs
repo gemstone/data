@@ -35,6 +35,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -1266,7 +1267,7 @@ public class Table : IComparable, IComparable<Table>
     /// <summary>
     /// Get <see cref="IDbConnection"/> of object
     /// </summary>
-    public IDbConnection Connection => m_parent.Parent.Connection;
+    public DbConnection Connection => m_parent.Parent.Connection;
 
     /// <summary>
     /// Check for object is view
@@ -1828,7 +1829,7 @@ public class Schema
     public const TableType NoRestriction = TableType.Table | TableType.View | TableType.SystemTable | TableType.SystemView | TableType.Alias | TableType.Synonym | TableType.GlobalTemp | TableType.LocalTemp | TableType.Link | TableType.Undetermined;
 
     [NonSerialized]
-    private IDbConnection m_schemaConnection;
+    private DbConnection m_schemaConnection;
 
     [NonSerialized]
     private string m_connectionString;
@@ -1914,7 +1915,7 @@ public class Schema
     /// <summary>
     /// <see cref="IDbConnection"/> to open a database connection
     /// </summary>
-    public IDbConnection Connection
+    public DbConnection Connection
     {
         get => m_schemaConnection;
         set => m_schemaConnection = value;
@@ -2279,7 +2280,7 @@ public class Schema
     /// <param name="deserializedSchema">The deserialized schema.</param>
     /// <param name="isAdoConnection">Flag that determines if connection is ADO.</param>
     /// <returns>Opened connection.</returns>
-    public static IDbConnection OpenConnection(string connectionString, out DatabaseType databaseType, out Schema deserializedSchema, out bool isAdoConnection)
+    public static DbConnection OpenConnection(string connectionString, out DatabaseType databaseType, out Schema deserializedSchema, out bool isAdoConnection)
     {
         //    Dictionary<string, string> settings = connectionString.ParseKeyValuePairs();
 

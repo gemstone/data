@@ -63,8 +63,13 @@
 //       Modified Header.
 //  12/13/2019 - J. Ritchie Carroll
 //      Migrated to Gemstone libraries.
+//  08/01/2024 - J. Ritchie Carroll
+//      Migrated code to use System.Data.Common abstract classes instead of IDb interfaces
+//      which includes async support.
 //
 //******************************************************************************************************
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedVariable
 
 using System;
 using System.Collections.Generic;
@@ -76,10 +81,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using Gemstone.Collections.IAsyncEnumerableExtensions;
 using Microsoft.Data.SqlClient;
 
-// ReSharper disable InconsistentNaming
-// ReSharper disable UnusedVariable
 namespace Gemstone.Data.DataExtensions;
 
 /// <summary>
@@ -93,7 +99,7 @@ public static class DataExtensions
     public const int DefaultTimeoutDuration = 30;
 
     // Defines a list of keywords used to identify PL/SQL blocks.
-    private static readonly string[] s_plsqlIdentifiers = { "CREATE FUNCTION", "CREATE OR REPLACE FUNCTION", "CREATE PROCEDURE", "CREATE OR REPLACE PROCEDURE", "CREATE PACKAGE", "CREATE OR REPLACE PACKAGE", "DECLARE", "BEGIN" };
+    private static readonly string[] s_plsqlIdentifiers = ["CREATE FUNCTION", "CREATE OR REPLACE FUNCTION", "CREATE PROCEDURE", "CREATE OR REPLACE PROCEDURE", "CREATE PACKAGE", "CREATE OR REPLACE PACKAGE", "DECLARE", "BEGIN"];
 
     private static readonly Regex s_sqlParameterRegex = new(@"^[:@][a-zA-Z]\w*$", RegexOptions.Compiled);
     private static readonly Regex s_sqlCommentRegex = new(@"/\*.*\*/|--.*(?=\n)", RegexOptions.Multiline);
@@ -107,466 +113,500 @@ public static class DataExtensions
     /// <param name="sql">The string on which SQL encoding is to be performed.</param>
     /// <param name="databaseType">Database type for the SQL encoding.</param>
     /// <returns>The SQL encoded string.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string SQLEncode(this string sql, DatabaseType databaseType = DatabaseType.Other)
     {
-            if (databaseType == DatabaseType.MySQL)
-                return sql.Replace("\\", "\\\\").Replace("\'", "\\\'");
+        if (databaseType == DatabaseType.MySQL)
+            return sql.Replace("\\", "\\\\").Replace("\'", "\\\'");
 
-            return sql.Replace("\'", "\'\'"); //.Replace("/*", "").Replace("--", "");
-        }
+        return sql.Replace("\'", "\'\'"); //.Replace("/*", "").Replace("--", "");
+    }
 
     #endregion
 
     #region [ ExecuteNonQuery Overloaded Extension ]
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the number of rows affected.
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the number of rows affected.
     /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
-    /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
-    public static int ExecuteNonQuery<TConnection>(this TConnection connection, string sql, params object[] parameters) where TConnection : IDbConnection
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int ExecuteNonQuery(this DbConnection connection, string sql, params object[] parameters)
     {
-            return connection.ExecuteNonQuery(DefaultTimeoutDuration, sql, parameters);
-        }
+        return connection.ExecuteNonQuery(DefaultTimeoutDuration, sql, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the number of rows affected.
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the number of rows affected.
     /// </summary>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
-    /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
-    public static int ExecuteNonQuery<TConnection>(this TConnection connection, int timeout, string sql, params object[] parameters) where TConnection : IDbConnection
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int ExecuteNonQuery(this DbConnection connection, int timeout, string sql, params object[] parameters)
     {
-            using IDbCommand command = connection.CreateParameterizedCommand(sql, parameters);
+        using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
-            command.CommandTimeout = timeout;
+        command.CommandTimeout = timeout;
 
-            return command.ExecuteNonQuery();
-        }
+        return command.ExecuteNonQuery();
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the number of rows affected.
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the number of rows affected.
     /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
-    public static int ExecuteNonQuery(this SqlConnection connection, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<int> ExecuteNonQueryAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return connection.ExecuteNonQuery(DefaultTimeoutDuration, sql, parameters);
-        }
+        return connection.ExecuteNonQueryAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the number of rows affected.
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the number of rows affected.
     /// </summary>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
-    public static int ExecuteNonQuery(this SqlConnection connection, int timeout, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static async Task<int> ExecuteNonQueryAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            using SqlCommand command = new(sql, connection) { CommandTimeout = timeout };
-            command.PopulateParameters(parameters);
+        await using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
-            return command.ExecuteNonQuery();
-        }
+        command.CommandTimeout = timeout;
+
+        return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the number of rows affected.
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the number of rows affected.
     /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
-    public static int ExecuteNonQuery(this IDbCommand command, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int ExecuteNonQuery(this DbCommand command, string sql, params object[] parameters)
     {
-            return command.ExecuteNonQuery(DefaultTimeoutDuration, sql, parameters);
-        }
+        return command.ExecuteNonQuery(DefaultTimeoutDuration, sql, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the number of rows affected.
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the number of rows affected.
     /// </summary>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
-    public static int ExecuteNonQuery(this IDbCommand command, int timeout, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int ExecuteNonQuery(this DbCommand command, int timeout, string sql, params object[] parameters)
     {
-            command.CommandTimeout = timeout;
-            command.Parameters.Clear();
-            command.AddParametersWithValues(sql, parameters);
+        command.CommandTimeout = timeout;
+        command.Parameters.Clear();
+        command.AddParametersWithValues(sql, parameters);
 
-            return command.ExecuteNonQuery();
-        }
+        return command.ExecuteNonQuery();
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the number of rows affected.
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the number of rows affected.
     /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
-    public static int ExecuteNonQuery(this SqlCommand command, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<int> ExecuteNonQueryAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return command.ExecuteNonQuery(DefaultTimeoutDuration, sql, parameters);
-        }
+        return command.ExecuteNonQueryAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the number of rows affected.
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the number of rows affected.
     /// </summary>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
-    public static int ExecuteNonQuery(this SqlCommand command, int timeout, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<int> ExecuteNonQueryAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            if (!string.IsNullOrWhiteSpace(sql))
-                command.CommandText = sql;
+        command.CommandTimeout = timeout;
+        command.Parameters.Clear();
+        command.AddParametersWithValues(sql, parameters);
 
-            command.CommandTimeout = timeout;
-            command.Parameters.Clear();
-            command.PopulateParameters(parameters);
-
-            return command.ExecuteNonQuery();
-        }
+        return command.ExecuteNonQueryAsync(cancellationToken);
+    }
 
     #endregion
 
     #region [ ExecuteReader Overloaded Extensions ]
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and builds a <see cref="IDataReader"/>.
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and builds a <see cref="DbDataReader"/>.
     /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="IDataReader"/> object.</returns>
-    /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
-    public static IDataReader ExecuteReader<TConnection>(this TConnection connection, string sql, params object[] parameters) where TConnection : IDbConnection
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DbDataReader ExecuteReader(this DbConnection connection, string sql, params object[] parameters)
     {
-            return connection.ExecuteReader(DefaultTimeoutDuration, sql, CommandBehavior.Default, parameters);
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and builds a <see cref="IDataReader"/>.
-    /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="IDataReader"/> object.</returns>
-    /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
-    public static IDataReader ExecuteReader<TConnection>(this TConnection connection, int timeout, string sql, params object[] parameters) where TConnection : IDbConnection
-    {
-            return connection.ExecuteReader(sql, CommandBehavior.Default, timeout, parameters);
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and builds a <see cref="IDataReader"/>.
-    /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
-    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="IDataReader"/> object.</returns>
-    /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
-    public static IDataReader ExecuteReader<TConnection>(this TConnection connection, int timeout, string sql, CommandBehavior behavior, params object[] parameters) where TConnection : IDbConnection
-    {
-            IDbCommand? command = null;
-            IDataReader? reader = null;
-
-            try
-            {
-                command = connection.CreateParameterizedCommand(sql, parameters);
-                command.CommandTimeout = timeout;
-                reader = command.ExecuteReader(behavior);
-                return new DataReaderWrapper(command, reader);
-            }
-            catch
-            {
-                reader?.Dispose();
-                command?.Dispose();
-                throw;
-            }
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and builds a <see cref="IDataReader"/>.
-    /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="IDataReader"/> object.</returns>
-    public static IDataReader ExecuteReader(this IDbCommand command, string sql, params object[] parameters)
-    {
-            return command.ExecuteReader(DefaultTimeoutDuration, sql, CommandBehavior.Default, parameters);
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and builds a <see cref="IDataReader"/>.
-    /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="IDataReader"/> object.</returns>
-    public static IDataReader ExecuteReader(this IDbCommand command, int timeout, string sql, params object[] parameters)
-    {
-            return command.ExecuteReader(sql, CommandBehavior.Default, timeout, parameters);
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and builds a <see cref="IDataReader"/>.
-    /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
-    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="IDataReader"/> object.</returns>
-    public static IDataReader ExecuteReader(this IDbCommand command, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
-    {
-            command.CommandTimeout = timeout;
-            command.Parameters.Clear();
-            command.AddParametersWithValues(sql, parameters);
-
-            return command.ExecuteReader(behavior);
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and builds a <see cref="SqlDataReader"/>.
-    /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
-    /// <returns>A <see cref="SqlDataReader"/> object.</returns>
-    public static SqlDataReader ExecuteReader(this SqlCommand command, string sql, params object[] parameters)
-    {
-            return command.ExecuteReader(DefaultTimeoutDuration, sql, CommandBehavior.Default, parameters);
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and builds a <see cref="SqlDataReader"/>.
-    /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
-    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
-    /// <returns>A <see cref="SqlDataReader"/> object.</returns>
-    public static SqlDataReader ExecuteReader(this SqlCommand command, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
-    {
-            if (!string.IsNullOrWhiteSpace(sql))
-                command.CommandText = sql;
-
-            command.CommandTimeout = timeout;
-            command.Parameters.Clear();
-            command.PopulateParameters(parameters);
-
-            return command.ExecuteReader(behavior);
-        }
-
-    #region [ IDbConnection.ExecuteReader Wrapper Class ]
-
-    private class DataReaderWrapper : IDataReader
-    {
-        private IDbCommand Command { get; }
-        private IDataReader Reader { get; }
-
-        public DataReaderWrapper(IDbCommand command, IDataReader reader)
-        {
-                Command = command;
-                Reader = reader;
-            }
-
-        public object this[int i] => Reader[i];
-        public object this[string name] => Reader[name];
-        public int Depth => Reader.Depth;
-        public bool IsClosed => Reader.IsClosed;
-        public int RecordsAffected => Reader.RecordsAffected;
-        public int FieldCount => Reader.FieldCount;
-
-        public bool GetBoolean(int i) => Reader.GetBoolean(i);
-        public byte GetByte(int i) => Reader.GetByte(i);
-        public char GetChar(int i) => Reader.GetChar(i);
-        public IDataReader GetData(int i) => Reader.GetData(i);
-        public string GetDataTypeName(int i) => Reader.GetDataTypeName(i);
-        public DateTime GetDateTime(int i) => Reader.GetDateTime(i);
-        public decimal GetDecimal(int i) => Reader.GetDecimal(i);
-        public double GetDouble(int i) => Reader.GetDouble(i);
-        public Type GetFieldType(int i) => Reader.GetFieldType(i);
-        public float GetFloat(int i) => Reader.GetFloat(i);
-        public Guid GetGuid(int i) => Reader.GetGuid(i);
-        public short GetInt16(int i) => Reader.GetInt16(i);
-        public int GetInt32(int i) => Reader.GetInt32(i);
-        public long GetInt64(int i) => Reader.GetInt64(i);
-        public string GetName(int i) => Reader.GetName(i);
-        public int GetOrdinal(string name) => Reader.GetOrdinal(name);
-        public DataTable? GetSchemaTable() => Reader.GetSchemaTable();
-        public string GetString(int i) => Reader.GetString(i);
-        public object GetValue(int i) => Reader.GetValue(i);
-        public int GetValues(object[] values) => Reader.GetValues(values);
-        public bool IsDBNull(int i) => Reader.IsDBNull(i);
-        public bool NextResult() => Reader.NextResult();
-        public bool Read() => Reader.Read();
-        public void Close() => Reader.Close();
-
-        public long GetBytes(int i, long fieldOffset, byte[]? buffer, int bufferOffset, int length) =>
-            Reader.GetBytes(i, fieldOffset, buffer, bufferOffset, length);
-
-        public long GetChars(int i, long fieldOffset, char[]? buffer, int bufferOffset, int length) =>
-            Reader.GetChars(i, fieldOffset, buffer, bufferOffset, length);
-
-        public void Dispose()
-        {
-                Reader.Dispose();
-                Command.Dispose();
-            }
+        return connection.ExecuteReader(DefaultTimeoutDuration, sql, CommandBehavior.Default, parameters);
     }
 
-    #endregion
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DbDataReader ExecuteReader(this DbConnection connection, int timeout, string sql, params object[] parameters)
+    {
+        return connection.ExecuteReader(timeout, sql, CommandBehavior.Default, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DbDataReader ExecuteReader(this DbConnection connection, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
+    {
+        DbCommand? command = null;
+        DbDataReader? reader = null;
+
+        try
+        {
+            command = connection.CreateParameterizedCommand(sql, parameters);
+            command.CommandTimeout = timeout;
+            return command.ExecuteReader(behavior);
+        }
+        catch
+        {
+            reader?.Dispose();
+            command?.Dispose();
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DbDataReader> ExecuteReaderAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
+    {
+        return connection.ExecuteReaderAsync(DefaultTimeoutDuration, sql, CommandBehavior.Default, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DbDataReader> ExecuteReaderAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    {
+        return connection.ExecuteReaderAsync(timeout, sql, CommandBehavior.Default, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DbDataReader> ExecuteReaderAsync(this DbConnection connection, int timeout, string sql, CommandBehavior behavior, CancellationToken cancellationToken, params object[] parameters)
+    {
+        DbCommand? command = null;
+        DbDataReader? reader = null;
+
+        try
+        {
+            command = connection.CreateParameterizedCommand(sql, parameters);
+            command.CommandTimeout = timeout;
+            return command.ExecuteReaderAsync(behavior, cancellationToken);
+        }
+        catch
+        {
+            reader?.Dispose();
+            command?.Dispose();
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DbDataReader ExecuteReader(this DbCommand command, string sql, params object[] parameters)
+    {
+        return command.ExecuteReader(DefaultTimeoutDuration, sql, CommandBehavior.Default, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DbDataReader ExecuteReader(this DbCommand command, int timeout, string sql, params object[] parameters)
+    {
+        return command.ExecuteReader(timeout, sql, CommandBehavior.Default, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DbDataReader ExecuteReader(this DbCommand command, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
+    {
+        command.CommandTimeout = timeout;
+        command.Parameters.Clear();
+        command.AddParametersWithValues(sql, parameters);
+
+        return command.ExecuteReader(behavior);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DbDataReader> ExecuteReaderAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
+    {
+        return command.ExecuteReaderAsync(DefaultTimeoutDuration, sql, CommandBehavior.Default, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DbDataReader> ExecuteReaderAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    {
+        return command.ExecuteReaderAsync(timeout, sql, CommandBehavior.Default, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DbDataReader> ExecuteReaderAsync(this DbCommand command, int timeout, string sql, CommandBehavior behavior, CancellationToken cancellationToken, params object[] parameters)
+    {
+        command.CommandTimeout = timeout;
+        command.Parameters.Clear();
+        command.AddParametersWithValues(sql, parameters);
+
+        return command.ExecuteReaderAsync(behavior, cancellationToken);
+    }
 
     #endregion
 
     #region [ ExecuteScalar Overloaded Extensions ]
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the value in the first column 
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the value in the first column 
     /// of the first row in the result set.
     /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
-    public static object? ExecuteScalar<TConnection>(this TConnection connection, string sql, params object[] parameters) where TConnection : IDbConnection
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static object? ExecuteScalar(this DbConnection connection, string sql, params object[] parameters)
     {
-            return connection.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
-        }
+        return connection.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the value in the first column 
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the value in the first column 
     /// of the first row in the result set.
     /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    /// <typeparam name="TConnection">Type of <see cref="IDbConnection"/> to use.</typeparam>
-    public static object? ExecuteScalar<TConnection>(this TConnection connection, int timeout, string sql, params object[] parameters) where TConnection : IDbConnection
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static object? ExecuteScalar(this DbConnection connection, int timeout, string sql, params object[] parameters)
     {
-            using IDbCommand command = connection.CreateParameterizedCommand(sql, parameters);
+        using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
-            command.CommandTimeout = timeout;
+        command.CommandTimeout = timeout;
 
-            return command.ExecuteScalar();
-        }
+        return command.ExecuteScalar();
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the value in the first column 
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the value in the first column 
     /// of the first row in the result set.
     /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public static object? ExecuteScalar(this SqlConnection connection, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<object?> ExecuteScalarAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return connection.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
-        }
+        return connection.ExecuteScalarAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the value in the first column 
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the value in the first column 
     /// of the first row in the result set.
     /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public static object? ExecuteScalar(this SqlConnection connection, int timeout, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static async Task<object?> ExecuteScalarAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            using SqlCommand command = new(sql, connection) { CommandTimeout = timeout };
-            command.PopulateParameters(parameters);
+        await using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
-            return command.ExecuteScalar();
-        }
+        command.CommandTimeout = timeout;
+
+        return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the value in the first column 
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the value in the first column 
     /// of the first row in the result set.
     /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public static object? ExecuteScalar(this IDbCommand command, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static object? ExecuteScalar(this DbCommand command, string sql, params object[] parameters)
     {
-            return command.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
-        }
+        return command.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the value in the first column 
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the value in the first column 
     /// of the first row in the result set.
     /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public static object? ExecuteScalar(this IDbCommand command, int timeout, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static object? ExecuteScalar(this DbCommand command, int timeout, string sql, params object[] parameters)
     {
-            command.CommandTimeout = timeout;
-            command.Parameters.Clear();
-            command.AddParametersWithValues(sql, parameters);
+        command.CommandTimeout = timeout;
+        command.Parameters.Clear();
+        command.AddParametersWithValues(sql, parameters);
 
-            return command.ExecuteScalar();
-        }
+        return command.ExecuteScalar();
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the value in the first column 
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the value in the first column 
     /// of the first row in the result set.
     /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public static object? ExecuteScalar(this SqlCommand command, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<object?> ExecuteScalarAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return command.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
-        }
+        return command.ExecuteScalarAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the value in the first column 
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the value in the first column 
     /// of the first row in the result set.
     /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public static object? ExecuteScalar(this SqlCommand command, int timeout, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<object?> ExecuteScalarAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            if (!string.IsNullOrWhiteSpace(sql))
-                command.CommandText = sql;
+        command.CommandTimeout = timeout;
+        command.Parameters.Clear();
+        command.AddParametersWithValues(sql, parameters);
 
-            command.CommandTimeout = timeout;
-            command.Parameters.Clear();
-            command.PopulateParameters(parameters);
-
-            return command.ExecuteScalar();
-        }
+        return command.ExecuteScalarAsync(cancellationToken);
+    }
 
     #endregion
 
@@ -577,718 +617,615 @@ public static class DataExtensions
     /// </summary>
     /// <param name="connection">The connection used to execute SQL statements.</param>
     /// <param name="scriptPath">The path to the SQL script.</param>
-    public static void ExecuteTSQLScript(this IDbConnection connection, string scriptPath)
+    public static void ExecuteTSQLScript(this DbConnection connection, string scriptPath)
     {
-            using TextReader scriptReader = File.OpenText(scriptPath);
+        using TextReader scriptReader = File.OpenText(scriptPath);
 
-            ExecuteTSQLScript(connection, scriptReader);
-        }
+        ExecuteTSQLScript(connection, scriptReader);
+    }
 
     /// <summary>
     /// Executes the statements defined in the given TSQL script.
     /// </summary>
     /// <param name="connection">The connection used to execute SQL statements.</param>
     /// <param name="scriptReader">The reader used to extract statements from the SQL script.</param>
-    public static void ExecuteTSQLScript(this IDbConnection connection, TextReader scriptReader)
+    public static void ExecuteTSQLScript(this DbConnection connection, TextReader scriptReader)
     {
-            string? line = scriptReader.ReadLine();
+        string? line = scriptReader.ReadLine();
 
-            using IDbCommand command = connection.CreateCommand();
+        using DbCommand command = connection.CreateCommand();
 
-            StringBuilder statementBuilder = new();
+        StringBuilder statementBuilder = new();
 
-            while (line is not null)
+        while (line is not null)
+        {
+            string trimLine = line.Trim();
+
+            if (trimLine == "GO")
             {
-                string trimLine = line.Trim();
-
-                if (trimLine == "GO")
-                {
-                    // Remove comments and execute the statement.
-                    string statement = statementBuilder.ToString();
-                    command.CommandText = s_sqlCommentRegex.Replace(statement, " ").Trim();
-                    command.ExecuteNonQuery();
-                    statementBuilder.Clear();
-                }
-                else
-                {
-                    // Append this line to the statement
-                    statementBuilder.Append(line);
-                    statementBuilder.Append('\n');
-                }
-
-                // Read the next line from the file.
-                line = scriptReader.ReadLine();
+                // Remove comments and execute the statement.
+                string statement = statementBuilder.ToString();
+                command.CommandText = s_sqlCommentRegex.Replace(statement, " ").Trim();
+                command.ExecuteNonQuery();
+                statementBuilder.Clear();
             }
-        }
-
-    /// <summary>
-    /// Executes the statements defined in the given MySQL script.
-    /// </summary>
-    /// <param name="connection">The connection used to execute SQL statements.</param>
-    /// <param name="scriptPath">The path to the SQL script.</param>
-    public static void ExecuteMySQLScript(this IDbConnection connection, string scriptPath)
-    {
-            using TextReader scriptReader = File.OpenText(scriptPath);
-
-            ExecuteMySQLScript(connection, scriptReader);
-        }
-
-    /// <summary>
-    /// Executes the statements defined in the given MySQL script.
-    /// </summary>
-    /// <param name="connection">The connection used to execute SQL statements.</param>
-    /// <param name="scriptReader">The reader used to extract statements from the SQL script.</param>
-    public static void ExecuteMySQLScript(this IDbConnection connection, TextReader scriptReader)
-    {
-            string? line = scriptReader.ReadLine();
-            string delimiter = ";";
-
-            using IDbCommand command = connection.CreateCommand();
-
-            StringBuilder statementBuilder = new();
-
-            while (line is not null)
+            else
             {
-                if (line.StartsWith("DELIMITER ", StringComparison.OrdinalIgnoreCase))
-                {
-                    delimiter = line.Split(' ')[1].Trim();
-                }
-                else
-                {
-                    statementBuilder.Append(line);
-                    statementBuilder.Append('\n');
-                    string statement = statementBuilder.ToString();
-                    statement = s_sqlCommentRegex.Replace(statement, " ").Trim();
-
-                    if (statement.EndsWith(delimiter, StringComparison.Ordinal))
-                    {
-                        // Remove trailing delimiter.
-                        statement = statement.Remove(statement.Length - delimiter.Length);
-
-                        // Remove comments and execute the statement.
-                        command.CommandText = statement;
-                        command.ExecuteNonQuery();
-                        statementBuilder.Clear();
-                    }
-                }
-
-                // Read the next line from the file.
-                line = scriptReader.ReadLine();
-            }
-        }
-
-    /// <summary>
-    /// Executes the statements defined in the given Oracle database script.
-    /// </summary>
-    /// <param name="connection">The connection used to execute SQL statements.</param>
-    /// <param name="scriptPath">The path to the SQL script.</param>
-    public static void ExecuteOracleScript(this IDbConnection connection, string scriptPath)
-    {
-            using TextReader scriptReader = File.OpenText(scriptPath);
-
-            ExecuteOracleScript(connection, scriptReader);
-        }
-
-    /// <summary>
-    /// Executes the statements defined in the given Oracle database script.
-    /// </summary>
-    /// <param name="connection">The connection used to execute SQL statements.</param>
-    /// <param name="scriptReader">The reader used to extract statements from the SQL script.</param>
-    public static void ExecuteOracleScript(this IDbConnection connection, TextReader scriptReader)
-    {
-            string? line = scriptReader.ReadLine();
-
-            using IDbCommand command = connection.CreateCommand();
-
-            StringBuilder statementBuilder = new();
-
-            while (line is not null)
-            {
-                string trimLine = line.Trim();
-
+                // Append this line to the statement
                 statementBuilder.Append(line);
                 statementBuilder.Append('\n');
+            }
+
+            // Read the next line from the file.
+            line = scriptReader.ReadLine();
+        }
+    }
+
+    /// <summary>
+    /// Executes the statements defined in the given MySQL script.
+    /// </summary>
+    /// <param name="connection">The connection used to execute SQL statements.</param>
+    /// <param name="scriptPath">The path to the SQL script.</param>
+    public static void ExecuteMySQLScript(this DbConnection connection, string scriptPath)
+    {
+        using TextReader scriptReader = File.OpenText(scriptPath);
+
+        ExecuteMySQLScript(connection, scriptReader);
+    }
+
+    /// <summary>
+    /// Executes the statements defined in the given MySQL script.
+    /// </summary>
+    /// <param name="connection">The connection used to execute SQL statements.</param>
+    /// <param name="scriptReader">The reader used to extract statements from the SQL script.</param>
+    public static void ExecuteMySQLScript(this DbConnection connection, TextReader scriptReader)
+    {
+        string? line = scriptReader.ReadLine();
+        string delimiter = ";";
+
+        using DbCommand command = connection.CreateCommand();
+
+        StringBuilder statementBuilder = new();
+
+        while (line is not null)
+        {
+            if (line.StartsWith("DELIMITER ", StringComparison.OrdinalIgnoreCase))
+            {
+                delimiter = line.Split(' ')[1].Trim();
+            }
+            else
+            {
+                statementBuilder.Append(line);
+                statementBuilder.Append('\n');
+
                 string statement = statementBuilder.ToString();
                 statement = s_sqlCommentRegex.Replace(statement, " ").Trim();
 
-                // Determine whether the statement is a PL/SQL block.
-                // If the statement is a PL/SQL block, the delimiter
-                // is a forward slash. Otherwise, it is a semicolon.
-                bool isPlsqlBlock = s_plsqlIdentifiers.Any(ident => statement.IndexOf(ident, StringComparison.CurrentCultureIgnoreCase) >= 0);
-
-                // If the statement is a PL/SQL block and the current line is a forward slash,
-                // or if the statement is not a PL/SQL block and the statement in a semicolon,
-                // then execute and flush the statement so that the next statement can be executed.
-                if (isPlsqlBlock && trimLine == "/" || !isPlsqlBlock && statement.EndsWith(";", StringComparison.Ordinal))
+                if (statement.EndsWith(delimiter, StringComparison.Ordinal))
                 {
-                    // Remove trailing delimiter and newlines.
-                    statement = statement.Remove(statement.Length - 1);
+                    // Remove trailing delimiter.
+                    statement = statement.Remove(statement.Length - delimiter.Length);
 
                     // Remove comments and execute the statement.
                     command.CommandText = statement;
                     command.ExecuteNonQuery();
                     statementBuilder.Clear();
                 }
-
-                // Read the next line from the file.
-                line = scriptReader.ReadLine();
             }
+
+            // Read the next line from the file.
+            line = scriptReader.ReadLine();
         }
+    }
+
+    /// <summary>
+    /// Executes the statements defined in the given Oracle database script.
+    /// </summary>
+    /// <param name="connection">The connection used to execute SQL statements.</param>
+    /// <param name="scriptPath">The path to the SQL script.</param>
+    public static void ExecuteOracleScript(this DbConnection connection, string scriptPath)
+    {
+        using TextReader scriptReader = File.OpenText(scriptPath);
+
+        ExecuteOracleScript(connection, scriptReader);
+    }
+
+    /// <summary>
+    /// Executes the statements defined in the given Oracle database script.
+    /// </summary>
+    /// <param name="connection">The connection used to execute SQL statements.</param>
+    /// <param name="scriptReader">The reader used to extract statements from the SQL script.</param>
+    public static void ExecuteOracleScript(this DbConnection connection, TextReader scriptReader)
+    {
+        string? line = scriptReader.ReadLine();
+
+        using DbCommand command = connection.CreateCommand();
+
+        StringBuilder statementBuilder = new();
+
+        while (line is not null)
+        {
+            string trimLine = line.Trim();
+
+            statementBuilder.Append(line);
+            statementBuilder.Append('\n');
+
+            string statement = statementBuilder.ToString();
+            statement = s_sqlCommentRegex.Replace(statement, " ").Trim();
+
+            // Determine whether the statement is a PL/SQL block.
+            // If the statement is a PL/SQL block, the delimiter
+            // is a forward slash. Otherwise, it is a semicolon.
+            bool isPlsqlBlock = s_plsqlIdentifiers.Any(ident => statement.IndexOf(ident, StringComparison.CurrentCultureIgnoreCase) >= 0);
+
+            // If the statement is a PL/SQL block and the current line is a forward slash,
+            // or if the statement is not a PL/SQL block and the statement in a semicolon,
+            // then execute and flush the statement so that the next statement can be executed.
+            if (isPlsqlBlock && trimLine == "/" || !isPlsqlBlock && statement.EndsWith(";", StringComparison.Ordinal))
+            {
+                // Remove trailing delimiter and newlines.
+                statement = statement.Remove(statement.Length - 1);
+
+                // Remove comments and execute the statement.
+                command.CommandText = statement;
+                command.ExecuteNonQuery();
+                statementBuilder.Clear();
+            }
+
+            // Read the next line from the file.
+            line = scriptReader.ReadLine();
+        }
+    }
 
     #endregion
 
     #region [ RetrieveRow Overloaded Extensions ]
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
     /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this SqlConnection connection, string sql)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataRow RetrieveRow(this DbConnection connection, string sql, params object[] parameters)
     {
-            return connection.RetrieveRow(DefaultTimeoutDuration, sql);
-        }
+        return connection.RetrieveRow(DefaultTimeoutDuration, sql, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
     /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this SqlConnection connection, int timeout, string sql)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataRow RetrieveRow(this DbConnection connection, int timeout, string sql, params object[] parameters)
     {
-            return connection.RetrieveRow(timeout, sql, Array.Empty<object>());
-        }
+        DataTable dataTable = connection.RetrieveData(timeout, sql, parameters);
+
+        if (dataTable.Rows.Count == 0)
+            dataTable.Rows.Add(dataTable.NewRow());
+
+        return dataTable.Rows[0];
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
     /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this SqlConnection connection, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DataRow> RetrieveRowAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return connection.RetrieveRow(DefaultTimeoutDuration, sql, parameters);
-        }
+        return connection.RetrieveRowAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
     /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this SqlConnection connection, int timeout, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static async Task<DataRow> RetrieveRowAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            DataTable dataTable = connection.RetrieveData(sql, 0, 1, timeout, parameters);
+        DataTable dataTable = await connection.RetrieveDataAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false);
 
-            if (dataTable.Rows.Count == 0)
-                dataTable.Rows.Add(dataTable.NewRow());
+        if (dataTable.Rows.Count == 0)
+            dataTable.Rows.Add(dataTable.NewRow());
 
-            return dataTable.Rows[0];
-        }
+        return dataTable.Rows[0];
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
     /// </summary>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this IDbConnection connection, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataRow RetrieveRow(this DbCommand command, string sql, params object[] parameters)
     {
-            return connection.RetrieveRow(DefaultTimeoutDuration, sql, parameters);
-        }
+        return command.RetrieveRow(DefaultTimeoutDuration, sql, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the first <see cref="DataRow"/> in the result set.
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
     /// </summary>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this IDbConnection connection, int timeout, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataRow RetrieveRow(this DbCommand command, int timeout, string sql, params object[] parameters)
     {
-            DataTable dataTable = connection.RetrieveData(timeout, sql, parameters);
+        DataTable dataTable = command.RetrieveData(timeout, sql, parameters);
 
-            if (dataTable.Rows.Count == 0)
-                dataTable.Rows.Add(dataTable.NewRow());
+        if (dataTable.Rows.Count == 0)
+            dataTable.Rows.Add(dataTable.NewRow());
 
-            return dataTable.Rows[0];
-        }
+        return dataTable.Rows[0];
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
     /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this SqlCommand command, string sql)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DataRow> RetrieveRowAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return command.RetrieveRow(DefaultTimeoutDuration, sql);
-        }
+        return command.RetrieveRowAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
     /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this SqlCommand command, int timeout, string sql)
-    {
-            return command.RetrieveRow(timeout, sql, Array.Empty<object>());
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
-    /// </summary>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this SqlCommand command, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static async Task<DataRow> RetrieveRowAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return command.RetrieveRow(DefaultTimeoutDuration, sql, parameters);
-        }
+        DataTable dataTable = await command.RetrieveDataAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false);
 
-    /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
-    /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
-    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this SqlCommand command, int timeout, string sql, params object[] parameters)
-    {
-            DataTable dataTable = command.RetrieveData(sql, 0, 1, timeout, parameters);
+        if (dataTable.Rows.Count == 0)
+            dataTable.Rows.Add(dataTable.NewRow());
 
-            if (dataTable.Rows.Count == 0)
-                dataTable.Rows.Add(dataTable.NewRow());
-
-            return dataTable.Rows[0];
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
-    /// </summary>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this IDbCommand command, string sql, params object[] parameters)
-    {
-            return command.RetrieveRow(DefaultTimeoutDuration, sql, parameters);
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
-    /// </summary>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static DataRow RetrieveRow(this IDbCommand command, int timeout, string sql, params object[] parameters)
-    {
-            DataTable dataTable = command.RetrieveData(timeout, sql, parameters);
-
-            if (dataTable.Rows.Count == 0)
-                dataTable.Rows.Add(dataTable.NewRow());
-
-            return dataTable.Rows[0];
-        }
+        return dataTable.Rows[0];
+    }
 
     #endregion
 
     #region [ RetrieveData Overloaded Extensions ]
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the first <see cref="DataTable"/> 
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the first <see cref="DataTable"/> 
     /// of result set, if the result set contains multiple tables.
     /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this SqlConnection connection, string sql)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataTable RetrieveData(this DbConnection connection, string sql, params object[] parameters)
     {
-            return connection.RetrieveData(DefaultTimeoutDuration, 0, int.MaxValue, sql);
-        }
+        return connection.RetrieveData(DefaultTimeoutDuration, sql, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the first <see cref="DataTable"/> 
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the first <see cref="DataTable"/> 
     /// of result set, if the result set contains multiple tables.
     /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="startRow">The zero-based record number to start with.</param>
-    /// <param name="maxRows">The maximum number of records to retrieve.</param>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this SqlConnection connection, int timeout, int startRow, int maxRows, string sql)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataTable RetrieveData(this DbConnection connection, int timeout, string sql, params object[] parameters)
     {
-            return connection.RetrieveData(timeout, startRow, maxRows, sql, Array.Empty<object>());
-        }
+        return connection.RetrieveDataSet(timeout, sql, parameters).Tables[0];
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the first <see cref="DataTable"/> 
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the first <see cref="DataTable"/> 
     /// of result set, if the result set contains multiple tables.
     /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this SqlConnection connection, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DataTable> RetrieveDataAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return connection.RetrieveData(DefaultTimeoutDuration, 0, int.MaxValue, sql, parameters);
-        }
+        return connection.RetrieveDataAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the first <see cref="DataTable"/> 
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the first <see cref="DataTable"/> 
     /// of result set, if the result set contains multiple tables.
     /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="startRow">The zero-based record number to start with.</param>
-    /// <param name="maxRows">The maximum number of records to retrieve.</param>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this SqlConnection connection, int timeout, int startRow, int maxRows, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static async Task<DataTable> RetrieveDataAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return connection.RetrieveDataSet(sql, startRow, maxRows, timeout, parameters).Tables[0];
-        }
+        return (await connection.RetrieveDataSetAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false)).Tables[0];
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the first <see cref="DataTable"/> 
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the first <see cref="DataTable"/> 
     /// of result set, if the result set contains multiple tables.
     /// </summary>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this IDbConnection connection, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataTable RetrieveData(this DbCommand command, string sql, params object[] parameters)
     {
-            return connection.RetrieveData(DefaultTimeoutDuration, sql, parameters);
-        }
+        return command.RetrieveData(DefaultTimeoutDuration, sql, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the first <see cref="DataTable"/> 
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the first <see cref="DataTable"/> 
     /// of result set, if the result set contains multiple tables.
     /// </summary>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this IDbConnection connection, int timeout, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataTable RetrieveData(this DbCommand command, int timeout, string sql, params object[] parameters)
     {
-            return connection.RetrieveDataSet(timeout, sql, parameters).Tables[0];
-        }
+        return command.RetrieveDataSet(timeout, sql, parameters).Tables[0];
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the first <see cref="DataTable"/> 
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the first <see cref="DataTable"/> 
     /// of result set, if the result set contains multiple tables.
     /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this SqlCommand command, string sql)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DataTable> RetrieveDataAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return command.RetrieveData(DefaultTimeoutDuration, 0, int.MaxValue, sql);
-        }
+        return command.RetrieveDataAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the first <see cref="DataTable"/> 
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the first <see cref="DataTable"/> 
     /// of result set, if the result set contains multiple tables.
     /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="startRow">The zero-based record number to start with.</param>
-    /// <param name="maxRows">The maximum number of records to retrieve.</param>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this SqlCommand command, int timeout, int startRow, int maxRows, string sql)
-    {
-            return command.RetrieveData(timeout, startRow, maxRows, sql, Array.Empty<object>());
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the first <see cref="DataTable"/> 
-    /// of result set, if the result set contains multiple tables.
-    /// </summary>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this SqlCommand command, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static async Task<DataTable> RetrieveDataAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return command.RetrieveData(DefaultTimeoutDuration, 0, int.MaxValue, sql, parameters);
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the first <see cref="DataTable"/> 
-    /// of result set, if the result set contains multiple tables.
-    /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="startRow">The zero-based record number to start with.</param>
-    /// <param name="maxRows">The maximum number of records to retrieve.</param>
-    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
-    /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this SqlCommand command, int timeout, int startRow, int maxRows, string sql, params object[] parameters)
-    {
-            return command.RetrieveDataSet(sql, startRow, maxRows, timeout, parameters).Tables[0];
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the first <see cref="DataTable"/> 
-    /// of result set, if the result set contains multiple tables.
-    /// </summary>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this IDbCommand command, string sql, params object[] parameters)
-    {
-            return command.RetrieveData(DefaultTimeoutDuration, sql, parameters);
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the first <see cref="DataTable"/> 
-    /// of result set, if the result set contains multiple tables.
-    /// </summary>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="DataTable"/> object.</returns>
-    public static DataTable RetrieveData(this IDbCommand command, int timeout, string sql, params object[] parameters)
-    {
-            return command.RetrieveDataSet(timeout, sql, parameters).Tables[0];
-        }
+        return (await command.RetrieveDataSetAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false)).Tables[0];
+    }
 
     #endregion
 
     #region [ RetrieveDataSet Overloaded Extensions ]
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the <see cref="DataSet"/> that 
-    /// may contain multiple table depending on the SQL statement.
-    /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-    /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this SqlConnection connection, string sql)
-    {
-            return connection.RetrieveDataSet(DefaultTimeoutDuration, 0, int.MaxValue, sql);
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the <see cref="DataSet"/> that 
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the <see cref="DataSet"/> that 
     /// may contain multiple tables, depending on the SQL statement.
     /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="startRow">The zero-based record number to start with.</param>
-    /// <param name="maxRows">The maximum number of records to retrieve.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DataSet"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataSet RetrieveDataSet(this DbConnection connection, string sql, params object[] parameters)
+    {
+        return connection.RetrieveDataSet(DefaultTimeoutDuration, sql, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the <see cref="DataSet"/> that 
+    /// may contain multiple tables, depending on the SQL statement.
+    /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this SqlConnection connection, int timeout, int startRow, int maxRows, string sql)
-    {
-            return connection.RetrieveDataSet(timeout, startRow, maxRows, sql, Array.Empty<object>());
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the <see cref="DataSet"/> that 
-    /// may contain multiple tables depending on the SQL statement.
-    /// </summary>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this SqlConnection connection, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataSet RetrieveDataSet(this DbConnection connection, int timeout, string sql, params object[] parameters)
     {
-            return connection.RetrieveDataSet(DefaultTimeoutDuration, 0, int.MaxValue, sql, parameters);
+        using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
+
+        command.CommandTimeout = timeout;
+
+        using DbDataReader reader = command.ExecuteReader();
+        DataSet data = new("Temp");
+        int tableIndex = 0;
+
+        do
+        {
+            string tableName = tableIndex == 0 ? "Table" : $"Table{tableIndex}";
+            data.Load(reader, LoadOption.PreserveChanges, tableName);
+            tableIndex++;
         }
+        while (!reader.IsClosed);
+
+        return data;
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlConnection"/>, and returns the <see cref="DataSet"/> that 
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the <see cref="DataSet"/> that 
     /// may contain multiple tables, depending on the SQL statement.
     /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="connection">The <see cref="SqlConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="startRow">The zero-based record number to start with.</param>
-    /// <param name="maxRows">The maximum number of records to retrieve.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DataSet"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DataSet> RetrieveDataSetAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
+    {
+        return connection.RetrieveDataSetAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbConnection"/>, and returns the <see cref="DataSet"/> that 
+    /// may contain multiple tables, depending on the SQL statement.
+    /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this SqlConnection connection, int timeout, int startRow, int maxRows, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static async Task<DataSet> RetrieveDataSetAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            using SqlCommand command = new(sql, connection) { CommandTimeout = timeout };
-            command.PopulateParameters(parameters);
-            SqlDataAdapter dataAdapter = new(command);
-            DataSet data = new("Temp");
-            dataAdapter.Fill(data, startRow, maxRows, "Table1");
+        await using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
-            return data;
+        command.CommandTimeout = timeout;
+
+        await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        DataSet data = new("Temp");
+        int tableIndex = 0;
+
+        do
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            string tableName = tableIndex == 0 ? "Table" : $"Table{tableIndex}";
+            data.Load(reader, LoadOption.PreserveChanges, tableName);
+            tableIndex++;
         }
+        while (!reader.IsClosed);
+
+        return data;
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the <see cref="DataSet"/> that 
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the <see cref="DataSet"/> that 
     /// may contain multiple tables, depending on the SQL statement.
     /// </summary>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this IDbConnection connection, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataSet RetrieveDataSet(this DbCommand command, string sql, params object[] parameters)
     {
-            return connection.RetrieveDataSet(DefaultTimeoutDuration, sql, parameters);
-        }
+        return command.RetrieveDataSet(DefaultTimeoutDuration, sql, parameters);
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="IDbConnection"/>, and returns the <see cref="DataSet"/> that 
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the <see cref="DataSet"/> that 
     /// may contain multiple tables, depending on the SQL statement.
     /// </summary>
-    /// <param name="connection">The <see cref="IDbConnection"/> to use for executing the SQL statement.</param>
-    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this IDbConnection connection, int timeout, string sql, params object[] parameters)
-    {
-            using IDbCommand command = connection.CreateParameterizedCommand(sql, parameters);
-            command.CommandTimeout = timeout;
-
-            using IDataReader reader = command.ExecuteReader();
-            DataSet data = new("Temp");
-            int tableIndex = 0;
-
-            do
-            {
-                string tableName = (tableIndex == 0) ? "Table" : $"Table{tableIndex}";
-                data.Load(reader, LoadOption.PreserveChanges, tableName);
-                tableIndex++;
-            } while (!reader.IsClosed);
-
-            return data;
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the <see cref="DataSet"/> that 
-    /// may contain multiple table depending on the SQL statement.
-    /// </summary>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this SqlCommand command, string sql)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DataSet RetrieveDataSet(this DbCommand command, int timeout, string sql, params object[] parameters)
     {
-            return command.RetrieveDataSet(DefaultTimeoutDuration, 0, int.MaxValue, sql);
+        command.CommandTimeout = timeout;
+        command.Parameters.Clear();
+        command.AddParametersWithValues(sql, parameters);
+
+        using DbDataReader reader = command.ExecuteReader();
+        DataSet data = new("Temp");
+        int tableIndex = 0;
+
+        do
+        {
+            string tableName = tableIndex == 0 ? "Table" : $"Table{tableIndex}";
+            data.Load(reader, LoadOption.PreserveChanges, tableName);
+            tableIndex++;
         }
+        while (!reader.IsClosed);
+
+        return data;
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the <see cref="DataSet"/> that 
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the <see cref="DataSet"/> that 
     /// may contain multiple tables, depending on the SQL statement.
     /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="startRow">The zero-based record number to start with.</param>
-    /// <param name="maxRows">The maximum number of records to retrieve.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>A <see cref="DataSet"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<DataSet> RetrieveDataSetAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
+    {
+        return command.RetrieveDataSetAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the <see cref="DataSet"/> that 
+    /// may contain multiple tables, depending on the SQL statement.
+    /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this SqlCommand command, int timeout, int startRow, int maxRows, string sql)
-    {
-            return command.RetrieveDataSet(timeout, startRow, maxRows, sql, Array.Empty<object>());
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the <see cref="DataSet"/> that 
-    /// may contain multiple tables depending on the SQL statement.
-    /// </summary>
     /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this SqlCommand command, string sql, params object[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static async Task<DataSet> RetrieveDataSetAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
-            return command.RetrieveDataSet(DefaultTimeoutDuration, 0, int.MaxValue, sql, parameters);
+        command.CommandTimeout = timeout;
+        command.Parameters.Clear();
+        command.AddParametersWithValues(sql, parameters);
+
+        await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        DataSet data = new("Temp");
+        int tableIndex = 0;
+
+        do
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            string tableName = tableIndex == 0 ? "Table" : $"Table{tableIndex}";
+            data.Load(reader, LoadOption.PreserveChanges, tableName);
+            tableIndex++;
         }
+        while (!reader.IsClosed);
 
-    /// <summary>
-    /// Executes the SQL statement using <see cref="SqlCommand"/>, and returns the <see cref="DataSet"/> that 
-    /// may contain multiple tables, depending on the SQL statement.
-    /// </summary>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="command">The <see cref="SqlCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="startRow">The zero-based record number to start with.</param>
-    /// <param name="maxRows">The maximum number of records to retrieve.</param>
-    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression -or- the parameter values to be passed into stored procedure being executed.</param>
-    /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this SqlCommand command, int timeout, int startRow, int maxRows, string sql, params object[] parameters)
-    {
-            if (!string.IsNullOrWhiteSpace(sql))
-                command.CommandText = sql;
-
-            command.CommandTimeout = timeout;
-            command.Parameters.Clear();
-            command.PopulateParameters(parameters);
-            SqlDataAdapter dataAdapter = new(command);
-            DataSet data = new("Temp");
-            dataAdapter.Fill(data, startRow, maxRows, "Table1");
-
-            return data;
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the <see cref="DataSet"/> that 
-    /// may contain multiple tables, depending on the SQL statement.
-    /// </summary>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this IDbCommand command, string sql, params object[] parameters)
-    {
-            return command.RetrieveDataSet(DefaultTimeoutDuration, sql, parameters);
-        }
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="IDbCommand"/>, and returns the <see cref="DataSet"/> that 
-    /// may contain multiple tables, depending on the SQL statement.
-    /// </summary>
-    /// <param name="command">The <see cref="IDbCommand"/> to use for executing the SQL statement.</param>
-    /// <param name="sql">The SQL statement to be executed.</param>
-    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="DataSet"/> object.</returns>
-    public static DataSet RetrieveDataSet(this IDbCommand command, int timeout, string sql, params object[] parameters)
-    {
-            command.CommandTimeout = timeout;
-            command.Parameters.Clear();
-            command.AddParametersWithValues(sql, parameters);
-
-            using IDataReader reader = command.ExecuteReader();
-            DataSet data = new("Temp");
-            int tableIndex = 0;
-
-            do
-            {
-                string tableName = (tableIndex == 0) ? "Table" : $"Table{tableIndex}";
-                data.Load(reader, LoadOption.PreserveChanges, tableName);
-                tableIndex++;
-            } while (!reader.IsClosed);
-
-            return data;
-        }
+        return data;
+    }
 
     #endregion
 
@@ -1299,137 +1236,172 @@ public static class DataExtensions
     /// Automatically applies type conversion to the column values.
     /// </summary>
     /// <typeparam name="T">A generic parameter that specifies the return type of the column.</typeparam>
-    /// <param name="row">The input <see cref="DataRow"/>, which acts as the this instance for the extension method.</param>
+    /// <param name="row">The input <see cref="DataRow"/>, which acts as the instance for the extension method.</param>
     /// <param name="field">The name of the column to return the value of.</param>
     /// <returns>The value, of type T, of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T ConvertField<T>(this DataRow row, string field)
     {
-            return ConvertField(row, field, default(T)!);
-        }
+        return ConvertField(row, field, default(T)!);
+    }
 
     /// <summary>
     /// Provides strongly-typed access to each of the column values in the specified row.
     /// Automatically applies type conversion to the column values.
     /// </summary>
     /// <typeparam name="T">A generic parameter that specifies the return type of the column.</typeparam>
-    /// <param name="row">The input <see cref="DataRow"/>, which acts as the this instance for the extension method.</param>
+    /// <param name="row">The input <see cref="DataRow"/>, which acts as the instance for the extension method.</param>
     /// <param name="field">The name of the column to return the value of.</param>
     /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved.</param>
     /// <returns>The value, of type T, of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
     public static T ConvertField<T>(this DataRow row, string field, T defaultValue)
     {
-            object? value = row.Field<object>(field);
+        object? value = row.Field<object>(field);
 
-            if (value is null || value == DBNull.Value)
-                return defaultValue;
+        if (value is null || value == DBNull.Value)
+            return defaultValue;
 
-            // If the value is an instance of the given type,
-            // no type conversion is necessary
-            if (value is T typeValue)
-                return typeValue;
+        // If the value is an instance of the given type,
+        // no type conversion is necessary
+        if (value is T typeValue)
+            return typeValue;
 
-            Type type = typeof(T);
+        Type type = typeof(T);
 
-            // Nullable types cannot be used in type conversion, but we can use Nullable.GetUnderlyingType()
-            // to determine whether the type is nullable and convert to the underlying type instead
-            Type underlyingType = Nullable.GetUnderlyingType(type) ?? type;
+        // Nullable types cannot be used in type conversion, but we can use Nullable.GetUnderlyingType()
+        // to determine whether the type is nullable and convert to the underlying type instead
+        Type underlyingType = Nullable.GetUnderlyingType(type) ?? type;
 
-            // Handle Guids as a special case since they do not implement IConvertible
-            if (underlyingType == typeof(Guid))
-                return (T)(object)Guid.Parse(value.ToString() ?? "");
+        // Handle Guids as a special case since they do not implement IConvertible
+        if (underlyingType == typeof(Guid))
+            return (T)(object)Guid.Parse(value.ToString() ?? "");
 
-            // Handle enums as a special case since they do not implement IConvertible
-            if (underlyingType.IsEnum)
-                return (T)Enum.Parse(underlyingType, value.ToString() ?? "");
+        // Handle enums as a special case since they do not implement IConvertible
+        if (underlyingType.IsEnum)
+            return (T)Enum.Parse(underlyingType, value.ToString() ?? "");
 
-            return (T)Convert.ChangeType(value, underlyingType);
-        }
+        return (T)Convert.ChangeType(value, underlyingType);
+    }
 
     /// <summary>
     /// Automatically applies type conversion to column values when only a type is available.
     /// </summary>
-    /// <param name="row">The input <see cref="DataRow"/>, which acts as the this instance for the extension method.</param>
+    /// <param name="row">The input <see cref="DataRow"/>, which acts as the instance for the extension method.</param>
     /// <param name="field">The name of the column to return the value of.</param>
     /// <param name="type">Type of the column.</param>
     /// <returns>The value of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static object? ConvertField(this DataRow row, string field, Type type)
     {
-            return ConvertField(row, field, type, default!);
-        }
+        return ConvertField(row, field, type, default!);
+    }
 
     /// <summary>
     /// Automatically applies type conversion to column values when only a type is available.
     /// </summary>
-    /// <param name="row">The input <see cref="DataRow"/>, which acts as the this instance for the extension method.</param>
+    /// <param name="row">The input <see cref="DataRow"/>, which acts as the instance for the extension method.</param>
     /// <param name="field">The name of the column to return the value of.</param>
     /// <param name="type">Type of the column.</param>
     /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved.</param>
     /// <returns>The value of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
     public static object? ConvertField(this DataRow row, string field, Type type, object? defaultValue)
     {
-            object? value = row.Field<object>(field);
+        object? value = row.Field<object>(field);
 
-            if (value is null || value == DBNull.Value)
-                return defaultValue ?? (type.IsValueType ? Activator.CreateInstance(type) : null);
+        if (value is null || value == DBNull.Value)
+            return defaultValue ?? (type.IsValueType ? Activator.CreateInstance(type) : null);
 
-            // If the value is an instance of the given type,
-            // no type conversion is necessary
-            if (type.IsInstanceOfType(value))
-                return value;
+        // If the value is an instance of the given type,
+        // no type conversion is necessary
+        if (type.IsInstanceOfType(value))
+            return value;
 
-            // Nullable types cannot be used in type conversion, but we can use Nullable.GetUnderlyingType()
-            // to determine whether the type is nullable and convert to the underlying type instead
-            Type underlyingType = Nullable.GetUnderlyingType(type) ?? type;
+        // Nullable types cannot be used in type conversion, but we can use Nullable.GetUnderlyingType()
+        // to determine whether the type is nullable and convert to the underlying type instead
+        Type underlyingType = Nullable.GetUnderlyingType(type) ?? type;
 
-            // Handle Guids as a special case since they do not implement IConvertible
-            if (underlyingType == typeof(Guid))
-                return Guid.Parse(value.ToString() ?? "");
+        // Handle Guids as a special case since they do not implement IConvertible
+        if (underlyingType == typeof(Guid))
+            return Guid.Parse(value.ToString() ?? "");
 
-            // Handle enums as a special case since they do not implement IConvertible
-            if (underlyingType.IsEnum)
-                return Enum.Parse(underlyingType, value.ToString() ?? "");
+        // Handle enums as a special case since they do not implement IConvertible
+        if (underlyingType.IsEnum)
+            return Enum.Parse(underlyingType, value.ToString() ?? "");
 
-            return Convert.ChangeType(value, underlyingType);
-        }
+        return Convert.ChangeType(value, underlyingType);
+    }
 
     /// <summary>
     /// Provides strongly-typed access to each of the column values in the specified row.
     /// Automatically applies type conversion to the column values.
     /// </summary>
     /// <typeparam name="T">A generic parameter that specifies the return type of the column.</typeparam>
-    /// <param name="row">The input <see cref="DataRow"/>, which acts as the this instance for the extension method.</param>
+    /// <param name="row">The input <see cref="DataRow"/>, which acts as the instance for the extension method.</param>
     /// <param name="field">The name of the column to return the value of.</param>
     /// <returns>The value, of type T, of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T? ConvertNullableField<T>(this DataRow row, string field) where T : struct
     {
-            object? value = row.Field<object>(field);
+        object? value = row.Field<object>(field);
 
-            if (value is null)
-                return null;
+        if (value is null)
+            return null;
 
-            return (T)Convert.ChangeType(value, typeof(T));
-        }
+        return (T)Convert.ChangeType(value, typeof(T));
+    }
 
     /// <summary>
     /// Parses a Guid from a database field that is a Guid type or a string representing a Guid.
     /// </summary>
-    /// <param name="row">The input <see cref="DataRow"/>, which acts as the this instance for the extension method.</param>
+    /// <param name="row">The input <see cref="DataRow"/>, which acts as the instance for the extension method.</param>
     /// <param name="field">The name of the column to return the value of.</param>
     /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved; defaults to <see cref="Guid.Empty"/>.</param>
     /// <returns>The <see cref="Guid"/> value of the <see cref="DataColumn"/> specified by <paramref name="field"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Guid ConvertGuidField(this DataRow row, string field, Guid? defaultValue = null)
     {
-            object? value = row.Field<object>(field);
+        object? value = row.Field<object>(field);
 
-            if (value is null || value == DBNull.Value)
-                return defaultValue ?? Guid.Empty;
+        if (value is null || value == DBNull.Value)
+            return defaultValue ?? Guid.Empty;
 
-            if (value is Guid guidValue)
-                return guidValue;
+        if (value is Guid guidValue)
+            return guidValue;
 
-            return Guid.Parse(value.ToString() ?? "");
-        }
+        return Guid.Parse(value.ToString() ?? "");
+    }
 
+    #endregion
+
+    #region [ DataTable Extensions ]
+
+    /// <summary>
+    /// Returns an <see cref="IAsyncEnumerable{T}"/> of <see cref="DataRow"/> values from the <see cref="DataTable"/>.
+    /// </summary>
+    /// <param name="source">The source <see cref="DataTable" /> to make async enumerable.</param>
+    /// <exception cref="ArgumentNullException">The source <see cref="DataTable" /> is <c>null</c>>.</exception>
+    /// <returns>An <see cref="IAsyncEnumerable{T}"/> of <see cref="DataRow"/> values from the <see cref="DataTable"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IAsyncEnumerable<DataRow> AsAsyncEnumerable(this DataTable source)
+    {
+        return source.AsEnumerable().ToAsyncEnumerable();
+    }
+
+    /// <summary>
+    /// Returns a cancellable <see cref="IAsyncEnumerable{T}"/> of <see cref="DataRow"/> values from the <see cref="DataTable"/>
+    /// and configures how awaits on the tasks returned from an async iteration will be performed.
+    /// </summary>
+    /// <param name="source">The source <see cref="DataTable" /> to make async enumerable.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="continueOnCapturedContext">Whether to capture and marshal back to the current context.</param>
+    /// <exception cref="ArgumentNullException">The source <see cref="DataTable" /> is <c>null</c>>.</exception>
+    /// <returns>An <see cref="IAsyncEnumerable{T}"/> of <see cref="DataRow"/> values from the <see cref="DataTable"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ConfiguredCancelableAsyncEnumerable<DataRow> AsAwaitConfiguredCancelableAsyncEnumerable(this DataTable source, CancellationToken cancellationToken, bool continueOnCapturedContext = false)
+    {
+        return source.AsAsyncEnumerable().WithAwaitConfiguredCancellation(cancellationToken, continueOnCapturedContext);
+    }
+        
     #endregion
 
     #region [ UpdateData Overloaded Functions ]
@@ -1445,11 +1417,11 @@ public static class DataExtensions
     [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
     public static int UpdateData(this SqlConnection connection, DataTable sourceData, string sourceSql)
     {
-            SqlDataAdapter dataAdapter = new(sourceSql, connection);
-            SqlCommandBuilder _ = new(dataAdapter);
+        SqlDataAdapter dataAdapter = new(sourceSql, connection);
+        SqlCommandBuilder _ = new(dataAdapter);
 
-            return dataAdapter.Update(sourceData);
-        }
+        return dataAdapter.Update(sourceData);
+    }
 
     #endregion
 
@@ -1463,8 +1435,8 @@ public static class DataExtensions
     /// <param name="parameters">The remaining parameter values to populate the <see cref="SqlCommand"/> parameters with.</param>
     public static void PopulateParameters(this SqlCommand command, object? parameter1, params object[] parameters)
     {
-            command.PopulateParameters(new[] { parameter1 }.Concat(parameters).NullAsDBNull());
-        }
+        command.PopulateParameters(new[] { parameter1 }.Concat(parameters).NullAsDBNull());
+    }
 
     /// <summary>
     ///  Takes the <see cref="SqlCommand"/> object and populates it with the given parameters.
@@ -1473,104 +1445,103 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to populate the <see cref="SqlCommand"/> parameters with.</param>
     public static void PopulateParameters(this SqlCommand command, object[] parameters)
     {
-            command.PopulateParameters(SqlCommandBuilder.DeriveParameters, parameters);
-        }
+        command.PopulateParameters(SqlCommandBuilder.DeriveParameters, parameters);
+    }
 
     /// <summary>
-    /// Takes the <see cref="IDbCommand"/> object and populates it with the given parameters.
+    /// Takes the <see cref="DbCommand"/> object and populates it with the given parameters.
     /// </summary>
-    /// <param name="command">The <see cref="IDbCommand"/> whose parameters are to be populated.</param>
+    /// <param name="command">The <see cref="DbCommand"/> whose parameters are to be populated.</param>
     /// <param name="deriveParameters">The DeriveParameters() implementation of the <paramref name="command"/> to use to populate parameters.</param>
-    /// <param name="values">The parameter values to populate the <see cref="IDbCommand"/> parameters with.</param>
-    /// <typeparam name="TDbCommand">Then <see cref="IDbCommand"/> type to be used.</typeparam>
+    /// <param name="values">The parameter values to populate the <see cref="DbCommand"/> parameters with.</param>
+    /// <typeparam name="TDbCommand">Then <see cref="DbCommand"/> type to be used.</typeparam>
     /// <exception cref="ArgumentException">
-    /// Number of <see cref="IDbDataParameter"/> arguments in <see cref="IDbCommand.CommandText"/> of this <paramref name="command"/>, identified by '@', do not match number of supplied parameter <paramref name="values"/> -or-
+    /// Number of <see cref="DbParameter"/> arguments in <see cref="DbCommand.CommandText"/> of this <paramref name="command"/>, identified by '@', do not match number of supplied parameter <paramref name="values"/> -or-
     /// You have supplied more <paramref name="values"/> than parameters listed for the stored procedure.
     /// </exception>
-    public static void PopulateParameters<TDbCommand>(this TDbCommand command, Action<TDbCommand> deriveParameters, object[]? values) where TDbCommand : IDbCommand
+    public static void PopulateParameters<TDbCommand>(this TDbCommand command, Action<TDbCommand> deriveParameters, object[]? values) where TDbCommand : DbCommand
     {
-            // tmshults 12/10/2004
-            if (values is null)
-                return;
+        if (values is null)
+            return;
 
-            string commandText = command.CommandText;
+        string commandText = command.CommandText;
 
-            if (string.IsNullOrEmpty(commandText))
-                throw new ArgumentNullException(nameof(command), "command.CommandText is null");
+        if (string.IsNullOrEmpty(commandText))
+            throw new ArgumentNullException(nameof(command), "command.CommandText is null");
 
-            // Add parameters for standard SQL expressions (i.e., non stored procedure expressions)
-            if (!IsStoredProcedure(commandText))
-            {
-                command.AddParametersWithValues(commandText, values);
-                return;
-            }
-
-            command.CommandType = CommandType.StoredProcedure;
-
-            // Makes quick query to db to find the parameters for the StoredProc, and then creates them for
-            // the command. The DeriveParameters() is only for commands with CommandType of StoredProcedure.
-            deriveParameters(command);
-
-            // Removes the ReturnValue Parameter.
-            command.Parameters.RemoveAt(0);
-
-            // Checks to see if the Parameters found match the Values provided.
-            if (command.Parameters.Count != values.Length)
-            {
-                // If there are more values than parameters, throws an error.
-                if (values.Length > command.Parameters.Count)
-                    throw new ArgumentException("You have supplied more values than parameters listed for the stored procedure");
-
-                // Otherwise, assume that the missing values are for Parameters that have default values,
-                // and the code uses the default. To do this fill the extended ParamValue as Nothing/Null.
-                Array.Resize(ref values, command.Parameters.Count); // Makes the Values array match the Parameters of the Stored Proc.
-            }
-
-            // Assigns the values to the Parameters.
-            for (int i = 0; i < command.Parameters.Count; i++)
-                ((DbParameter)command.Parameters[i]!).Value = values[i];
+        // Add parameters for standard SQL expressions (i.e., non stored procedure expressions)
+        if (!IsStoredProcedure(commandText))
+        {
+            command.AddParametersWithValues(commandText, values);
+            return;
         }
+
+        command.CommandType = CommandType.StoredProcedure;
+
+        // Makes quick query to db to find the parameters for the StoredProc, and then creates them for
+        // the command. The DeriveParameters() is only for commands with CommandType of StoredProcedure.
+        deriveParameters(command);
+
+        // Removes the ReturnValue Parameter.
+        command.Parameters.RemoveAt(0);
+
+        // Checks to see if the Parameters found match the Values provided.
+        if (command.Parameters.Count != values.Length)
+        {
+            // If there are more values than parameters, throws an error.
+            if (values.Length > command.Parameters.Count)
+                throw new ArgumentException("You have supplied more values than parameters listed for the stored procedure");
+
+            // Otherwise, assume that the missing values are for Parameters that have default values,
+            // and the code uses the default. To do this fill the extended ParamValue as Nothing/Null.
+            Array.Resize(ref values, command.Parameters.Count); // Makes the Values array match the Parameters of the Stored Proc.
+        }
+
+        // Assigns the values to the Parameters.
+        for (int i = 0; i < command.Parameters.Count; i++)
+            command.Parameters[i].Value = values[i];
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool IsStoredProcedure(string sql)
     {
-            // No lock required for this use case: https://docs.microsoft.com/en-us/dotnet/standard/base-types/thread-safety-in-regular-expressions
-            return s_sqlIdentifierRegex.IsMatch(sql.Trim());
-        }
+        // No lock required for this use case: https://docs.microsoft.com/en-us/dotnet/standard/base-types/thread-safety-in-regular-expressions
+        return s_sqlIdentifierRegex.IsMatch(sql.Trim());
+    }
 
     /// <summary>
-    /// Creates and adds an <see cref="IDbDataParameter"/> to the <see cref="IDbCommand"/> object with the specified <paramref name="value"/>.
+    /// Creates and adds an <see cref="DbParameter"/> to the <see cref="DbCommand"/> object with the specified <paramref name="value"/>.
     /// </summary>
-    /// <param name="command"><see cref="IDbCommand"/> to which parameter needs to be added.</param>
-    /// <param name="name">Name of the <see cref="IDbDataParameter"/> to be added.</param>
-    /// <param name="value">Value of the <see cref="IDbDataParameter"/> to be added.</param>
-    /// <param name="direction"><see cref="ParameterDirection"/> for <see cref="IDbDataParameter"/>.</param>
-    public static void AddParameterWithValue(this IDbCommand command, string name, object value, ParameterDirection direction = ParameterDirection.Input)
+    /// <param name="command"><see cref="DbCommand"/> to which parameter needs to be added.</param>
+    /// <param name="name">Name of the <see cref="DbParameter"/> to be added.</param>
+    /// <param name="value">Value of the <see cref="DbParameter"/> to be added.</param>
+    /// <param name="direction"><see cref="ParameterDirection"/> for <see cref="DbParameter"/>.</param>
+    public static void AddParameterWithValue(this DbCommand command, string name, object value, ParameterDirection direction = ParameterDirection.Input)
     {
-            if (value is IDbDataParameter)
-            {
-                // Value is already a parameter.
-                command.Parameters.Add(value);
-            }
-            else
-            {
-                // Create a parameter for the value.
-                IDbDataParameter parameter = command.CreateParameter();
-
-                parameter.ParameterName = name;
-                parameter.Value = value;
-                parameter.Direction = direction;
-
-                command.Parameters.Add(parameter);
-            }
+        if (value is DbParameter)
+        {
+            // Value is already a parameter.
+            command.Parameters.Add(value);
         }
+        else
+        {
+            // Create a parameter for the value.
+            DbParameter parameter = command.CreateParameter();
+
+            parameter.ParameterName = name;
+            parameter.Value = value;
+            parameter.Direction = direction;
+
+            command.Parameters.Add(parameter);
+        }
+    }
 
     /// <summary>
-    /// Creates and adds a new <see cref="IDbDataParameter"/> for each of the specified <paramref name="values"/> to the <see cref="IDbCommand"/> object.
+    /// Creates and adds a new <see cref="DbParameter"/> for each of the specified <paramref name="values"/> to the <see cref="DbCommand"/> object.
     /// </summary>
-    /// <param name="command"><see cref="IDbCommand"/> to which parameters need to be added.</param>
+    /// <param name="command"><see cref="DbCommand"/> to which parameters need to be added.</param>
     /// <param name="sql">The SQL statement.</param>
-    /// <param name="values">The values for the parameters of the <see cref="IDbCommand"/> in the order that they appear in the SQL statement.</param>
+    /// <param name="values">The values for the parameters of the <see cref="DbCommand"/> in the order that they appear in the SQL statement.</param>
     /// <remarks>
     /// <para>
     /// This method does very rudimentary parsing of the SQL statement so parameter names should start with the '@'
@@ -1582,52 +1553,52 @@ public static class DataExtensions
     /// </para>
     /// </remarks>
     /// <returns>The fully populated parameterized command.</returns>
-    /// <exception cref="ArgumentException">Number of <see cref="IDbDataParameter"/> arguments in <paramref name="sql"/> expression, identified by '@', do not match number of supplied parameter <paramref name="values"/>.</exception>
-    public static void AddParametersWithValues(this IDbCommand command, string sql, params object[] values)
+    /// <exception cref="ArgumentException">Number of <see cref="DbParameter"/> arguments in <paramref name="sql"/> expression, identified by '@', do not match number of supplied parameter <paramref name="values"/>.</exception>
+    public static void AddParametersWithValues(this DbCommand command, string sql, params object[] values)
     {
-            if (values.FirstOrDefault(value => value is IDbDataParameter) is not null)
-            {
-                // Values are already parameters.
-                foreach (object param in values)
-                    command.Parameters.Add(param);
-            }
-            else
-            {
-                // Pick up all parameters that start with @ or : but skip key words such as @@IDENTITY
-                string[] tokens = sql.Split(' ', '(', ')', ',', '=')
-                    .Where(token => token.StartsWith(":", StringComparison.Ordinal) || token.StartsWith("@", StringComparison.Ordinal) && !token.StartsWith("@@", StringComparison.Ordinal))
-                    .Distinct()
-                    .Where(IsValidParameter)
-                    .ToArray();
-
-                int i = 0;
-
-                if (tokens.Length != values.Length)
-                    throw new ArgumentException("Number of parameter arguments in SQL expression do not match number of supplied values", nameof(values));
-
-                foreach (string token in tokens)
-                {
-                    if (!command.Parameters.Contains(token))
-                        command.AddParameterWithValue(token, values[i++]);
-                }
-            }
-
-            command.CommandText = sql;
+        if (values.FirstOrDefault(value => value is DbParameter) is not null)
+        {
+            // Values are already parameters
+            foreach (object param in values)
+                command.Parameters.Add(param);
         }
+        else
+        {
+            // Pick up all parameters that start with @ or : but skip keywords such as @@IDENTITY
+            string[] tokens = sql.Split(' ', '(', ')', ',', '=')
+                .Where(token => token.StartsWith(":", StringComparison.Ordinal) || token.StartsWith("@", StringComparison.Ordinal) && !token.StartsWith("@@", StringComparison.Ordinal))
+                .Distinct()
+                .Where(IsValidParameter)
+                .ToArray();
+
+            int i = 0;
+
+            if (tokens.Length != values.Length)
+                throw new ArgumentException("Number of parameter arguments in SQL expression do not match number of supplied values", nameof(values));
+
+            foreach (string token in tokens)
+            {
+                if (!command.Parameters.Contains(token))
+                    command.AddParameterWithValue(token, values[i++]);
+            }
+        }
+
+        command.CommandText = sql;
+    }
 
     private static bool IsValidParameter(string token)
     {
-            // No lock required for this use case: https://docs.microsoft.com/en-us/dotnet/standard/base-types/thread-safety-in-regular-expressions
-            return s_sqlParameterRegex.IsMatch(token);
-        }
+        // No lock required for this use case: https://docs.microsoft.com/en-us/dotnet/standard/base-types/thread-safety-in-regular-expressions
+        return s_sqlParameterRegex.IsMatch(token);
+    }
 
     /// <summary>
-    /// Creates and returns a parameterized <see cref="IDbCommand"/>. Parameter names are embedded in the SQL statement
+    /// Creates and returns a parameterized <see cref="DbCommand"/>. Parameter names are embedded in the SQL statement
     /// passed as a parameter to this method.
     /// </summary>
     /// <param name="connection">The database connection.</param>
     /// <param name="sql">The SQL statement.</param>
-    /// <param name="values">The values for the parameters of the <see cref="IDbCommand"/> in the order that they appear in the SQL statement.</param>
+    /// <param name="values">The values for the parameters of the <see cref="DbCommand"/> in the order that they appear in the SQL statement.</param>
     /// <remarks>
     /// <para>
     /// This method does very rudimentary parsing of the SQL statement so parameter names should start with the '@'
@@ -1639,26 +1610,26 @@ public static class DataExtensions
     /// </para>
     /// </remarks>
     /// <returns>The fully populated parameterized command.</returns>
-    /// <exception cref="ArgumentException">Number of <see cref="IDbDataParameter"/> arguments in <paramref name="sql"/> expression, identified by '@', do not match number of supplied parameter <paramref name="values"/>.</exception>
-    public static IDbCommand CreateParameterizedCommand(this IDbConnection connection, string sql, params object[] values)
+    /// <exception cref="ArgumentException">Number of <see cref="DbParameter"/> arguments in <paramref name="sql"/> expression, identified by '@', do not match number of supplied parameter <paramref name="values"/>.</exception>
+    public static DbCommand CreateParameterizedCommand(this DbConnection connection, string sql, params object[] values)
     {
-            IDbCommand command = connection.CreateCommand();
+        DbCommand command = connection.CreateCommand();
 
-            command.AddParametersWithValues(sql, values);
+        command.AddParametersWithValues(sql, values);
 
-            if (IsStoredProcedure(sql))
-            {
-                command.CommandType = CommandType.StoredProcedure;
+        if (IsStoredProcedure(sql))
+        {
+            command.CommandType = CommandType.StoredProcedure;
 
-                // Force parameters for stored procedures to have no name - cannot determine proper
-                // name in a database abstract way. As a result, callers must specify proper number
-                // of parameters for stored procedure, in order.
-                foreach (IDbDataParameter parameter in command.Parameters)
-                    parameter.ParameterName = null;
-            }
-
-            return command;
+            // Force parameters for stored procedures to have no name - cannot determine proper
+            // name in a database abstract way. As a result, callers must specify proper number
+            // of parameters for stored procedure, in order.
+            foreach (DbParameter parameter in command.Parameters)
+                parameter.ParameterName = null;
         }
+
+        return command;
+    }
 
     /// <summary>
     /// Gets any <c>null</c> parameter values as <see cref="DBNull"/>.
@@ -1680,56 +1651,56 @@ public static class DataExtensions
     /// <returns>A <see cref="DataTable"/> object.</returns>
     public static DataTable ToDataTable(this string delimitedData, string delimiter, bool header)
     {
-            DataTable table = new();
+        DataTable table = new();
 
-            string pattern =
-                // Regex pattern that will be used to split the delimited data.
-                $"{Regex.Escape(delimiter)}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))";
+        string pattern =
+            // Regex pattern that will be used to split the delimited data.
+            $"{Regex.Escape(delimiter)}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))";
 
-            // Remove any leading and trailing whitespace, carriage returns or line feeds.
-            delimitedData = delimitedData.Trim().Trim('\r', '\n').Replace("\n", "");
+        // Remove any leading and trailing whitespace, carriage returns or line feeds.
+        delimitedData = delimitedData.Trim().Trim('\r', '\n').Replace("\n", "");
 
-            string[] lines = delimitedData.Split('\r'); //Splits delimited data into lines.
+        string[] lines = delimitedData.Split('\r'); //Splits delimited data into lines.
 
-            int cursor = 0;
+        int cursor = 0;
 
-            // Assumes that the first line has header information.
-            string[] headers = Regex.Split(lines[cursor], pattern);
+        // Assumes that the first line has header information.
+        string[] headers = Regex.Split(lines[cursor], pattern);
 
-            // Creates columns.
-            if (header)
-            {
-                // Uses the first row as header row.
-                foreach (string columnName in headers)
-                    table.Columns.Add(new DataColumn(columnName.Trim('\"'))); //Remove any leading and trailing quotes from the column name.
+        // Creates columns.
+        if (header)
+        {
+            // Uses the first row as header row.
+            foreach (string columnName in headers)
+                table.Columns.Add(new DataColumn(columnName.Trim('\"'))); //Remove any leading and trailing quotes from the column name.
 
-                cursor++;
-            }
-            else
-            {
-                for (int i = 0; i < headers.Length; i++)
-                    table.Columns.Add(new DataColumn());
-            }
-
-            // Populates the data table with CSV data.
-            for (; cursor < lines.Length; cursor++)
-            {
-                // Creates new row.
-                DataRow row = table.NewRow();
-
-                // Populates the new row.
-                string[] fields = Regex.Split(lines[cursor], pattern);
-
-                // Removes any leading and trailing quotes from the data.
-                for (int i = 0; i < fields.Length; i++)
-                    row[i] = fields[i].Trim('\"');
-
-                // Adds the new row.
-                table.Rows.Add(row);
-            }
-
-            return table;
+            cursor++;
         }
+        else
+        {
+            for (int i = 0; i < headers.Length; i++)
+                table.Columns.Add(new DataColumn());
+        }
+
+        // Populates the data table with CSV data.
+        for (; cursor < lines.Length; cursor++)
+        {
+            // Creates new row.
+            DataRow row = table.NewRow();
+
+            // Populates the new row.
+            string[] fields = Regex.Split(lines[cursor], pattern);
+
+            // Removes any leading and trailing quotes from the data.
+            for (int i = 0; i < fields.Length; i++)
+                row[i] = fields[i].Trim('\"');
+
+            // Adds the new row.
+            table.Rows.Add(row);
+        }
+
+        return table;
+    }
 
     /// <summary>
     /// Converts the <see cref="DataTable"/> to a multi-line delimited string (e.g., CSV export).
@@ -1741,39 +1712,39 @@ public static class DataExtensions
     /// <returns>A string of delimited text.</returns>
     public static string ToDelimitedString(this DataTable table, string delimiter, bool quoted, bool header)
     {
-            StringBuilder data = new();
+        StringBuilder data = new();
 
-            // Uses the column names as the headers if headers are requested.
-            if (header)
+        // Uses the column names as the headers if headers are requested.
+        if (header)
+        {
+            for (int i = 0; i < table.Columns.Count; i++)
             {
-                for (int i = 0; i < table.Columns.Count; i++)
-                {
-                    data.Append($"{(quoted ? "\"" : "")}{table.Columns[i].ColumnName}{(quoted ? "\"" : "")}");
+                data.Append($"{(quoted ? "\"" : "")}{table.Columns[i].ColumnName}{(quoted ? "\"" : "")}");
 
-                    if (i < table.Columns.Count - 1)
-                        data.Append(delimiter);
-                }
-
-                data.Append(Environment.NewLine);
+                if (i < table.Columns.Count - 1)
+                    data.Append(delimiter);
             }
 
-            for (int i = 0; i < table.Rows.Count; i++)
-            {
-                // Converts data table's data to delimited data.
-                for (int j = 0; j < table.Columns.Count; j++)
-                {
-                    data.Append($"{(quoted ? "\"" : "")}{table.Rows[i][j]}{(quoted ? "\"" : "")}");
-
-                    if (j < table.Columns.Count - 1)
-                        data.Append(delimiter);
-                }
-
-                data.Append(Environment.NewLine);
-            }
-
-            // Returns the delimited data.
-            return data.ToString();
+            data.Append(Environment.NewLine);
         }
+
+        for (int i = 0; i < table.Rows.Count; i++)
+        {
+            // Converts data table's data to delimited data.
+            for (int j = 0; j < table.Columns.Count; j++)
+            {
+                data.Append($"{(quoted ? "\"" : "")}{table.Rows[i][j]}{(quoted ? "\"" : "")}");
+
+                if (j < table.Columns.Count - 1)
+                    data.Append(delimiter);
+            }
+
+            data.Append(Environment.NewLine);
+        }
+
+        // Returns the delimited data.
+        return data.ToString();
+    }
 
     #endregion
 }

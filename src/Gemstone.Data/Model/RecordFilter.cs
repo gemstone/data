@@ -154,9 +154,9 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     #region [ Static ]
 
     // Static Fields
-    private static readonly string[] s_validOperators = ["=", "<>", "<", ">", "IN", "NOT IN", "LIKE", "NOT LIKE", "<=", ">="];
+    private static readonly string[] s_validOperators = ["=", "<>", "<", ">", "IN", "NOT IN", "LIKE", "NOT LIKE", "<=", ">=", "IS", "IS NOT"];
     private static readonly string[] s_groupOperators = ["IN", "NOT IN"];
-    private static readonly string[] s_encryptedOperators = ["IN", "NOT IN", "=", "<>"];
+    private static readonly string[] s_encryptedOperators = ["IN", "NOT IN", "=", "<>", "IS", "IS NOT"];
 
     #endregion
 }

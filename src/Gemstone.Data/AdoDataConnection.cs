@@ -27,19 +27,23 @@
 //      Migrated to Gemstone libraries.
 //
 //******************************************************************************************************
+// ReSharper disable CoVariantArrayConversion
+// ReSharper disable InconsistentNaming
 
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Gemstone.Configuration;
 using Gemstone.Data.DataExtensions;
 using Gemstone.StringExtensions;
 
-// ReSharper disable InconsistentNaming
 namespace Gemstone.Data;
 
 /// <summary>
@@ -84,7 +88,7 @@ public enum DatabaseType
 }
 
 /// <summary>
-/// Creates a new <see cref="IDbConnection"/> from any specified or configured ADO.NET data source.
+/// Creates a new <see cref="DbConnection"/> from any specified or configured ADO.NET data source.
 /// </summary>
 /// <remarks>
 /// Example connection and data provider strings:
@@ -167,8 +171,7 @@ public class AdoDataConnection : IDisposable
     /// </summary>
     /// <param name="settings">Settings instance.</param>
     public AdoDataConnection(Settings settings)
-        : this(settings["System"]["ConnectionString"]!.ToString(),
-            settings["System"]["DataProviderString"]!.ToString())
+        : this(settings["System"]["ConnectionString"]!.ToString(), settings["System"]["DataProviderString"]!.ToString())
     {
     }
 
@@ -190,9 +193,8 @@ public class AdoDataConnection : IDisposable
     /// <param name="connectionType">The ADO type used to establish the database connection.</param>
     public AdoDataConnection(string connectionString, Type connectionType)
     {
-        if (!typeof(IDbConnection).IsAssignableFrom(connectionType))
-            throw new ArgumentException("Connection type must implement the IDbConnection interface",
-                nameof(connectionType));
+        if (!typeof(DbConnection).IsAssignableFrom(connectionType))
+            throw new ArgumentException($"Connection type must derived from the {nameof(DbConnection)} class", nameof(connectionType));
 
         DatabaseType = GetDatabaseType(connectionType);
         m_disposeConnection = true;
@@ -200,14 +202,13 @@ public class AdoDataConnection : IDisposable
         try
         {
             // Open ADO.NET provider connection
-            Connection = (IDbConnection)Activator.CreateInstance(connectionType)!;
+            Connection = (DbConnection)Activator.CreateInstance(connectionType)!;
             Connection.ConnectionString = connectionString;
             Connection.Open();
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException(
-                $"Failed to open ADO data connection, verify \"ConnectionString\": {ex.Message}", ex);
+            throw new InvalidOperationException($"Failed to open ADO data connection, verify \"ConnectionString\": {ex.Message}", ex);
         }
     }
 
@@ -216,7 +217,7 @@ public class AdoDataConnection : IDisposable
     /// </summary>
     /// <param name="connection">The database connection.</param>
     /// <param name="disposeConnection">True if the database connection should be closed when the <see cref="AdoDataConnection"/> is disposed; false otherwise.</param>
-    public AdoDataConnection(IDbConnection connection, bool disposeConnection)
+    public AdoDataConnection(DbConnection connection, bool disposeConnection)
     {
         Connection = connection;
         DatabaseType = GetDatabaseType(connection.GetType());
@@ -247,17 +248,15 @@ public class AdoDataConnection : IDisposable
             Assembly assembly = Assembly.Load(new AssemblyName(assemblyName));
             connectionType = assembly.GetType(connectionTypeName);
 
-            if (!typeof(IDbConnection).IsAssignableFrom(connectionType))
-                throw new ArgumentException("Connection type must implement the IDbConnection interface",
-                    nameof(dataProviderString));
+            if (!typeof(DbConnection).IsAssignableFrom(connectionType))
+                throw new ArgumentException($"Connection type must derived from the {nameof(DbConnection)} class", nameof(dataProviderString));
 
             DatabaseType = GetDatabaseType(connectionType);
             m_disposeConnection = true;
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException(
-                $"Failed to load ADO data provider, verify \"DataProviderString\": {ex.Message}", ex);
+            throw new InvalidOperationException($"Failed to load ADO data provider, verify \"DataProviderString\": {ex.Message}", ex);
         }
 
         if (!openConnection)
@@ -266,14 +265,13 @@ public class AdoDataConnection : IDisposable
         try
         {
             // Open ADO.NET provider connection
-            Connection = (IDbConnection)Activator.CreateInstance(connectionType)!;
+            Connection = (DbConnection)Activator.CreateInstance(connectionType)!;
             Connection.ConnectionString = connectionString;
             Connection.Open();
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException(
-                $"Failed to open ADO data connection, verify \"ConnectionString\": {ex.Message}", ex);
+            throw new InvalidOperationException($"Failed to open ADO data connection, verify \"ConnectionString\": {ex.Message}", ex);
         }
     }
 
@@ -287,9 +285,9 @@ public class AdoDataConnection : IDisposable
     #region [ Properties ]
 
     /// <summary>
-    /// Gets an open <see cref="IDbConnection"/> to configured ADO.NET data source.
+    /// Gets an open <see cref="DbConnection"/> to configured ADO.NET data source.
     /// </summary>
-    public IDbConnection Connection { get; } = default!;
+    public DbConnection Connection { get; } = default!;
 
     /// <summary>
     /// Gets or sets the type of the database underlying the <see cref="AdoDataConnection"/>.
@@ -327,8 +325,7 @@ public class AdoDataConnection : IDisposable
     /// <summary>
     /// Gets the default <see cref="IsolationLevel"/> for the connected <see cref=" AdoDataConnection"/> database type.
     /// </summary>
-    public IsolationLevel DefaultIsolationLevel =>
-        IsSQLServer ? IsolationLevel.ReadUncommitted : IsolationLevel.Unspecified;
+    public IsolationLevel DefaultIsolationLevel => IsSQLServer ? IsolationLevel.ReadUncommitted : IsolationLevel.Unspecified;
 
     /// <summary>
     /// Gets a value to indicate whether source database is Microsoft Access.
@@ -408,8 +405,7 @@ public class AdoDataConnection : IDisposable
 
                 if (mySqlScriptType is not null)
                 {
-                    object executor =
-                        Activator.CreateInstance(mySqlScriptType, Connection, scriptReader.ReadToEnd())!;
+                    object executor = Activator.CreateInstance(mySqlScriptType, Connection, scriptReader.ReadToEnd())!;
                     MethodInfo executeMethod = executor.GetType().GetMethod("Execute")!;
                     executeMethod.Invoke(executor, null);
                 }
@@ -431,69 +427,165 @@ public class AdoDataConnection : IDisposable
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the number of rows affected.
     /// </summary>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>The number of rows affected.</returns>
-    public int ExecuteNonQuery(string sqlFormat, params object?[] parameters) =>
-        ExecuteNonQuery(DefaultTimeout, sqlFormat, parameters);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int ExecuteNonQuery(string sqlFormat, params object?[] parameters)
+    {
+        return ExecuteNonQuery(DefaultTimeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the number of rows affected.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>The number of rows affected.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<int> ExecuteNonQueryAsync(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return ExecuteNonQueryAsync(DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
 
     /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the number of rows affected.
     /// </summary>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>The number of rows affected.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int ExecuteNonQuery(int timeout, string sqlFormat, params object?[] parameters)
     {
         string sql = GenericParameterizedQueryString(sqlFormat, parameters);
-
         return Connection.ExecuteNonQuery(timeout, sql, ResolveParameters(parameters));
     }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="Connection"/>, and builds a <see cref="IDataReader"/>.
-    /// </summary>
-    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
-    /// <returns>A <see cref="IDataReader"/> object.</returns>
-    public IDataReader ExecuteReader(string sqlFormat, params object?[] parameters) =>
-        ExecuteReader(DefaultTimeout, sqlFormat, parameters);
-
-    /// <summary>
-    /// Executes the SQL statement using <see cref="Connection"/>, and builds a <see cref="IDataReader"/>.
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the number of rows affected.
     /// </summary>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
-    /// <returns>A <see cref="IDataReader"/> object.</returns>
-    public IDataReader ExecuteReader(int timeout, string sqlFormat, params object?[] parameters) =>
-        ExecuteReader(CommandBehavior.Default, timeout, sqlFormat, parameters);
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>The number of rows affected.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<int> ExecuteNonQueryAsync(int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        string sql = GenericParameterizedQueryString(sqlFormat, parameters);
+        return Connection.ExecuteNonQueryAsync(timeout, sql, cancellationToken, ResolveParameters(parameters));
+    }
 
     /// <summary>
-    /// Executes the SQL statement using <see cref="Connection"/>, and builds a <see cref="IDataReader"/>.
+    /// Executes the SQL statement using <see cref="Connection"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public DbDataReader ExecuteReader(string sqlFormat, params object?[] parameters)
+    {
+        return ExecuteReader(DefaultTimeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<DbDataReader> ExecuteReaderAsync(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return ExecuteReaderAsync(DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public DbDataReader ExecuteReader(int timeout, string sqlFormat, params object?[] parameters)
+    {
+        return ExecuteReader(CommandBehavior.Default, timeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<DbDataReader> ExecuteReaderAsync(int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return ExecuteReaderAsync(CommandBehavior.Default, timeout, sqlFormat, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and builds a <see cref="DbDataReader"/>.
     /// </summary>
     /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
-    /// <returns>A <see cref="IDataReader"/> object.</returns>
-    public IDataReader ExecuteReader(CommandBehavior behavior, int timeout, string sqlFormat,
-        params object?[] parameters)
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public DbDataReader ExecuteReader(CommandBehavior behavior, int timeout, string sqlFormat, params object?[] parameters)
     {
         string sql = GenericParameterizedQueryString(sqlFormat, parameters);
-
         return Connection.ExecuteReader(timeout, sql, behavior, ResolveParameters(parameters));
     }
 
     /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and builds a <see cref="DbDataReader"/>.
+    /// </summary>
+    /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<DbDataReader> ExecuteReaderAsync(CommandBehavior behavior, int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        string sql = GenericParameterizedQueryString(sqlFormat, parameters);
+        return Connection.ExecuteReaderAsync(timeout, sql, behavior, cancellationToken, ResolveParameters(parameters));
+    }
+
+    /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
     /// of the first row in the result set as type <typeparamref name="T"/>.
     /// </summary>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public T ExecuteScalar<T>(string sqlFormat, params object?[] parameters) =>
-        ExecuteScalar<T>(DefaultTimeout, sqlFormat, parameters);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public T ExecuteScalar<T>(string sqlFormat, params object?[] parameters)
+    {
+        return ExecuteScalar<T>(DefaultTimeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
+    /// of the first row in the result set as type <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<T> ExecuteScalarAsync<T>(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return ExecuteScalarAsync<T>(DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
 
     /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -501,10 +593,28 @@ public class AdoDataConnection : IDisposable
     /// </summary>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public T ExecuteScalar<T>(int timeout, string sqlFormat, params object?[] parameters) =>
-        ExecuteScalar(default(T)!, timeout, sqlFormat, parameters);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public T ExecuteScalar<T>(int timeout, string sqlFormat, params object?[] parameters)
+    {
+        return ExecuteScalar(default(T)!, timeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
+    /// of the first row in the result set as type <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<T> ExecuteScalarAsync<T>(int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return ExecuteScalarAsync(default(T)!, timeout, sqlFormat, cancellationToken, parameters);
+    }
 
     /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -513,10 +623,29 @@ public class AdoDataConnection : IDisposable
     /// </summary>
     /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public T ExecuteScalar<T>(T defaultValue, string sqlFormat, params object?[] parameters) =>
-        ExecuteScalar(defaultValue, DefaultTimeout, sqlFormat, parameters);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public T ExecuteScalar<T>(T defaultValue, string sqlFormat, params object?[] parameters)
+    {
+        return ExecuteScalar(defaultValue, DefaultTimeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
+    /// of the first row in the result set as type <typeparamref name="T"/>, substituting <paramref name="defaultValue"/>
+    /// if <see cref="DBNull.Value"/> is retrieved.
+    /// </summary>
+    /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<T> ExecuteScalarAsync<T>(T defaultValue, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return ExecuteScalarAsync(defaultValue, DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
 
     /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -526,10 +655,30 @@ public class AdoDataConnection : IDisposable
     /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public T ExecuteScalar<T>(T defaultValue, int timeout, string sqlFormat, params object?[] parameters) =>
-        (T)ExecuteScalar(typeof(T), defaultValue, timeout, sqlFormat, parameters)!;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public T ExecuteScalar<T>(T defaultValue, int timeout, string sqlFormat, params object?[] parameters)
+    {
+        return (T)ExecuteScalar(typeof(T), defaultValue, timeout, sqlFormat, parameters)!;
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
+    /// of the first row in the result set as type <typeparamref name="T"/>, substituting <paramref name="defaultValue"/>
+    /// if <see cref="DBNull.Value"/> is retrieved.
+    /// </summary>
+    /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public async Task<T> ExecuteScalarAsync<T>(T defaultValue, int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return (T)(await ExecuteScalarAsync(typeof(T), defaultValue, timeout, sqlFormat, cancellationToken, parameters).ConfigureAwait(false))!;
+    }
 
     /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -537,10 +686,28 @@ public class AdoDataConnection : IDisposable
     /// </summary>
     /// <param name="returnType">The type to which the result of the query should be converted.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public object? ExecuteScalar(Type returnType, string sqlFormat, params object?[] parameters) =>
-        ExecuteScalar(returnType, DefaultTimeout, sqlFormat, parameters);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public object? ExecuteScalar(Type returnType, string sqlFormat, params object?[] parameters)
+    {
+        return ExecuteScalar(returnType, DefaultTimeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
+    /// of the first row in the result set as type <paramref name="returnType"/>.
+    /// </summary>
+    /// <param name="returnType">The type to which the result of the query should be converted.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<object?> ExecuteScalarAsync(Type returnType, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return ExecuteScalarAsync(returnType, DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
 
     /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -549,14 +716,32 @@ public class AdoDataConnection : IDisposable
     /// <param name="returnType">The type to which the result of the query should be converted.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public object? ExecuteScalar(Type returnType, int timeout, string sqlFormat, params object?[] parameters)
     {
-        if (returnType.IsValueType)
-            return ExecuteScalar(returnType, Activator.CreateInstance(returnType), timeout, sqlFormat, parameters);
+        return returnType.IsValueType ? 
+            ExecuteScalar(returnType, Activator.CreateInstance(returnType), timeout, sqlFormat, parameters) : 
+            ExecuteScalar(returnType, (object)default!, timeout, sqlFormat, parameters);
+    }
 
-        return ExecuteScalar(returnType, (object)default!, timeout, sqlFormat, parameters);
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
+    /// of the first row in the result set as type <paramref name="returnType"/>.
+    /// </summary>
+    /// <param name="returnType">The type to which the result of the query should be converted.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<object?> ExecuteScalarAsync(Type returnType, int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return returnType.IsValueType ?
+            ExecuteScalarAsync(returnType, Activator.CreateInstance(returnType), timeout, sqlFormat, cancellationToken, parameters) :
+            ExecuteScalarAsync(returnType, default!, timeout, sqlFormat, cancellationToken, parameters);
     }
 
     /// <summary>
@@ -567,11 +752,30 @@ public class AdoDataConnection : IDisposable
     /// <param name="returnType">The type to which the result of the query should be converted.</param>
     /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public object? ExecuteScalar(Type returnType, object? defaultValue, string sqlFormat,
-        params object?[] parameters) =>
-        ExecuteScalar(returnType, defaultValue, DefaultTimeout, sqlFormat, parameters);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public object? ExecuteScalar(Type returnType, object? defaultValue, string sqlFormat, params object?[] parameters)
+    {
+        return ExecuteScalar(returnType, defaultValue, DefaultTimeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
+    /// of the first row in the result set as type <paramref name="returnType"/>, substituting <paramref name="defaultValue"/>
+    /// if <see cref="DBNull.Value"/> is retrieved.
+    /// </summary>
+    /// <param name="returnType">The type to which the result of the query should be converted.</param>
+    /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<object?> ExecuteScalarAsync(Type returnType, object? defaultValue, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return ExecuteScalarAsync(returnType, defaultValue, DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
 
     /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -582,13 +786,36 @@ public class AdoDataConnection : IDisposable
     /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved.</param>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public object? ExecuteScalar(Type returnType, object? defaultValue, int timeout, string sqlFormat,
-        params object?[] parameters)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public object? ExecuteScalar(Type returnType, object? defaultValue, int timeout, string sqlFormat, params object?[] parameters)
     {
         object? value = ExecuteScalar(timeout, sqlFormat, parameters);
+        return ProcessTypedScalar(returnType, defaultValue, value);
+    }
 
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
+    /// of the first row in the result set as type <paramref name="returnType"/>, substituting <paramref name="defaultValue"/>
+    /// if <see cref="DBNull.Value"/> is retrieved.
+    /// </summary>
+    /// <param name="returnType">The type to which the result of the query should be converted.</param>
+    /// <param name="defaultValue">The value to be substituted if <see cref="DBNull.Value"/> is retrieved.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public async Task<object?> ExecuteScalarAsync(Type returnType, object? defaultValue, int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        object? value = await ExecuteScalarAsync(timeout, sqlFormat, cancellationToken, parameters).ConfigureAwait(false);
+        return ProcessTypedScalar(returnType, defaultValue, value);
+    }
+
+    private static object? ProcessTypedScalar(Type returnType, object? defaultValue, object? value)
+    {
         // It's important that we do not validate the default value to determine
         // whether it is assignable to the return type because this method is
         // sometimes used to return null for value types in default value
@@ -620,10 +847,27 @@ public class AdoDataConnection : IDisposable
     /// of the first row in the result set.
     /// </summary>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
-    public object? ExecuteScalar(string sqlFormat, params object?[] parameters) =>
-        ExecuteScalar(DefaultTimeout, sqlFormat, parameters);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public object? ExecuteScalar(string sqlFormat, params object?[] parameters)
+    {
+        return ExecuteScalar(DefaultTimeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
+    /// of the first row in the result set.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<object?> ExecuteScalarAsync(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return ExecuteScalarAsync(DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
 
     /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
@@ -631,47 +875,124 @@ public class AdoDataConnection : IDisposable
     /// </summary>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public object? ExecuteScalar(int timeout, string sqlFormat, params object?[] parameters)
     {
         string sql = GenericParameterizedQueryString(sqlFormat, parameters);
-
         return Connection.ExecuteScalar(timeout, sql, ResolveParameters(parameters));
     }
 
     /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the value in the first column 
+    /// of the first row in the result set.
+    /// </summary>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>Value in the first column of the first row in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<object?> ExecuteScalarAsync(int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        string sql = GenericParameterizedQueryString(sqlFormat, parameters);
+        return Connection.ExecuteScalarAsync(timeout, sql, cancellationToken, ResolveParameters(parameters));
+    }
+
+    /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataRow"/> in the result set.
     /// </summary>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public DataRow RetrieveRow(string sqlFormat, params object?[] parameters) =>
-        RetrieveRow(DefaultTimeout, sqlFormat, parameters);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public DataRow RetrieveRow(string sqlFormat, params object?[] parameters)
+    {
+        return RetrieveRow(DefaultTimeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataRow"/> in the result set.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<DataRow> RetrieveRowAsync(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return RetrieveRowAsync(DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
 
     /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataRow"/> in the result set.
     /// </summary>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public DataRow RetrieveRow(int timeout, string sqlFormat, params object?[] parameters)
     {
         string sql = GenericParameterizedQueryString(sqlFormat, parameters);
-
         return Connection.RetrieveRow(timeout, sql, ResolveParameters(parameters));
     }
 
     /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataRow"/> in the result set.
+    /// </summary>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<DataRow> RetrieveRowAsync(int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        string sql = GenericParameterizedQueryString(sqlFormat, parameters);
+        return Connection.RetrieveRowAsync(timeout, sql, cancellationToken, ResolveParameters(parameters));
+    }
+
+    /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataTable"/> 
     /// of result set, if the result set contains at least one table.
     /// </summary>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
-    public DataTable RetrieveData(string sqlFormat, params object?[] parameters) =>
-        RetrieveData(DefaultTimeout, sqlFormat, parameters);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public DataTable RetrieveData(string sqlFormat, params object?[] parameters)
+    {
+        return RetrieveData(DefaultTimeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataTable"/> 
+    /// of result set, if the result set contains at least one table.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>A <see cref="DataTable"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<DataTable> RetrieveDataAsync(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return RetrieveDataAsync(DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataTable"/>
+    /// of result set, if the result set contains at least one table, as an asynchronous enumerable.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>An asynchronous enumerable of <see cref="DataRow"/> objects.</returns>
+    public IAsyncEnumerable<DataRow> RetrieveDataAsAsyncEnumerable(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return RetrieveDataAsAsyncEnumerable(DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
 
     /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataTable"/> 
@@ -679,13 +1000,44 @@ public class AdoDataConnection : IDisposable
     /// </summary>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public DataTable RetrieveData(int timeout, string sqlFormat, params object?[] parameters)
     {
         string sql = GenericParameterizedQueryString(sqlFormat, parameters);
-
         return Connection.RetrieveData(timeout, sql, ResolveParameters(parameters));
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataTable"/> 
+    /// of result set, if the result set contains at least one table.
+    /// </summary>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>A <see cref="DataTable"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<DataTable> RetrieveDataAsync(int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        string sql = GenericParameterizedQueryString(sqlFormat, parameters);
+        return Connection.RetrieveDataAsync(timeout, sql, cancellationToken, ResolveParameters(parameters));
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataTable"/>
+    /// of result set, if the result set contains at least one table, as an asynchronous enumerable.
+    /// </summary>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>An asynchronous enumerable of <see cref="DataRow"/> objects.</returns>
+    public async IAsyncEnumerable<DataRow> RetrieveDataAsAsyncEnumerable(int timeout, string sqlFormat, [EnumeratorCancellation] CancellationToken cancellationToken, params object?[] parameters)
+    {
+        await foreach (DataRow row in (await RetrieveDataAsync(timeout, sqlFormat, cancellationToken, parameters).ConfigureAwait(false)).AsAwaitConfiguredCancelableAsyncEnumerable(cancellationToken))
+            yield return row;
     }
 
     /// <summary>
@@ -693,10 +1045,27 @@ public class AdoDataConnection : IDisposable
     /// may contain multiple tables, depending on the SQL statement.
     /// </summary>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
-    public DataSet RetrieveDataSet(string sqlFormat, params object?[] parameters) =>
-        RetrieveDataSet(DefaultTimeout, sqlFormat, parameters);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public DataSet RetrieveDataSet(string sqlFormat, params object?[] parameters)
+    {
+        return RetrieveDataSet(DefaultTimeout, sqlFormat, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the <see cref="DataSet"/> that 
+    /// may contain multiple tables, depending on the SQL statement.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>A <see cref="DataSet"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<DataSet> RetrieveDataSetAsync(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return RetrieveDataSetAsync(DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
 
     /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the <see cref="DataSet"/> that 
@@ -704,13 +1073,29 @@ public class AdoDataConnection : IDisposable
     /// </summary>
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
-    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public DataSet RetrieveDataSet(int timeout, string sqlFormat, params object?[] parameters)
     {
         string sql = GenericParameterizedQueryString(sqlFormat, parameters);
-
         return Connection.RetrieveDataSet(timeout, sql, ResolveParameters(parameters));
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/>, and returns the <see cref="DataSet"/> that 
+    /// may contain multiple tables, depending on the SQL statement.
+    /// </summary>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>A <see cref="DataSet"/> object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<DataSet> RetrieveDataSetAsync(int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        string sql = GenericParameterizedQueryString(sqlFormat, parameters);
+        return Connection.RetrieveDataSetAsync(timeout, sql, cancellationToken, ResolveParameters(parameters));
     }
 
     /// <summary>
@@ -763,16 +1148,12 @@ public class AdoDataConnection : IDisposable
         if (useAnsiQuotes)
             return $"\"{identifier}\"";
 
-        switch (DatabaseType)
+        return DatabaseType switch
         {
-            case DatabaseType.SQLServer:
-            case DatabaseType.Access:
-                return $"[{identifier}]";
-            case DatabaseType.MySQL:
-                return $"`{identifier}`";
-            default:
-                return $"\"{identifier}\"";
-        }
+            DatabaseType.SQLServer or DatabaseType.Access => $"[{identifier}]",
+            DatabaseType.MySQL => $"`{identifier}`",
+            _ => $"\"{identifier}\""
+        };
     }
 
     /// <summary>
@@ -862,7 +1243,7 @@ public class AdoDataConnection : IDisposable
 
                 break;
             case "oledbconnection":
-                if (Connection.ConnectionString?.ToLowerInvariant().Contains("microsoft.jet.oledb") ?? false)
+                if (Connection.ConnectionString.ToLowerInvariant().Contains("microsoft.jet.oledb"))
                     type = DatabaseType.Access;
 
                 break;
@@ -875,52 +1256,45 @@ public class AdoDataConnection : IDisposable
     private string GenericParameterizedQueryString(string sqlFormat, object?[] parameters)
     {
         string[] parameterNames = parameters.Select((_, index) => $"p{index}").ToArray();
-
         return ParameterizedQueryString(sqlFormat, parameterNames);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private object[] ResolveParameters(object?[] parameters)
     {
-        IDbDataParameter[] dataParameters = new IDbDataParameter[parameters.Length];
+        DbParameter[] dataParameters = new DbParameter[parameters.Length];
 
-        if (parameters.Length > 0)
+        if (parameters.Length <= 0)
+            return dataParameters;
+
+        using DbCommand command = Connection.CreateCommand();
+
+        for (int i = 0; i < parameters.Length; i++)
         {
-            using IDbCommand command = Connection.CreateCommand();
+            object? value = parameters[i];
+            DbType? type = null;
 
-            for (int i = 0; i < parameters.Length; i++)
+            if (value is DbParameter dataParameter)
             {
-                object? value = parameters[i];
-                DbType? type = null;
-
-                if (value is IDbDataParameter dataParameter)
-                {
-                    type = dataParameter.DbType;
-                    value = dataParameter.Value;
-                }
-
-                switch (value)
-                {
-                    case null:
-                        value = DBNull.Value;
-                        break;
-                    case bool boolVal:
-                        value = Bool(boolVal);
-                        break;
-                    case Guid guidVal:
-                        value = Guid(guidVal);
-                        break;
-                }
-
-                IDbDataParameter parameter = command.CreateParameter();
-
-                if (type.HasValue)
-                    parameter.DbType = type.Value;
-
-                parameter.ParameterName = $"@p{i}";
-                parameter.Value = value;
-                dataParameters[i] = parameter;
+                type = dataParameter.DbType;
+                value = dataParameter.Value;
             }
+
+            value = value switch
+            {
+                null => DBNull.Value,
+                bool boolVal => Bool(boolVal),
+                Guid guidVal => Guid(guidVal),
+                _ => value
+            };
+
+            DbParameter parameter = command.CreateParameter();
+
+            if (type.HasValue)
+                parameter.DbType = type.Value;
+
+            parameter.ParameterName = $"@p{i}";
+            parameter.Value = value;
+            dataParameters[i] = parameter;
         }
 
         // ReSharper disable once CoVariantArrayConversion
@@ -938,13 +1312,13 @@ public class AdoDataConnection : IDisposable
     /// <returns>The data provider string for the given connection type.</returns>
     public static string ToDataProviderString(Type connectionType)
     {
-        if (!typeof(IDbConnection).IsAssignableFrom(connectionType))
-            throw new ArgumentException("Connection type must implement the IDbConnection interface",
-                nameof(connectionType));
+        if (!typeof(DbConnection).IsAssignableFrom(connectionType))
+            throw new ArgumentException($"Connection type must derived from the {nameof(DbConnection)} class", nameof(connectionType));
 
         Dictionary<string, string> settings = new()
         {
-            ["AssemblyName"] = connectionType.Assembly.FullName!, ["ConnectionType"] = connectionType.FullName!
+            ["AssemblyName"] = connectionType.Assembly.FullName!,
+            ["ConnectionType"] = connectionType.FullName!
         };
 
         return settings.JoinKeyValuePairs();

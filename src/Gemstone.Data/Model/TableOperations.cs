@@ -40,7 +40,10 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Gemstone.Collections.CollectionExtensions;
+using Gemstone.Collections.IAsyncEnumerableExtensions;
 using Gemstone.Data.DataExtensions;
 using Gemstone.Expressions.Evaluator;
 using Gemstone.Expressions.Model;
@@ -504,6 +507,37 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     /// <summary>
+    /// Queries database and returns a single modeled table record for the specified <paramref name="restriction"/>.
+    /// </summary>
+    /// <param name="restriction">Record restriction to apply.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>A single modeled table record for the queried record.</returns>
+    /// <remarks>
+    /// <para>
+    /// If no record is found for specified <paramref name="restriction"/>, <c>null</c> will be returned.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    public ValueTask<T?> QueryRecordAsync(RecordRestriction? restriction, CancellationToken cancellationToken)
+    {
+        return QueryRecordAsync(null, restriction, cancellationToken);
+    }
+
+    ValueTask<object?> ITableOperations.QueryRecordAsync(RecordRestriction? restriction, CancellationToken cancellationToken)
+    {
+        return ((ITableOperations)this).QueryRecordAsync(null, restriction, cancellationToken);
+    }
+
+    /// <summary>
     /// Queries database and returns a single modeled table record for the specified <paramref name="restriction"/>,
     /// execution of query will apply <paramref name="orderByExpression"/>.
     /// </summary>
@@ -533,6 +567,39 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     object? ITableOperations.QueryRecord(string? orderByExpression, RecordRestriction? restriction)
     {
         return QueryRecord(orderByExpression, restriction);
+    }
+
+    /// <summary>
+    /// Queries database and returns a single modeled table record for the specified <paramref name="restriction"/>,
+    /// execution of query will apply <paramref name="orderByExpression"/>.
+    /// </summary>
+    /// <param name="orderByExpression">Field name expression used for sort order, include ASC or DESC as needed - does not include ORDER BY; defaults to primary keys.</param>
+    /// <param name="restriction">Record restriction to apply.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>A single modeled table record for the queried record.</returns>
+    /// <remarks>
+    /// <para>
+    /// If no record is found for specified <paramref name="restriction"/>, <c>null</c> will be returned.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    public ValueTask<T?> QueryRecordAsync(string? orderByExpression, RecordRestriction? restriction, CancellationToken cancellationToken)
+    {
+        return QueryRecordsAsync(orderByExpression, restriction, 1, cancellationToken).FirstOrDefaultAsync(cancellationToken);
+    }
+
+    ValueTask<object?> ITableOperations.QueryRecordAsync(string? orderByExpression, RecordRestriction? restriction, CancellationToken cancellationToken)
+    {
+        return ((ITableOperations)this).QueryRecordsAsync(orderByExpression, restriction, 1, cancellationToken).FirstOrDefaultAsync(cancellationToken);
     }
 
     /// <summary>
@@ -578,6 +645,52 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     object? ITableOperations.QueryRecordWhere(string? filterExpression, params object?[] parameters)
     {
         return QueryRecordWhere(filterExpression, parameters);
+    }
+
+    /// <summary>
+    /// Queries database and returns a single modeled table record for the specified SQL filter
+    /// expression and parameters.
+    /// </summary>
+    /// <param name="filterExpression">
+    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
+    /// When escaping is needed for field names, use standard ANSI quotes.
+    /// </param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">Restriction parameter values.</param>
+    /// <returns>A single modeled table record for the queried record.</returns>
+    /// <remarks>
+    /// <para>
+    /// If no record is found for specified filter expression and parameters, <c>null</c> will be returned.
+    /// </para>
+    /// <para>
+    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
+    /// will be converted into query parameters where each of the corresponding values in the
+    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
+    /// values to an executed <see cref="IDbCommand"/> query.
+    /// </para>
+    /// <para>
+    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// <para>
+    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
+    /// will be updated to reflect what is defined in the user model.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
+    /// </para>
+    /// </remarks>
+    public ValueTask<T?> QueryRecordWhereAsync(string? filterExpression, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return QueryRecordAsync(new RecordRestriction(filterExpression, parameters), cancellationToken);
+    }
+
+    ValueTask<object?> ITableOperations.QueryRecordWhereAsync(string? filterExpression, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return ((ITableOperations)this).QueryRecordAsync(new RecordRestriction(filterExpression, parameters), cancellationToken);
     }
 
     /// <summary>
@@ -653,6 +766,79 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     /// <summary>
+    /// Queries database and returns modeled table records for the specified parameters.
+    /// </summary>
+    /// <param name="orderByExpression">Field name expression used for sort order, include ASC or DESC as needed - does not include ORDER BY; defaults to primary keys.</param>
+    /// <param name="restriction">Record restriction to apply, if any.</param>
+    /// <param name="limit">Limit of number of record to return.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// If no record <paramref name="restriction"/> or <paramref name="limit"/> is provided, all rows will be returned.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    public IAsyncEnumerable<T?> QueryRecordsAsync(string? orderByExpression = null, RecordRestriction? restriction = null, int limit = -1, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(orderByExpression))
+            orderByExpression = UpdateFieldNames(s_primaryKeyFields);
+
+        string? sqlExpression = null;
+
+        try
+        {
+            if (RootQueryRestriction is not null)
+                restriction = (RootQueryRestriction + restriction)!;
+
+            if (limit < 1)
+            {
+                // No record limit specified
+                if (restriction is null)
+                {
+                    sqlExpression = string.Format(m_selectSetSql, orderByExpression);
+                    return Connection.RetrieveDataAsAsyncEnumerable(sqlExpression, cancellationToken).Select(LoadRecord);
+                }
+
+                sqlExpression = string.Format(m_selectSetWhereSql, UpdateFieldNames(restriction.FilterExpression), orderByExpression);
+
+                return Connection.RetrieveDataAsAsyncEnumerable(sqlExpression, cancellationToken, restriction.Parameters).Select(LoadRecord);
+            }
+
+            if (restriction is null)
+            {
+                sqlExpression = string.Format(m_selectSetSql, orderByExpression);
+                return Connection.RetrieveDataAsAsyncEnumerable(sqlExpression, cancellationToken).Take(limit).Select(LoadRecord);
+            }
+
+            sqlExpression = string.Format(m_selectSetWhereSql, UpdateFieldNames(restriction.FilterExpression), orderByExpression);
+
+            return Connection.RetrieveDataAsAsyncEnumerable(sqlExpression, cancellationToken, restriction.Parameters).Take(limit).Select(LoadRecord);
+        }
+        catch (Exception ex)
+        {
+            InvalidOperationException opex = new($"Exception during record query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
+
+            if (ExceptionHandler is null)
+                throw opex;
+
+            ExceptionHandler(opex);
+
+            return AsyncEnumerable.Empty<T>();
+        }
+    }
+
+    IAsyncEnumerable<object?> ITableOperations.QueryRecordsAsync(string? orderByExpression, RecordRestriction? restriction, int limit, CancellationToken cancellationToken)
+    {
+        return QueryRecordsAsync(orderByExpression, restriction, limit, cancellationToken)!.Cast<object?>();
+    }
+
+    /// <summary>
     /// Queries database and returns modeled table records for the specified <paramref name="restriction"/>.
     /// </summary>
     /// <param name="restriction">Record restriction to apply.</param>
@@ -677,6 +863,34 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     IEnumerable ITableOperations.QueryRecords(RecordRestriction? restriction)
     {
         return QueryRecords(restriction);
+    }
+
+    /// <summary>
+    /// Queries database and returns modeled table records for the specified <paramref name="restriction"/>.
+    /// </summary>
+    /// <param name="restriction">Record restriction to apply.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/> only
+    /// specifying the <see cref="RecordRestriction"/> parameter.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    public IAsyncEnumerable<T?> QueryRecordsAsync(RecordRestriction? restriction, CancellationToken cancellationToken)
+    {
+        return QueryRecordsAsync(null, restriction, -1, cancellationToken);
+    }
+
+    IAsyncEnumerable<object?> ITableOperations.QueryRecordsAsync(RecordRestriction? restriction, CancellationToken cancellationToken)
+    {
+        return QueryRecordsAsync(restriction, cancellationToken)!.Cast<object?>();
     }
 
     /// <summary>
@@ -722,6 +936,49 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     /// <summary>
+    /// Queries database and returns modeled table records for the specified SQL filter expression
+    /// and parameters.
+    /// </summary>
+    /// <param name="filterExpression">
+    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
+    /// When escaping is needed for field names, use standard ANSI quotes.
+    /// </param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">Restriction parameter values.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
+    /// will be converted into query parameters where each of the corresponding values in the
+    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
+    /// values to an executed <see cref="IDbCommand"/> query.
+    /// </para>
+    /// <para>
+    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// <para>
+    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
+    /// will be updated to reflect what is defined in the user model.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/> only
+    /// specifying the <see cref="RecordRestriction"/> parameter.
+    /// </para>
+    /// </remarks>
+    public IAsyncEnumerable<T?> QueryRecordsWhereAsync(string? filterExpression, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return QueryRecordsAsync(new RecordRestriction(filterExpression, parameters), cancellationToken);
+    }
+
+    IAsyncEnumerable<object?> ITableOperations.QueryRecordsWhereAsync(string? filterExpression, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return QueryRecordsWhereAsync(filterExpression, cancellationToken, parameters)!.Cast<object?>();
+    }
+
+    /// <summary>
     /// Queries database and returns modeled table records for the specified sorting and paging parameters.
     /// </summary>
     /// <param name="sortField">Field name to order-by.</param>
@@ -752,6 +1009,37 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     /// <summary>
+    /// Queries database and returns modeled table records for the specified sorting and paging parameters.
+    /// </summary>
+    /// <param name="sortField">Field name to order-by.</param>
+    /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+    /// <param name="page">Page number of records to return (1-based).</param>
+    /// <param name="pageSize">Current page size.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// This function is used for record paging. Primary keys are cached server-side, typically per user session,
+    /// to maintain desired per-page sort order. Call <see cref="ClearPrimaryKeyCache"/> to manually clear cache
+    /// when table contents are known to have changed.
+    /// </para>
+    /// <para>
+    /// If the specified <paramref name="sortField"/> has been marked with <see cref="EncryptDataAttribute"/>,
+    /// establishing the primary key cache operation will take longer to execute since query data will need to
+    /// be downloaded locally and decrypted so the proper sort order can be determined.
+    /// </para>
+    /// </remarks>
+    public IAsyncEnumerable<T> QueryRecordsAsync(string? sortField, bool ascending, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        return QueryRecordsAsync(sortField, ascending, page, pageSize, cancellationToken, (RecordRestriction?[]?)null);
+    }
+
+    IAsyncEnumerable<object> ITableOperations.QueryRecordsAsync(string? sortField, bool ascending, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        return QueryRecordsAsync(sortField, ascending, page, pageSize, cancellationToken).Cast<object>();
+    }
+
+    /// <summary>
     /// Queries database and returns modeled table records for the specified sorting, paging and search parameters.
     /// Search executed against fields modeled with <see cref="SearchableAttribute"/>.
     /// </summary>
@@ -759,7 +1047,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
     /// <param name="page">Page number of records to return (1-based).</param>
     /// <param name="pageSize">Current page size.</param>
-    /// <param name="recordFilter">Record Filters to be applied.</param>
+    /// <param name="recordFilters">Record Filters to be applied.</param>
     /// <returns>An enumerable of modeled table row instances for queried records.</returns>
     /// <remarks>
     /// <para>
@@ -774,17 +1062,54 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </para>
     /// <para>
     /// This is a convenience call to <see cref="QueryRecords(string, bool, int, int, RecordRestriction[])"/> where restriction
-    /// is generated by <see cref="GetSearchRestrictions(IRecordFilter[])"/> using <paramref name="recordFilter"/>.
+    /// is generated by <see cref="GetSearchRestrictions(IRecordFilter[])"/> using <paramref name="recordFilters"/>.
     /// </para>
     /// </remarks>
-    public IEnumerable<T> QueryRecords(string? sortField, bool ascending, int page, int pageSize, params IRecordFilter?[]? recordFilter)
+    public IEnumerable<T> QueryRecords(string? sortField, bool ascending, int page, int pageSize, params IRecordFilter?[]? recordFilters)
     {
-        return QueryRecords(sortField, ascending, page, pageSize, GetSearchRestrictions(recordFilter));
+        return QueryRecords(sortField, ascending, page, pageSize, GetSearchRestrictions(recordFilters));
     }
 
-    IEnumerable ITableOperations.QueryRecords(string? sortField, bool ascending, int page, int pageSize, params IRecordFilter?[]? recordFilter)
+    IEnumerable ITableOperations.QueryRecords(string? sortField, bool ascending, int page, int pageSize, params IRecordFilter?[]? recordFilters)
     {
-        return QueryRecords(sortField, ascending, page, pageSize, recordFilter);
+        return QueryRecords(sortField, ascending, page, pageSize, recordFilters);
+    }
+
+    /// <summary>
+    /// Queries database and returns modeled table records for the specified sorting, paging and search parameters.
+    /// Search executed against fields modeled with <see cref="SearchableAttribute"/>.
+    /// </summary>
+    /// <param name="sortField">Field name to order-by.</param>
+    /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+    /// <param name="page">Page number of records to return (1-based).</param>
+    /// <param name="pageSize">Current page size.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="recordFilters">Record Filters to be applied.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// This function is used for record paging. Primary keys are cached server-side, typically per user session,
+    /// to maintain desired per-page sort order. Call <see cref="ClearPrimaryKeyCache"/> to manually clear cache
+    /// when table contents are known to have changed.
+    /// </para>
+    /// <para>
+    /// If the specified <paramref name="sortField"/> has been marked with <see cref="EncryptDataAttribute"/>,
+    /// establishing the primary key cache operation will take longer to execute since query data will need to
+    /// be downloaded locally and decrypted so the proper sort order can be determined.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, bool, int, int, RecordRestriction[])"/> where restriction
+    /// is generated by <see cref="GetSearchRestrictions(IRecordFilter[])"/> using <paramref name="recordFilters"/>.
+    /// </para>
+    /// </remarks>
+    public IAsyncEnumerable<T> QueryRecordsAsync(string? sortField, bool ascending, int page, int pageSize, CancellationToken cancellationToken, params IRecordFilter?[]? recordFilters)
+    {
+        return QueryRecordsAsync(sortField, ascending, page, pageSize, cancellationToken, GetSearchRestrictions(recordFilters));
+    }
+
+    IAsyncEnumerable<object> ITableOperations.QueryRecordsAsync(string? sortField, bool ascending, int page, int pageSize, CancellationToken cancellationToken, params IRecordFilter?[]? recordFilters)
+    {
+        return QueryRecordsAsync(sortField, ascending, page, pageSize, cancellationToken, recordFilters).Cast<object>();
     }
 
     /// <summary>
@@ -794,7 +1119,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
     /// <param name="page">Page number of records to return (1-based).</param>
     /// <param name="pageSize">Current page size.</param>
-    /// <param name="restrictions">Record restriction to apply, if any.</param>
+    /// <param name="restrictions">Record restrictions to apply, if any.</param>
     /// <returns>An enumerable of modeled table row instances for queried records.</returns>
     /// <remarks>
     /// <para>
@@ -819,10 +1144,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         RecordRestriction? restriction = null;
 
         if (restrictions is not null)
-        {
-            foreach (RecordRestriction? r in restrictions)
-                restriction += r;
-        }
+            restriction = restrictions.Aggregate(restriction, (current, item) => current + item);
 
         if (string.IsNullOrWhiteSpace(sortField))
             sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
@@ -899,10 +1221,143 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return QueryRecords(sortField, ascending, page, pageSize, restrictions);
     }
 
+    /// <summary>
+    /// Queries database and returns modeled table records for the specified sorting and paging parameters.
+    /// </summary>
+    /// <param name="sortField">Field name to order-by.</param>
+    /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+    /// <param name="page">Page number of records to return (1-based).</param>
+    /// <param name="pageSize">Current page size.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="restrictions">Record restrictions to apply, if any.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// This function is used for record paging. Primary keys are cached server-side, typically per user session,
+    /// to maintain desired per-page sort order. Call <see cref="ClearPrimaryKeyCache"/> to manually clear cache
+    /// when table contents are known to have changed.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restrictions"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// <para>
+    /// If the specified <paramref name="sortField"/> has been marked with <see cref="EncryptDataAttribute"/>,
+    /// establishing the primary key cache operation will take longer to execute since query data will need to
+    /// be downloaded locally and decrypted so the proper sort order can be determined.
+    /// </para>
+    /// </remarks>
+    public async IAsyncEnumerable<T> QueryRecordsAsync(string? sortField, bool ascending, int page, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken, params RecordRestriction?[]? restrictions)
+    {
+        RecordRestriction? restriction = null;
+
+        if (restrictions is not null) 
+            restriction = restrictions.Aggregate(restriction, (current, item) => current + item);
+
+        if (string.IsNullOrWhiteSpace(sortField))
+            sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
+
+        if (sortField is null)
+            throw new ArgumentNullException(nameof(sortField));
+
+        bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
+
+        // Records that have been deleted since primary key cache was established will return null and be filtered out which will throw
+        // off the record count. Local delete operations automatically clear the primary key cache, however, if record set is known to
+        // have changed outside purview of this class, the "ClearPrimaryKeyCache()" method should be manually called so that primary key
+        // cache can be reestablished.
+        if (PrimaryKeyCache is null || !sortField.Equals(m_lastSortField, StringComparison.OrdinalIgnoreCase) || restriction != m_lastRestriction)
+        {
+            string orderByExpression = sortFieldIsEncrypted ? s_fieldNames[s_primaryKeyProperties[0].Name] : $"{sortField}{(ascending ? "" : " DESC")}";
+            string? sqlExpression = null;
+
+            try
+            {
+                if (RootQueryRestriction is not null)
+                    restriction = (RootQueryRestriction + restriction)!;
+
+                if (restriction is null)
+                {
+                    sqlExpression = string.Format(m_selectKeysSql, orderByExpression);
+                    PrimaryKeyCache = await Connection.RetrieveDataAsync(sqlExpression, cancellationToken).ConfigureAwait(false);
+                }
+                else
+                {
+                    sqlExpression = string.Format(m_selectKeysWhereSql, UpdateFieldNames(restriction.FilterExpression), orderByExpression);
+                    PrimaryKeyCache = await Connection.RetrieveDataAsync(sqlExpression, cancellationToken, restriction.Parameters).ConfigureAwait(false);
+                }
+
+                // If sort field is encrypted, execute a local sort and update primary key cache
+                if (sortFieldIsEncrypted && s_propertyNames.TryGetValue(sortField, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? sortFieldProperty))
+                {
+                    // Reduce properties to load only primary key fields and sort field
+                    HashSet<PropertyInfo> properties = [.. s_primaryKeyProperties, sortFieldProperty];
+
+                    async IAsyncEnumerable<T?> loadKeyRecordFieldsFromCache()
+                    {
+                        await foreach (DataRow row in PrimaryKeyCache.AsAwaitConfiguredCancelableAsyncEnumerable(cancellationToken))
+                        {
+                            T? record = await LoadRecordFromCachedKeysAsync(row.ItemArray, cancellationToken, properties).ConfigureAwait(false);
+
+                            if (record is not null)
+                                yield return record;
+                        }
+                    }
+
+                    IAsyncEnumerable<T?> sortResult = LocalOrderByAsync(loadKeyRecordFieldsFromCache(), sortField, ascending);
+                    DataTable sortedKeyCache = new(s_tableName);
+
+                    foreach (DataColumn column in PrimaryKeyCache.Columns)
+                        sortedKeyCache.Columns.Add(column.ColumnName, column.DataType);
+
+                    await foreach (T? record in sortResult.WithAwaitConfiguredCancellation(cancellationToken))
+                        sortedKeyCache.Rows.Add(GetPrimaryKeys(record!));
+
+                    PrimaryKeyCache = sortedKeyCache;
+                }
+            }
+            catch (Exception ex)
+            {
+                InvalidOperationException opex = new($"Exception during record query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
+
+                if (ExceptionHandler is null)
+                    throw opex;
+
+                ExceptionHandler(opex);
+                yield break;
+            }
+
+            m_lastSortField = sortField;
+            m_lastRestriction = restriction;
+        }
+
+        // Paginate on cached data rows so paging does no work except to skip through records, then only load records for a given page of data 
+        await foreach (Task<T?> recordTask in PrimaryKeyCache.AsAsyncEnumerable().Skip(page * pageSize).Take(pageSize).Select(row => LoadRecordFromCachedKeysAsync(row.ItemArray, cancellationToken)).WithAwaitConfiguredCancellation(cancellationToken))
+        {
+            T? record = await recordTask.ConfigureAwait(false);
+
+            if (record is not null)
+                yield return record;
+        }
+    }
+
+    IAsyncEnumerable<object> ITableOperations.QueryRecordsAsync(string? sortField, bool ascending, int page, int pageSize, CancellationToken cancellationToken, params RecordRestriction?[]? restrictions)
+    {
+        return QueryRecordsAsync(sortField, ascending, page, pageSize, cancellationToken, restrictions).Cast<object>();
+    }
+
     /// <inheritdoc/>
     public int QueryRecordCount()
     {
         return QueryRecordCount((RecordRestriction?[]?)null);
+    }
+
+    /// <inheritdoc/>
+    public Task<int> QueryRecordCountAsync(CancellationToken cancellationToken)
+    {
+        return QueryRecordCountAsync(cancellationToken, (RecordRestriction?[]?)null);
     }
 
     /// <inheritdoc/>
@@ -912,16 +1367,19 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     /// <inheritdoc/>
+    public Task<int> QueryRecordCountAsync(CancellationToken cancellationToken, params IRecordFilter?[]? recordFilter)
+    {
+        return QueryRecordCountAsync(cancellationToken, GetSearchRestrictions(recordFilter));
+    }
+
+    /// <inheritdoc/>
     public int QueryRecordCount(params RecordRestriction?[]? restrictions)
     {
         string? sqlExpression = null;
         RecordRestriction? restriction = null;
-           
+
         if (restrictions is not null)
-        {
-            foreach (RecordRestriction? r in restrictions)
-                restriction += r;
-        }
+            restriction = restrictions.Aggregate(restriction, (current, item) => current + item);
 
         try
         {
@@ -953,9 +1411,53 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     /// <inheritdoc/>
+    public Task<int> QueryRecordCountAsync(CancellationToken cancellationToken, params RecordRestriction?[]? restrictions)
+    {
+        string? sqlExpression = null;
+        RecordRestriction? restriction = null;
+
+        if (restrictions is not null)
+            restriction = restrictions.Aggregate(restriction, (current, item) => current + item);
+
+        try
+        {
+            if (RootQueryRestriction is not null)
+                restriction = (RootQueryRestriction + restriction)!;
+
+            if (restriction is null)
+            {
+                sqlExpression = m_selectCountSql;
+
+                return Connection.ExecuteScalarAsync<int>(sqlExpression, cancellationToken);
+            }
+
+            sqlExpression = $"{m_selectCountSql} WHERE {UpdateFieldNames(restriction.FilterExpression)}";
+
+            return Connection.ExecuteScalarAsync<int>(sqlExpression, cancellationToken, restriction.Parameters);
+        }
+        catch (Exception ex)
+        {
+            InvalidOperationException opex = new($"Exception during record count query for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction?.Parameters)}\": {ex.Message}", ex);
+
+            if (ExceptionHandler is null)
+                throw opex;
+
+            ExceptionHandler(opex);
+
+            return Task.FromResult(-1);
+        }
+    }
+
+    /// <inheritdoc/>
     public int QueryRecordCountWhere(string? filterExpression, params object?[] parameters)
     {
         return QueryRecordCount(new RecordRestriction(filterExpression, parameters));
+    }
+
+    /// <inheritdoc/>
+    public Task<int> QueryRecordCountWhereAsync(string? filterExpression, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return QueryRecordCountAsync(cancellationToken, new RecordRestriction(filterExpression, parameters));
     }
 
     /// <summary>
@@ -965,8 +1467,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </summary>
     /// <param name="sortField">Field name to order-by.</param>
     /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
-    /// <param name="recordFilters">Record Filters to be applied.</param>
     /// <param name="comparison"><see cref="StringComparison"/> to use when searching string fields; defaults to ordinal ignore case.</param>
+    /// <param name="recordFilters">Record Filters to be applied.</param>
     /// <returns>An array of modeled table row instances for the queried records that match the search.</returns>
     /// <remarks>
     /// <para>
@@ -1011,6 +1513,57 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return SearchRecords(sortField, ascending, comparison, recordFilter);
     }
 
+    /// <summary>
+    /// Locally searches retrieved table records after queried from database for the specified sorting and search parameters.
+    /// Search executed against fields modeled with <see cref="SearchableAttribute"/>.
+    /// Function only typically used for record models that apply the <see cref="EncryptDataAttribute"/>.
+    /// </summary>
+    /// <param name="sortField">Field name to order-by.</param>
+    /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+    /// <param name="comparison"><see cref="StringComparison"/> to use when searching string fields; defaults to ordinal ignore case.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="recordFilters">Record Filters to be applied.</param>
+    /// <returns>An array of modeled table row instances for the queried records that match the search.</returns>
+    /// <remarks>
+    /// <para>
+    /// This function searches records locally after query from database, this way Search functionality will work
+    /// even with fields that are modeled with the <see cref="EncryptDataAttribute"/> and use restrictions not being = or =/=.
+    /// Primary keys for this function will not be cached server-side and this function will be slower and more expensive than similar calls
+    /// to <see cref="QueryRecords(string, bool, int, int, IRecordFilter[])"/>. Usage should be restricted to cases searching for field data that has
+    /// been modeled with the <see cref="EncryptDataAttribute"/>.
+    /// </para>
+    /// <para>
+    /// This function does not paginate records, instead a full list of search records is returned. User can cache returned records and page
+    /// through them using the <see cref="GetPageOfRecordsAsync"/> function. As a result, usage should be restricted to smaller data sets. 
+    /// </para>
+    /// </remarks>
+    public IAsyncEnumerable<T?> SearchRecordsAsync(string sortField, bool ascending, StringComparison comparison = StringComparison.OrdinalIgnoreCase, CancellationToken cancellationToken = default, params IRecordFilter?[]? recordFilters)
+    {
+        if (recordFilters is null)
+            return AsyncEnumerable.Empty<T?>();
+
+        if (string.IsNullOrWhiteSpace(sortField))
+            sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
+
+        bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
+        string? orderByExpression = sortFieldIsEncrypted ? null : $"{sortField}{(ascending ? "" : " DESC")}";
+
+        IRecordFilter[] validFilters = recordFilters.Where(filter => filter is not null).ToArray()!;
+
+        RecordRestriction? restriction = validFilters.Aggregate((RecordRestriction?)null, (restriction, filter) => 
+            filter.GenerateRestriction(this) + restriction);
+
+        IAsyncEnumerable<T?> queryResult = QueryRecordsAsync(orderByExpression, restriction, -1, cancellationToken);
+
+        return sortFieldIsEncrypted ? 
+            LocalOrderByAsync(queryResult, sortField, ascending, comparison.GetComparer()) : 
+            queryResult;
+    }
+
+    IAsyncEnumerable<object?> ITableOperations.SearchRecordsAsync(string sortField, bool ascending, StringComparison comparison, CancellationToken cancellationToken, params IRecordFilter?[]? recordFilter)
+    {
+        return SearchRecordsAsync(sortField, ascending, comparison, cancellationToken, recordFilter)!.Cast<object?>();
+    }
 
     /// <summary>
     /// Gets the specified <paramref name="page"/> of records from the provided source <paramref name="records"/> array.
@@ -1019,16 +1572,40 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <param name="page">Desired page of records.</param>
     /// <param name="pageSize">Desired page size.</param>
     /// <returns>A page of records.</returns>
-    public IEnumerable<T> GetPageOfRecords(T[] records, int page, int pageSize)
+    public IEnumerable<T?> GetPageOfRecords(T?[] records, int page, int pageSize)
     {
         return records.ToPagedList(page, pageSize, records.Length);
     }
 
-    IEnumerable ITableOperations.GetPageOfRecords(object[] records, int page, int pageSize)
+    IEnumerable ITableOperations.GetPageOfRecords(object?[] records, int page, int pageSize)
     {
         try
         {
-            return GetPageOfRecords(records.Cast<T>().ToArray(), page, pageSize);
+            return GetPageOfRecords(records.Cast<T?>().ToArray(), page, pageSize);
+        }
+        catch (InvalidCastException ex)
+        {
+            throw new ArgumentException($"One of the provided records cannot be converted to type \"{typeof(T).Name}\": {ex.Message}", nameof(records), ex);
+        }
+    }
+
+    /// <summary>
+    /// Gets the specified <paramref name="page"/> of records from the provided source <paramref name="records"/> array.
+    /// </summary>
+    /// <param name="records">Source records array.</param>
+    /// <param name="page">Desired page of records.</param>
+    /// <param name="pageSize">Desired page size.</param>
+    /// <returns>A page of records.</returns>
+    public IAsyncEnumerable<T?> GetPageOfRecordsAsync(IAsyncEnumerable<T?> records, int page, int pageSize)
+    {
+        return records.Skip(page * pageSize).Take(pageSize);
+    }
+
+    IAsyncEnumerable<object?> ITableOperations.GetPageOfRecordsAsync(IAsyncEnumerable<object?> records, int page, int pageSize)
+    {
+        try
+        {
+            return GetPageOfRecordsAsync(records!.Cast<T?>(), page, pageSize)!.Cast<object?>();
         }
         catch (InvalidCastException ex)
         {
@@ -1065,13 +1642,62 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return LoadRecord(primaryKeys);
     }
 
+    /// <summary>
+    /// Creates a new modeled table record queried from the specified <paramref name="primaryKeys"/>.
+    /// </summary>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="primaryKeys">Primary keys values of the record to load.</param>
+    /// <returns>New modeled table record queried from the specified <paramref name="primaryKeys"/>.</returns>
+    public async Task<T?> LoadRecordAsync(CancellationToken cancellationToken, params object[] primaryKeys)
+    {
+        try
+        {
+            return LoadRecord(await Connection.RetrieveRowAsync(m_selectRowSql, cancellationToken, GetInterpretedPrimaryKeys(primaryKeys)).ConfigureAwait(false));
+        }
+        catch (Exception ex)
+        {
+            InvalidOperationException opex = new($"Exception during record load for {typeof(T).Name} \"{m_selectRowSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
+
+            if (ExceptionHandler is null)
+                throw opex;
+
+            ExceptionHandler(opex);
+
+            return null;
+        }
+    }
+
+    async Task<object?> ITableOperations.LoadRecordAsync(CancellationToken cancellationToken, params object[] primaryKeys)
+    {
+        return await LoadRecordAsync(cancellationToken, primaryKeys).ConfigureAwait(false);
+    }
+
     // Cached keys are not decrypted, so any needed record interpretation steps should skip encryption
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private T? LoadRecordFromCachedKeys(object?[] primaryKeys, IEnumerable<PropertyInfo>? properties = null)
     {
         try
         {
             return LoadRecord(Connection.RetrieveRow(m_selectRowSql, GetInterpretedPrimaryKeys(primaryKeys, true)), properties ?? s_properties.Values);
+        }
+        catch (Exception ex)
+        {
+            InvalidOperationException opex = new($"Exception during record load from primary key cache for {typeof(T).Name} \"{m_selectRowSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
+
+            if (ExceptionHandler is null)
+                throw opex;
+
+            ExceptionHandler(opex);
+
+            return null;
+        }
+    }
+
+    // Cached keys are not decrypted, so any needed record interpretation steps should skip encryption
+    private async Task<T?> LoadRecordFromCachedKeysAsync(object?[] primaryKeys, CancellationToken cancellationToken, IEnumerable<PropertyInfo>? properties = null)
+    {
+        try
+        {
+            return LoadRecord(await Connection.RetrieveRowAsync(m_selectRowSql, cancellationToken, GetInterpretedPrimaryKeys(primaryKeys, true)).ConfigureAwait(false), properties ?? s_properties.Values);
         }
         catch (Exception ex)
         {
@@ -1102,7 +1728,6 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     // This is the primary function where records are loaded from a DataRow into a modeled record of type T
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private T? LoadRecord(DataRow row, IEnumerable<PropertyInfo> properties, bool skipPrimaryKeyValidation = false)
     {
         try
@@ -1160,15 +1785,18 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </summary>
     /// <param name="records">The collection of records to be inserted into the data table.</param>
     /// <returns>A data table containing data from the given records.</returns>
-    public DataTable ToDataTable(IEnumerable<T> records)
+    public DataTable ToDataTable(IEnumerable<T?> records)
     {
         DataTable dataTable = new(s_tableName);
 
         foreach (PropertyInfo property in s_properties.Values)
             dataTable.Columns.Add(new DataColumn(s_fieldNames[property.Name]));
 
-        foreach (T record in records)
+        foreach (T? record in records)
         {
+            if (record is null)
+                continue;
+
             DataRow row = dataTable.NewRow();
 
             foreach (PropertyInfo property in s_properties.Values)
@@ -1184,7 +1812,48 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     {
         try
         {
-            return ToDataTable(records.Cast<T>());
+            return ToDataTable(records.Cast<T?>());
+        }
+        catch (InvalidCastException ex)
+        {
+            throw new ArgumentException($"One of the provided records cannot be converted to type \"{typeof(T).Name}\": {ex.Message}", nameof(records), ex);
+        }
+    }
+
+    /// <summary>
+    /// Converts the given collection of <paramref name="records"/> into a <see cref="DataTable"/>.
+    /// </summary>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="records">The collection of records to be inserted into the data table.</param>
+    /// <returns>A data table containing data from the given records.</returns>
+    public async Task<DataTable> ToDataTableAsync(IAsyncEnumerable<T?> records, CancellationToken cancellationToken)
+    {
+        DataTable dataTable = new(s_tableName);
+
+        foreach (PropertyInfo property in s_properties.Values)
+            dataTable.Columns.Add(new DataColumn(s_fieldNames[property.Name]));
+
+        await foreach (T? record in records.WithAwaitConfiguredCancellation(cancellationToken))
+        {
+            if (record is null)
+                continue;
+
+            DataRow row = dataTable.NewRow();
+
+            foreach (PropertyInfo property in s_properties.Values)
+                row[s_fieldNames[property.Name]] = property.GetValue(record);
+
+            dataTable.Rows.Add(row);
+        }
+
+        return dataTable;
+    }
+
+    async Task<DataTable> ITableOperations.ToDataTableAsync(IAsyncEnumerable<object?> records, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await ToDataTableAsync(records!.Cast<T?>(), cancellationToken).ConfigureAwait(false);
         }
         catch (InvalidCastException ex)
         {
@@ -1198,6 +1867,31 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         try
         {
             int affectedRecords = Connection.ExecuteNonQuery(m_deleteSql, GetInterpretedPrimaryKeys(primaryKeys));
+
+            if (affectedRecords > 0)
+                PrimaryKeyCache = null;
+
+            return affectedRecords;
+        }
+        catch (Exception ex)
+        {
+            InvalidOperationException opex = new($"Exception during record delete for {typeof(T).Name} \"{m_deleteSql}, {ValueList(primaryKeys)}\": {ex.Message}", ex);
+
+            if (ExceptionHandler is null)
+                throw opex;
+
+            ExceptionHandler(opex);
+
+            return 0;
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> DeleteRecordAsync(CancellationToken cancellationToken, params object[] primaryKeys)
+    {
+        try
+        {
+            int affectedRecords = await Connection.ExecuteNonQueryAsync(m_deleteSql, cancellationToken, GetInterpretedPrimaryKeys(primaryKeys)).ConfigureAwait(false);
 
             if (affectedRecords > 0)
                 PrimaryKeyCache = null;
@@ -1235,10 +1929,35 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return DeleteRecord(record);
     }
 
+    /// <summary>
+    /// Deletes the specified modeled table <paramref name="record"/> from the database.
+    /// </summary>
+    /// <param name="record">Record to delete.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>Number of rows affected.</returns>
+    public Task<int> DeleteRecordAsync(T record, CancellationToken cancellationToken)
+    {
+        return DeleteRecordAsync(cancellationToken, GetPrimaryKeys(record));
+    }
+
+    Task<int> ITableOperations.DeleteRecordAsync(object value, CancellationToken cancellationToken)
+    {
+        if (value is not T record)
+            throw new ArgumentException($"Cannot delete record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
+
+        return DeleteRecordAsync(record, cancellationToken);
+    }
+
     /// <inheritdoc/>
     public int DeleteRecord(DataRow row)
     {
         return DeleteRecord(GetPrimaryKeys(row));
+    }
+
+    /// <inheritdoc/>
+    public Task<int> DeleteRecordAsync(DataRow row, CancellationToken cancellationToken)
+    {
+        return DeleteRecordAsync(cancellationToken, GetPrimaryKeys(row));
     }
 
     /// <inheritdoc/>
@@ -1276,9 +1995,49 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     /// <inheritdoc/>
+    public async Task<int> DeleteRecordAsync(RecordRestriction? restriction, CancellationToken cancellationToken, bool? applyRootQueryRestriction = null)
+    {
+        if (restriction is null)
+            throw new ArgumentNullException(nameof(restriction));
+
+        string? sqlExpression = null;
+
+        try
+        {
+            if (RootQueryRestriction is not null && (applyRootQueryRestriction ?? ApplyRootQueryRestrictionToDeletes))
+                restriction = (RootQueryRestriction + restriction)!;
+
+            sqlExpression = $"{m_deleteWhereSql}{UpdateFieldNames(restriction.FilterExpression)}";
+            int affectedRecords = await Connection.ExecuteNonQueryAsync(sqlExpression, cancellationToken, restriction.Parameters).ConfigureAwait(false);
+
+            if (affectedRecords > 0)
+                PrimaryKeyCache = null;
+
+            return affectedRecords;
+        }
+        catch (Exception ex)
+        {
+            InvalidOperationException opex = new($"Exception during record delete for {typeof(T).Name} \"{sqlExpression ?? "undefined"}, {ValueList(restriction.Parameters)}\": {ex.Message}", ex);
+
+            if (ExceptionHandler is null)
+                throw opex;
+
+            ExceptionHandler(opex);
+
+            return 0;
+        }
+    }
+
+    /// <inheritdoc/>
     public int DeleteRecordWhere(string filterExpression, params object?[] parameters)
     {
         return DeleteRecord(new RecordRestriction(filterExpression, parameters));
+    }
+
+    /// <inheritdoc/>
+    public Task<int> DeleteRecordWhereAsync(string filterExpression, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return DeleteRecordAsync(new RecordRestriction(filterExpression, parameters), cancellationToken);
     }
 
     /// <summary>
@@ -1307,6 +2066,57 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </remarks>
     public int UpdateRecord(T record, RecordRestriction? restriction = null, bool? applyRootQueryRestriction = null)
     {
+        return UpdateRecordOperation(record, 0, (sqlFormat, _, parameters) => Connection.ExecuteNonQuery(sqlFormat, parameters), CancellationToken.None, restriction, applyRootQueryRestriction);
+    }
+
+    int ITableOperations.UpdateRecord(object value, RecordRestriction? restriction, bool? applyRootQueryRestriction)
+    {
+        if (value is not T record)
+            throw new ArgumentException($"Cannot update record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
+
+        return UpdateRecord(record, restriction, applyRootQueryRestriction);
+    }
+
+    /// <summary>
+    /// Updates the database with the specified modeled table <paramref name="record"/>,
+    /// any model properties marked with <see cref="UpdateValueExpressionAttribute"/> will
+    /// be evaluated and applied before the record is provided to the data source.
+    /// </summary>
+    /// <param name="record">Record to update.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="restriction">Record restriction to apply, if any.</param>
+    /// <param name="applyRootQueryRestriction">
+    /// Flag that determines if any existing <see cref="RootQueryRestriction"/> should be applied. Defaults to
+    /// <see cref="ApplyRootQueryRestrictionToUpdates"/> setting.
+    /// </param>
+    /// <returns>Number of rows affected.</returns>
+    /// <remarks>
+    /// <para>
+    /// Record restriction is only used for custom update expressions or in cases where modeled
+    /// table has no defined primary keys.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    public Task<int> UpdateRecordAsync(T record, CancellationToken cancellationToken, RecordRestriction? restriction = null, bool? applyRootQueryRestriction = null)
+    {
+        return UpdateRecordOperation(record, Task.FromResult(0), Connection.ExecuteNonQueryAsync, cancellationToken, restriction, applyRootQueryRestriction);
+    }
+
+    Task<int> ITableOperations.UpdateRecordAsync(object value, CancellationToken cancellationToken, RecordRestriction? restriction, bool? applyRootQueryRestriction)
+    {
+        if (value is not T record)
+            throw new ArgumentException($"Cannot update record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
+
+        return UpdateRecordAsync(record, cancellationToken, restriction, applyRootQueryRestriction);
+    }
+
+    private TReturn UpdateRecordOperation<TReturn>(T record, TReturn zeroReturn, Func<string, CancellationToken, object?[], TReturn> updateAction, CancellationToken cancellationToken, RecordRestriction? restriction, bool? applyRootQueryRestriction)
+    {
         List<object?> values = [];
 
         try
@@ -1323,7 +2133,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
             ExceptionHandler(ex);
 
-            return 0;
+            return zeroReturn;
         }
 
         if (restriction is null)
@@ -1336,7 +2146,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
                 foreach (PropertyInfo property in s_primaryKeyProperties)
                     values.Add(GetInterpretedPropertyValue(property, record));
 
-                return Connection.ExecuteNonQuery(m_updateSql, values.ToArray());
+                return updateAction(m_updateSql, cancellationToken, values.ToArray());
             }
             catch (Exception ex)
             {
@@ -1347,7 +2157,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
                 ExceptionHandler(opex);
 
-                return 0;
+                return zeroReturn;
             }
         }
 
@@ -1368,7 +2178,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
             sqlExpression = $"{m_updateWhereSql}{string.Format(UpdateFieldNames(restriction.FilterExpression)!, updateWhereOffsets.ToArray())}";
 
-            return Connection.ExecuteNonQuery(sqlExpression, values.ToArray());
+            return updateAction(sqlExpression, cancellationToken, values.ToArray());
         }
         catch (Exception ex)
         {
@@ -1379,16 +2189,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
             ExceptionHandler(opex);
 
-            return 0;
+            return zeroReturn;
         }
-    }
-
-    int ITableOperations.UpdateRecord(object value, RecordRestriction? restriction, bool? applyRootQueryRestriction)
-    {
-        if (value is not T record)
-            throw new ArgumentException($"Cannot update record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
-
-        return UpdateRecord(record, restriction, applyRootQueryRestriction);
     }
 
     /// <summary>
@@ -1442,6 +2244,58 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return UpdateRecordWhere(record, filterExpression, parameters);
     }
 
+    /// <summary>
+    /// Updates the database with the specified modeled table <paramref name="record"/>
+    /// referenced by the specified SQL filter expression and parameters, any model properties
+    /// marked with <see cref="UpdateValueExpressionAttribute"/> will be evaluated and applied
+    /// before the record is provided to the data source.
+    /// </summary>
+    /// <param name="record">Record to update.</param>
+    /// <param name="filterExpression">
+    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
+    /// When escaping is needed for field names, use standard ANSI quotes.
+    /// </param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">Restriction parameter values.</param>
+    /// <returns>Number of rows affected.</returns>
+    /// <remarks>
+    /// <para>
+    /// Record restriction is only used for custom update expressions or in cases where modeled
+    /// table has no defined primary keys.
+    /// </para>
+    /// <para>
+    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
+    /// will be converted into query parameters where each of the corresponding values in the
+    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
+    /// values to an executed <see cref="IDbCommand"/> query.
+    /// </para>
+    /// <para>
+    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// <para>
+    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
+    /// will be updated to reflect what is defined in the user model.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="UpdateRecord(T, RecordRestriction, bool?)"/>.
+    /// </para>
+    /// </remarks>
+    public Task<int> UpdateRecordWhereAsync(T record, string filterExpression, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return UpdateRecordAsync(record, cancellationToken, new RecordRestriction(filterExpression, parameters));
+    }
+
+    Task<int> ITableOperations.UpdateRecordWhereAsync(object value, string filterExpression, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        if (value is not T record)
+            throw new ArgumentException($"Cannot update record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
+
+        return UpdateRecordWhereAsync(record, filterExpression, cancellationToken, parameters);
+    }
+
     /// <inheritdoc/>
     public int UpdateRecord(DataRow row, RecordRestriction? restriction = null)
     {
@@ -1449,9 +2303,21 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     /// <inheritdoc/>
+    public Task<int> UpdateRecordAsync(DataRow row, CancellationToken cancellationToken, RecordRestriction? restriction = null)
+    {
+        return UpdateRecordAsync(LoadRecordWithKeys(row), cancellationToken, restriction);
+    }
+
+    /// <inheritdoc/>
     public int UpdateRecordWhere(DataRow row, string filterExpression, params object?[] parameters)
     {
         return UpdateRecord(row, new RecordRestriction(filterExpression, parameters));
+    }
+
+    /// <inheritdoc/>
+    public Task<int> UpdateRecordWhereAsync(DataRow row, string filterExpression, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return UpdateRecordAsync(row, cancellationToken, new RecordRestriction(filterExpression, parameters));
     }
 
     /// <summary>
@@ -1496,10 +2362,59 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return AddNewRecord(record);
     }
 
+    /// <summary>
+    /// Adds the specified modeled table <paramref name="record"/> to the database.
+    /// </summary>
+    /// <param name="record">Record to add.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>Number of rows affected.</returns>
+    public async Task<int> AddNewRecordAsync(T record, CancellationToken cancellationToken)
+    {
+        List<object?> values = [];
+
+        try
+        {
+            foreach (PropertyInfo property in s_addNewProperties)
+                values.Add(GetInterpretedPropertyValue(property, record));
+
+            int affectedRecords = await Connection.ExecuteNonQueryAsync(m_addNewSql, cancellationToken, values.ToArray()).ConfigureAwait(false);
+
+            if (affectedRecords > 0)
+                PrimaryKeyCache = null;
+
+            return affectedRecords;
+        }
+        catch (Exception ex)
+        {
+            InvalidOperationException opex = new($"Exception during record insert for {typeof(T).Name} \"{m_addNewSql}, {ValueList(values)}\": {ex.Message}", ex);
+
+            if (ExceptionHandler is null)
+                throw opex;
+
+            ExceptionHandler(opex);
+
+            return 0;
+        }
+    }
+
+    Task<int> ITableOperations.AddNewRecordAsync(object value, CancellationToken cancellationToken)
+    {
+        if (value is not T record)
+            throw new ArgumentException($"Cannot add new record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
+
+        return AddNewRecordAsync(record, cancellationToken);
+    }
+
     /// <inheritdoc/>
     public int AddNewRecord(DataRow row)
     {
         return AddNewRecord(LoadRecordWithKeys(row));
+    }
+
+    /// <inheritdoc/>
+    public Task<int> AddNewRecordAsync(DataRow row, CancellationToken cancellationToken)
+    {
+        return AddNewRecordAsync(LoadRecordWithKeys(row), cancellationToken);
     }
 
     /// <summary>
@@ -1522,6 +2437,29 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             throw new ArgumentException($"Cannot add new or update record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
 
         return AddNewOrUpdateRecord(record);
+    }
+
+    /// <summary>
+    /// Adds the specified modeled table <paramref name="record"/> to the database if the
+    /// record has not defined any of its primary key values; otherwise, the database will
+    /// be updated with the specified modeled table <paramref name="record"/>.
+    /// </summary>
+    /// <param name="record">Record to add or update.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>Number of rows affected.</returns>
+    public Task<int> AddNewOrUpdateRecordAsync(T record, CancellationToken cancellationToken)
+    {
+        return s_primaryKeyProperties.All(property => Common.IsDefaultValue(property.GetValue(record)))
+            ? AddNewRecordAsync(record, cancellationToken)
+            : UpdateRecordAsync(record, cancellationToken);
+    }
+
+    Task<int> ITableOperations.AddNewOrUpdateRecordAsync(object value, CancellationToken cancellationToken)
+    {
+        if (value is not T record)
+            throw new ArgumentException($"Cannot add new or update record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
+
+        return AddNewOrUpdateRecordAsync(record, cancellationToken);
     }
 
     /// <summary>
@@ -1844,6 +2782,15 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private IEnumerable<T?> LocalOrderBy(IEnumerable<T?> queryResults, string sortField, bool ascending, StringComparer? comparer = default)
+    {
+        // Execute order-by locally on unencrypted data
+        return ascending ?
+            queryResults.OrderBy(record => GetFieldValue(record, sortField) as string, comparer ?? StringComparer.OrdinalIgnoreCase) :
+            queryResults.OrderByDescending(record => GetFieldValue(record, sortField) as string, comparer ?? StringComparer.OrdinalIgnoreCase);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private IAsyncEnumerable<T?> LocalOrderByAsync(IAsyncEnumerable<T?> queryResults, string sortField, bool ascending, StringComparer? comparer = default)
     {
         // Execute order-by locally on unencrypted data
         return ascending ?

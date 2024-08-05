@@ -1560,9 +1560,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             queryResult;
     }
 
-    IAsyncEnumerable<object?> ITableOperations.SearchRecordsAsync(string sortField, bool ascending, StringComparison comparison, CancellationToken cancellationToken, params IRecordFilter?[]? recordFilter)
+    IAsyncEnumerable<object?> ITableOperations.SearchRecordsAsync(string sortField, bool ascending, CancellationToken cancellationToken, StringComparison comparison, params IRecordFilter?[]? recordFilter)
     {
-        return SearchRecordsAsync(sortField, ascending, comparison, cancellationToken, recordFilter)!.Cast<object?>();
+        return SearchRecordsAsync(sortField, ascending, cancellationToken, comparison, recordFilter)!.Cast<object?>();
     }
 
     /// <summary>

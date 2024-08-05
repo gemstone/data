@@ -1520,8 +1520,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </summary>
     /// <param name="sortField">Field name to order-by.</param>
     /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
-    /// <param name="comparison"><see cref="StringComparison"/> to use when searching string fields; defaults to ordinal ignore case.</param>
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="comparison"><see cref="StringComparison"/> to use when searching string fields; defaults to ordinal ignore case.</param>
     /// <param name="recordFilters">Record Filters to be applied.</param>
     /// <returns>An array of modeled table row instances for the queried records that match the search.</returns>
     /// <remarks>
@@ -1537,7 +1537,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// through them using the <see cref="GetPageOfRecordsAsync"/> function. As a result, usage should be restricted to smaller data sets. 
     /// </para>
     /// </remarks>
-    public IAsyncEnumerable<T?> SearchRecordsAsync(string sortField, bool ascending, StringComparison comparison = StringComparison.OrdinalIgnoreCase, CancellationToken cancellationToken = default, params IRecordFilter?[]? recordFilters)
+    public IAsyncEnumerable<T?> SearchRecordsAsync(string sortField, bool ascending, CancellationToken cancellationToken, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilters)
     {
         if (recordFilters is null)
             return AsyncEnumerable.Empty<T?>();

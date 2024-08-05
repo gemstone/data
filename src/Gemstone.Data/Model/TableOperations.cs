@@ -375,22 +375,22 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     public bool HasPrimaryKeyIdentityField => s_hasPrimaryKeyIdentityField;
 
     /// <inheritdoc/>
-    public Action<Exception>? ExceptionHandler { get; set; }
+    public Action<Exception>? ExceptionHandler { get; init; }
 
     /// <inheritdoc/>
-    public bool UseCaseSensitiveFieldNames { get; set; }
+    public bool UseCaseSensitiveFieldNames { get; init; }
 
     /// <inheritdoc/>
     public DataTable? PrimaryKeyCache { get; set; }
 
     /// <inheritdoc/>
-    public RecordRestriction? RootQueryRestriction { get; set; }
+    public RecordRestriction? RootQueryRestriction { get; init; }
 
     /// <inheritdoc/>
-    public bool ApplyRootQueryRestrictionToUpdates { get; set; }
+    public bool ApplyRootQueryRestrictionToUpdates { get; init; }
 
     /// <inheritdoc/>
-    public bool ApplyRootQueryRestrictionToDeletes { get; set; }
+    public bool ApplyRootQueryRestrictionToDeletes { get; init; }
 
     #endregion
 

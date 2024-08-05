@@ -71,7 +71,7 @@ public interface ITableOperations
     /// encountered exceptions will be passed to handler for processing. Otherwise, exceptions will be thrown
     /// on the call stack.
     /// </remarks>
-    Action<Exception>? ExceptionHandler { get; set; }
+    Action<Exception>? ExceptionHandler { get; init; }
 
     /// <summary>
     /// Gets or sets flag that determines if field names should be treated as case-sensitive. Defaults to <c>false</c>.
@@ -81,7 +81,7 @@ public interface ITableOperations
     /// to properly update escaped field names that may be case-sensitive. For example, escaped field names in Oracle
     /// are case-sensitive. This value is typically <c>false</c>.
     /// </remarks>
-    bool UseCaseSensitiveFieldNames { get; set; }
+    bool UseCaseSensitiveFieldNames { get; init; }
 
     /// <summary>
     /// Gets or sets primary key cache.
@@ -133,7 +133,7 @@ public interface ITableOperations
     /// returned value so that the field value will be properly set prior to executing the database function.
     /// </para>
     /// </remarks>
-    RecordRestriction? RootQueryRestriction { get; set; }
+    RecordRestriction? RootQueryRestriction { get; init; }
 
     /// <summary>
     /// Gets or sets flag that determines if <see cref="RootQueryRestriction"/> should be applied to update operations.
@@ -149,7 +149,7 @@ public interface ITableOperations
     /// <see cref="RootQueryRestrictionAttribute.ApplyToUpdates"/>.
     /// </para>
     /// </remarks>
-    bool ApplyRootQueryRestrictionToUpdates { get; set; }
+    bool ApplyRootQueryRestrictionToUpdates { get; init; }
 
     /// <summary>
     /// Gets or sets flag that determines if <see cref="RootQueryRestriction"/> should be applied to delete operations.
@@ -165,7 +165,7 @@ public interface ITableOperations
     /// <see cref="RootQueryRestrictionAttribute.ApplyToDeletes"/>.
     /// </para>
     /// </remarks>
-    bool ApplyRootQueryRestrictionToDeletes { get; set; }
+    bool ApplyRootQueryRestrictionToDeletes { get; init; }
 
     /// <summary>
     /// Creates a new modeled record instance, applying any modeled default values as specified by a

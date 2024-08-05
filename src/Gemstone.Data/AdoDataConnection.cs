@@ -482,9 +482,9 @@ public class AdoDataConnection : IDisposable
     /// </summary>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public DbDataReader ExecuteReader(string sqlFormat, params object?[] parameters)
+    public (DbDataReader, DbCommand) ExecuteReader(string sqlFormat, params object?[] parameters)
     {
         return ExecuteReader(DefaultTimeout, sqlFormat, parameters);
     }
@@ -495,9 +495,9 @@ public class AdoDataConnection : IDisposable
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Task<DbDataReader> ExecuteReaderAsync(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    public (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
     {
         return ExecuteReaderAsync(DefaultTimeout, sqlFormat, cancellationToken, parameters);
     }
@@ -508,9 +508,9 @@ public class AdoDataConnection : IDisposable
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public DbDataReader ExecuteReader(int timeout, string sqlFormat, params object?[] parameters)
+    public (DbDataReader, DbCommand) ExecuteReader(int timeout, string sqlFormat, params object?[] parameters)
     {
         return ExecuteReader(CommandBehavior.Default, timeout, sqlFormat, parameters);
     }
@@ -522,9 +522,9 @@ public class AdoDataConnection : IDisposable
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Task<DbDataReader> ExecuteReaderAsync(int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    public (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
     {
         return ExecuteReaderAsync(CommandBehavior.Default, timeout, sqlFormat, cancellationToken, parameters);
     }
@@ -536,9 +536,9 @@ public class AdoDataConnection : IDisposable
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public DbDataReader ExecuteReader(CommandBehavior behavior, int timeout, string sqlFormat, params object?[] parameters)
+    public (DbDataReader, DbCommand) ExecuteReader(CommandBehavior behavior, int timeout, string sqlFormat, params object?[] parameters)
     {
         string sql = GenericParameterizedQueryString(sqlFormat, parameters);
         return Connection.ExecuteReader(timeout, sql, behavior, ResolveParameters(parameters));
@@ -552,9 +552,9 @@ public class AdoDataConnection : IDisposable
     /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Task<DbDataReader> ExecuteReaderAsync(CommandBehavior behavior, int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    public (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(CommandBehavior behavior, int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
     {
         string sql = GenericParameterizedQueryString(sqlFormat, parameters);
         return Connection.ExecuteReaderAsync(timeout, sql, behavior, cancellationToken, ResolveParameters(parameters));
@@ -989,9 +989,34 @@ public class AdoDataConnection : IDisposable
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>An asynchronous enumerable of <see cref="DataRow"/> objects.</returns>
+    /// <remarks>
+    /// This method first reads data into memory as a <see cref="DataTable"/> then enumerates over its rows.
+    /// If the <see cref="DataTable"/> schema can be derived in advance, use the
+    /// <see cref="RetrieveDataAsAsyncEnumerable(DataTable, string, CancellationToken, object?[])"/>
+    /// overload instead that takes the schema and uses a <see cref="DbDataReader"/> to enumerate over the
+    /// rows directly without caching into memory first as an optimization.
+    /// </remarks>
     public IAsyncEnumerable<DataRow> RetrieveDataAsAsyncEnumerable(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
     {
         return RetrieveDataAsAsyncEnumerable(DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/> using a <see cref="DbDataReader"/> and returns
+    /// data rows based on the provided <paramref name="schema"/> as an asynchronous enumerable.
+    /// </summary>
+    /// <param name="schema"><see cref="DataTable"/> that defines the schema for the data rows.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>An asynchronous enumerable of <see cref="DataRow"/> objects.</returns>
+    /// <remarks>
+    /// If provided <paramref name="schema"/> does not match the schema of the result set based on <paramref name="sqlFormat"/>,
+    /// the results may be unpredictable or method call may fail.
+    /// </remarks>
+    public IAsyncEnumerable<DataRow> RetrieveDataAsAsyncEnumerable(DataTable schema, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return RetrieveDataAsAsyncEnumerable(schema, DefaultTimeout, sqlFormat, cancellationToken, parameters);
     }
 
     /// <summary>
@@ -1034,10 +1059,76 @@ public class AdoDataConnection : IDisposable
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
     /// <returns>An asynchronous enumerable of <see cref="DataRow"/> objects.</returns>
+    /// <remarks>
+    /// This method first reads data into memory as a <see cref="DataTable"/> then enumerates over its rows.
+    /// If the <see cref="DataTable"/> schema can be derived in advance, use the
+    /// <see cref="RetrieveDataAsAsyncEnumerable(DataTable, int, string, CancellationToken, object?[])"/>
+    /// overload instead that takes the schema and uses a <see cref="DbDataReader"/> to enumerate over the
+    /// rows directly without caching into memory first as an optimization.
+    /// </remarks>
     public async IAsyncEnumerable<DataRow> RetrieveDataAsAsyncEnumerable(int timeout, string sqlFormat, [EnumeratorCancellation] CancellationToken cancellationToken, params object?[] parameters)
     {
+        // This loads DataTable into memory, automatically deriving schema from SQL expression, then iterates over rows.
+        // Each step is cancellable but if the schema for the DataTable can be derived in advance, loading the data into
+        // memory first can be skipped - see next overload that takes table DataTable as a parameter
         await foreach (DataRow row in (await RetrieveDataAsync(timeout, sqlFormat, cancellationToken, parameters).ConfigureAwait(false)).AsAwaitConfiguredCancelableAsyncEnumerable(cancellationToken))
             yield return row;
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/> using a <see cref="DbDataReader"/> and returns
+    /// data rows based on the provided <paramref name="schema"/> as an asynchronous enumerable.
+    /// </summary>
+    /// <param name="schema"><see cref="DataTable"/> that defines the schema for the data rows.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>An asynchronous enumerable of <see cref="DataRow"/> objects.</returns>
+    /// <remarks>
+    /// If provided <paramref name="schema"/> does not match the schema of the result set based on <paramref name="sqlFormat"/>,
+    /// the results may be unpredictable or method call may fail.
+    /// </remarks>
+    public IAsyncEnumerable<DataRow> RetrieveDataAsAsyncEnumerable(DataTable schema, int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return RetrieveDataAsAsyncEnumerable(schema, CommandBehavior.Default, timeout, sqlFormat, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Executes the SQL statement using <see cref="Connection"/> using a <see cref="DbDataReader"/> and returns
+    /// data rows based on the provided <paramref name="schema"/> as an asynchronous enumerable.
+    /// </summary>
+    /// <param name="schema"><see cref="DataTable"/> that defines the schema for the data rows.</param>
+    /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters.</param>
+    /// <returns>An asynchronous enumerable of <see cref="DataRow"/> objects.</returns>
+    /// <remarks>
+    /// If provided <paramref name="schema"/> does not match the schema of the result set based on <paramref name="sqlFormat"/>,
+    /// the results may be unpredictable or method call may fail.
+    /// </remarks>
+    public async IAsyncEnumerable<DataRow> RetrieveDataAsAsyncEnumerable(DataTable schema, CommandBehavior behavior, int timeout, string sqlFormat, [EnumeratorCancellation] CancellationToken cancellationToken, params object?[] parameters)
+    {
+        (Task<DbDataReader> readerTask, DbCommand command) = ExecuteReaderAsync(behavior, timeout, sqlFormat, cancellationToken, parameters);
+
+        await using DbDataReader reader = await readerTask;
+        await using (command)
+        {
+            if (!reader.HasRows)
+                yield break;
+
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                DataRow row = schema.NewRow();
+
+                foreach (DataColumn col in schema.Columns)
+                    row[col.Ordinal] = reader[col.Ordinal];
+
+                yield return row;
+            }
+        }
     }
 
     /// <summary>
@@ -1301,7 +1392,7 @@ public class AdoDataConnection : IDisposable
         return dataParameters;
     }
 
-    #endregion
+#endregion
 
     #region [ Static ]
 

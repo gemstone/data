@@ -807,23 +807,23 @@ public class TableOperations<T> : ITableOperations where T : class, new()
                 if (restriction is null)
                 {
                     sqlExpression = string.Format(m_selectSetSql, orderByExpression);
-                    return Connection.RetrieveDataAsAsyncEnumerable(sqlExpression, cancellationToken).Select(LoadRecord);
+                    return Connection.RetrieveDataAsAsyncEnumerable(s_tableSchema, sqlExpression, cancellationToken).Select(LoadRecord);
                 }
 
                 sqlExpression = string.Format(m_selectSetWhereSql, UpdateFieldNames(restriction.FilterExpression), orderByExpression);
 
-                return Connection.RetrieveDataAsAsyncEnumerable(sqlExpression, cancellationToken, restriction.Parameters).Select(LoadRecord);
+                return Connection.RetrieveDataAsAsyncEnumerable(s_tableSchema, sqlExpression, cancellationToken, restriction.Parameters).Select(LoadRecord);
             }
 
             if (restriction is null)
             {
                 sqlExpression = string.Format(m_selectSetSql, orderByExpression);
-                return Connection.RetrieveDataAsAsyncEnumerable(sqlExpression, cancellationToken).Take(limit).Select(LoadRecord);
+                return Connection.RetrieveDataAsAsyncEnumerable(s_tableSchema, sqlExpression, cancellationToken).Take(limit).Select(LoadRecord);
             }
 
             sqlExpression = string.Format(m_selectSetWhereSql, UpdateFieldNames(restriction.FilterExpression), orderByExpression);
 
-            return Connection.RetrieveDataAsAsyncEnumerable(sqlExpression, cancellationToken, restriction.Parameters).Take(limit).Select(LoadRecord);
+            return Connection.RetrieveDataAsAsyncEnumerable(s_tableSchema, sqlExpression, cancellationToken, restriction.Parameters).Take(limit).Select(LoadRecord);
         }
         catch (Exception ex)
         {
@@ -1792,10 +1792,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <returns>A data table containing data from the given records.</returns>
     public DataTable ToDataTable(IEnumerable<T?> records)
     {
-        DataTable dataTable = new(s_tableName);
-
-        foreach (PropertyInfo property in s_properties.Values)
-            dataTable.Columns.Add(new DataColumn(s_fieldNames[property.Name]));
+        DataTable dataTable = s_tableSchema.Clone();
 
         foreach (T? record in records)
         {
@@ -2838,6 +2835,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private static readonly Func<CurrentScope, T> s_createRecordInstance;
     private static readonly Action<CurrentScope> s_updateRecordInstance;
     private static readonly Action<CurrentScope> s_applyRecordDefaults;
+    private static readonly DataTable s_tableSchema;
     private static TypeRegistry? s_typeRegistry;
 
     // Static Constructor
@@ -3019,6 +3017,12 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         s_createRecordInstance = ValueExpressionParser<T>.CreateInstance<CurrentScope>(s_properties.Values, s_typeRegistry);
         s_updateRecordInstance = ValueExpressionParser<T>.UpdateInstance<CurrentScope>(s_properties.Values, s_typeRegistry);
         s_applyRecordDefaults = ValueExpressionParser<T>.ApplyDefaults<CurrentScope>(s_properties.Values, s_typeRegistry);
+
+        // Generate a data table to be used for schema operations
+        s_tableSchema = new DataTable(s_tableName);
+
+        foreach (PropertyInfo property in s_properties.Values)
+            s_tableSchema.Columns.Add(new DataColumn(s_fieldNames[property.Name]));
     }
 
     // Static Properties

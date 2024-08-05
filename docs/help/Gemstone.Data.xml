@@ -3198,6 +3198,22 @@
             Gets field name to use for property.
             </summary>
     </member>
+    <member name="T:Gemstone.Data.Model.DeleteRolesAttribute">
+      <summary>
+            Defines an attribute that will allow setting DELETE function roles for a modeled table.
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.DeleteRolesAttribute.#ctor(System.String)">
+      <summary>
+            Creates a new <see cref="T:Gemstone.Data.Model.DeleteRolesAttribute" />.
+            </summary>
+      <param name="roles">Comma separated string of roles allowed for DELETE functions.</param>
+    </member>
+    <member name="P:Gemstone.Data.Model.DeleteRolesAttribute.Roles">
+      <summary>
+            Gets field name to use for property.
+            </summary>
+    </member>
     <member name="T:Gemstone.Data.Model.EncryptDataAttribute">
       <summary>
             Defines an attribute that provides encryption of text field contents for a modeled table.
@@ -4276,6 +4292,38 @@
       <param name="model">Type of modeled table that key points back to.</param>
     </member>
     <member name="P:Gemstone.Data.Model.ParentKeyAttribute.Model">
+      <summary>
+            Gets field name to use for property.
+            </summary>
+    </member>
+    <member name="T:Gemstone.Data.Model.PatchRolesAttribute">
+      <summary>
+            Defines an attribute that will allow setting PATCH function roles for a modeled table.
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.PatchRolesAttribute.#ctor(System.String)">
+      <summary>
+            Creates a new <see cref="T:Gemstone.Data.Model.PatchRolesAttribute" />.
+            </summary>
+      <param name="roles">Comma separated string of roles allowed for PATCH functions.</param>
+    </member>
+    <member name="P:Gemstone.Data.Model.PatchRolesAttribute.Roles">
+      <summary>
+            Gets field name to use for property.
+            </summary>
+    </member>
+    <member name="T:Gemstone.Data.Model.PostRolesAttribute">
+      <summary>
+            Defines an attribute that will allow setting POST function roles for a modeled table.
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.PostRolesAttribute.#ctor(System.String)">
+      <summary>
+            Creates a new <see cref="T:Gemstone.Data.Model.PostRolesAttribute" />.
+            </summary>
+      <param name="roles">Comma separated string of roles allowed for POST functions.</param>
+    </member>
+    <member name="P:Gemstone.Data.Model.PostRolesAttribute.Roles">
       <summary>
             Gets field name to use for property.
             </summary>

@@ -231,17 +231,22 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             return;
 
         // Handle any modeled expression amendments
-        foreach (Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string> expressionAmendment in s_expressionAmendments)
+        foreach ((DatabaseType, TargetExpression, StatementTypes, AffixPosition, string) expressionAmendment in s_expressionAmendments)
         {
+            // Deconstruct expression amendment properties
+            (
+                DatabaseType databaseType, 
+                TargetExpression targetExpression, 
+                StatementTypes statementTypes, 
+                AffixPosition affixPosition, 
+                string amendmentText
+            )
+            = expressionAmendment;
+
             // See if expression amendment applies to current database type
-            if (expressionAmendment.Item1 != Connection.DatabaseType)
+            if (databaseType != Connection.DatabaseType)
                 continue;
 
-            // Get expression amendment properties
-            TargetExpression targetExpression = expressionAmendment.Item2;
-            StatementTypes statementTypes = expressionAmendment.Item3;
-            AffixPosition affixPosition = expressionAmendment.Item4;
-            string amendmentText = expressionAmendment.Item5;
             string tableNameToken = affixPosition == AffixPosition.Prefix ? TableNamePrefixToken : TableNameSuffixToken;
             string fieldListToken = affixPosition == AffixPosition.Prefix ? FieldListPrefixToken : FieldListSuffixToken;
             string targetToken = targetExpression == TargetExpression.TableName ? tableNameToken : fieldListToken;
@@ -2815,7 +2820,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private static readonly Dictionary<PropertyInfo, string>? s_encryptDataTargets;
     private static readonly Dictionary<DatabaseType, bool>? s_escapedTableNameTargets;
     private static readonly Dictionary<string, Dictionary<DatabaseType, bool>?>? s_escapedFieldNameTargets;
-    private static readonly List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>? s_expressionAmendments;
+    private static readonly List<(DatabaseType, TargetExpression, StatementTypes, AffixPosition, string)>? s_expressionAmendments;
     private static readonly RootQueryRestrictionAttribute? s_rootQueryRestrictionAttribute;
     private static readonly string s_selectCountSql;
     private static readonly string s_selectSetSql;
@@ -3164,14 +3169,14 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return escapedNameTargets;
     }
 
-    private static List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>>? DeriveExpressionAmendments(AmendExpressionAttribute?[]? amendExpressionAttributes)
+    private static List<(DatabaseType, TargetExpression, StatementTypes, AffixPosition, string)>? DeriveExpressionAmendments(AmendExpressionAttribute?[]? amendExpressionAttributes)
     {
         if (amendExpressionAttributes is null || amendExpressionAttributes.Length == 0)
             return null;
 
-        List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> typedExpressionAmendments = [];
-        List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> untypedExpressionAmendments = [];
-        List<Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>> expressionAmendments;
+        List<(DatabaseType, TargetExpression, StatementTypes, AffixPosition, string)> typedExpressionAmendments = [];
+        List<(DatabaseType, TargetExpression, StatementTypes, AffixPosition, string)> untypedExpressionAmendments = [];
+        List<(DatabaseType, TargetExpression, StatementTypes, AffixPosition, string)> expressionAmendments;
 
         foreach (AmendExpressionAttribute? attribute in amendExpressionAttributes)
         {
@@ -3196,7 +3201,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             {
                 string amendmentText = attribute.AmendmentText.Trim();
                 amendmentText = attribute.AffixPosition == AffixPosition.Prefix ? $"{amendmentText} " : $" {amendmentText}";
-                expressionAmendments.Add(new Tuple<DatabaseType, TargetExpression, StatementTypes, AffixPosition, string>(databaseType, attribute.TargetExpression, attribute.StatementTypes, attribute.AffixPosition, amendmentText));
+                expressionAmendments.Add((databaseType, attribute.TargetExpression, attribute.StatementTypes, attribute.AffixPosition, amendmentText));
             }
         }
 

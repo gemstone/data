@@ -35,6 +35,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.IO;
 using System.Text;
 using Gemstone.Data.DataExtensions;
@@ -542,7 +543,10 @@ public class DataInserter : BulkDataOperationBase
         string countSQLStub = $"SELECT COUNT(*) AS Total FROM {toTable.SQLEscapedName}";
 
         // Execute source query
-        using (IDataReader fromReader = fromTable.Connection.ExecuteReader(selectString, CommandBehavior.SequentialAccess, Timeout))
+        (DbDataReader fromReader, DbCommand command) = fromTable.Connection.ExecuteReader(selectString, CommandBehavior.SequentialAccess, Timeout);
+        
+        using (fromReader)
+        using (command)
         {
             // Read source records and write each to destination
             while (fromReader.Read())

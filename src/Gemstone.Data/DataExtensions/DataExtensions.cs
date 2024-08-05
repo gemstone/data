@@ -264,9 +264,9 @@ public static class DataExtensions
     /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DbDataReader ExecuteReader(this DbConnection connection, string sql, params object[] parameters)
+    public static (DbDataReader, DbCommand) ExecuteReader(this DbConnection connection, string sql, params object[] parameters)
     {
         return connection.ExecuteReader(DefaultTimeoutDuration, sql, CommandBehavior.Default, parameters);
     }
@@ -278,9 +278,9 @@ public static class DataExtensions
     /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
     /// <param name="sql">The SQL statement to be executed.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DbDataReader ExecuteReader(this DbConnection connection, int timeout, string sql, params object[] parameters)
+    public static (DbDataReader, DbCommand) ExecuteReader(this DbConnection connection, int timeout, string sql, params object[] parameters)
     {
         return connection.ExecuteReader(timeout, sql, CommandBehavior.Default, parameters);
     }
@@ -293,9 +293,9 @@ public static class DataExtensions
     /// <param name="sql">The SQL statement to be executed.</param>
     /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DbDataReader ExecuteReader(this DbConnection connection, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
+    public static (DbDataReader, DbCommand) ExecuteReader(this DbConnection connection, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
     {
         DbCommand? command = null;
         DbDataReader? reader = null;
@@ -304,7 +304,7 @@ public static class DataExtensions
         {
             command = connection.CreateParameterizedCommand(sql, parameters);
             command.CommandTimeout = timeout;
-            return command.ExecuteReader(behavior);
+            return (command.ExecuteReader(behavior), command);
         }
         catch
         {
@@ -321,9 +321,9 @@ public static class DataExtensions
     /// <param name="sql">The SQL statement to be executed.</param>
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DbDataReader> ExecuteReaderAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
         return connection.ExecuteReaderAsync(DefaultTimeoutDuration, sql, CommandBehavior.Default, cancellationToken, parameters);
     }
@@ -336,9 +336,9 @@ public static class DataExtensions
     /// <param name="sql">The SQL statement to be executed.</param>
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DbDataReader> ExecuteReaderAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
         return connection.ExecuteReaderAsync(timeout, sql, CommandBehavior.Default, cancellationToken, parameters);
     }
@@ -352,9 +352,9 @@ public static class DataExtensions
     /// <param name="behavior">One of the <see cref="CommandBehavior"/> values.</param>
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
-    /// <returns>A <see cref="DbDataReader"/> object.</returns>
+    /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DbDataReader> ExecuteReaderAsync(this DbConnection connection, int timeout, string sql, CommandBehavior behavior, CancellationToken cancellationToken, params object[] parameters)
+    public static (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(this DbConnection connection, int timeout, string sql, CommandBehavior behavior, CancellationToken cancellationToken, params object[] parameters)
     {
         DbCommand? command = null;
         DbDataReader? reader = null;
@@ -363,7 +363,7 @@ public static class DataExtensions
         {
             command = connection.CreateParameterizedCommand(sql, parameters);
             command.CommandTimeout = timeout;
-            return command.ExecuteReaderAsync(behavior, cancellationToken);
+            return (command.ExecuteReaderAsync(behavior, cancellationToken), command);
         }
         catch
         {

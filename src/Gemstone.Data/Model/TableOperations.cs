@@ -3022,7 +3022,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         s_tableSchema = new DataTable(s_tableName);
 
         foreach (PropertyInfo property in s_properties.Values)
-            s_tableSchema.Columns.Add(new DataColumn(s_fieldNames[property.Name]));
+            s_tableSchema.Columns.Add(new DataColumn(s_fieldNames[property.Name], property.PropertyType));
     }
 
     // Static Properties

@@ -167,8 +167,8 @@ public class AdoDataConnection : IDisposable
     /// </summary>
     /// <param name="settings">Settings instance.</param>
     public AdoDataConnection(Settings settings)
-        : this(settings["System"]["ConnectionString"]!.ToString(),
-            settings["System"]["DataProviderString"]!.ToString())
+        : this(settings[Settings.SystemSettingsCategory]["ConnectionString"]!.ToString(),
+            settings[Settings.SystemSettingsCategory]["DataProviderString"]!.ToString())
     {
     }
 

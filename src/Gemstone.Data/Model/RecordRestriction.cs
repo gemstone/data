@@ -112,7 +112,7 @@ public class RecordRestriction : IEquatable<RecordRestriction>
     public RecordRestriction(string? filterExpression, params object?[]? parameters)
     {
         FilterExpression = filterExpression;
-        Parameters = parameters ?? Array.Empty<object>();
+        Parameters = parameters ?? [];
     }
 
     #endregion
@@ -174,7 +174,7 @@ public class RecordRestriction : IEquatable<RecordRestriction>
     {
         unchecked
         {
-            return ((FilterExpression?.GetHashCode() ?? 0) * 397) ^ (Parameters?.GetHashCode() ?? 0);
+            return ((FilterExpression?.GetHashCode() ?? 0) * 397) ^ Parameters.GetHashCode();
         }
     }
 

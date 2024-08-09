@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Text;
 using Gemstone.Data.DataExtensions;
 using Gemstone.EventHandlerExtensions;
@@ -233,7 +234,10 @@ public class DataUpdater : BulkDataOperationBase
         OnOverallProgress((int)OverallProgress, (int)OverallTotal);
 
         // Execute source query
-        using (IDataReader fromReader = fromTable.Connection.ExecuteReader($"SELECT {fieldsCollection.GetList(sqlEscapeFunction: fromTable.Parent.Parent.SQLEscapeName)} FROM {fromTable.SQLEscapedName}", CommandBehavior.SequentialAccess, Timeout))
+        (DbDataReader fromReader, DbCommand command) = fromTable.Connection.ExecuteReader($"SELECT {fieldsCollection.GetList(sqlEscapeFunction: fromTable.Parent.Parent.SQLEscapeName)} FROM {fromTable.SQLEscapedName}", CommandBehavior.SequentialAccess, Timeout);
+        
+        using (fromReader)
+        using (command)
         {
             // Create Sql update stub
             updateSQLStub = $"UPDATE {toTable.SQLEscapedName} SET ";

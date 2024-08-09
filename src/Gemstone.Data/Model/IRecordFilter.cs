@@ -21,6 +21,7 @@
 //
 //******************************************************************************************************
 
+using System;
 using System.Reflection;
 
 namespace Gemstone.Data.Model;
@@ -37,18 +38,36 @@ public interface IRecordFilter
     #region [ Properties ]
 
     /// <summary>
-    /// The name of the field to be searched.
+    /// Gets or sets the name of the field to be searched.
     /// </summary>
     string FieldName { get; set; }
 
     /// <summary>
-    /// The value to be searched.
+    /// Gets or sets the value to be searched.
     /// </summary>
     object? SearchParameter { get; set; }
 
     /// <summary>
-    /// The operator to be used for the search.
+    /// Gets or sets the operator to be used for the search.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The list of supported operators includes:
+    /// <list type="bullet">
+    ///   <item>=</item>
+    ///   <item><![CDATA[<>]]></item>
+    ///   <item><![CDATA[<]]></item>
+    ///   <item><![CDATA[>]]></item>
+    ///   <item>IN</item>
+    ///   <item>NOT IN</item>
+    ///   <item>LIKE</item>
+    ///   <item>NOT LIKE</item>
+    ///   <item><![CDATA[<=]]></item>
+    ///   <item><![CDATA[>=]]></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
+    /// <exception cref="NotSupportedException">Attempted to assign an operator that is not supported.</exception>
     public string Operator { get; set; }
 
     /// <summary>
@@ -57,7 +76,7 @@ public interface IRecordFilter
     public bool SupportsEncrypted { get; }
 
     /// <summary>
-    /// The <see cref="PropertyInfo"/> of the Model that this <see cref="IRecordFilter"/> applies to.
+    /// The <see cref="PropertyInfo"/> of the model that this <see cref="IRecordFilter"/> applies to.
     /// </summary>
     /// <remarks>
     /// This will return <c>null</c> if the <see cref="IRecordFilter"/> is not associated with a property.
@@ -71,7 +90,8 @@ public interface IRecordFilter
     /// <summary>
     /// Generates a <see cref="RecordRestriction"/> that corresponds to this <see cref="IRecordFilter"/>.
     /// </summary>
-    public RecordRestriction GenerateRestriction();
+    /// <param name="tableOperations">The <see cref="ITableOperations"/> that will be used to generate the restriction.</param>
+    public RecordRestriction GenerateRestriction(ITableOperations tableOperations);
         
     #endregion
 }

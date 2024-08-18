@@ -1830,10 +1830,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <returns>A data table containing data from the given records.</returns>
     public async Task<DataTable> ToDataTableAsync(IAsyncEnumerable<T?> records, CancellationToken cancellationToken)
     {
-        DataTable dataTable = new(s_tableName);
-
-        foreach (PropertyInfo property in s_properties.Values)
-            dataTable.Columns.Add(new DataColumn(s_fieldNames[property.Name]));
+        DataTable dataTable = s_tableSchema.Clone();
 
         await foreach (T? record in records.WithAwaitConfiguredCancellation(cancellationToken))
         {

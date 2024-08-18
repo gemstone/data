@@ -1,4 +1,5 @@
-﻿//  AdoDataConnection.cs - Gbtc
+﻿//******************************************************************************************************
+//  AdoDataConnection.cs - Gbtc
 //
 //  Copyright © 2012, Grid Protection Alliance.  All Rights Reserved.
 //
@@ -1393,7 +1394,7 @@ public class AdoDataConnection : IDisposable
         return dataParameters;
     }
 
-#endregion
+    #endregion
 
     #region [ Static ]
 

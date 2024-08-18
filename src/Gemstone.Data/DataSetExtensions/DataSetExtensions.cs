@@ -319,9 +319,9 @@ public static class DataSetExtensions
 
                             break;
                         case DataType.Blob:
-                            byte[] blob = value.NotDBNull<byte[]>();
+                            byte[]? blob = value.NotDBNull<byte[]>();
 
-                            if (blob.Length == 0)
+                            if (blob is null || blob.Length == 0)
                             {
                                 output.Write(0);
                             }
@@ -525,11 +525,23 @@ public static class DataSetExtensions
     /// </summary>
     /// <param name="dataType"><see cref="DataType"/> to derive object <see cref="Type"/> from.</param>
     /// <returns>Object <see cref="Type"/> derived from given <see cref="DataType"/>.</returns>
-    public static Type DeriveColumnType(this DataType dataType) => s_supportedDataTypes[(int)dataType];
+    public static Type DeriveColumnType(this DataType dataType)
+    {
+        return s_supportedDataTypes[(int)dataType];
+    }
 
-    private static string NotDBNullString(this object value) => value == DBNull.Value ? "" : value.ToString()!;
+    private static string NotDBNullString(this object value)
+    {
+        return value == DBNull.Value ? "" : value.ToString()!;
+    }
 
-    private static T NotDBNull<T>(this object value, T defaultValue) => value == DBNull.Value ? defaultValue : (T)value;
+    private static T? NotDBNull<T>(this object value, T? defaultValue)
+    {
+        return value == DBNull.Value ? defaultValue : (T)value;
+    }
 
-    private static T NotDBNull<T>(this object value) => value.NotDBNull(default(T)!);
+    private static T? NotDBNull<T>(this object value)
+    {
+        return value.NotDBNull(default(T)!);
+    }
 }

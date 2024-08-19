@@ -37,7 +37,7 @@ namespace Gemstone.Data.Model;
 public sealed class SearchableAttribute(params string[] fields) : Attribute
 {
     /// <summary>
-    /// The FieldNames that are searchable.
+    /// The field names that are searchable.
     /// </summary>
     public string[] FieldNames { get; } = fields;
 }

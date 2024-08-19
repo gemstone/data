@@ -140,28 +140,28 @@ public static class DataSetExtensions
 {
     // Constant array of supported data types
     private static readonly Type[] s_supportedDataTypes =
-        {
-            // This must match DataType enum order
-            typeof(bool),
-            typeof(byte),
-            typeof(char),
-            typeof(DateTime),
-            typeof(decimal),
-            typeof(double),
-            typeof(Guid),
-            typeof(short),
-            typeof(int),
-            typeof(long),
-            typeof(sbyte),
-            typeof(float),
-            typeof(string),
-            typeof(TimeSpan),
-            typeof(ushort),
-            typeof(uint),
-            typeof(ulong),
-            typeof(byte[]),
-            typeof(object)
-        };
+    [
+        // This must match DataType enum order
+        typeof(bool),
+        typeof(byte),
+        typeof(char),
+        typeof(DateTime),
+        typeof(decimal),
+        typeof(double),
+        typeof(Guid),
+        typeof(short),
+        typeof(int),
+        typeof(long),
+        typeof(sbyte),
+        typeof(float),
+        typeof(string),
+        typeof(TimeSpan),
+        typeof(ushort),
+        typeof(uint),
+        typeof(ulong),
+        typeof(byte[]),
+        typeof(object)
+    ];
 
     /// <summary>
     /// Serializes a <see cref="DataSet"/> to a destination <see cref="Stream"/>.
@@ -172,171 +172,171 @@ public static class DataSetExtensions
     /// <param name="useNullableDataTypes">Flag to determine if extra information should be serialized to support null values.</param>
     public static void SerializeToStream(this DataSet source, Stream destination, bool assumeStringForUnknownTypes = true, bool useNullableDataTypes = true)
     {
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
+        if (source is null)
+            throw new ArgumentNullException(nameof(source));
 
-            if (destination is null)
-                throw new ArgumentNullException(nameof(destination));
+        if (destination is null)
+            throw new ArgumentNullException(nameof(destination));
 
-            if (!destination.CanWrite)
-                throw new InvalidOperationException("Cannot write to a read-only stream");
+        if (!destination.CanWrite)
+            throw new InvalidOperationException("Cannot write to a read-only stream");
 
-            BinaryWriter output = new(destination);
+        BinaryWriter output = new(destination);
 
-            // Serialize dataset name and table count
-            output.Write(source.DataSetName);
-            output.Write(source.Tables.Count);
+        // Serialize dataset name and table count
+        output.Write(source.DataSetName);
+        output.Write(source.Tables.Count);
 
-            // Serialize tables
-            foreach (DataTable table in source.Tables)
+        // Serialize tables
+        foreach (DataTable table in source.Tables)
+        {
+            List<int> columnIndices = new();
+            List<DataType> columnDataTypes = new();
+
+            // Serialize column metadata
+            using (BlockAllocatedMemoryStream columnMetaDataStream = new())
             {
-                List<int> columnIndices = new();
-                List<DataType> columnDataTypes = new();
+                BinaryWriter columnMetaData = new(columnMetaDataStream);
 
-                // Serialize column metadata
-                using (BlockAllocatedMemoryStream columnMetaDataStream = new())
+                foreach (DataColumn column in table.Columns)
                 {
-                    BinaryWriter columnMetaData = new(columnMetaDataStream);
+                    // Get column data type, unknown types will be represented as object
+                    DataType dataType = GetDataType(column.DataType, assumeStringForUnknownTypes);
 
-                    foreach (DataColumn column in table.Columns)
-                    {
-                        // Get column data type, unknown types will be represented as object
-                        DataType dataType = GetDataType(column.DataType, assumeStringForUnknownTypes);
+                    // Only objects of a known type can be properly serialized
+                    if (dataType == DataType.Object)
+                        continue;
 
-                        // Only objects of a known type can be properly serialized
-                        if (dataType == DataType.Object)
-                            continue;
+                    byte dtByte = (byte)dataType;
 
-                        byte dtByte = (byte)dataType;
+                    if (useNullableDataTypes)
+                        dtByte |= 0x80;
 
-                        if (useNullableDataTypes)
-                            dtByte |= 0x80;
+                    // Serialize column name and type
+                    columnMetaData.Write(column.ColumnName);
+                    columnMetaData.Write(dtByte);
 
-                        // Serialize column name and type
-                        columnMetaData.Write(column.ColumnName);
-                        columnMetaData.Write(dtByte);
-
-                        // Track data types and column indices in parallel lists for faster DataRow serialization
-                        columnIndices.Add(column.Ordinal);
-                        columnDataTypes.Add(dataType);
-                    }
-
-                    // Serialize table name and column count
-                    output.Write(table.TableName);
-                    output.Write(columnIndices.Count);
-
-                    // Write column metadata
-                    output.Write(columnMetaDataStream.ToArray(), 0, (int)columnMetaDataStream.Length);
+                    // Track data types and column indices in parallel lists for faster DataRow serialization
+                    columnIndices.Add(column.Ordinal);
+                    columnDataTypes.Add(dataType);
                 }
 
-                // Serialize row count
-                output.Write(table.Rows.Count);
+                // Serialize table name and column count
+                output.Write(table.TableName);
+                output.Write(columnIndices.Count);
 
-                // Serialize rows
-                foreach (DataRow row in table.Rows)
+                // Write column metadata
+                output.Write(columnMetaDataStream.ToArray(), 0, (int)columnMetaDataStream.Length);
+            }
+
+            // Serialize row count
+            output.Write(table.Rows.Count);
+
+            // Serialize rows
+            foreach (DataRow row in table.Rows)
+            {
+                // Serialize column data
+                for (int i = 0; i < columnIndices.Count; i++)
                 {
-                    // Serialize column data
-                    for (int i = 0; i < columnIndices.Count; i++)
+                    object value = row[columnIndices[i]];
+
+                    if (useNullableDataTypes)
                     {
-                        object value = row[columnIndices[i]];
+                        output.Write((byte)(value == DBNull.Value ? 1 : 0));
 
-                        if (useNullableDataTypes)
-                        {
-                            output.Write((byte)(value == DBNull.Value ? 1 : 0));
+                        if (value == DBNull.Value)
+                            continue;
+                    }
 
-                            if (value == DBNull.Value)
-                                continue;
-                        }
+                    switch (columnDataTypes[i])
+                    {
+                        case DataType.Boolean:
+                            output.Write(value.NotDBNull<bool>());
 
-                        switch (columnDataTypes[i])
-                        {
-                            case DataType.Boolean:
-                                output.Write(value.NotDBNull<bool>());
+                            break;
+                        case DataType.Byte:
+                            output.Write(value.NotDBNull<byte>());
 
-                                break;
-                            case DataType.Byte:
-                                output.Write(value.NotDBNull<byte>());
+                            break;
+                        case DataType.Char:
+                            output.Write(value.NotDBNull<char>());
 
-                                break;
-                            case DataType.Char:
-                                output.Write(value.NotDBNull<char>());
+                            break;
+                        case DataType.DateTime:
+                            output.Write(value.NotDBNull<DateTime>().Ticks);
 
-                                break;
-                            case DataType.DateTime:
-                                output.Write(value.NotDBNull<DateTime>().Ticks);
+                            break;
+                        case DataType.Decimal:
+                            output.Write(value.NotDBNull<decimal>());
 
-                                break;
-                            case DataType.Decimal:
-                                output.Write(value.NotDBNull<decimal>());
+                            break;
+                        case DataType.Double:
+                            output.Write(value.NotDBNull<double>());
 
-                                break;
-                            case DataType.Double:
-                                output.Write(value.NotDBNull<double>());
+                            break;
+                        case DataType.Guid:
+                            output.Write(value.NotDBNull<Guid>().ToByteArray());
 
-                                break;
-                            case DataType.Guid:
-                                output.Write(value.NotDBNull<Guid>().ToByteArray());
+                            break;
+                        case DataType.Int16:
+                            output.Write(value.NotDBNull<short>());
 
-                                break;
-                            case DataType.Int16:
-                                output.Write(value.NotDBNull<short>());
+                            break;
+                        case DataType.Int32:
+                            output.Write(value.NotDBNull<int>());
 
-                                break;
-                            case DataType.Int32:
-                                output.Write(value.NotDBNull<int>());
+                            break;
+                        case DataType.Int64:
+                            output.Write(value.NotDBNull<long>());
 
-                                break;
-                            case DataType.Int64:
-                                output.Write(value.NotDBNull<long>());
+                            break;
+                        case DataType.SByte:
+                            output.Write(value.NotDBNull<sbyte>());
 
-                                break;
-                            case DataType.SByte:
-                                output.Write(value.NotDBNull<sbyte>());
+                            break;
+                        case DataType.Single:
+                            output.Write(value.NotDBNull<float>());
 
-                                break;
-                            case DataType.Single:
-                                output.Write(value.NotDBNull<float>());
+                            break;
+                        case DataType.String:
+                            output.Write(value.NotDBNullString());
 
-                                break;
-                            case DataType.String:
-                                output.Write(value.NotDBNullString());
+                            break;
+                        case DataType.TimeSpan:
+                            output.Write(value.NotDBNull<TimeSpan>().Ticks);
 
-                                break;
-                            case DataType.TimeSpan:
-                                output.Write(value.NotDBNull<TimeSpan>().Ticks);
+                            break;
+                        case DataType.UInt16:
+                            output.Write(value.NotDBNull<ushort>());
 
-                                break;
-                            case DataType.UInt16:
-                                output.Write(value.NotDBNull<ushort>());
+                            break;
+                        case DataType.UInt32:
+                            output.Write(value.NotDBNull<uint>());
 
-                                break;
-                            case DataType.UInt32:
-                                output.Write(value.NotDBNull<uint>());
+                            break;
+                        case DataType.UInt64:
+                            output.Write(value.NotDBNull<ulong>());
 
-                                break;
-                            case DataType.UInt64:
-                                output.Write(value.NotDBNull<ulong>());
+                            break;
+                        case DataType.Blob:
+                            byte[]? blob = value.NotDBNull<byte[]>();
 
-                                break;
-                            case DataType.Blob:
-                                byte[] blob = value.NotDBNull<byte[]>();
+                            if (blob is null || blob.Length == 0)
+                            {
+                                output.Write(0);
+                            }
+                            else
+                            {
+                                output.Write(blob.Length);
+                                output.Write(blob);
+                            }
 
-                                if (blob is null || blob.Length == 0)
-                                {
-                                    output.Write(0);
-                                }
-                                else
-                                {
-                                    output.Write(blob.Length);
-                                    output.Write(blob);
-                                }
-
-                                break;
-                        }
+                            break;
                     }
                 }
             }
         }
+    }
 
     /// <summary>
     /// Deserializes a <see cref="DataSet"/> from a <see cref="Stream"/>.
@@ -344,162 +344,162 @@ public static class DataSetExtensions
     /// <param name="source"><see cref="Stream"/> to deserialize <see cref="DataSet"/> from.</param>
     public static DataSet DeserializeToDataSet(this Stream source)
     {
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
+        if (source is null)
+            throw new ArgumentNullException(nameof(source));
 
-            if (!source.CanRead)
-                throw new InvalidOperationException("Cannot read from a write-only stream");
+        if (!source.CanRead)
+            throw new InvalidOperationException("Cannot read from a write-only stream");
 
-            DataSet dataset = new();
+        DataSet dataset = new();
 
-            BinaryReader input = new(source);
+        BinaryReader input = new(source);
 
-            // Deserialize dataset name and table count
-            dataset.DataSetName = input.ReadString();
-            int tableCount = input.ReadInt32();
+        // Deserialize dataset name and table count
+        dataset.DataSetName = input.ReadString();
+        int tableCount = input.ReadInt32();
 
-            // Deserialize tables
-            for (int i = 0; i < tableCount; i++)
+        // Deserialize tables
+        for (int i = 0; i < tableCount; i++)
+        {
+            List<int> columnIndices = new();
+            List<DataType> columnDataTypes = new();
+            List<bool> columnNullable = new();
+
+            DataTable table = dataset.Tables.Add();
+
+            // Deserialize table name and column count
+            table.TableName = input.ReadString();
+            int columnCount = input.ReadInt32();
+
+            // Deserialize column metadata
+            for (int j = 0; j < columnCount; j++)
             {
-                List<int> columnIndices = new();
-                List<DataType> columnDataTypes = new();
-                List<bool> columnNullable = new();
+                DataColumn column = table.Columns.Add();
 
-                DataTable table = dataset.Tables.Add();
+                // Deserialize column name and type
+                column.ColumnName = input.ReadString();
 
-                // Deserialize table name and column count
-                table.TableName = input.ReadString();
-                int columnCount = input.ReadInt32();
+                byte dtByte = input.ReadByte();
+                DataType dataType = (DataType)(dtByte & 0x7F);
+                column.DataType = dataType.DeriveColumnType();
+                columnNullable.Add((dtByte & 0x80) != 0);
 
-                // Deserialize column metadata
-                for (int j = 0; j < columnCount; j++)
-                {
-                    DataColumn column = table.Columns.Add();
-
-                    // Deserialize column name and type
-                    column.ColumnName = input.ReadString();
-
-                    byte dtByte = input.ReadByte();
-                    DataType dataType = (DataType)(dtByte & 0x7F);
-                    column.DataType = dataType.DeriveColumnType();
-                    columnNullable.Add((dtByte & 0x80) != 0);
-
-                    // Track data types and column indices in parallel lists for faster DataRow deserialization
-                    columnIndices.Add(column.Ordinal);
-                    columnDataTypes.Add(dataType);
-                }
-
-                // Deserialize row count
-                int rowCount = input.ReadInt32();
-
-                // Deserialize rows
-                for (int j = 0; j < rowCount; j++)
-                {
-                    DataRow row = table.NewRow();
-
-                    // Deserialize column data
-                    for (int k = 0; k < columnIndices.Count; k++)
-                    {
-                        object? value = null;
-
-                        if (columnNullable[k] && input.ReadByte() != 0)
-                        {
-                            // Set column value to DBNull
-                            row[columnIndices[k]] = DBNull.Value;
-
-                            continue;
-                        }
-
-                        switch (columnDataTypes[k])
-                        {
-                            case DataType.Boolean:
-                                value = input.ReadBoolean();
-
-                                break;
-                            case DataType.Byte:
-                                value = input.ReadByte();
-
-                                break;
-                            case DataType.Char:
-                                value = input.ReadChar();
-
-                                break;
-                            case DataType.DateTime:
-                                value = new DateTime(input.ReadInt64());
-
-                                break;
-                            case DataType.Decimal:
-                                value = input.ReadDecimal();
-
-                                break;
-                            case DataType.Double:
-                                value = input.ReadDouble();
-
-                                break;
-                            case DataType.Guid:
-                                value = new Guid(input.ReadBytes(16));
-
-                                break;
-                            case DataType.Int16:
-                                value = input.ReadInt16();
-
-                                break;
-                            case DataType.Int32:
-                                value = input.ReadInt32();
-
-                                break;
-                            case DataType.Int64:
-                                value = input.ReadInt64();
-
-                                break;
-                            case DataType.SByte:
-                                value = input.ReadSByte();
-
-                                break;
-                            case DataType.Single:
-                                value = input.ReadSingle();
-
-                                break;
-                            case DataType.String:
-                                value = input.ReadString();
-
-                                break;
-                            case DataType.TimeSpan:
-                                value = new TimeSpan(input.ReadInt64());
-
-                                break;
-                            case DataType.UInt16:
-                                value = input.ReadUInt16();
-
-                                break;
-                            case DataType.UInt32:
-                                value = input.ReadUInt32();
-
-                                break;
-                            case DataType.UInt64:
-                                value = input.ReadUInt64();
-
-                                break;
-                            case DataType.Blob:
-                                int byteCount = input.ReadInt32();
-
-                                if (byteCount > 0)
-                                    value = input.ReadBytes(byteCount);
-
-                                break;
-                        }
-
-                        // Update column value
-                        row[columnIndices[k]] = value;
-                    }
-
-                    // Add new row to table
-                    table.Rows.Add(row);
-                }
+                // Track data types and column indices in parallel lists for faster DataRow deserialization
+                columnIndices.Add(column.Ordinal);
+                columnDataTypes.Add(dataType);
             }
 
-            return dataset;
+            // Deserialize row count
+            int rowCount = input.ReadInt32();
+
+            // Deserialize rows
+            for (int j = 0; j < rowCount; j++)
+            {
+                DataRow row = table.NewRow();
+
+                // Deserialize column data
+                for (int k = 0; k < columnIndices.Count; k++)
+                {
+                    object? value = null;
+
+                    if (columnNullable[k] && input.ReadByte() != 0)
+                    {
+                        // Set column value to DBNull
+                        row[columnIndices[k]] = DBNull.Value;
+
+                        continue;
+                    }
+
+                    switch (columnDataTypes[k])
+                    {
+                        case DataType.Boolean:
+                            value = input.ReadBoolean();
+
+                            break;
+                        case DataType.Byte:
+                            value = input.ReadByte();
+
+                            break;
+                        case DataType.Char:
+                            value = input.ReadChar();
+
+                            break;
+                        case DataType.DateTime:
+                            value = new DateTime(input.ReadInt64());
+
+                            break;
+                        case DataType.Decimal:
+                            value = input.ReadDecimal();
+
+                            break;
+                        case DataType.Double:
+                            value = input.ReadDouble();
+
+                            break;
+                        case DataType.Guid:
+                            value = new Guid(input.ReadBytes(16));
+
+                            break;
+                        case DataType.Int16:
+                            value = input.ReadInt16();
+
+                            break;
+                        case DataType.Int32:
+                            value = input.ReadInt32();
+
+                            break;
+                        case DataType.Int64:
+                            value = input.ReadInt64();
+
+                            break;
+                        case DataType.SByte:
+                            value = input.ReadSByte();
+
+                            break;
+                        case DataType.Single:
+                            value = input.ReadSingle();
+
+                            break;
+                        case DataType.String:
+                            value = input.ReadString();
+
+                            break;
+                        case DataType.TimeSpan:
+                            value = new TimeSpan(input.ReadInt64());
+
+                            break;
+                        case DataType.UInt16:
+                            value = input.ReadUInt16();
+
+                            break;
+                        case DataType.UInt32:
+                            value = input.ReadUInt32();
+
+                            break;
+                        case DataType.UInt64:
+                            value = input.ReadUInt64();
+
+                            break;
+                        case DataType.Blob:
+                            int byteCount = input.ReadInt32();
+
+                            if (byteCount > 0)
+                                value = input.ReadBytes(byteCount);
+
+                            break;
+                    }
+
+                    // Update column value
+                    row[columnIndices[k]] = value;
+                }
+
+                // Add new row to table
+                table.Rows.Add(row);
+            }
         }
+
+        return dataset;
+    }
 
     /// <summary>
     /// Attempts to derive <see cref="DataType"/> based on object <see cref="Type"/>.
@@ -509,27 +509,39 @@ public static class DataSetExtensions
     /// <param name="assumeStringForUnknownTypes">Flag to determine if unknown column types should be serialized as strings.</param>
     public static DataType GetDataType(this Type objectType, bool assumeStringForUnknownTypes = true)
     {
-            DataType dataType = DataType.Object;
+        DataType dataType = DataType.Object;
 
-            for (int i = 0; i < s_supportedDataTypes.Length; i++)
-            {
-                if (objectType == s_supportedDataTypes[i])
-                    dataType = (DataType)i;
-            }
-
-            return assumeStringForUnknownTypes ? dataType == DataType.Object ? DataType.String : dataType : dataType;
+        for (int i = 0; i < s_supportedDataTypes.Length; i++)
+        {
+            if (objectType == s_supportedDataTypes[i])
+                dataType = (DataType)i;
         }
+
+        return assumeStringForUnknownTypes ? dataType == DataType.Object ? DataType.String : dataType : dataType;
+    }
 
     /// <summary>
     /// Gets column object <see cref="Type"/> from given <see cref="DataType"/>.
     /// </summary>
     /// <param name="dataType"><see cref="DataType"/> to derive object <see cref="Type"/> from.</param>
     /// <returns>Object <see cref="Type"/> derived from given <see cref="DataType"/>.</returns>
-    public static Type DeriveColumnType(this DataType dataType) => s_supportedDataTypes[(int)dataType];
+    public static Type DeriveColumnType(this DataType dataType)
+    {
+        return s_supportedDataTypes[(int)dataType];
+    }
 
-    private static string NotDBNullString(this object value) => value == DBNull.Value ? "" : value.ToString()!;
+    private static string NotDBNullString(this object value)
+    {
+        return value == DBNull.Value ? "" : value.ToString()!;
+    }
 
-    private static T NotDBNull<T>(this object value, T defaultValue) => value == DBNull.Value ? defaultValue : (T)value;
+    private static T? NotDBNull<T>(this object value, T? defaultValue)
+    {
+        return value == DBNull.Value ? defaultValue : (T)value;
+    }
 
-    private static T NotDBNull<T>(this object value) => value.NotDBNull(default(T)!);
+    private static T? NotDBNull<T>(this object value)
+    {
+        return value.NotDBNull(default(T)!);
+    }
 }

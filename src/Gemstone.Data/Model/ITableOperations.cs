@@ -25,8 +25,11 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Threading;
+using System.Threading.Tasks;
 using Gemstone.Expressions.Model;
 
 // ReSharper disable UnusedMemberInSuper.Global
@@ -37,6 +40,11 @@ namespace Gemstone.Data.Model;
 /// </summary>
 public interface ITableOperations
 {
+    /// <summary>
+    /// Gets <see cref="AdoDataConnection"/> instance associated with this <see cref="TableOperations{T}"/> used for database operations.
+    /// </summary>
+    AdoDataConnection Connection { get; }
+
     /// <summary>
     /// Gets the table name defined for the modeled table, includes any escaping as defined in model.
     /// </summary>
@@ -63,7 +71,7 @@ public interface ITableOperations
     /// encountered exceptions will be passed to handler for processing. Otherwise, exceptions will be thrown
     /// on the call stack.
     /// </remarks>
-    Action<Exception>? ExceptionHandler { get; set; }
+    Action<Exception>? ExceptionHandler { get; init; }
 
     /// <summary>
     /// Gets or sets flag that determines if field names should be treated as case-sensitive. Defaults to <c>false</c>.
@@ -73,7 +81,7 @@ public interface ITableOperations
     /// to properly update escaped field names that may be case-sensitive. For example, escaped field names in Oracle
     /// are case-sensitive. This value is typically <c>false</c>.
     /// </remarks>
-    bool UseCaseSensitiveFieldNames { get; set; }
+    bool UseCaseSensitiveFieldNames { get; init; }
 
     /// <summary>
     /// Gets or sets primary key cache.
@@ -125,7 +133,7 @@ public interface ITableOperations
     /// returned value so that the field value will be properly set prior to executing the database function.
     /// </para>
     /// </remarks>
-    RecordRestriction? RootQueryRestriction { get; set; }
+    RecordRestriction? RootQueryRestriction { get; init; }
 
     /// <summary>
     /// Gets or sets flag that determines if <see cref="RootQueryRestriction"/> should be applied to update operations.
@@ -141,7 +149,7 @@ public interface ITableOperations
     /// <see cref="RootQueryRestrictionAttribute.ApplyToUpdates"/>.
     /// </para>
     /// </remarks>
-    bool ApplyRootQueryRestrictionToUpdates { get; set; }
+    bool ApplyRootQueryRestrictionToUpdates { get; init; }
 
     /// <summary>
     /// Gets or sets flag that determines if <see cref="RootQueryRestriction"/> should be applied to delete operations.
@@ -157,7 +165,7 @@ public interface ITableOperations
     /// <see cref="RootQueryRestrictionAttribute.ApplyToDeletes"/>.
     /// </para>
     /// </remarks>
-    bool ApplyRootQueryRestrictionToDeletes { get; set; }
+    bool ApplyRootQueryRestrictionToDeletes { get; init; }
 
     /// <summary>
     /// Creates a new modeled record instance, applying any modeled default values as specified by a
@@ -205,6 +213,29 @@ public interface ITableOperations
     object? QueryRecord(RecordRestriction? restriction);
 
     /// <summary>
+    /// Queries database and returns a single modeled table record for the specified <paramref name="restriction"/>.
+    /// </summary>
+    /// <param name="restriction">Record restriction to apply.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>A single modeled table record for the queried record.</returns>
+    /// <remarks>
+    /// <para>
+    /// If no record is found for specified <paramref name="restriction"/>, <c>null</c> will be returned.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    ValueTask<object?> QueryRecordAsync(RecordRestriction? restriction, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Queries database and returns a single modeled table record for the specified <paramref name="restriction"/>,
     /// execution of query will apply <paramref name="orderByExpression"/>.
     /// </summary>
@@ -227,6 +258,31 @@ public interface ITableOperations
     /// </para>
     /// </remarks>
     object? QueryRecord(string? orderByExpression, RecordRestriction? restriction);
+
+    /// <summary>
+    /// Queries database and returns a single modeled table record for the specified <paramref name="restriction"/>,
+    /// execution of query will apply <paramref name="orderByExpression"/>.
+    /// </summary>
+    /// <param name="orderByExpression">Field name expression used for sort order, include ASC or DESC as needed - does not include ORDER BY; defaults to primary keys.</param>
+    /// <param name="restriction">Record restriction to apply.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>A single modeled table record for the queried record.</returns>
+    /// <remarks>
+    /// <para>
+    /// If no record is found for specified <paramref name="restriction"/>, <c>null</c> will be returned.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    ValueTask<object?> QueryRecordAsync(string? orderByExpression, RecordRestriction? restriction, CancellationToken cancellationToken);
 
     /// <summary>
     /// Queries database and returns a single modeled table record for the specified SQL filter
@@ -266,6 +322,44 @@ public interface ITableOperations
     object? QueryRecordWhere(string? filterExpression, params object?[] parameters);
 
     /// <summary>
+    /// Queries database and returns a single modeled table record for the specified SQL filter
+    /// expression and parameters.
+    /// </summary>
+    /// <param name="filterExpression">
+    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
+    /// When escaping is needed for field names, use standard ANSI quotes.
+    /// </param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">Restriction parameter values.</param>
+    /// <returns>A single modeled table record for the queried record.</returns>
+    /// <remarks>
+    /// <para>
+    /// If no record is found for specified filter expression and parameters, <c>null</c> will be returned.
+    /// </para>
+    /// <para>
+    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
+    /// will be converted into query parameters where each of the corresponding values in the
+    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
+    /// values to an executed <see cref="IDbCommand"/> query.
+    /// </para>
+    /// <para>
+    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// <para>
+    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
+    /// will be updated to reflect what is defined in the user model.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
+    /// </para>
+    /// </remarks>
+    ValueTask<object?> QueryRecordWhereAsync(string? filterExpression, CancellationToken cancellationToken, params object?[] parameters);
+
+    /// <summary>
     /// Queries database and returns modeled table records for the specified parameters.
     /// </summary>
     /// <param name="orderByExpression">Field name expression used for sort order, include ASC or DESC as needed - does not include ORDER BY; defaults to primary keys.</param>
@@ -286,6 +380,27 @@ public interface ITableOperations
     IEnumerable QueryRecords(string? orderByExpression = null, RecordRestriction? restriction = null, int limit = -1);
 
     /// <summary>
+    /// Queries database and returns modeled table records for the specified parameters.
+    /// </summary>
+    /// <param name="orderByExpression">Field name expression used for sort order, include ASC or DESC as needed - does not include ORDER BY; defaults to primary keys.</param>
+    /// <param name="restriction">Record restriction to apply, if any.</param>
+    /// <param name="limit">Limit of number of record to return.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// If no record <paramref name="restriction"/> or <paramref name="limit"/> is provided, all rows will be returned.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    IAsyncEnumerable<object?> QueryRecordsAsync(string? orderByExpression = null, RecordRestriction? restriction = null, int limit = -1, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Queries database and returns modeled table records for the specified <paramref name="restriction"/>.
     /// </summary>
     /// <param name="restriction">Record restriction to apply.</param>
@@ -303,6 +418,26 @@ public interface ITableOperations
     /// </para>
     /// </remarks>
     IEnumerable QueryRecords(RecordRestriction? restriction);
+
+    /// <summary>
+    /// Queries database and returns modeled table records for the specified <paramref name="restriction"/>.
+    /// </summary>
+    /// <param name="restriction">Record restriction to apply.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/> only
+    /// specifying the <see cref="RecordRestriction"/> parameter.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    IAsyncEnumerable<object?> QueryRecordsAsync(RecordRestriction? restriction, CancellationToken cancellationToken);
 
     /// <summary>
     /// Queries database and returns modeled table records for the specified SQL filter expression
@@ -339,6 +474,86 @@ public interface ITableOperations
     IEnumerable QueryRecordsWhere(string? filterExpression, params object?[] parameters);
 
     /// <summary>
+    /// Queries database and returns modeled table records for the specified SQL filter expression
+    /// and parameters.
+    /// </summary>
+    /// <param name="filterExpression">
+    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
+    /// When escaping is needed for field names, use standard ANSI quotes.
+    /// </param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">Restriction parameter values.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
+    /// will be converted into query parameters where each of the corresponding values in the
+    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
+    /// values to an executed <see cref="IDbCommand"/> query.
+    /// </para>
+    /// <para>
+    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// <para>
+    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
+    /// will be updated to reflect what is defined in the user model.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/> only
+    /// specifying the <see cref="RecordRestriction"/> parameter.
+    /// </para>
+    /// </remarks>
+    IAsyncEnumerable<object?> QueryRecordsWhereAsync(string? filterExpression, CancellationToken cancellationToken, params object?[] parameters);
+
+    /// <summary>
+    /// Queries database and returns modeled table records for the specified sorting and paging parameters.
+    /// </summary>
+    /// <param name="sortField">Field name to order-by.</param>
+    /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+    /// <param name="page">Page number of records to return (1-based).</param>
+    /// <param name="pageSize">Current page size.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// This function is used for record paging. Primary keys are cached server-side, typically per user session,
+    /// to maintain desired per-page sort order. Call <see cref="ClearPrimaryKeyCache"/> to manually clear cache
+    /// when table contents are known to have changed.
+    /// </para>
+    /// <para>
+    /// If the specified <paramref name="sortField"/> has been marked with <see cref="EncryptDataAttribute"/>,
+    /// establishing the primary key cache operation will take longer to execute since query data will need to
+    /// be downloaded locally and decrypted so the proper sort order can be determined.
+    /// </para>
+    /// </remarks>
+    IEnumerable QueryRecords(string? sortField, bool ascending, int page, int pageSize);
+
+    /// <summary>
+    /// Queries database and returns modeled table records for the specified sorting and paging parameters.
+    /// </summary>
+    /// <param name="sortField">Field name to order-by.</param>
+    /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+    /// <param name="page">Page number of records to return (1-based).</param>
+    /// <param name="pageSize">Current page size.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// This function is used for record paging. Primary keys are cached server-side, typically per user session,
+    /// to maintain desired per-page sort order. Call <see cref="ClearPrimaryKeyCache"/> to manually clear cache
+    /// when table contents are known to have changed.
+    /// </para>
+    /// <para>
+    /// If the specified <paramref name="sortField"/> has been marked with <see cref="EncryptDataAttribute"/>,
+    /// establishing the primary key cache operation will take longer to execute since query data will need to
+    /// be downloaded locally and decrypted so the proper sort order can be determined.
+    /// </para>
+    /// </remarks>
+    IAsyncEnumerable<object> QueryRecordsAsync(string? sortField, bool ascending, int page, int pageSize, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Queries database and returns modeled table records for the specified sorting, paging and search parameters.
     /// Search executed against fields modeled with <see cref="SearchableAttribute"/>.
     /// </summary>
@@ -346,7 +561,7 @@ public interface ITableOperations
     /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
     /// <param name="page">Page number of records to return (1-based).</param>
     /// <param name="pageSize">Current page size.</param>
-    /// <param name="filters"> <see cref="IRecordFilter"/> to be applied />.</param>
+    /// <param name="recordFilters">Record Filters to be applied.</param>
     /// <returns>An enumerable of modeled table row instances for queried records.</returns>
     /// <remarks>
     /// <para>
@@ -361,10 +576,39 @@ public interface ITableOperations
     /// </para>
     /// <para>
     /// This is a convenience call to <see cref="QueryRecords(string, bool, int, int, RecordRestriction[])"/> where restriction
-    /// is generated by <see cref="GetSearchRestrictions"/> using <paramref name="filters"/>.
+    /// is generated by <see cref="GetSearchRestrictions"/> using <paramref name="recordFilters"/>.
     /// </para>
     /// </remarks>
-    IEnumerable QueryRecords(string? sortField, bool ascending, int page, int pageSize, params IRecordFilter?[]? filters);
+    IEnumerable QueryRecords(string? sortField, bool ascending, int page, int pageSize, params IRecordFilter?[]? recordFilters);
+
+    /// <summary>
+    /// Queries database and returns modeled table records for the specified sorting, paging and search parameters.
+    /// Search executed against fields modeled with <see cref="SearchableAttribute"/>.
+    /// </summary>
+    /// <param name="sortField">Field name to order-by.</param>
+    /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+    /// <param name="page">Page number of records to return (1-based).</param>
+    /// <param name="pageSize">Current page size.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="recordFilters">Record Filters to be applied.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// This function is used for record paging. Primary keys are cached server-side, typically per user session,
+    /// to maintain desired per-page sort order. Call <see cref="ClearPrimaryKeyCache"/> to manually clear cache
+    /// when table contents are known to have changed.
+    /// </para>
+    /// <para>
+    /// If the specified <paramref name="sortField"/> has been marked with <see cref="EncryptDataAttribute"/>,
+    /// establishing the primary key cache operation will take longer to execute since query data will need to
+    /// be downloaded locally and decrypted so the proper sort order can be determined.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecords(string, bool, int, int, RecordRestriction[])"/> where restriction
+    /// is generated by <see cref="GetSearchRestrictions(IRecordFilter[])"/> using <paramref name="recordFilters"/>.
+    /// </para>
+    /// </remarks>
+    IAsyncEnumerable<object> QueryRecordsAsync(string? sortField, bool ascending, int page, int pageSize, CancellationToken cancellationToken, params IRecordFilter?[]? recordFilters);
 
     /// <summary>
     /// Queries database and returns modeled table records for the specified sorting and paging parameters.
@@ -396,6 +640,53 @@ public interface ITableOperations
     IEnumerable QueryRecords(string? sortField, bool ascending, int page, int pageSize, params RecordRestriction?[]? restrictions);
 
     /// <summary>
+    /// Queries database and returns modeled table records for the specified sorting and paging parameters.
+    /// </summary>
+    /// <param name="sortField">Field name to order-by.</param>
+    /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+    /// <param name="page">Page number of records to return (1-based).</param>
+    /// <param name="pageSize">Current page size.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="restrictions">Record restrictions to apply, if any.</param>
+    /// <returns>An enumerable of modeled table row instances for queried records.</returns>
+    /// <remarks>
+    /// <para>
+    /// This function is used for record paging. Primary keys are cached server-side, typically per user session,
+    /// to maintain desired per-page sort order. Call <see cref="ClearPrimaryKeyCache"/> to manually clear cache
+    /// when table contents are known to have changed.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restrictions"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// <para>
+    /// If the specified <paramref name="sortField"/> has been marked with <see cref="EncryptDataAttribute"/>,
+    /// establishing the primary key cache operation will take longer to execute since query data will need to
+    /// be downloaded locally and decrypted so the proper sort order can be determined.
+    /// </para>
+    /// </remarks>
+    IAsyncEnumerable<object> QueryRecordsAsync(string? sortField, bool ascending, int page, int pageSize, CancellationToken cancellationToken, params RecordRestriction?[]? restrictions);
+
+    /// <summary>
+    /// Gets total record count for the modeled table.
+    /// </summary>
+    /// <returns>
+    /// Total record count for the modeled table.
+    /// </returns>
+    int QueryRecordCount();
+
+    /// <summary>
+    /// Gets total record count for the modeled table.
+    /// </summary>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>
+    /// Total record count for the modeled table.
+    /// </returns>
+    Task<int> QueryRecordCountAsync(CancellationToken cancellationToken);
+
+    /// <summary>
     /// Gets the record count for the modeled table based on search parameter.
     /// Search executed against fields modeled with <see cref="SearchableAttribute"/>.
     /// </summary>
@@ -406,6 +697,19 @@ public interface ITableOperations
     /// is generated by <see cref="GetSearchRestrictions(IRecordFilter[])"/>
     /// </remarks>
     int QueryRecordCount(params IRecordFilter?[]? recordFilter);
+
+    /// <summary>
+    /// Gets the record count for the modeled table based on search parameter.
+    /// Search executed against fields modeled with <see cref="SearchableAttribute"/>.
+    /// </summary>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="recordFilter"><see cref="IRecordFilter"/> to be filtered by</param>
+    /// <returns>Record count for the modeled table based on search parameter.</returns>
+    /// <remarks>
+    /// This is a convenience call to <see cref="QueryRecordCount(RecordRestriction[])"/> where restriction
+    /// is generated by <see cref="GetSearchRestrictions(IRecordFilter[])"/>
+    /// </remarks>
+    Task<int> QueryRecordCountAsync(CancellationToken cancellationToken, params IRecordFilter?[]? recordFilter);
 
     /// <summary>
     /// Gets the record count for the specified <paramref name="restrictions"/> - or - total record
@@ -423,6 +727,24 @@ public interface ITableOperations
     /// returned value so that the field value will be properly set prior to executing the database function.
     /// </remarks>
     int QueryRecordCount(params RecordRestriction?[]? restrictions);
+
+    /// <summary>
+    /// Gets the record count for the specified <paramref name="restrictions"/> - or - total record
+    /// count for the modeled table if <paramref name="restrictions"/> is <c>null</c>.
+    /// </summary>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="restrictions">Record restrictions to apply, if any.</param>
+    /// <returns>
+    /// Record count for the specified <paramref name="restrictions"/> - or - total record count
+    /// for the modeled table if no <see cref="RecordRestriction"/> is provided.
+    /// </returns>
+    /// <remarks>
+    /// If any of the <paramref name="restrictions"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </remarks>
+    Task<int> QueryRecordCountAsync(CancellationToken cancellationToken, params RecordRestriction?[]? restrictions);
 
     /// <summary>
     /// Gets the record count for the modeled table for the specified SQL filter expression and parameters.
@@ -457,14 +779,47 @@ public interface ITableOperations
     int QueryRecordCountWhere(string? filterExpression, params object?[] parameters);
 
     /// <summary>
+    /// Gets the record count for the modeled table for the specified SQL filter expression and parameters.
+    /// </summary>
+    /// <param name="filterExpression">
+    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
+    /// When escaping is needed for field names, use standard ANSI quotes.
+    /// </param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">Restriction parameter values.</param>
+    /// <returns>Record count for the modeled table for the specified parameters.</returns>
+    /// <remarks>
+    /// <para>
+    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
+    /// will be converted into query parameters where each of the corresponding values in the
+    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
+    /// values to an executed <see cref="IDbCommand"/> query.
+    /// </para>
+    /// <para>
+    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// <para>
+    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
+    /// will be updated to reflect what is defined in the user model.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="QueryRecordCount(RecordRestriction[])"/>.
+    /// </para>
+    /// </remarks>
+    Task<int> QueryRecordCountWhereAsync(string? filterExpression, CancellationToken cancellationToken, params object?[] parameters);
+
+    /// <summary>
     /// Locally searches retrieved table records after queried from database for the specified sorting and search parameters.
     /// Search executed against fields modeled with <see cref="SearchableAttribute"/>.
     /// Function only typically used for record models that apply the <see cref="EncryptDataAttribute"/>.
     /// </summary>
     /// <param name="sortField">Field name to order-by.</param>
     /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
-    /// <param name="recordFilter">Record Filters to be applied.</param>
     /// <param name="comparison"><see cref="StringComparison"/> to use when searching string fields; defaults to ordinal ignore case.</param>
+    /// <param name="recordFilters">Record Filters to be applied.</param>
     /// <returns>An array of modeled table row instances for the queried records that match the search.</returns>
     /// <remarks>
     /// <para>
@@ -479,7 +834,33 @@ public interface ITableOperations
     /// through them using the <see cref="GetPageOfRecords"/> function. As a result, usage should be restricted to smaller data sets. 
     /// </para>
     /// </remarks>
-    object?[]? SearchRecords(string sortField, bool ascending, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilter);
+    object?[]? SearchRecords(string sortField, bool ascending, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilters);
+
+    /// <summary>
+    /// Locally searches retrieved table records after queried from database for the specified sorting and search parameters.
+    /// Search executed against fields modeled with <see cref="SearchableAttribute"/>.
+    /// Function only typically used for record models that apply the <see cref="EncryptDataAttribute"/>.
+    /// </summary>
+    /// <param name="sortField">Field name to order-by.</param>
+    /// <param name="ascending">Sort ascending flag; set to <c>false</c> for descending.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="comparison"><see cref="StringComparison"/> to use when searching string fields; defaults to ordinal ignore case.</param>
+    /// <param name="recordFilters">Record Filters to be applied.</param>
+    /// <returns>An array of modeled table row instances for the queried records that match the search.</returns>
+    /// <remarks>
+    /// <para>
+    /// This function searches records locally after query from database, this way Search functionality will work
+    /// even with fields that are modeled with the <see cref="EncryptDataAttribute"/> and use restrictions not being = or =/=.
+    /// Primary keys for this function will not be cached server-side and this function will be slower and more expensive than similar calls
+    /// to <see cref="QueryRecords(string, bool, int, int, IRecordFilter[])"/>. Usage should be restricted to cases searching for field data that has
+    /// been modeled with the <see cref="EncryptDataAttribute"/>.
+    /// </para>
+    /// <para>
+    /// This function does not paginate records, instead a full list of search records is returned. User can cache returned records and page
+    /// through them using the <see cref="GetPageOfRecordsAsync"/> function. As a result, usage should be restricted to smaller data sets. 
+    /// </para>
+    /// </remarks>
+    IAsyncEnumerable<object?> SearchRecordsAsync(string sortField, bool ascending, CancellationToken cancellationToken, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilters);
 
     /// <summary>
     /// Gets the specified <paramref name="page"/> of records from the provided source <paramref name="records"/> array.
@@ -488,7 +869,16 @@ public interface ITableOperations
     /// <param name="page">Desired page of records.</param>
     /// <param name="pageSize">Desired page size.</param>
     /// <returns>A page of records.</returns>
-    IEnumerable GetPageOfRecords(object[] records, int page, int pageSize);
+    IEnumerable GetPageOfRecords(object?[] records, int page, int pageSize);
+
+    /// <summary>
+    /// Gets the specified <paramref name="page"/> of records from the provided source <paramref name="records"/> array.
+    /// </summary>
+    /// <param name="records">Source records array.</param>
+    /// <param name="page">Desired page of records.</param>
+    /// <param name="pageSize">Desired page size.</param>
+    /// <returns>A page of records.</returns>
+    IAsyncEnumerable<object?> GetPageOfRecordsAsync(IAsyncEnumerable<object?> records, int page, int pageSize);
 
     /// <summary>
     /// Creates a new modeled table record queried from the specified <paramref name="primaryKeys"/>.
@@ -496,6 +886,14 @@ public interface ITableOperations
     /// <param name="primaryKeys">Primary keys values of the record to load.</param>
     /// <returns>New modeled table record queried from the specified <paramref name="primaryKeys"/>.</returns>
     object? LoadRecord(params object[] primaryKeys);
+
+    /// <summary>
+    /// Creates a new modeled table record queried from the specified <paramref name="primaryKeys"/>.
+    /// </summary>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="primaryKeys">Primary keys values of the record to load.</param>
+    /// <returns>New modeled table record queried from the specified <paramref name="primaryKeys"/>.</returns>
+    Task<object?> LoadRecordAsync(CancellationToken cancellationToken, params object[] primaryKeys);
 
     /// <summary>
     /// Creates a new modeled table record queried from the specified <paramref name="row"/>.
@@ -512,11 +910,27 @@ public interface ITableOperations
     DataTable ToDataTable(IEnumerable records);
 
     /// <summary>
+    /// Converts the given collection of <paramref name="records"/> into a <see cref="DataTable"/>.
+    /// </summary>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="records">The collection of records to be inserted into the data table.</param>
+    /// <returns>A data table containing data from the given records.</returns>
+    Task<DataTable> ToDataTableAsync(IAsyncEnumerable<object?> records, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Deletes the record referenced by the specified <paramref name="primaryKeys"/>.
     /// </summary>
     /// <param name="primaryKeys">Primary keys values of the record to load.</param>
     /// <returns>Number of rows affected.</returns>
     int DeleteRecord(params object[] primaryKeys);
+
+    /// <summary>
+    /// Deletes the record referenced by the specified <paramref name="primaryKeys"/>.
+    /// </summary>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="primaryKeys">Primary keys values of the record to load.</param>
+    /// <returns>Number of rows affected.</returns>
+    Task<int> DeleteRecordAsync(CancellationToken cancellationToken, params object[] primaryKeys);
 
     /// <summary>
     /// Deletes the specified modeled table <paramref name="record"/> from the database.
@@ -526,11 +940,27 @@ public interface ITableOperations
     int DeleteRecord(object record);
 
     /// <summary>
+    /// Deletes the specified modeled table <paramref name="record"/> from the database.
+    /// </summary>
+    /// <param name="record">Record to delete.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>Number of rows affected.</returns>
+    Task<int> DeleteRecordAsync(object record, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Deletes the record referenced by the specified <paramref name="row"/>.
     /// </summary>
     /// <param name="row"><see cref="DataRow"/> of queried data to be deleted.</param>
     /// <returns>Number of rows affected.</returns>
     int DeleteRecord(DataRow row);
+
+    /// <summary>
+    /// Deletes the record referenced by the specified <paramref name="row"/>.
+    /// </summary>
+    /// <param name="row"><see cref="DataRow"/> of queried data to be deleted.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>Number of rows affected.</returns>
+    Task<int> DeleteRecordAsync(DataRow row, CancellationToken cancellationToken);
 
     /// <summary>
     /// Deletes the records referenced by the specified <paramref name="restriction"/>.
@@ -549,6 +979,25 @@ public interface ITableOperations
     /// </remarks>
     /// <exception cref="ArgumentNullException"><paramref name="restriction"/> cannot be <c>null</c>.</exception>
     int DeleteRecord(RecordRestriction? restriction, bool? applyRootQueryRestriction = null);
+
+    /// <summary>
+    /// Deletes the records referenced by the specified <paramref name="restriction"/>.
+    /// </summary>
+    /// <param name="restriction">Record restriction to apply</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="applyRootQueryRestriction">
+    /// Flag that determines if any existing <see cref="RootQueryRestriction"/> should be applied. Defaults to
+    /// <see cref="ApplyRootQueryRestrictionToDeletes"/> setting.
+    /// </param>
+    /// <returns>Number of rows affected.</returns>
+    /// <remarks>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException"><paramref name="restriction"/> cannot be <c>null</c>.</exception>
+    Task<int> DeleteRecordAsync(RecordRestriction? restriction, CancellationToken cancellationToken, bool? applyRootQueryRestriction = null);
 
     /// <summary>
     /// Deletes the records referenced by the specified SQL filter expression and parameters.
@@ -583,6 +1032,39 @@ public interface ITableOperations
     int DeleteRecordWhere(string filterExpression, params object?[] parameters);
 
     /// <summary>
+    /// Deletes the records referenced by the specified SQL filter expression and parameters.
+    /// </summary>
+    /// <param name="filterExpression">
+    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
+    /// When escaping is needed for field names, use standard ANSI quotes.
+    /// </param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">Restriction parameter values.</param>
+    /// <returns>Number of rows affected.</returns>
+    /// <remarks>
+    /// <para>
+    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
+    /// will be converted into query parameters where each of the corresponding values in the
+    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
+    /// values to an executed <see cref="IDbCommand"/> query.
+    /// </para>
+    /// <para>
+    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// <para>
+    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
+    /// will be updated to reflect what is defined in the user model.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="DeleteRecord(RecordRestriction, bool?)"/>.
+    /// </para>
+    /// </remarks>
+    Task<int> DeleteRecordWhereAsync(string filterExpression, CancellationToken cancellationToken, params object?[] parameters);
+
+    /// <summary>
     /// Updates the database with the specified modeled table <paramref name="record"/>,
     /// any model properties marked with <see cref="UpdateValueExpressionAttribute"/> will
     /// be evaluated and applied before the record is provided to the data source.
@@ -607,6 +1089,33 @@ public interface ITableOperations
     /// </para>
     /// </remarks>
     int UpdateRecord(object record, RecordRestriction? restriction = null, bool? applyRootQueryRestriction = null);
+
+    /// <summary>
+    /// Updates the database with the specified modeled table <paramref name="record"/>,
+    /// any model properties marked with <see cref="UpdateValueExpressionAttribute"/> will
+    /// be evaluated and applied before the record is provided to the data source.
+    /// </summary>
+    /// <param name="record">Record to update.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="restriction">Record restriction to apply, if any.</param>
+    /// <param name="applyRootQueryRestriction">
+    /// Flag that determines if any existing <see cref="RootQueryRestriction"/> should be applied. Defaults to
+    /// <see cref="ApplyRootQueryRestrictionToUpdates"/> setting.
+    /// </param>
+    /// <returns>Number of rows affected.</returns>
+    /// <remarks>
+    /// <para>
+    /// Record restriction is only used for custom update expressions or in cases where modeled
+    /// table has no defined primary keys.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    Task<int> UpdateRecordAsync(object record, CancellationToken cancellationToken, RecordRestriction? restriction = null, bool? applyRootQueryRestriction = null);
 
     /// <summary>
     /// Updates the database with the specified modeled table <paramref name="record"/>
@@ -649,6 +1158,47 @@ public interface ITableOperations
     int UpdateRecordWhere(object record, string filterExpression, params object?[] parameters);
 
     /// <summary>
+    /// Updates the database with the specified modeled table <paramref name="record"/>
+    /// referenced by the specified SQL filter expression and parameters, any model properties
+    /// marked with <see cref="UpdateValueExpressionAttribute"/> will be evaluated and applied
+    /// before the record is provided to the data source.
+    /// </summary>
+    /// <param name="record">Record to update.</param>
+    /// <param name="filterExpression">
+    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
+    /// When escaping is needed for field names, use standard ANSI quotes.
+    /// </param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">Restriction parameter values.</param>
+    /// <returns>Number of rows affected.</returns>
+    /// <remarks>
+    /// <para>
+    /// Record restriction is only used for custom update expressions or in cases where modeled
+    /// table has no defined primary keys.
+    /// </para>
+    /// <para>
+    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
+    /// will be converted into query parameters where each of the corresponding values in the
+    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
+    /// values to an executed <see cref="IDbCommand"/> query.
+    /// </para>
+    /// <para>
+    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// <para>
+    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
+    /// will be updated to reflect what is defined in the user model.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="UpdateRecord(object, RecordRestriction, bool?)"/>.
+    /// </para>
+    /// </remarks>
+    Task<int> UpdateRecordWhereAsync(object record, string filterExpression, CancellationToken cancellationToken, params object?[] parameters);
+
+    /// <summary>
     /// Updates the database with the specified <paramref name="row"/>, any model properties
     /// marked with <see cref="UpdateValueExpressionAttribute"/> will be evaluated and applied
     /// before the record is provided to the data source.
@@ -669,6 +1219,29 @@ public interface ITableOperations
     /// </para>
     /// </remarks>
     int UpdateRecord(DataRow row, RecordRestriction? restriction = null);
+
+    /// <summary>
+    /// Updates the database with the specified <paramref name="row"/>, any model properties
+    /// marked with <see cref="UpdateValueExpressionAttribute"/> will be evaluated and applied
+    /// before the record is provided to the data source.
+    /// </summary>
+    /// <param name="row"><see cref="DataRow"/> of queried data to be updated.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="restriction">Record restriction to apply, if any.</param>
+    /// <returns>Number of rows affected.</returns>
+    /// <remarks>
+    /// <para>
+    /// Record restriction is only used for custom update expressions or in cases where modeled
+    /// table has no defined primary keys.
+    /// </para>
+    /// <para>
+    /// If any of the <paramref name="restriction"/> parameters reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    Task<int> UpdateRecordAsync(DataRow row, CancellationToken cancellationToken, RecordRestriction? restriction = null);
 
     /// <summary>
     /// Updates the database with the specified <paramref name="row"/> referenced by the
@@ -711,11 +1284,60 @@ public interface ITableOperations
     int UpdateRecordWhere(DataRow row, string filterExpression, params object?[] parameters);
 
     /// <summary>
+    /// Updates the database with the specified <paramref name="row"/> referenced by the
+    /// specified SQL filter expression and parameters, any model properties marked with
+    /// <see cref="UpdateValueExpressionAttribute"/> will be evaluated and applied before
+    /// the record is provided to the data source.
+    /// </summary>
+    /// <param name="row"><see cref="DataRow"/> of queried data to be updated.</param>
+    /// <param name="filterExpression">
+    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
+    /// When escaping is needed for field names, use standard ANSI quotes.
+    /// </param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">Restriction parameter values.</param>
+    /// <returns>Number of rows affected.</returns>
+    /// <remarks>
+    /// <para>
+    /// Record restriction is only used for custom update expressions or in cases where modeled
+    /// table has no defined primary keys.
+    /// </para>
+    /// <para>
+    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
+    /// will be converted into query parameters where each of the corresponding values in the
+    /// <paramref name="parameters"/> collection will be applied as <see cref="IDbDataParameter"/>
+    /// values to an executed <see cref="IDbCommand"/> query.
+    /// </para>
+    /// <para>
+    /// If any of the specified <paramref name="parameters"/> reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// <para>
+    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
+    /// will be updated to reflect what is defined in the user model.
+    /// </para>
+    /// <para>
+    /// This is a convenience call to <see cref="UpdateRecord(DataRow, RecordRestriction)"/>.
+    /// </para>
+    /// </remarks>
+    Task<int> UpdateRecordWhereAsync(DataRow row, string filterExpression, CancellationToken cancellationToken, params object?[] parameters);
+
+    /// <summary>
     /// Adds the specified modeled table <paramref name="record"/> to the database.
     /// </summary>
     /// <param name="record">Record to add.</param>
     /// <returns>Number of rows affected.</returns>
     int AddNewRecord(object record);
+
+    /// <summary>
+    /// Adds the specified modeled table <paramref name="record"/> to the database.
+    /// </summary>
+    /// <param name="record">Record to add.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>Number of rows affected.</returns>
+    Task<int> AddNewRecordAsync(object record, CancellationToken cancellationToken);
 
     /// <summary>
     /// Adds the specified <paramref name="row"/> to the database.
@@ -725,6 +1347,14 @@ public interface ITableOperations
     int AddNewRecord(DataRow row);
 
     /// <summary>
+    /// Adds the specified <paramref name="row"/> to the database.
+    /// </summary>
+    /// <param name="row"><see cref="DataRow"/> of queried data to be added.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>Number of rows affected.</returns>
+    Task<int> AddNewRecordAsync(DataRow row, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Adds the specified modeled table <paramref name="record"/> to the database if the
     /// record has not defined any of its primary key values; otherwise, the database will
     /// be updated with the specified modeled table <paramref name="record"/>.
@@ -732,6 +1362,16 @@ public interface ITableOperations
     /// <param name="record">Record to add or update.</param>
     /// <returns>Number of rows affected.</returns>
     int AddNewOrUpdateRecord(object record);
+
+    /// <summary>
+    /// Adds the specified modeled table <paramref name="record"/> to the database if the
+    /// record has not defined any of its primary key values; otherwise, the database will
+    /// be updated with the specified modeled table <paramref name="record"/>.
+    /// </summary>
+    /// <param name="record">Record to add or update.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>Number of rows affected.</returns>
+    Task<int> AddNewOrUpdateRecordAsync(object record, CancellationToken cancellationToken);
 
     /// <summary>
     /// Gets the primary key values from the specified <paramref name="record"/>.
@@ -833,7 +1473,7 @@ public interface ITableOperations
     /// filter expression where the <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/> have been modeled
     /// on a field referenced by one of the <see cref="RecordRestriction"/> parameters. Since the record restrictions are used
     /// with a free-form expression, the <see cref="TableOperations{T}"/> class cannot be aware of the fields accessed in the
-    /// expression without attempting to parse the expression which would be time consuming and error prone; as a result, users
+    /// expression without attempting to parse the expression which would be time-consuming and error-prone; as a result, users
     /// will need to be aware to call this function when using record restriction that references fields that are either marked
     /// for encryption or use a specific field data-type attribute.
     /// </para>

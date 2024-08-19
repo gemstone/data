@@ -2679,7 +2679,6 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    // ReSharper disable once UnusedParameter.Local
     private object? GetInterpretedValue(PropertyInfo property, object? value, bool skipEncryption = false)
     {
         if (!skipEncryption && s_encryptDataTargets is not null && value is not null && s_encryptDataTargets.TryGetValue(property, out string? keyReference))

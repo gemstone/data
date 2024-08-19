@@ -4,10 +4,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Gemstone.Data.UnitTests
 {
     // TODO: Determine how to enable tests for any environment
-    [TestClass]
+    //[TestClass]
     public class AdoDataConnectionTest
     {
-        //[TestMethod]
+        [TestMethod]
         public void TestSQLServerConnection()
         {
             string connectionString = @"Data Source=localhost\SQLEXPRESS; Initial Catalog=openPDC; Integrated Security=SSPI; TrustServerCertificate=True; Connect Timeout=5";

@@ -155,7 +155,7 @@ public enum DatabaseType
 /// ]]>
 /// </code>
 /// </remarks>
-public class AdoDataConnection : IDisposable
+public class AdoDataConnection : IAsyncDisposable, IDisposable
 {
     #region [ Members ]
 
@@ -280,7 +280,10 @@ public class AdoDataConnection : IDisposable
     /// <summary>
     /// Releases the unmanaged resources before the <see cref="AdoDataConnection"/> object is reclaimed by <see cref="GC"/>.
     /// </summary>
-    ~AdoDataConnection() => Dispose(false);
+    ~AdoDataConnection()
+    {
+        Dispose(false);
+    }
 
     #endregion
 
@@ -1216,6 +1219,32 @@ public class AdoDataConnection : IDisposable
 
             if (m_disposeConnection)
                 Connection.Dispose();
+        }
+        finally
+        {
+            m_disposed = true; // Prevent duplicate dispose.
+        }
+    }
+
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeAsyncCore().ConfigureAwait(false);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Asynchronously releases the resources used by the <see cref="AdoDataConnection"/> object.
+    /// </summary>
+    protected virtual async ValueTask DisposeAsyncCore()
+    {
+        if (m_disposed)
+            return;
+
+        try
+        {
+            if (m_disposeConnection)
+                await Connection.DisposeAsync();
         }
         finally
         {

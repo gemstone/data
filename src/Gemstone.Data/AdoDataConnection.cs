@@ -1458,7 +1458,7 @@ public class AdoDataConnection : IAsyncDisposable, IDisposable
         // Define example connection settings
         section = settings["ExampleConnectionSettings"];
 
-        section.SqlServer_ConnectionString = ("Data Source=.\\SQLEXPRESS; Initial Catalog=DatabaseName; Integrated Security=SSPI; Connect Timeout=5", "Example SQL Server database connection string");
+        section.SqlServer_ConnectionString = ("Data Source=.\\SQLEXPRESS; Initial Catalog=DatabaseName; Integrated Security=SSPI; TrustServerCertificate=True; Connect Timeout=5", "Example SQL Server database connection string");
         section.SqlServer_DataProviderString = ("AssemblyName=Microsoft.Data.SqlClient; ConnectionType=Microsoft.Data.SqlClient.SqlConnection", "Example SQL Server database ADO.NET provider string");
         section.SQLite_ConnectionString = ("Data Source=Example.db; Version=3; FailIfMissing=True; Foreign Keys=True", "Example SQLite database connection string");
         section.SQLite_DataProviderString = ("AssemblyName=Microsoft.Data.Sqlite; ConnectionType=Microsoft.Data.Sqlite.SqliteConnection", "Example SQLite database ADO.NET provider string");

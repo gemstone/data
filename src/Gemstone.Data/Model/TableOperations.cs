@@ -1627,7 +1627,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     {
         try
         {
-            return LoadRecord(Connection.RetrieveRow(m_selectRowSql, GetInterpretedPrimaryKeys(primaryKeys)));
+            return Connection.TryRetrieveRow(m_selectRowSql, out DataRow? row, GetInterpretedPrimaryKeys(primaryKeys)) ? LoadRecord(row!) : default;
+
         }
         catch (Exception ex)
         {
@@ -1657,7 +1658,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     {
         try
         {
-            return LoadRecord(await Connection.RetrieveRowAsync(m_selectRowSql, cancellationToken, GetInterpretedPrimaryKeys(primaryKeys)).ConfigureAwait(false));
+            (DataRow? row, bool success) = await Connection.TryRetrieveRowAsync(m_selectRowSql, cancellationToken, GetInterpretedPrimaryKeys(primaryKeys)).ConfigureAwait(false);
+            return success ? LoadRecord(row!) : default;
+
         }
         catch (Exception ex)
         {
@@ -1682,7 +1685,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     {
         try
         {
-            return LoadRecord(Connection.RetrieveRow(m_selectRowSql, GetInterpretedPrimaryKeys(primaryKeys, true)), properties ?? s_properties.Values);
+            return Connection.TryRetrieveRow(m_selectRowSql, out DataRow? row, GetInterpretedPrimaryKeys(primaryKeys, true)) ? LoadRecord(row!, properties ?? s_properties.Values) : default;
+
         }
         catch (Exception ex)
         {
@@ -1702,7 +1706,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     {
         try
         {
-            return LoadRecord(await Connection.RetrieveRowAsync(m_selectRowSql, cancellationToken, GetInterpretedPrimaryKeys(primaryKeys, true)).ConfigureAwait(false), properties ?? s_properties.Values);
+            (DataRow? row, bool success) = await Connection.TryRetrieveRowAsync(m_selectRowSql, cancellationToken, GetInterpretedPrimaryKeys(primaryKeys, true)).ConfigureAwait(false);
+            return success ? LoadRecord(row!, properties ?? s_properties.Values) : default;
+
         }
         catch (Exception ex)
         {
@@ -1727,21 +1733,12 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return LoadRecord(row, s_properties.Values);
     }
 
-    private T LoadRecordWithKeys(DataRow row)
-    {
-        return LoadRecord(row, s_properties.Values, true)!;
-    }
-
     // This is the primary function where records are loaded from a DataRow into a modeled record of type T
-    private T? LoadRecord(DataRow row, IEnumerable<PropertyInfo> properties, bool skipPrimaryKeyValidation = false)
+    private T? LoadRecord(DataRow row, IEnumerable<PropertyInfo> properties)
     {
         try
         {
             T record = new();
-
-            // Make sure record exists, if not return null instead of a blank record
-            if (s_hasPrimaryKeyIdentityField && !skipPrimaryKeyValidation && GetPrimaryKeys(row).All(Common.IsDefaultValue))
-                return null;
 
             foreach (PropertyInfo property in properties)
             {
@@ -2298,13 +2295,13 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <inheritdoc/>
     public int UpdateRecord(DataRow row, RecordRestriction? restriction = null)
     {
-        return UpdateRecord(LoadRecordWithKeys(row), restriction);
+        return UpdateRecord(LoadRecord(row)!, restriction);
     }
 
     /// <inheritdoc/>
     public Task<int> UpdateRecordAsync(DataRow row, CancellationToken cancellationToken, RecordRestriction? restriction = null)
     {
-        return UpdateRecordAsync(LoadRecordWithKeys(row), cancellationToken, restriction);
+        return UpdateRecordAsync(LoadRecord(row)!, cancellationToken, restriction);
     }
 
     /// <inheritdoc/>
@@ -2407,13 +2404,13 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <inheritdoc/>
     public int AddNewRecord(DataRow row)
     {
-        return AddNewRecord(LoadRecordWithKeys(row));
+        return AddNewRecord(LoadRecord(row)!);
     }
 
     /// <inheritdoc/>
     public Task<int> AddNewRecordAsync(DataRow row, CancellationToken cancellationToken)
     {
-        return AddNewRecordAsync(LoadRecordWithKeys(row), cancellationToken);
+        return AddNewRecordAsync(LoadRecord(row)!, cancellationToken);
     }
 
     /// <summary>

@@ -960,6 +960,62 @@ public class AdoDataConnection : IAsyncDisposable, IDisposable
     }
 
     /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="Connection"/>.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="row">The first <see cref="DataRow"/> in the result set, or <c>null</c>.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryRetrieveRow(string sqlFormat, out DataRow? row, params object?[] parameters)
+    {
+        return TryRetrieveRow(DefaultTimeout, sqlFormat, out row, parameters);
+    }
+
+    /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="Connection"/>.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <returns>Tuple of first <see cref="DataRow"/> in the result set (can be <c>null</c>) and a flag that determines if retrieve was successful.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<(DataRow?, bool)> TryRetrieveRowAsync(string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        return TryRetrieveRowAsync(DefaultTimeout, sqlFormat, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="Connection"/>.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="row">The first <see cref="DataRow"/> in the result set, or <c>null</c>.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryRetrieveRow(int timeout, string sqlFormat, out DataRow? row, params object?[] parameters)
+    {
+        string sql = GenericParameterizedQueryString(sqlFormat, parameters);
+        return Connection.TryRetrieveRow(sql, timeout, out row, ResolveParameters(parameters));
+    }
+
+    /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="Connection"/>.
+    /// </summary>
+    /// <param name="sqlFormat">Format string for the SQL statement to be executed.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="IDbDataParameter"/> parameters.</param>
+    /// <returns>Tuple of first <see cref="DataRow"/> in the result set (can be <c>null</c>) and a flag that determines if retrieve was successful.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<(DataRow?, bool)> TryRetrieveRowAsync(int timeout, string sqlFormat, CancellationToken cancellationToken, params object?[] parameters)
+    {
+        string sql = GenericParameterizedQueryString(sqlFormat, parameters);
+        return Connection.TryRetrieveRowAsync(sql, timeout, cancellationToken, ResolveParameters(parameters));
+    }
+
+    /// <summary>
     /// Executes the SQL statement using <see cref="Connection"/>, and returns the first <see cref="DataTable"/> 
     /// of result set, if the result set contains at least one table.
     /// </summary>
@@ -1333,7 +1389,7 @@ public class AdoDataConnection : IAsyncDisposable, IDisposable
     public string ParameterizedQueryString(string format, params string[] parameterNames)
     {
         char paramChar = IsOracle ? ':' : '@';
-        object[] parameters = parameterNames.Select(name => paramChar + name).Cast<object>().ToArray();
+        object?[] parameters = parameterNames.Select(name => paramChar + name).Cast<object>().ToArray();
 
         return string.Format(format, parameters);
     }

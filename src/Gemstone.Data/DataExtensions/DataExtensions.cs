@@ -848,6 +848,70 @@ public static class DataExtensions
     }
 
     /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="DbConnection"/>.
+    /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="row">The first <see cref="DataRow"/> in the result set, or <c>null</c>.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
+    public static bool TryRetrieveRow(this DbConnection connection, string sql, out DataRow? row, params object[] parameters)
+    {
+        return connection.TryRetrieveRow(sql, DefaultTimeoutDuration, out row, parameters);
+    }
+
+    /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="DbConnection"/>.
+    /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="row">The first <see cref="DataRow"/> in the result set, or <c>null</c>.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
+    public static bool TryRetrieveRow(this DbConnection connection, string sql, int timeout, out DataRow? row, params object[] parameters)
+    {
+        DataTable dataTable = connection.RetrieveData(sql, timeout, parameters);
+
+        if (dataTable.Rows.Count == 0)
+        {
+            row = default;
+            return false;
+        }
+
+        row = dataTable.Rows[0];
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="DbConnection"/>.
+    /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>Tuple of first <see cref="DataRow"/> in the result set (can be <c>null</c>) and a flag that determines if retrieve was successful.</returns>
+    public static Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
+    {
+        return connection.TryRetrieveRowAsync(sql, DefaultTimeoutDuration, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="DbConnection"/>.
+    /// </summary>
+    /// <param name="connection">The <see cref="DbConnection"/> to use for executing the SQL statement.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>Tuple of first <see cref="DataRow"/> in the result set (can be <c>null</c>) and a flag that determines if retrieve was successful.</returns>
+    public static async Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbConnection connection, string sql, int timeout, CancellationToken cancellationToken, params object[] parameters)
+    {
+        DataTable dataTable = await connection.RetrieveDataAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false);
+        return dataTable.Rows.Count == 0 ? (default, false) : (dataTable.Rows[0], true);
+    }
+
+    /// <summary>
     /// Executes the SQL statement using <see cref="DbCommand"/>, and returns the first <see cref="DataRow"/> in the result set.
     /// </summary>
     /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
@@ -911,6 +975,70 @@ public static class DataExtensions
             dataTable.Rows.Add(dataTable.NewRow());
 
         return dataTable.Rows[0];
+    }
+
+    /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="DbCommand"/>.
+    /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="row">The first <see cref="DataRow"/> in the result set, or <c>null</c>.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
+    public static bool TryRetrieveRow(this DbCommand command, string sql, out DataRow? row, params object[] parameters)
+    {
+        return command.TryRetrieveRow(sql, DefaultTimeoutDuration, out row, parameters);
+    }
+
+    /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="DbCommand"/>.
+    /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="row">The first <see cref="DataRow"/> in the result set, or <c>null</c>.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
+    public static bool TryRetrieveRow(this DbCommand command, string sql, int timeout, out DataRow? row, params object[] parameters)
+    {
+        DataTable dataTable = command.RetrieveData(sql, timeout, parameters);
+
+        if (dataTable.Rows.Count == 0)
+        {
+            row = default;
+            return false;
+        }
+
+        row = dataTable.Rows[0];
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="DbCommand"/>.
+    /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>Tuple of first <see cref="DataRow"/> in the result set (can be <c>null</c>) and a flag that determines if retrieve was successful.</returns>
+    public static Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
+    {
+        return command.TryRetrieveRowAsync(sql, DefaultTimeoutDuration, cancellationToken, parameters);
+    }
+
+    /// <summary>
+    /// Tries to retrieve the first <see cref="DataRow"/> in the result set of the SQL statement using <see cref="DbCommand"/>.
+    /// </summary>
+    /// <param name="command">The <see cref="DbCommand"/> to use for executing the SQL statement.</param>
+    /// <param name="sql">The SQL statement to be executed.</param>
+    /// <param name="timeout">The time in seconds to wait for the SQL statement to execute.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
+    /// <returns>Tuple of first <see cref="DataRow"/> in the result set (can be <c>null</c>) and a flag that determines if retrieve was successful.</returns>
+    public static async Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbCommand command, string sql, int timeout, CancellationToken cancellationToken, params object[] parameters)
+    {
+        DataTable dataTable = await command.RetrieveDataAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false);
+        return dataTable.Rows.Count == 0 ? (default, false) : (dataTable.Rows[0], true);
     }
 
     #endregion

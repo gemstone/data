@@ -115,6 +115,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private const string TableNameSuffixToken = "<!TNS/>";
     private const string FieldListPrefixToken = "<!FLP/>";
     private const string FieldListSuffixToken = "<!FLS/>";
+    private const string WildcarChar = "%";
 
     // Fields
     private readonly string m_selectCountSql;
@@ -370,6 +371,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
     /// <inheritdoc/>
     public string UnescapedTableName => s_tableName;
+
+    ///  <inheritdoc/>
+    public string WildcardChar => WildcarChar; 
 
     /// <inheritdoc/>
     public bool HasPrimaryKeyIdentityField => s_hasPrimaryKeyIdentityField;

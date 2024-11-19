@@ -54,7 +54,7 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     public string FieldName { get; set; } = string.Empty;
 
     /// <inheritdoc/>
-    public object? SearchParameter { get; set; }
+    public string SearchParameter { get; set; }
 
     /// <inheritdoc/>
     public string Operator
@@ -91,6 +91,8 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
             info.TryGetAttribute(out SearchExtensionAttribute? searchExtension) &&
             Regex.IsMatch(FieldName, searchExtension.FieldMatch));
 
+        //sub wildcard here
+        
         if (transform is not null)
         {
             try
@@ -107,28 +109,24 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
             }
         }
 
-        if (SearchParameter is not object?[] searchParameters) 
-            searchParameters = SearchParameter is not null ? [SearchParameter] : [];
-
-        int parameterCount = searchParameters.Length;
-
-        if (parameterCount == 0)
+        if (string.IsNullOrEmpty(SearchParameter))
             return new RecordRestriction($"{FieldName} {m_operator} NULL");
 
         // Convert search parameters to the interpreted value for the specified field, i.e., encrypting or
         // returning any intermediate IDbDataParameter value as needed:
-        for (int i = 0; i < parameterCount; i++) 
-            searchParameters[i] = tableOperations.GetInterpretedFieldValue(FieldName, searchParameters[i]);
+        string interpretedValue = (string)tableOperations.GetInterpretedFieldValue(FieldName, SearchParameter);
+
+        if (m_operator == "LIKE" || m_operator == "NOT LIKE")
+        {
+            interpretedValue = string.IsNullOrEmpty(SearchParameter) ? tableOperations.WildcardChar: SearchParameter.Replace("*", tableOperations.WildcardChar);
+        }
+
+        interpretedValue = $"'{interpretedValue}'";
 
         if (!s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase))
-            return new RecordRestriction($"{FieldName} {m_operator} {{0}}", searchParameters);
+            return new RecordRestriction($"{FieldName} {m_operator} {interpretedValue}");
 
-        string[] parameters = new string[parameterCount];
-
-        for (int i = 0; i < parameterCount; i++)
-            parameters[i] = $"{{{i}}}";
-
-        return new RecordRestriction($"{FieldName} {m_operator} ({string.Join(',', parameters)})", searchParameters);
+        return new RecordRestriction($"{FieldName} {m_operator} ({interpretedValue})");
     }
 
     private bool IsValidField(string fieldName)

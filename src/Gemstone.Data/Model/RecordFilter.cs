@@ -90,8 +90,6 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
         MethodInfo? transform = methods.FirstOrDefault(info =>
             info.TryGetAttribute(out SearchExtensionAttribute? searchExtension) &&
             Regex.IsMatch(FieldName, searchExtension.FieldMatch));
-
-        //sub wildcard here
         
         if (transform is not null)
         {
@@ -116,12 +114,24 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
         // returning any intermediate IDbDataParameter value as needed:
         string interpretedValue = (string)tableOperations.GetInterpretedFieldValue(FieldName, SearchParameter);
 
-        if (m_operator == "LIKE" || m_operator == "NOT LIKE")
+        if (m_operator.Equals("LIKE", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT LIKE", StringComparison.OrdinalIgnoreCase))
         {
-            interpretedValue = string.IsNullOrEmpty(SearchParameter) ? tableOperations.WildcardChar: SearchParameter.Replace("*", tableOperations.WildcardChar);
+            interpretedValue = string.IsNullOrEmpty(SearchParameter) ? tableOperations.WildcardChar : SearchParameter.Replace("*", tableOperations.WildcardChar);
+            interpretedValue = $"'{interpretedValue}'";
         }
+        else if (m_operator.Equals("IN", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT IN", StringComparison.OrdinalIgnoreCase))
+        {
+            // Split the SearchParameter on commas, trim whitespace, and wrap each value in single quotes
+            IEnumerable<string> values = SearchParameter
+                .Split(',')
+                .Select(value => $"'{value.Trim()}'");
 
-        interpretedValue = $"'{interpretedValue}'";
+            interpretedValue = string.Join(", ", values);
+        }
+        else
+        {
+            interpretedValue = $"'{interpretedValue}'";
+        }
 
         if (!s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase))
             return new RecordRestriction($"{FieldName} {m_operator} {interpretedValue}");

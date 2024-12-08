@@ -1292,17 +1292,17 @@ public class Table : IComparable, IComparable<Table>
     /// <summary>
     /// Get count for primary key <see cref="Field"/>
     /// </summary>
-    public int PrimaryKeyFieldCount => Fields.Count(field => field.IsPrimaryKey);
+    public int PrimaryKeyFieldCount => Fields.Count(schemaField => schemaField.IsPrimaryKey);
 
     /// <summary>
     /// Get flag that determines if the table has any foreign keys.
     /// </summary>
-    public bool ReferencedByForeignKeys => Fields.Any(field => field is { IsPrimaryKey: true, ForeignKeys.Count: > 0 });
+    public bool ReferencedByForeignKeys => Fields.Any(schemaField => schemaField is { IsPrimaryKey: true, ForeignKeys.Count: > 0 });
 
     /// <summary>
     /// Get flag of any foreign key <see cref="Field"/>
     /// </summary>
-    public bool IsForeignKeyTable => Fields.Any(field => field.IsForeignKey);
+    public bool IsForeignKeyTable => Fields.Any(schemaField => schemaField.IsForeignKey);
 
     /// <summary>
     /// Gets flag that determines if the <see cref="Table"/> has an auto-increment field.
@@ -1312,7 +1312,7 @@ public class Table : IComparable, IComparable<Table>
     /// <summary>
     /// Gets auto-increment field for the <see cref="Table"/>, if any.
     /// </summary>
-    public Field AutoIncField => Fields.FirstOrDefault(field => field.AutoIncrement);
+    public Field? AutoIncField => Fields.FirstOrDefault(field => field.AutoIncrement);
 
     #endregion
 

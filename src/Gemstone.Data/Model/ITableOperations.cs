@@ -59,6 +59,10 @@ public interface ITableOperations
     string UnescapedTableName { get; }
 
     /// <summary>
+    /// Gets the wildcard character used for pattern matching within queries.
+    /// </summary>
+    public string WildcardChar { get; }
+    /// <summary>
     /// Gets flag that determines if modeled table has a primary key that is an identity field.
     /// </summary>
     bool HasPrimaryKeyIdentityField { get; }

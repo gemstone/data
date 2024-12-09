@@ -39,6 +39,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Gemstone.Configuration;
@@ -1462,6 +1463,10 @@ public class AdoDataConnection : IAsyncDisposable, IDisposable
                 null => DBNull.Value,
                 bool boolVal => Bool(boolVal),
                 Guid guidVal => Guid(guidVal),
+                string stringVal => stringVal,
+                int intVal => intVal,
+                double doubleVal => doubleVal,
+                JsonElement jsonElement => jsonElement.GetRawText(),
                 _ => value
             };
 

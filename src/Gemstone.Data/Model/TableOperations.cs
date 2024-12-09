@@ -115,6 +115,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private const string TableNameSuffixToken = "<!TNS/>";
     private const string FieldListPrefixToken = "<!FLP/>";
     private const string FieldListSuffixToken = "<!FLS/>";
+    private const string WildcarChar = "%";
 
     // Fields
     private readonly string m_selectCountSql;
@@ -370,6 +371,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
     /// <inheritdoc/>
     public string UnescapedTableName => s_tableName;
+
+    ///  <inheritdoc/>
+    public string WildcardChar => WildcarChar; 
 
     /// <inheritdoc/>
     public bool HasPrimaryKeyIdentityField => s_hasPrimaryKeyIdentityField;
@@ -3015,7 +3019,33 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         s_tableSchema = new DataTable(s_tableName);
 
         foreach (PropertyInfo property in s_properties.Values)
-            s_tableSchema.Columns.Add(new DataColumn(s_fieldNames[property.Name], property.PropertyType));
+        {
+            string fieldName = s_fieldNames[property.Name];
+            Type propertyType = property.PropertyType;
+
+            bool isNullable = false;
+            Type columnType = propertyType;
+
+            // Check if the property is a nullable value type
+            if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                isNullable = true;
+                columnType = Nullable.GetUnderlyingType(propertyType)!; // e.g., int for int?
+            }
+            else if (!propertyType.IsValueType)
+            {
+                // Reference types are nullable by default
+                isNullable = true;
+            }
+
+            // Create the DataColumn with the non-nullable type
+            DataColumn column = new DataColumn(fieldName, columnType)
+            {
+                AllowDBNull = isNullable
+            };
+
+            s_tableSchema.Columns.Add(column);
+        }
     }
 
     // Static Properties

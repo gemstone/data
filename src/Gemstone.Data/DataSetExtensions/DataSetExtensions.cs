@@ -35,7 +35,7 @@ namespace Gemstone.Data.DataSetExtensions;
 /// <summary>
 /// Data types available to a <see cref="DataSet"/> object.
 /// </summary>
-public enum DataType : byte
+internal enum DataType : byte
 {
     /// <summary>
     /// Boolean data type, <see cref="Boolean"/>.
@@ -507,7 +507,7 @@ public static class DataSetExtensions
     /// <param name="objectType"><see cref="Type"/> of object to test.</param>
     /// <returns>Derived <see cref="DataType"/> based on object <see cref="Type"/> if matched; otherwise <see cref="DataType.Object"/>.</returns>
     /// <param name="assumeStringForUnknownTypes">Flag to determine if unknown column types should be serialized as strings.</param>
-    public static DataType GetDataType(this Type objectType, bool assumeStringForUnknownTypes = true)
+    internal static DataType GetDataType(this Type objectType, bool assumeStringForUnknownTypes = true)
     {
         DataType dataType = DataType.Object;
 
@@ -525,7 +525,7 @@ public static class DataSetExtensions
     /// </summary>
     /// <param name="dataType"><see cref="DataType"/> to derive object <see cref="Type"/> from.</param>
     /// <returns>Object <see cref="Type"/> derived from given <see cref="DataType"/>.</returns>
-    public static Type DeriveColumnType(this DataType dataType)
+    internal static Type DeriveColumnType(this DataType dataType)
     {
         return s_supportedDataTypes[(int)dataType];
     }

@@ -45,7 +45,7 @@ public interface IRecordFilter
     /// <summary>
     /// Gets or sets the value to be searched.
     /// </summary>
-    object? SearchParameter { get; set; }
+    string SearchParameter { get; set; }
 
     /// <summary>
     /// Gets or sets the operator to be used for the search.

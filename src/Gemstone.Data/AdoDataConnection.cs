@@ -1186,7 +1186,7 @@ public class AdoDataConnection : IAsyncDisposable, IDisposable
                 DataRow row = schema.NewRow();
 
                 foreach (DataColumn col in schema.Columns)
-                    row[col.Ordinal] = reader[col.Ordinal];
+                    row[col.ColumnName] = reader[col.ColumnName];
 
                 yield return row;
             }

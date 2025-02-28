@@ -1398,6 +1398,13 @@ public interface ITableOperations
     object[] GetPrimaryKeys(DataRow row);
 
     /// <summary>
+    /// Gets a record restriction based on the non-primary key values of the specified <paramref name="record"/>.
+    /// </summary>
+    /// <param name="record">Record to retrieve non-primary key field values from.</param>
+    /// <returns>Record restriction based on the non-primary key values of the specified <paramref name="record"/>.</returns>
+    public RecordRestriction GetNonPrimaryFieldRecordRestriction(object record);
+
+    /// <summary>
     /// Gets the field names for the table; if <paramref name="escaped"/> is <c>true</c>, also includes any escaping as defined in model.
     /// </summary>
     /// <param name="escaped">Flag that determines if field names should include any escaping as defined in the model; defaults to <c>true</c>.</param>
@@ -1406,6 +1413,16 @@ public interface ITableOperations
     /// A field name will only be escaped if the model requested escaping with the <see cref="UseEscapedNameAttribute"/>.
     /// </remarks>
     string[] GetFieldNames(bool escaped = true);
+
+    /// <summary>
+    /// Get the non-primary key field names for the table; if <paramref name="escaped"/> is <c>true</c>, also includes any escaping as defined in model.
+    /// </summary>
+    /// <param name="escaped">Flag that determines if field names should include any escaping as defined in the model; defaults to <c>true</c>.</param>
+    /// <returns>Array of non-primary field names.</returns>
+    /// <remarks>
+    /// A field name will only be escaped if the model requested escaping with the <see cref="UseEscapedNameAttribute"/>.
+    /// </remarks>
+    string[] GetNonPrimaryFieldNames(bool escaped = true);
 
     /// <summary>
     /// Get the primary key field names for the table; if <paramref name="escaped"/> is <c>true</c>, also includes any escaping as defined in model.

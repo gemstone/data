@@ -2524,6 +2524,33 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         }
     }
 
+    /// <summary>
+    /// Gets a record restriction based on the non-primary key values of the specified <paramref name="record"/>.
+    /// </summary>
+    /// <param name="record">Record to retrieve non-primary key field values from.</param>
+    /// <returns>Record restriction based on the non-primary key values of the specified <paramref name="record"/>.</returns>
+    /// <remarks>
+    /// This will look up a newly added record when the primary key values are not yet defined searching all field values.
+    /// If all fields do not represent a unique record, queries based on this restriction will return multiple records.
+    /// Note that if the modeled table has fields that are known be unique, searching based on those fields is preferred.
+    /// </remarks>
+    public RecordRestriction GetNonPrimaryFieldRecordRestriction(T record)
+    {
+        string[] fieldNames = GetNonPrimaryFieldNames();
+
+        return new RecordRestriction(
+            fieldNames.Select((fieldName, index) => $"{fieldName} = {{{index}}}").ToDelimitedString(" AND "),
+            fieldNames.Select(fieldName => GetFieldValue(record, fieldName)).ToArray());
+    }
+
+    RecordRestriction ITableOperations.GetNonPrimaryFieldRecordRestriction(object value)
+    {
+        if (value is not T record)
+            throw new ArgumentException($"Cannot get non-primary key field restriction for record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
+        
+        return GetNonPrimaryFieldRecordRestriction(record);
+    }
+
     /// <inheritdoc/>
     public string[] GetFieldNames(bool escaped = true)
     {
@@ -2531,6 +2558,17 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return escaped ? 
             s_fieldNames.Values.Select(fieldName => GetEscapedFieldName(fieldName)).ToArray() : 
             s_fieldNames.Values.ToArray();
+    }
+
+    /// <inheritdoc/>
+    public string[] GetNonPrimaryFieldNames(bool escaped = true)
+    {
+        HashSet<string> primaryKeyFields = new(GetPrimaryKeyFieldNames(escaped), UseCaseSensitiveFieldNames ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
+
+        // Fields in the field names dictionary are stored in unescaped format
+        return escaped ?
+            s_fieldNames.Values.Select(fieldName => GetEscapedFieldName(fieldName)).Where(fieldName => !primaryKeyFields.Contains(fieldName)).ToArray() :
+            s_fieldNames.Values.Where(fieldName => !primaryKeyFields.Contains(fieldName)).ToArray();
     }
 
     /// <inheritdoc/>

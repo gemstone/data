@@ -1519,6 +1519,13 @@ public interface ITableOperations
     Type? GetFieldType(string fieldName);
 
     /// <summary>
+    /// Gets flag that determines if the specified field exists.
+    /// </summary>
+    /// <param name="fieldName">Field name to check.</param>
+    /// <returns><c>true</c> if field is found; otherwise, <c>false</c>.</returns>
+    bool FieldExists(string fieldName);
+
+    /// <summary>
     /// Generates a <see cref="RecordRestriction"/> based on <paramref name="recordFilters"/>.
     /// </summary>
     /// <param name="recordFilters"><see cref="IRecordFilter"/> to search.</param>

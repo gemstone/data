@@ -2666,6 +2666,12 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     /// <inheritdoc/>
+    public bool FieldExists(string fieldName)
+    {
+        return s_propertyNames.TryGetValue(fieldName, out _);
+    }
+
+    /// <inheritdoc/>
     public RecordRestriction[]? GetSearchRestrictions(params IRecordFilter?[]? recordFilters)
     {
         return recordFilters?.Where(recordFilter => recordFilter is not null)

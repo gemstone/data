@@ -40,6 +40,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Gemstone.Collections.CollectionExtensions;
@@ -323,6 +324,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             m_deleteSql = m_deleteSql.Replace(customToken.Key, customToken.Value);
             m_deleteWhereSql = m_deleteWhereSql.Replace(customToken.Key, customToken.Value);
         }
+
+        
     }
 
     /// <summary>
@@ -725,6 +728,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         if (string.IsNullOrWhiteSpace(orderByExpression))
             orderByExpression = UpdateFieldNames(s_primaryKeyFields);
 
+        if (!IsValidSortExpression(orderByExpression))
+            throw new InvalidOperationException($"\"{orderByExpression}\" is not a valid expression to order by");
+
         string? sqlExpression = null;
 
         try
@@ -797,6 +803,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     {
         if (string.IsNullOrWhiteSpace(orderByExpression))
             orderByExpression = UpdateFieldNames(s_primaryKeyFields);
+
+        if (!IsValidSortExpression(orderByExpression))
+            throw new InvalidOperationException($"\"{orderByExpression}\" is not a valid expression to order by");
 
         string? sqlExpression = null;
 
@@ -1161,6 +1170,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         if (sortField is null)
             throw new ArgumentNullException(nameof(sortField));
 
+        if (!IsValidSortField(sortField))
+            throw new InvalidOperationException($"\"{sortField}\" is not a valid expression to order by");
+
         bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
 
         // Records that have been deleted since primary key cache was established will return null and be filtered out which will throw
@@ -1270,6 +1282,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
         if (sortField is null)
             throw new ArgumentNullException(nameof(sortField));
+
+        if (!IsValidSortField(sortField))
+            throw new InvalidOperationException($"\"{sortField}\" is not a valid expression to order by");
+
 
         bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
 
@@ -1500,6 +1516,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         if (string.IsNullOrWhiteSpace(sortField))
             sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
 
+        if (!IsValidSortField(sortField))
+            throw new InvalidOperationException($"\"{sortField}\" is not a valid expression to order by");
+
         bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
         string? orderByExpression = sortFieldIsEncrypted ? null : $"{sortField}{(ascending ? "" : " DESC")}";
 
@@ -1553,6 +1572,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
         if (string.IsNullOrWhiteSpace(sortField))
             sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
+
+        if (!IsValidSortField(sortField))
+            throw new InvalidOperationException($"\"{sortField}\" is not a valid expression to order by");
 
         bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
         string? orderByExpression = sortFieldIsEncrypted ? null : $"{sortField}{(ascending ? "" : " DESC")}";
@@ -2665,6 +2687,28 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return default;
     }
 
+    /// <summary>
+    /// Checks if a Field is a vaid sortField
+    /// </summary>
+    /// <param name="fieldName">The Field to check.</param>
+    /// 
+    private bool IsValidSortField(string fieldName)
+    {
+        if (FieldExists(fieldName))
+            return true;
+
+        IEnumerable<MethodInfo> methods = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static);
+
+        return methods.Any(info =>
+            info.TryGetAttribute(out SortExtensionAttribute? sortExtension) &&
+            Regex.IsMatch(fieldName, sortExtension.FieldMatch));
+    }
+
+    private bool IsValidSortExpression(string sortByExpression)
+    {
+
+        return sortByExpression.Split(",").All(fld => IsValidSortExpression(fld.ReplaceCaseInsensitive("asc", "").ReplaceCaseInsensitive("desc", "").Trim()));
+    }
     /// <inheritdoc/>
     public bool FieldExists(string fieldName)
     {

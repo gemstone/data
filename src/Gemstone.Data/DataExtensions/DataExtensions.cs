@@ -875,7 +875,7 @@ public static class DataExtensions
 
         if (dataTable.Rows.Count == 0)
         {
-            row = default;
+            row = null;
             return false;
         }
 
@@ -908,7 +908,7 @@ public static class DataExtensions
     public static async Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbConnection connection, string sql, int timeout, CancellationToken cancellationToken, params object[] parameters)
     {
         DataTable dataTable = await connection.RetrieveDataAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false);
-        return dataTable.Rows.Count == 0 ? (default, false) : (dataTable.Rows[0], true);
+        return dataTable.Rows.Count == 0 ? (null, false) : (dataTable.Rows[0], true);
     }
 
     /// <summary>
@@ -1005,7 +1005,7 @@ public static class DataExtensions
 
         if (dataTable.Rows.Count == 0)
         {
-            row = default;
+            row = null;
             return false;
         }
 
@@ -1038,7 +1038,7 @@ public static class DataExtensions
     public static async Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbCommand command, string sql, int timeout, CancellationToken cancellationToken, params object[] parameters)
     {
         DataTable dataTable = await command.RetrieveDataAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false);
-        return dataTable.Rows.Count == 0 ? (default, false) : (dataTable.Rows[0], true);
+        return dataTable.Rows.Count == 0 ? (null, false) : (dataTable.Rows[0], true);
     }
 
     #endregion
@@ -1421,7 +1421,7 @@ public static class DataExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static object? ConvertField(this DataRow row, string field, Type type)
     {
-        return ConvertField(row, field, type, default!);
+        return ConvertField(row, field, type, null!);
     }
 
     /// <summary>

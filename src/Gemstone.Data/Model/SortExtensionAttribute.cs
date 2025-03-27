@@ -26,13 +26,9 @@ using System;
 namespace Gemstone.Data.Model;
 
 /// <summary>
-/// Defines an attribute that marks methods that are used to transform a Field into subquery for Sorting.
+/// Defines an attribute that marks static methods on a model that are used to transform a
+/// field into more complex order by expression, e.g., a subquery, for sorting.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method)]
-public sealed class SortExtensionAttribute(string fieldMatch) : Attribute
-{
-    /// <summary>
-    /// The string used to match FieldNames this applies to.
-    /// </summary>
-    public string FieldMatch { get; } = fieldMatch;
-}
+public sealed class SortExtensionAttribute(string fieldMatch) : 
+    ExtensionAttributeBase(fieldMatch);

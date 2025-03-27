@@ -98,7 +98,7 @@ public class DataDeleter : BulkDataOperationBase
     /// </summary>
     public override void Execute()
     {
-        List<Table> tablesList = new();
+        List<Table> tablesList = [];
         int x;
 
         if (TableCollection.Count == 0)

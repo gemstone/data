@@ -190,8 +190,8 @@ public static class DataSetExtensions
         // Serialize tables
         foreach (DataTable table in source.Tables)
         {
-            List<int> columnIndices = new();
-            List<DataType> columnDataTypes = new();
+            List<int> columnIndices = [];
+            List<DataType> columnDataTypes = [];
 
             // Serialize column metadata
             using (BlockAllocatedMemoryStream columnMetaDataStream = new())
@@ -361,9 +361,9 @@ public static class DataSetExtensions
         // Deserialize tables
         for (int i = 0; i < tableCount; i++)
         {
-            List<int> columnIndices = new();
-            List<DataType> columnDataTypes = new();
-            List<bool> columnNullable = new();
+            List<int> columnIndices = [];
+            List<DataType> columnDataTypes = [];
+            List<bool> columnNullable = [];
 
             DataTable table = dataset.Tables.Add();
 

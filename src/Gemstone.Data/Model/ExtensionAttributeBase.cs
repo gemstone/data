@@ -1,7 +1,7 @@
 ﻿//******************************************************************************************************
-//  PostRolesAttribute.cs - Gbtc
+//  ExtensionAttributeBase.cs - Gbtc
 //
-//  Copyright © 2021, Grid Protection Alliance.  All Rights Reserved.
+//  Copyright © 2025, Grid Protection Alliance.  All Rights Reserved.
 //
 //  Licensed to the Grid Protection Alliance (GPA) under one or more contributor license agreements. See
 //  the NOTICE file distributed with this work for additional information regarding copyright ownership.
@@ -16,7 +16,7 @@
 //
 //  Code Modification History:
 //  ----------------------------------------------------------------------------------------------------
-//  06/11/2021 - Billy Ernest
+//  03/27/2025 - J. Ritchie Carroll
 //       Generated original version of source code.
 //
 //******************************************************************************************************
@@ -26,22 +26,22 @@ using System;
 namespace Gemstone.Data.Model;
 
 /// <summary>
-/// Defines an attribute that will allow setting POST function roles for a modeled table.
+/// Base class for Attributes that are used to extend the functionality of <see cref="TableOperations{T}"/>.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public sealed class PostRolesAttribute : Attribute
+[AttributeUsage(AttributeTargets.Method)]
+public abstract class ExtensionAttributeBase : Attribute
 {
     /// <summary>
-    /// Gets field name to use for property.
+    /// The regular expression used to match field names the attribute applies to.
     /// </summary>
-    public string Roles { get; }
+    public string FieldMatch { get; }
 
     /// <summary>
-    /// Creates a new <see cref="PostRolesAttribute"/>.
+    /// Creates a new <see cref="ExtensionAttributeBase"/>
     /// </summary>
-    /// <param name="roles">Comma separated string of roles allowed for POST functions.</param>
-    public PostRolesAttribute(string roles)
+    /// <param name="fieldMatch">Field match expression for the attribute.</param>
+    protected ExtensionAttributeBase(string fieldMatch)
     {
-        Roles = roles;
+        FieldMatch = fieldMatch;
     }
 }

@@ -34,10 +34,7 @@ public sealed class PatchRolesAttribute : Attribute
     /// <summary>
     /// Gets field name to use for property.
     /// </summary>
-    public string Roles
-    {
-        get;
-    }
+    public string Roles { get; }
 
     /// <summary>
     /// Creates a new <see cref="PatchRolesAttribute"/>.

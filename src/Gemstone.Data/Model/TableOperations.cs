@@ -3084,7 +3084,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
             // Default to all
             primaryKeyFields.Clear();
-            primaryKeyFields.Append("*");
+            primaryKeyFields.Append('*');
         }
         else
         {
@@ -3213,10 +3213,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
                     $"Expected: public static {typeof(TReturn).Name} Method({typeof(TInput)} input)");
             }
 
-            // Compile the regex pattern
+            // Pre-compile the regex pattern
             Regex regex = new(attribute.FieldMatch, RegexOptions.Compiled);
 
-            // Create and cache the delegate directly as Func<string, string>
+            // Create and cache the delegate
             Func<TInput, TReturn> staticExtensionMethod = (Func<TInput, TReturn>)Delegate.CreateDelegate(typeof(Func<TInput, TReturn>), method);
             extensions.Add((regex, staticExtensionMethod));
         }

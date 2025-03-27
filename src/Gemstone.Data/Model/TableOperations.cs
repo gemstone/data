@@ -3206,7 +3206,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             // Validate method signature
             ParameterInfo[] parameters = method.GetParameters();
 
-            if (method.ReturnType != typeof(TReturn) || parameters.Length != 1 || parameters[0].ParameterType != typeof(string))
+            if (method.ReturnType != typeof(TReturn) || parameters.Length != 1 || parameters[0].ParameterType != typeof(TInput))
             {
                 throw new InvalidOperationException(
                     $"Method \"{method.Name}\" marked with \"{typeof(TAttribute).Name}\" in model \"{typeof(T).Name}\" has an invalid signature. " +

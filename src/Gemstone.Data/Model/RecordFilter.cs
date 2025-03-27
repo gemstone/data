@@ -27,8 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
-using Gemstone.Reflection.MemberInfoExtensions;
 
 namespace Gemstone.Data.Model;
 
@@ -54,7 +52,7 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     public string FieldName { get; set; } = string.Empty;
 
     /// <inheritdoc/>
-    public string SearchParameter { get; set; }
+    public required string SearchParameter { get; set; }
 
     /// <inheritdoc/>
     public string Operator
@@ -82,21 +80,13 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     /// <inheritdoc/>
     public RecordRestriction GenerateRestriction(ITableOperations tableOperations)
     {
-        if (!IsValidField(FieldName))
-            throw new ArgumentException($"{FieldName} is not a valid field for {typeof(T).Name}");
+        Func<IRecordFilter, RecordRestriction>? transform = TableOperations<T>.GetSearchExtensionMethod(FieldName);
 
-        IEnumerable<MethodInfo> methods = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static);
-
-        MethodInfo? transform = methods.FirstOrDefault(info =>
-            info.TryGetAttribute(out SearchExtensionAttribute? searchExtension) &&
-            Regex.IsMatch(FieldName, searchExtension.FieldMatch));
-        
         if (transform is not null)
         {
             try
             {
-                if (transform.Invoke(null, [this]) is RecordRestriction recordRestriction)
-                    return recordRestriction;
+                return transform(this);
             }
             catch
             {
@@ -107,12 +97,15 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
             }
         }
 
+        if (ModelProperty is null && !TableOperations<T>.IsSearchableField(FieldName))
+            throw new ArgumentException($"{FieldName} is not a valid field for {typeof(T).Name}");
+
         if (string.IsNullOrEmpty(SearchParameter))
             return new RecordRestriction($"{FieldName} {m_operator} NULL");
 
         // Convert search parameters to the interpreted value for the specified field, i.e., encrypting or
         // returning any intermediate IDbDataParameter value as needed:
-        string interpretedValue = (string)tableOperations.GetInterpretedFieldValue(FieldName, SearchParameter);
+        string interpretedValue = tableOperations.GetInterpretedFieldValue(FieldName, SearchParameter) as string ?? string.Empty;
 
         if (m_operator.Equals("LIKE", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT LIKE", StringComparison.OrdinalIgnoreCase))
         {
@@ -133,28 +126,9 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
             interpretedValue = $"'{interpretedValue}'";
         }
 
-        if (!s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase))
-            return new RecordRestriction($"{FieldName} {m_operator} {interpretedValue}");
-
-        return new RecordRestriction($"{FieldName} {m_operator} ({interpretedValue})");
-    }
-
-    private bool IsValidField(string fieldName)
-    {
-        if (ModelProperty is not null)
-            return true;
-
-        if (typeof(T).TryGetAttribute(out SearchableAttribute? searchableAttribute))
-        {
-            if (searchableAttribute.FieldNames.Contains(FieldName))
-                return true;
-        }
-
-        IEnumerable<MethodInfo> methods = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static);
-
-        return methods.Any(info =>
-            info.TryGetAttribute(out SearchExtensionAttribute? searchExtension) &&
-            Regex.IsMatch(fieldName, searchExtension.FieldMatch));
+        return s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase) ? 
+            new RecordRestriction($"{FieldName} {m_operator} ({interpretedValue})") : 
+            new RecordRestriction($"{FieldName} {m_operator} {interpretedValue}");
     }
 
     #endregion

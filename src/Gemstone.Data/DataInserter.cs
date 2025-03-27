@@ -201,7 +201,7 @@ public class DataInserter : BulkDataOperationBase
     /// </summary>
     public override void Execute()
     {
-        List<Table> tablesList = new();
+        List<Table> tablesList = [];
         Table tableLookup;
         Table table;
         int x;
@@ -219,7 +219,7 @@ public class DataInserter : BulkDataOperationBase
         if (ClearDestinationTables)
         {
             // We do not consider table exclusions when deleting data from destination tables as these may have triggered inserts
-            List<Table> allSourceTables = new(FromSchema.Tables);
+            List<Table> allSourceTables = [..FromSchema.Tables];
 
             // Clear data in a child to parent direction to help avoid potential constraint issues
             allSourceTables.Sort((table1, table2) => table1.Priority > table2.Priority ? 1 : table1.Priority < table2.Priority ? -1 : 0);
@@ -828,7 +828,7 @@ public class DataInserter : BulkDataOperationBase
             if (BulkInsertFilePath.Substring(BulkInsertFilePath.Length - 1) != "\\")
                 BulkInsertFilePath += "\\";
 
-            bulkInsertFile = $"{BulkInsertFilePath}{new Guid()}.tmp";
+            bulkInsertFile = $"{BulkInsertFilePath}{Guid.Empty}.tmp";
             bulkInsertFileStream = File.Create(bulkInsertFile);
         }
 

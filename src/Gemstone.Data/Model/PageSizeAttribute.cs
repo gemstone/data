@@ -26,7 +26,7 @@ using System;
 namespace Gemstone.Data.Model;
 
 /// <summary>
-/// Defines an attribute that will allows a top number of results to be returned when queried
+/// Defines an attribute that will allow a top number of results to be returned when queried
 /// </summary>
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class PageSizeAttribute : Attribute
@@ -34,10 +34,7 @@ public sealed class PageSizeAttribute : Attribute
     /// <summary>
     /// Gets field name to use for property.
     /// </summary>
-    public int Limit
-    {
-        get;
-    }
+    public int Limit { get; }
 
     /// <summary>
     /// Creates a new <see cref="PageSizeAttribute"/>.
@@ -45,6 +42,6 @@ public sealed class PageSizeAttribute : Attribute
     /// <param name="limit">Number of top records to return per Page.</param>
     public PageSizeAttribute(int limit)
     {
-            Limit = limit;
-        }
+        Limit = limit;
+    }
 }

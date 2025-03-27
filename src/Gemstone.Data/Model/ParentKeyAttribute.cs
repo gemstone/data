@@ -21,7 +21,6 @@
 //
 //******************************************************************************************************
 
-
 using System;
 
 namespace Gemstone.Data.Model;
@@ -35,10 +34,7 @@ public sealed class ParentKeyAttribute : Attribute
     /// <summary>
     /// Gets field name to use for property.
     /// </summary>
-    public Type Model
-    {
-        get;
-    }
+    public Type Model { get; }
 
     /// <summary>
     /// Creates a new <see cref="ParentKeyAttribute"/>.

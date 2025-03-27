@@ -231,7 +231,10 @@ public class RecordRestriction : IEquatable<RecordRestriction>
     /// <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
     /// the parameter that has a filter expression will be returned.
     /// </remarks>
-    public static RecordRestriction? operator +(RecordRestriction? left, RecordRestriction? right) => CombineAnd(left, right);
+    public static RecordRestriction? operator +(RecordRestriction? left, RecordRestriction? right)
+    {
+        return CombineAnd(left, right);
+    }
 
     /// <summary>
     /// Combines two record restrictions with an AND condition.
@@ -247,7 +250,10 @@ public class RecordRestriction : IEquatable<RecordRestriction>
     /// <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
     /// the parameter that has a filter expression will be returned.
     /// </remarks>
-    public static RecordRestriction? operator &(RecordRestriction? left, RecordRestriction? right) => CombineAnd(left, right);
+    public static RecordRestriction? operator &(RecordRestriction? left, RecordRestriction? right)
+    {
+        return CombineAnd(left, right);
+    }
 
     /// <summary>
     /// Combines two record restrictions with an OR condition.
@@ -263,7 +269,10 @@ public class RecordRestriction : IEquatable<RecordRestriction>
     /// <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
     /// the parameter that has a filter expression will be returned.
     /// </remarks>
-    public static RecordRestriction? operator |(RecordRestriction? left, RecordRestriction? right) => CombineOr(left, right);
+    public static RecordRestriction? operator |(RecordRestriction? left, RecordRestriction? right)
+    {
+        return CombineOr(left, right);
+    }
 
     #endregion
 
@@ -279,7 +288,7 @@ public class RecordRestriction : IEquatable<RecordRestriction>
     public static RecordRestriction? Clone(RecordRestriction? source)
     {
         if (source is null)
-            return default;
+            return null;
 
         object?[] parameters = source.Parameters;
 
@@ -306,7 +315,10 @@ public class RecordRestriction : IEquatable<RecordRestriction>
     /// <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
     /// the parameter that has a filter expression will be returned.
     /// </remarks>
-    public static RecordRestriction? CombineAnd(RecordRestriction? left, RecordRestriction? right) => Combine(left, right, "AND");
+    public static RecordRestriction? CombineAnd(RecordRestriction? left, RecordRestriction? right)
+    {
+        return Combine(left, right, "AND");
+    }
 
     /// <summary>
     /// Combines two record restrictions with an OR condition.
@@ -322,14 +334,17 @@ public class RecordRestriction : IEquatable<RecordRestriction>
     /// <c>null</c>, empty or whitespace and the other parameter's filter expression is defined, then
     /// the parameter that has a filter expression will be returned.
     /// </remarks>
-    public static RecordRestriction? CombineOr(RecordRestriction? left, RecordRestriction? right) => Combine(left, right, "OR");
+    public static RecordRestriction? CombineOr(RecordRestriction? left, RecordRestriction? right)
+    {
+        return Combine(left, right, "OR");
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static RecordRestriction? Combine(RecordRestriction? left, RecordRestriction? right, string operation)
     {
         // Check for null operands
         if (left is null && right is null)
-            return default;
+            return null;
 
         if (left is null)
             return right;

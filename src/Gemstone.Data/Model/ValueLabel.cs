@@ -20,35 +20,25 @@
 //       Generated original version of source code.
 //
 //******************************************************************************************************
-// ReSharper disable StaticMemberInGenericType
-// ReSharper disable RedundantCatchClause
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using Gemstone.Reflection.MemberInfoExtensions;
 
 namespace Gemstone.Data.Model;
 
 /// <summary>
-/// Defines a common model to hold a Label and associated Value.
+/// Defines a common model to hold a label and associated value.
 /// </summary>
 public class ValueLabel
 {
     #region [ Properties ]
 
     /// <summary>
-    /// gets or sets the Value Property.
+    /// Gets or sets the value property.
     /// </summary>
     public string Value { get; set; } = string.Empty;
 
     /// <summary>
-    /// gets or sets the Label Property.
+    /// Gets or sets the label property.
     /// </summary>
     public string Label { get; set; } = string.Empty;
 
     #endregion
-
 }

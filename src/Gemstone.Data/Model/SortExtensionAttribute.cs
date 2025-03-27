@@ -1,12 +1,12 @@
 ﻿//******************************************************************************************************
-//  PostRolesAttribute.cs - Gbtc
+//  SortExtensionAttribute.cs - Gbtc
 //
-//  Copyright © 2021, Grid Protection Alliance.  All Rights Reserved.
+//  Copyright © 2025, Grid Protection Alliance.  All Rights Reserved.
 //
 //  Licensed to the Grid Protection Alliance (GPA) under one or more contributor license agreements. See
 //  the NOTICE file distributed with this work for additional information regarding copyright ownership.
-//  The GPA licenses this file to you under the MIT License (MIT), the "License"; you may not use this
-//  file except in compliance with the License. You may obtain a copy of the License at:
+//  The GPA licenses this file to you under the MIT License (MIT), the "License"; you may
+//  not use this file except in compliance with the License. You may obtain a copy of the License at:
 //
 //      http://opensource.org/licenses/MIT
 //
@@ -16,7 +16,7 @@
 //
 //  Code Modification History:
 //  ----------------------------------------------------------------------------------------------------
-//  06/11/2021 - Billy Ernest
+//  03/22/2025 - C. Lackner
 //       Generated original version of source code.
 //
 //******************************************************************************************************
@@ -26,22 +26,9 @@ using System;
 namespace Gemstone.Data.Model;
 
 /// <summary>
-/// Defines an attribute that will allow setting POST function roles for a modeled table.
+/// Defines an attribute that marks static methods on a model that are used to transform a
+/// field into more complex order by expression, e.g., a subquery, for sorting.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public sealed class PostRolesAttribute : Attribute
-{
-    /// <summary>
-    /// Gets field name to use for property.
-    /// </summary>
-    public string Roles { get; }
-
-    /// <summary>
-    /// Creates a new <see cref="PostRolesAttribute"/>.
-    /// </summary>
-    /// <param name="roles">Comma separated string of roles allowed for POST functions.</param>
-    public PostRolesAttribute(string roles)
-    {
-        Roles = roles;
-    }
-}
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class SortExtensionAttribute(string fieldMatch) : 
+    ExtensionAttributeBase(fieldMatch);

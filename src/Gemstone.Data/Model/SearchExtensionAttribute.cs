@@ -26,13 +26,9 @@ using System;
 namespace Gemstone.Data.Model;
 
 /// <summary>
-/// Defines an attribute that marks methods that are used to transform <see cref="IRecordFilter"/> into <see cref="RecordRestriction"/>.
+/// Defines an attribute that marks static methods on a model that are used to transform
+/// <see cref="IRecordFilter"/> into <see cref="RecordRestriction"/>.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method)]
-public sealed class SearchExtensionAttribute(string fieldMatch) : Attribute
-{
-    /// <summary>
-    /// The string used to match FieldNames this applies to.
-    /// </summary>
-    public string FieldMatch { get; } = fieldMatch;
-}
+public sealed class SearchExtensionAttribute(string fieldMatch) :
+    ExtensionAttributeBase(fieldMatch);

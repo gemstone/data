@@ -34,11 +34,7 @@ public sealed class DefaultSortOrderAttribute : Attribute
     /// <summary>
     /// Gets field name to use for property.
     /// </summary>
-    public bool Ascending
-    {
-        get;
-    }
-
+    public bool Ascending { get; }
 
     /// <summary>
     /// Creates a new <see cref="DefaultSortOrderAttribute"/>.

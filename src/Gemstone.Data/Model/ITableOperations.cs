@@ -62,6 +62,7 @@ public interface ITableOperations
     /// Gets the wildcard character used for pattern matching within queries.
     /// </summary>
     public string WildcardChar { get; }
+
     /// <summary>
     /// Gets flag that determines if modeled table has a primary key that is an identity field.
     /// </summary>
@@ -92,7 +93,7 @@ public interface ITableOperations
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The <see cref="QueryRecords(string, bool, int, int, IRecordFilter[])"/> overloads that include paging parameters
+    /// The <see cref="QueryRecords(string?, bool, int, int, IRecordFilter[])"/> overloads that include paging parameters
     /// cache the sorted and filtered primary keys of queried records between calls so that paging is fast and
     /// efficient. Since the primary keys are cached, an instance of the <see cref="TableOperations{T}"/> should
     /// exist per user session when using query functions that support pagination. In web based implementations,
@@ -204,7 +205,7 @@ public interface ITableOperations
     /// If no record is found for specified <paramref name="restriction"/>, <c>null</c> will be returned.
     /// </para>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// This is a convenience call to <see cref="QueryRecords(string?, RecordRestriction, int)"/>
     /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
     /// </para>
     /// <para>
@@ -227,7 +228,7 @@ public interface ITableOperations
     /// If no record is found for specified <paramref name="restriction"/>, <c>null</c> will be returned.
     /// </para>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// This is a convenience call to <see cref="QueryRecords(string?, RecordRestriction, int)"/>
     /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
     /// </para>
     /// <para>
@@ -251,7 +252,7 @@ public interface ITableOperations
     /// If no record is found for specified <paramref name="restriction"/>, <c>null</c> will be returned.
     /// </para>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// This is a convenience call to <see cref="QueryRecords(string?, RecordRestriction, int)"/>
     /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
     /// </para>
     /// <para>
@@ -276,7 +277,7 @@ public interface ITableOperations
     /// If no record is found for specified <paramref name="restriction"/>, <c>null</c> will be returned.
     /// </para>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// This is a convenience call to <see cref="QueryRecords(string?, RecordRestriction, int)"/>
     /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
     /// </para>
     /// <para>
@@ -319,7 +320,7 @@ public interface ITableOperations
     /// will be updated to reflect what is defined in the user model.
     /// </para>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// This is a convenience call to <see cref="QueryRecords(string?, RecordRestriction, int)"/>
     /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
     /// </para>
     /// </remarks>
@@ -357,7 +358,7 @@ public interface ITableOperations
     /// will be updated to reflect what is defined in the user model.
     /// </para>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/>
+    /// This is a convenience call to <see cref="QueryRecords(string?, RecordRestriction, int)"/>
     /// specifying the <see cref="RecordRestriction"/> parameter with a limit of 1 record.
     /// </para>
     /// </remarks>
@@ -411,7 +412,7 @@ public interface ITableOperations
     /// <returns>An enumerable of modeled table row instances for queried records.</returns>
     /// <remarks>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/> only
+    /// This is a convenience call to <see cref="QueryRecords(string?, RecordRestriction, int)"/> only
     /// specifying the <see cref="RecordRestriction"/> parameter.
     /// </para>
     /// <para>
@@ -431,7 +432,7 @@ public interface ITableOperations
     /// <returns>An enumerable of modeled table row instances for queried records.</returns>
     /// <remarks>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/> only
+    /// This is a convenience call to <see cref="QueryRecords(string?, RecordRestriction, int)"/> only
     /// specifying the <see cref="RecordRestriction"/> parameter.
     /// </para>
     /// <para>
@@ -471,7 +472,7 @@ public interface ITableOperations
     /// will be updated to reflect what is defined in the user model.
     /// </para>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/> only
+    /// This is a convenience call to <see cref="QueryRecords(string?, RecordRestriction, int)"/> only
     /// specifying the <see cref="RecordRestriction"/> parameter.
     /// </para>
     /// </remarks>
@@ -506,7 +507,7 @@ public interface ITableOperations
     /// will be updated to reflect what is defined in the user model.
     /// </para>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, RecordRestriction, int)"/> only
+    /// This is a convenience call to <see cref="QueryRecords(string?, RecordRestriction, int)"/> only
     /// specifying the <see cref="RecordRestriction"/> parameter.
     /// </para>
     /// </remarks>
@@ -579,7 +580,7 @@ public interface ITableOperations
     /// be downloaded locally and decrypted so the proper sort order can be determined.
     /// </para>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, bool, int, int, RecordRestriction[])"/> where restriction
+    /// This is a convenience call to <see cref="QueryRecords(string?, bool, int, int, RecordRestriction[])"/> where restriction
     /// is generated by <see cref="GetSearchRestrictions"/> using <paramref name="recordFilters"/>.
     /// </para>
     /// </remarks>
@@ -608,7 +609,7 @@ public interface ITableOperations
     /// be downloaded locally and decrypted so the proper sort order can be determined.
     /// </para>
     /// <para>
-    /// This is a convenience call to <see cref="QueryRecords(string, bool, int, int, RecordRestriction[])"/> where restriction
+    /// This is a convenience call to <see cref="QueryRecords(string?, bool, int, int, RecordRestriction[])"/> where restriction
     /// is generated by <see cref="GetSearchRestrictions(IRecordFilter[])"/> using <paramref name="recordFilters"/>.
     /// </para>
     /// </remarks>
@@ -830,7 +831,7 @@ public interface ITableOperations
     /// This function searches records locally after query from database, this way Search functionality will work
     /// even with fields that are modeled with the <see cref="EncryptDataAttribute"/> and use restrictions not being = or =/=.
     /// Primary keys for this function will not be cached server-side and this function will be slower and more expensive than similar calls
-    /// to <see cref="QueryRecords(string, bool, int, int, IRecordFilter[])"/>. Usage should be restricted to cases searching for field data that has
+    /// to <see cref="QueryRecords(string?, bool, int, int, IRecordFilter[])"/>. Usage should be restricted to cases searching for field data that has
     /// been modeled with the <see cref="EncryptDataAttribute"/>.
     /// </para>
     /// <para>
@@ -838,7 +839,7 @@ public interface ITableOperations
     /// through them using the <see cref="GetPageOfRecords"/> function. As a result, usage should be restricted to smaller data sets. 
     /// </para>
     /// </remarks>
-    object?[]? SearchRecords(string sortField, bool ascending, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilters);
+    object?[]? SearchRecords(string? sortField, bool ascending, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilters);
 
     /// <summary>
     /// Locally searches retrieved table records after queried from database for the specified sorting and search parameters.
@@ -856,7 +857,7 @@ public interface ITableOperations
     /// This function searches records locally after query from database, this way Search functionality will work
     /// even with fields that are modeled with the <see cref="EncryptDataAttribute"/> and use restrictions not being = or =/=.
     /// Primary keys for this function will not be cached server-side and this function will be slower and more expensive than similar calls
-    /// to <see cref="QueryRecords(string, bool, int, int, IRecordFilter[])"/>. Usage should be restricted to cases searching for field data that has
+    /// to <see cref="QueryRecords(string?, bool, int, int, IRecordFilter[])"/>. Usage should be restricted to cases searching for field data that has
     /// been modeled with the <see cref="EncryptDataAttribute"/>.
     /// </para>
     /// <para>
@@ -864,7 +865,7 @@ public interface ITableOperations
     /// through them using the <see cref="GetPageOfRecordsAsync"/> function. As a result, usage should be restricted to smaller data sets. 
     /// </para>
     /// </remarks>
-    IAsyncEnumerable<object?> SearchRecordsAsync(string sortField, bool ascending, CancellationToken cancellationToken, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilters);
+    IAsyncEnumerable<object?> SearchRecordsAsync(string? sortField, bool ascending, CancellationToken cancellationToken, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilters);
 
     /// <summary>
     /// Gets the specified <paramref name="page"/> of records from the provided source <paramref name="records"/> array.
@@ -1553,7 +1554,7 @@ public interface ITableOperations
     /// <remarks>
     /// <para>
     /// This method is intended to be used in conjunction with calls to the overloads for
-    /// <see cref="QueryRecords(string, bool, int, int, RecordRestriction[])"/> which are
+    /// <see cref="QueryRecords(string?, bool, int, int, RecordRestriction[])"/> which are
     /// used for record pagination.
     /// </para>
     /// <para>

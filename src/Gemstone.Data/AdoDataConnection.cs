@@ -293,7 +293,7 @@ public class AdoDataConnection : IAsyncDisposable, IDisposable
     /// <summary>
     /// Gets an open <see cref="DbConnection"/> to configured ADO.NET data source.
     /// </summary>
-    public DbConnection Connection { get; } = default!;
+    public DbConnection Connection { get; } = null!;
 
     /// <summary>
     /// Gets or sets the type of the database underlying the <see cref="AdoDataConnection"/>.
@@ -729,7 +729,7 @@ public class AdoDataConnection : IAsyncDisposable, IDisposable
     {
         return returnType.IsValueType ? 
             ExecuteScalar(returnType, Activator.CreateInstance(returnType), timeout, sqlFormat, parameters) : 
-            ExecuteScalar(returnType, (object)default!, timeout, sqlFormat, parameters);
+            ExecuteScalar(returnType, (object)null!, timeout, sqlFormat, parameters);
     }
 
     /// <summary>
@@ -747,7 +747,7 @@ public class AdoDataConnection : IAsyncDisposable, IDisposable
     {
         return returnType.IsValueType ?
             ExecuteScalarAsync(returnType, Activator.CreateInstance(returnType), timeout, sqlFormat, cancellationToken, parameters) :
-            ExecuteScalarAsync(returnType, default!, timeout, sqlFormat, cancellationToken, parameters);
+            ExecuteScalarAsync(returnType, null!, timeout, sqlFormat, cancellationToken, parameters);
     }
 
     /// <summary>

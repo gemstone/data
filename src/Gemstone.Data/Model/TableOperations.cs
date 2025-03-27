@@ -40,6 +40,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Gemstone.Collections.CollectionExtensions;
@@ -75,16 +76,16 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     {
         [AllowNull]
         public string ConnectionString { get; set; }
-        public int ConnectionTimeout { get; } = default;
-        public string Database { get; } = default!;
+        public int ConnectionTimeout { get; } = 0;
+        public string Database { get; } = null!;
         public ConnectionState State { get; } = ConnectionState.Open;
         public void Open() {}
         public void Close() {}
         public void Dispose() {}
         public void ChangeDatabase(string databaseName) {}
-        public IDbCommand CreateCommand() => default!;
-        public IDbTransaction BeginTransaction() => default!;
-        public IDbTransaction BeginTransaction(IsolationLevel il) => default!;
+        public IDbCommand CreateCommand() => null!;
+        public IDbTransaction BeginTransaction() => null!;
+        public IDbTransaction BeginTransaction(IsolationLevel il) => null!;
     }
 
     private class IntermediateParameter : IDbDataParameter
@@ -115,7 +116,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private const string TableNameSuffixToken = "<!TNS/>";
     private const string FieldListPrefixToken = "<!FLP/>";
     private const string FieldListSuffixToken = "<!FLS/>";
-    private const string WildcarChar = "%";
+    private const string DefaultWildcardChar = "%";
 
     // Fields
     private readonly string m_selectCountSql;
@@ -157,7 +158,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// customTokens = new[] { new KeyValuePair&lt;string, string&gt;("{count}", $"{count}") };
     /// </code>
     /// </remarks>
-    public TableOperations(AdoDataConnection connection, IEnumerable<KeyValuePair<string, string>>? customTokens = default)
+    public TableOperations(AdoDataConnection connection, IEnumerable<KeyValuePair<string, string>>? customTokens = null)
     {
         Connection = connection ?? throw new ArgumentNullException(nameof(connection));
         m_selectCountSql = s_selectCountSql;
@@ -323,6 +324,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             m_deleteSql = m_deleteSql.Replace(customToken.Key, customToken.Value);
             m_deleteWhereSql = m_deleteWhereSql.Replace(customToken.Key, customToken.Value);
         }
+
+        
     }
 
     /// <summary>
@@ -353,7 +356,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </para>
     /// </remarks>
     /// <exception cref="ArgumentNullException"><paramref name="connection"/> cannot be <c>null</c>.</exception>
-    public TableOperations(AdoDataConnection connection, Action<Exception> exceptionHandler, IEnumerable<KeyValuePair<string, string>>? customTokens = default)
+    public TableOperations(AdoDataConnection connection, Action<Exception> exceptionHandler, IEnumerable<KeyValuePair<string, string>>? customTokens = null)
         : this(connection, customTokens)
     {
         ExceptionHandler = exceptionHandler;
@@ -373,7 +376,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     public string UnescapedTableName => s_tableName;
 
     ///  <inheritdoc/>
-    public string WildcardChar => WildcarChar; 
+    public string WildcardChar { get; init; } = DefaultWildcardChar; 
 
     /// <inheritdoc/>
     public bool HasPrimaryKeyIdentityField => s_hasPrimaryKeyIdentityField;
@@ -722,6 +725,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </remarks>
     public IEnumerable<T?> QueryRecords(string? orderByExpression = null, RecordRestriction? restriction = null, int limit = -1)
     {
+        orderByExpression = ValidateOrderByExpression(orderByExpression);
+
         if (string.IsNullOrWhiteSpace(orderByExpression))
             orderByExpression = UpdateFieldNames(s_primaryKeyFields);
 
@@ -765,7 +770,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
             ExceptionHandler(opex);
 
-            return Enumerable.Empty<T>();
+            return [];
         }
     }
 
@@ -795,6 +800,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </remarks>
     public IAsyncEnumerable<T?> QueryRecordsAsync(string? orderByExpression = null, RecordRestriction? restriction = null, int limit = -1, CancellationToken cancellationToken = default)
     {
+        orderByExpression = ValidateOrderByExpression(orderByExpression);
+
         if (string.IsNullOrWhiteSpace(orderByExpression))
             orderByExpression = UpdateFieldNames(s_primaryKeyFields);
 
@@ -1155,11 +1162,12 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         if (restrictions is not null)
             restriction = restrictions.Aggregate(restriction, (current, item) => current + item);
 
+        sortField = ValidateOrderByExpression(sortField);
+
         if (string.IsNullOrWhiteSpace(sortField))
             sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
 
-        if (sortField is null)
-            throw new ArgumentNullException(nameof(sortField));
+        ArgumentNullException.ThrowIfNull(sortField);
 
         bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
 
@@ -1214,7 +1222,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
                 ExceptionHandler(opex);
 
-                return Enumerable.Empty<T>();
+                return [];
             }
 
             m_lastSortField = sortField;
@@ -1265,12 +1273,13 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         if (restrictions is not null) 
             restriction = restrictions.Aggregate(restriction, (current, item) => current + item);
 
+        sortField = ValidateOrderByExpression(sortField);
+
         if (string.IsNullOrWhiteSpace(sortField))
             sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
 
-        if (sortField is null)
-            throw new ArgumentNullException(nameof(sortField));
-
+        ArgumentNullException.ThrowIfNull(sortField);
+        
         bool sortFieldIsEncrypted = FieldIsEncrypted(sortField);
 
         // Records that have been deleted since primary key cache was established will return null and be filtered out which will throw
@@ -1492,10 +1501,12 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// through them using the <see cref="GetPageOfRecords"/> function. As a result, usage should be restricted to smaller data sets. 
     /// </para>
     /// </remarks>
-    public T?[]? SearchRecords(string sortField, bool ascending, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilters)
+    public T?[]? SearchRecords(string? sortField, bool ascending, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilters)
     {
         if (recordFilters is null)
             return null;
+
+        sortField = ValidateOrderByExpression(sortField);
 
         if (string.IsNullOrWhiteSpace(sortField))
             sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
@@ -1517,7 +1528,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     // ReSharper disable once CoVariantArrayConversion
-    object?[]? ITableOperations.SearchRecords(string sortField, bool ascending, StringComparison comparison, params IRecordFilter?[]? recordFilter)
+    object?[]? ITableOperations.SearchRecords(string? sortField, bool ascending, StringComparison comparison, params IRecordFilter?[]? recordFilter)
     {
         return SearchRecords(sortField, ascending, comparison, recordFilter);
     }
@@ -1546,10 +1557,12 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// through them using the <see cref="GetPageOfRecordsAsync"/> function. As a result, usage should be restricted to smaller data sets. 
     /// </para>
     /// </remarks>
-    public IAsyncEnumerable<T?> SearchRecordsAsync(string sortField, bool ascending, CancellationToken cancellationToken, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilters)
+    public IAsyncEnumerable<T?> SearchRecordsAsync(string? sortField, bool ascending, CancellationToken cancellationToken, StringComparison comparison = StringComparison.OrdinalIgnoreCase, params IRecordFilter?[]? recordFilters)
     {
         if (recordFilters is null)
             return AsyncEnumerable.Empty<T?>();
+
+        sortField = ValidateOrderByExpression(sortField);
 
         if (string.IsNullOrWhiteSpace(sortField))
             sortField = s_fieldNames[s_primaryKeyProperties[0].Name];
@@ -1569,7 +1582,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             queryResult;
     }
 
-    IAsyncEnumerable<object?> ITableOperations.SearchRecordsAsync(string sortField, bool ascending, CancellationToken cancellationToken, StringComparison comparison, params IRecordFilter?[]? recordFilter)
+    IAsyncEnumerable<object?> ITableOperations.SearchRecordsAsync(string? sortField, bool ascending, CancellationToken cancellationToken, StringComparison comparison, params IRecordFilter?[]? recordFilter)
     {
         return SearchRecordsAsync(sortField, ascending, cancellationToken, comparison, recordFilter)!.Cast<object?>();
     }
@@ -1631,7 +1644,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     {
         try
         {
-            return Connection.TryRetrieveRow(m_selectRowSql, out DataRow? row, GetInterpretedPrimaryKeys(primaryKeys)) ? LoadRecord(row!) : default;
+            return Connection.TryRetrieveRow(m_selectRowSql, out DataRow? row, GetInterpretedPrimaryKeys(primaryKeys)) ? LoadRecord(row!) : null;
 
         }
         catch (Exception ex)
@@ -1663,7 +1676,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         try
         {
             (DataRow? row, bool success) = await Connection.TryRetrieveRowAsync(m_selectRowSql, cancellationToken, GetInterpretedPrimaryKeys(primaryKeys)).ConfigureAwait(false);
-            return success ? LoadRecord(row!) : default;
+            return success ? LoadRecord(row!) : null;
 
         }
         catch (Exception ex)
@@ -1689,7 +1702,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     {
         try
         {
-            return Connection.TryRetrieveRow(m_selectRowSql, out DataRow? row, GetInterpretedPrimaryKeys(primaryKeys, true)) ? LoadRecord(row!, properties ?? s_properties.Values) : default;
+            return Connection.TryRetrieveRow(m_selectRowSql, out DataRow? row, GetInterpretedPrimaryKeys(primaryKeys, true)) ? LoadRecord(row!, properties ?? s_properties.Values) : null;
 
         }
         catch (Exception ex)
@@ -1711,7 +1724,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         try
         {
             (DataRow? row, bool success) = await Connection.TryRetrieveRowAsync(m_selectRowSql, cancellationToken, GetInterpretedPrimaryKeys(primaryKeys, true)).ConfigureAwait(false);
-            return success ? LoadRecord(row!, properties ?? s_properties.Values) : default;
+            return success ? LoadRecord(row!, properties ?? s_properties.Values) : null;
 
         }
         catch (Exception ex)
@@ -1963,8 +1976,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <inheritdoc/>
     public int DeleteRecord(RecordRestriction? restriction, bool? applyRootQueryRestriction = null)
     {
-        if (restriction is null)
-            throw new ArgumentNullException(nameof(restriction));
+        ArgumentNullException.ThrowIfNull(restriction);
 
         string? sqlExpression = null;
 
@@ -1997,8 +2009,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <inheritdoc/>
     public async Task<int> DeleteRecordAsync(RecordRestriction? restriction, CancellationToken cancellationToken, bool? applyRootQueryRestriction = null)
     {
-        if (restriction is null)
-            throw new ArgumentNullException(nameof(restriction));
+        ArgumentNullException.ThrowIfNull(restriction);
 
         string? sqlExpression = null;
 
@@ -2585,7 +2596,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         if (s_propertyNames.TryGetValue(fieldName, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? property) && property.TryGetAttribute(out attribute))
             return true;
 
-        attribute = default!;
+        attribute = null!;
 
         return false;
     }
@@ -2593,13 +2604,13 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <inheritdoc/>
     public bool TryGetFieldAttribute(string fieldName, Type attributeType, out Attribute? attribute)
     {
-        if (!attributeType.IsInstanceOfType(typeof(Attribute)))
+        if (!typeof(Attribute).IsAssignableFrom(attributeType))
             throw new ArgumentException($"The specified type \"{attributeType.Name}\" is not an Attribute.", nameof(attributeType));
 
         if (s_propertyNames.TryGetValue(fieldName, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? property) && property.TryGetAttribute(attributeType, out attribute))
             return true;
 
-        attribute = default;
+        attribute = null;
 
         return false;
     }
@@ -2662,13 +2673,13 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         if (s_propertyNames.TryGetValue(fieldName, out string? propertyName) && s_properties.TryGetValue(propertyName, out PropertyInfo? property))
             return property.PropertyType;
 
-        return default;
+        return null;
     }
 
     /// <inheritdoc/>
     public bool FieldExists(string fieldName)
     {
-        return s_propertyNames.TryGetValue(fieldName, out _);
+        return s_validFieldNames.Contains(fieldName);
     }
 
     /// <inheritdoc/>
@@ -2772,15 +2783,14 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
     // Derive field name, unescaping it if it was escaped by the model
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private string GetUnescapedFieldName(string fieldName)
+    private static string GetUnescapedFieldName(string fieldName)
     {
         if (s_escapedFieldNameTargets is null)
             return fieldName;
 
-        if (!s_escapedFieldNameTargets.TryGetValue(fieldName, out _))
-            return fieldName;
-
-        return fieldName.Substring(1, fieldName.Length - 2);
+        return s_escapedFieldNameTargets.TryGetValue(fieldName, out _) ? 
+            fieldName.Substring(1, fieldName.Length - 2) : 
+            fieldName;
     }
 
     // Update field names in expression, escaping or unescaping as needed as defined by model
@@ -2788,7 +2798,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private string? UpdateFieldNames(string? filterExpression)
     {
         if (filterExpression is null)
-            return default;
+            return null;
 
         if (s_escapedFieldNameTargets is not null)
         {
@@ -2824,7 +2834,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private IEnumerable<T?> LocalOrderBy(IEnumerable<T?> queryResults, string sortField, bool ascending, StringComparer? comparer = default)
+    private IEnumerable<T?> LocalOrderBy(IEnumerable<T?> queryResults, string sortField, bool ascending, StringComparer? comparer = null)
     {
         // Execute order-by locally on unencrypted data
         return ascending ?
@@ -2833,12 +2843,82 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private IAsyncEnumerable<T?> LocalOrderByAsync(IAsyncEnumerable<T?> queryResults, string sortField, bool ascending, StringComparer? comparer = default)
+    private IAsyncEnumerable<T?> LocalOrderByAsync(IAsyncEnumerable<T?> queryResults, string sortField, bool ascending, StringComparer? comparer = null)
     {
         // Execute order-by locally on unencrypted data
         return ascending ?
             queryResults.OrderBy(record => GetFieldValue(record, sortField) as string, comparer ?? StringComparer.OrdinalIgnoreCase) :
             queryResults.OrderByDescending(record => GetFieldValue(record, sortField) as string, comparer ?? StringComparer.OrdinalIgnoreCase);
+    }
+
+    // Validates that an order by expression is either an explicitly allowed via the 'SortExtensionAttribute' or a field in the model 
+    private string? ValidateOrderByExpression(string? orderByExpression)
+    {
+        if (string.IsNullOrWhiteSpace(orderByExpression))
+            return orderByExpression;
+
+        // Split the expression by commas to handle multiple fields
+        string[] fieldExpressions = orderByExpression.Split(',');
+        List<string> validatedExpressions = [];
+
+        foreach (string fieldExpression in fieldExpressions)
+        {
+            string trimmedExpression = fieldExpression.Trim();
+
+            if (string.IsNullOrWhiteSpace(trimmedExpression))
+                continue;
+
+            // Parse the field name and any optional direction (ASC/DESC)
+            string fieldName, direction;
+
+            // Check for ASC/DESC keywords
+            if (trimmedExpression.EndsWith(" ASC", StringComparison.OrdinalIgnoreCase))
+            {
+                fieldName = trimmedExpression[..^4].Trim();
+                direction = " ASC";
+            }
+            else if (trimmedExpression.EndsWith(" DESC", StringComparison.OrdinalIgnoreCase))
+            {
+                fieldName = trimmedExpression[..^5].Trim();
+                direction = " DESC";
+            }
+            else
+            {
+                // No direction specified
+                fieldName = trimmedExpression;
+                direction = string.Empty;
+            }
+
+            // Check if the field matches any SortExtension pre-compiled regex patterns
+            bool matchFound = false;
+
+            foreach ((Regex fieldMatchExpression, Func<string, string> sortExtensionMethod) in s_sortExtensions)
+            {
+                if (!fieldMatchExpression.IsMatch(fieldName))
+                    continue;
+
+                // Call the delegate method to get the coded order by expression
+                string expression = sortExtensionMethod(fieldName);
+                validatedExpressions.Add(expression + direction);
+                matchFound = true;
+
+                // Exit after first match, possible duplicate field matches are ignored - models with wide
+                // field match expression should ensure that the most specific expressions are listed first
+                break;
+            }
+
+            if (matchFound)
+                continue;
+
+            // If no SortExtension method matches, check if it's a valid field in the model
+            if (!FieldExists(fieldName))
+                throw new InvalidExpressionException($"\"{fieldName}\" is not a valid field in the order by expression");
+
+            validatedExpressions.Add(fieldName + direction);
+        }
+
+        // Combine all validated expressions back with commas
+        return string.Join(", ", validatedExpressions);
     }
 
     #endregion
@@ -2877,6 +2957,10 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private static readonly Action<CurrentScope> s_updateRecordInstance;
     private static readonly Action<CurrentScope> s_applyRecordDefaults;
     private static readonly DataTable s_tableSchema;
+    private static readonly HashSet<string> s_validFieldNames;
+    private static readonly HashSet<string> s_searchableFields;
+    private static readonly (Regex, Func<IRecordFilter, RecordRestriction>)[] s_searchExtensions;
+    private static readonly (Regex, Func<string, string>)[] s_sortExtensions;
     private static TypeRegistry? s_typeRegistry;
 
     // Static Constructor
@@ -3083,13 +3167,72 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             }
 
             // Create the DataColumn with the non-nullable type
-            DataColumn column = new DataColumn(fieldName, columnType)
-            {
-                AllowDBNull = isNullable
-            };
+            DataColumn column = new(fieldName, columnType) { AllowDBNull = isNullable };
 
             s_tableSchema.Columns.Add(column);
         }
+
+        // Create hash set of valid field names, escaped and unescaped
+        s_validFieldNames = new HashSet<string>(s_fieldNames.Values, StringComparer.OrdinalIgnoreCase);
+        s_validFieldNames.UnionWith(s_fieldNames.Values.Select(GetUnescapedFieldName));
+
+        // Create hash set of searchable fields
+        s_searchableFields = new HashSet<string>(typeof(T).GetCustomAttributes<SearchableAttribute>().SelectMany(attr => attr.FieldNames), StringComparer.OrdinalIgnoreCase);
+
+        // Get all public static methods for the modeled table
+        MethodInfo[] staticMethods = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.Static);
+
+        // Resolve extensions methods for the modeled table
+        s_searchExtensions = ResolveExtensionAttributes<SearchExtensionAttribute, IRecordFilter, RecordRestriction>(staticMethods);
+        s_sortExtensions = ResolveExtensionAttributes<SortExtensionAttribute, string, string>(staticMethods);
+    }
+
+    internal static bool IsSearchableField(string fieldName)
+    {
+        return s_searchableFields.Contains(fieldName);
+    }
+
+    private static (Regex, Func<TInput, TReturn>)[] ResolveExtensionAttributes<TAttribute, TInput, TReturn>(MethodInfo[] staticMethods) where TAttribute : ExtensionAttributeBase
+    {
+        List<(Regex, Func<TInput, TReturn>)> extensions = [];
+
+        foreach (MethodInfo method in staticMethods)
+        {
+            TAttribute? attribute = method.GetCustomAttribute<TAttribute>();
+
+            if (attribute is null)
+                continue;
+
+            // Validate method signature
+            ParameterInfo[] parameters = method.GetParameters();
+
+            if (method.ReturnType != typeof(TReturn) || parameters.Length != 1 || parameters[0].ParameterType != typeof(string))
+            {
+                throw new InvalidOperationException(
+                    $"Method \"{method.Name}\" marked with \"{typeof(TAttribute).Name}\" in model \"{typeof(T).Name}\" has an invalid signature. " +
+                    $"Expected: public static {typeof(TReturn).Name} Method({typeof(TInput)} input)");
+            }
+
+            // Compile the regex pattern
+            Regex regex = new(attribute.FieldMatch, RegexOptions.Compiled);
+
+            // Create and cache the delegate directly as Func<string, string>
+            Func<TInput, TReturn> staticExtensionMethod = (Func<TInput, TReturn>)Delegate.CreateDelegate(typeof(Func<TInput, TReturn>), method);
+            extensions.Add((regex, staticExtensionMethod));
+        }
+
+        return extensions.ToArray();
+    }
+
+    internal static Func<IRecordFilter, RecordRestriction>? GetSearchExtensionMethod(string fieldName)
+    {
+        foreach ((Regex fieldMatchExpression, Func<IRecordFilter, RecordRestriction> searchExtensionMethod) in s_searchExtensions)
+        {
+            if (fieldMatchExpression.IsMatch(fieldName))
+                return searchExtensionMethod;
+        }
+
+        return null;
     }
 
     // Static Properties
@@ -3121,7 +3264,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </remarks>
     public static Func<DataRow, T?> LoadRecordFunction()
     {
-        using AdoDataConnection connection = new(default!, typeof(NullConnection));
+        using AdoDataConnection connection = new(null!, typeof(NullConnection));
         return new TableOperations<T>(connection).LoadRecord;
     }
 
@@ -3136,7 +3279,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </remarks>
     public static Func<T?> NewRecordFunction()
     {
-        using AdoDataConnection connection = new(default!, typeof(NullConnection));
+        using AdoDataConnection connection = new(null!, typeof(NullConnection));
         return new TableOperations<T>(connection).NewRecord;
     }
 
@@ -3151,7 +3294,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </remarks>
     public static Action<T> ApplyRecordDefaultsFunction()
     {
-        using AdoDataConnection connection = new(default!, typeof(NullConnection));
+        using AdoDataConnection connection = new(null!, typeof(NullConnection));
         return new TableOperations<T>(connection).ApplyRecordDefaults;
     }
 
@@ -3166,7 +3309,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// </remarks>
     public static Action<T> ApplyRecordUpdatesFunction()
     {
-        using AdoDataConnection connection = new(default!, typeof(NullConnection));
+        using AdoDataConnection connection = new(null!, typeof(NullConnection));
         return new TableOperations<T>(connection).ApplyRecordUpdates;
     }
 

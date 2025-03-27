@@ -45,6 +45,6 @@ public sealed class FieldNameAttribute : Attribute
     /// <param name="fieldName">Field name to use for property.</param>
     public FieldNameAttribute(string fieldName)
     {
-            FieldName = fieldName;
-        }
+        FieldName = fieldName;
+    }
 }

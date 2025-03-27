@@ -631,7 +631,7 @@ public class Field : IComparable
                             break;
                         case OleDbType.Guid:
                             if (encodedValue.Length == 0)
-                                encodedValue = new Guid().ToString().ToLower();
+                                encodedValue = Guid.Empty.ToString().ToLower();
 
                             encodedValue = Parent.Parent.Parent.Parent.DataSourceType == DatabaseType.Access ? $"{{{encodedValue.ToLower()}}}" : $"'{encodedValue.ToLower()}'";
 
@@ -722,7 +722,7 @@ public class Field : IComparable
 
                     break;
                 case OleDbType.Guid:
-                    encodedValue = new Guid().ToString().ToLower();
+                    encodedValue = Guid.Empty.ToString().ToLower();
                     if (Parent.Parent.Parent.Parent.DataSourceType == DatabaseType.Access)
                         encodedValue = $"{{{encodedValue}}}";
                     else
@@ -826,7 +826,7 @@ public class ForeignKeyFields : IEnumerable
     {
         Parent = parent;
         FieldDictionary = new Dictionary<string, ForeignKeyField>(StringComparer.OrdinalIgnoreCase);
-        FieldsList = new List<ForeignKeyField>();
+        FieldsList = [];
     }
 
     #endregion
@@ -931,7 +931,7 @@ public class Fields : IEnumerable<Field>
     {
         Parent = parent;
         FieldDictionary = new Dictionary<string, Field>(StringComparer.OrdinalIgnoreCase);
-        FieldList = new List<Field>();
+        FieldList = [];
     }
 
     #endregion
@@ -1366,7 +1366,7 @@ public class Table : IComparable, IComparable<Table>
     {
         Table table;
 
-        tableStack ??= new List<Table>();
+        tableStack ??= [];
 
         tableStack.Add(this);
 
@@ -1475,7 +1475,7 @@ public class Table : IComparable, IComparable<Table>
         Table? remoteForeignKeyTable = m_parent[foreignKeyTableName];
         Field? remoteForeignKeyField = remoteForeignKeyTable?.Fields[foreignKeyFieldName];
 
-        if (remoteForeignKeyField == null)
+        if (remoteForeignKeyField is null)
             return false;
                 
         ForeignKeyField localForeignKeyField = new(localPrimaryKeyField.ForeignKeys);
@@ -1576,7 +1576,7 @@ public class Tables : IEnumerable<Table>
         // We only allow internal creation of this object
         m_parent = parent;
         TableDictionary = new Dictionary<string, Table>(StringComparer.OrdinalIgnoreCase);
-        TableList = new List<Table>();
+        TableList = [];
     }
 
     #endregion
@@ -1970,7 +1970,7 @@ public class Schema
                 m_schemaConnection.ExecuteNonQuery("SET sql_mode='ANSI_QUOTES'");
 
             // Validate table / field existence against open connection as defined in serialized schema
-            List<Table> tablesToRemove = new();
+            List<Table> tablesToRemove = [];
 
             foreach (Table table in Tables)
             {
@@ -1979,7 +1979,7 @@ public class Schema
                     // Make sure table exists
                     m_schemaConnection.ExecuteScalar($"SELECT COUNT(*) FROM {table.SQLEscapedName}");
 
-                    List<Field> fieldsToRemove = new();
+                    List<Field> fieldsToRemove = [];
                     string testFieldSQL;
 
                     try

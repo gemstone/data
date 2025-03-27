@@ -95,7 +95,7 @@ public sealed class RecordOperationAttribute : Attribute
     /// <param name="operation">The <see cref="RecordOperation"/> the method represents.</param>
     public RecordOperationAttribute(Type modelType, RecordOperation operation)
     {
-            ModelType = modelType;
-            Operation = operation;
-        }
+        ModelType = modelType;
+        Operation = operation;
+    }
 }

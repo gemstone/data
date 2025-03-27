@@ -53,8 +53,8 @@ public sealed class EncryptDataAttribute : Attribute
     /// </summary>
     public EncryptDataAttribute()
     {
-            KeyReference = DefaultKeyReference;
-        }
+        KeyReference = DefaultKeyReference;
+    }
 
     /// <summary>
     /// Creates a new <see cref="EncryptDataAttribute"/> with a specified <paramref name="keyReference"/> value.
@@ -62,9 +62,9 @@ public sealed class EncryptDataAttribute : Attribute
     /// <param name="keyReference">Reference name used to lookup encryption key and initialization vector.</param>
     public EncryptDataAttribute(string keyReference)
     {
-            if (string.IsNullOrWhiteSpace(keyReference))
-                throw new ArgumentNullException(nameof(keyReference), "Key reference cannot be null, empty or whitespace.");
+        if (string.IsNullOrWhiteSpace(keyReference))
+            throw new ArgumentNullException(nameof(keyReference), "Key reference cannot be null, empty or whitespace.");
 
-            KeyReference = keyReference;
-        }
+        KeyReference = keyReference;
+    }
 }

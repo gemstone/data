@@ -254,7 +254,7 @@ public abstract class BulkDataOperationBase : IBulkDataOperation, IDisposable
     /// <summary>
     /// Get list of tables to be excluded during data processing
     /// </summary>
-    public List<string> ExcludedTables { get; } = new();
+    public List<string> ExcludedTables { get; } = [];
 
     #endregion
 

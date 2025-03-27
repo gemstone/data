@@ -110,7 +110,7 @@ public sealed class RootQueryRestrictionAttribute : Attribute
     public RootQueryRestrictionAttribute(string filterExpression, params object?[]? parameters)
     {
         FilterExpression = filterExpression ?? throw new ArgumentNullException(nameof(filterExpression));
-        Parameters = parameters ?? Array.Empty<object>();
+        Parameters = parameters ?? [];
     }
 
     #endregion

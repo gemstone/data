@@ -828,7 +828,7 @@ public class DataInserter : BulkDataOperationBase
             if (BulkInsertFilePath.Substring(BulkInsertFilePath.Length - 1) != "\\")
                 BulkInsertFilePath += "\\";
 
-            bulkInsertFile = $"{BulkInsertFilePath}{Guid.Empty}.tmp";
+            bulkInsertFile = $"{BulkInsertFilePath}{new Guid()}.tmp";
             bulkInsertFileStream = File.Create(bulkInsertFile);
         }
 

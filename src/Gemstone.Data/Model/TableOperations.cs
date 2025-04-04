@@ -176,7 +176,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         // Establish any modeled root query restriction parameters
         if (s_rootQueryRestrictionAttribute is not null)
         {
-            RootQueryRestriction = new RecordRestriction(s_rootQueryRestrictionAttribute.FilterExpression, s_rootQueryRestrictionAttribute.Parameters);
+            // Copy parameters array so that modifications to parameter values do not affect other instances
+            object?[] parameters = s_rootQueryRestrictionAttribute.Parameters.ToArray();
+            RootQueryRestriction = new RecordRestriction(s_rootQueryRestrictionAttribute.FilterExpression, parameters);
             ApplyRootQueryRestrictionToUpdates = s_rootQueryRestrictionAttribute.ApplyToUpdates;
             ApplyRootQueryRestrictionToDeletes = s_rootQueryRestrictionAttribute.ApplyToDeletes;
         }

@@ -2687,7 +2687,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <inheritdoc/>
     public RecordRestriction[]? GetSearchRestrictions(params IRecordFilter?[]? recordFilters)
     {
-        return recordFilters?.Where(recordFilter => recordFilter is not null)
+        return recordFilters?.Where(recordFilter => !string.IsNullOrWhiteSpace(recordFilter?.FieldName))
             .Select(recordFilter => recordFilter!.GenerateRestriction(this))
             .ToArray();
     }

@@ -1196,22 +1196,8 @@ public static class DataExtensions
     public static DataSet RetrieveDataSet(this DbConnection connection, int timeout, string sql, params object[] parameters)
     {
         using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
-
         command.CommandTimeout = timeout;
-
-        using DbDataReader reader = command.ExecuteReader();
-        DataSet data = new("Temp");
-        int tableIndex = 0;
-
-        do
-        {
-            string tableName = tableIndex == 0 ? "Table" : $"Table{tableIndex}";
-            data.Load(reader, LoadOption.PreserveChanges, tableName);
-            tableIndex++;
-        }
-        while (!reader.IsClosed);
-
-        return data;
+        return Load(command);
     }
 
     /// <summary>
@@ -1243,23 +1229,8 @@ public static class DataExtensions
     public static async Task<DataSet> RetrieveDataSetAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
     {
         await using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
-
         command.CommandTimeout = timeout;
-
-        await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-        DataSet data = new("Temp");
-        int tableIndex = 0;
-
-        do
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            string tableName = tableIndex == 0 ? "Table" : $"Table{tableIndex}";
-            data.Load(reader, LoadOption.PreserveChanges, tableName);
-            tableIndex++;
-        }
-        while (!reader.IsClosed);
-
-        return data;
+        return await LoadAsync(command, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -1291,20 +1262,7 @@ public static class DataExtensions
         command.CommandTimeout = timeout;
         command.Parameters.Clear();
         command.AddParametersWithValues(sql, parameters);
-
-        using DbDataReader reader = command.ExecuteReader();
-        DataSet data = new("Temp");
-        int tableIndex = 0;
-
-        do
-        {
-            string tableName = tableIndex == 0 ? "Table" : $"Table{tableIndex}";
-            data.Load(reader, LoadOption.PreserveChanges, tableName);
-            tableIndex++;
-        }
-        while (!reader.IsClosed);
-
-        return data;
+        return Load(command);
     }
 
     /// <summary>
@@ -1338,19 +1296,67 @@ public static class DataExtensions
         command.CommandTimeout = timeout;
         command.Parameters.Clear();
         command.AddParametersWithValues(sql, parameters);
+        return await LoadAsync(command, cancellationToken).ConfigureAwait(false);
+    }
 
+    // DataSet.Load() throws an exception related to table constraints
+    // when attempting to load data from a view using Microsoft.Data.Sqlite
+    private static DataSet Load(DbCommand command)
+    {
+        using DbDataReader reader = command.ExecuteReader();
+        DataSet data = new("Temp");
+        int tableIndex = 0;
+
+        do
+        {
+            string tableName = tableIndex == 0 ? "Table" : $"Table{tableIndex}";
+            DataTable table = new(tableName);
+
+            foreach (DbColumn column in reader.GetColumnSchema())
+                table.Columns.Add(column.ColumnName, column.DataType ?? typeof(string));
+
+            while (reader.Read())
+            {
+                object[] values = new object[reader.FieldCount];
+                reader.GetValues(values);
+                table.LoadDataRow(values, true);
+            }
+
+            data.Tables.Add(table);
+            tableIndex++;
+        }
+        while (reader.NextResult());
+
+        return data;
+    }
+
+    // DataSet.Load() throws an exception related to table constraints
+    // when attempting to load data from a view using Microsoft.Data.Sqlite
+    private static async Task<DataSet> LoadAsync(DbCommand command, CancellationToken cancellationToken)
+    {
         await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         DataSet data = new("Temp");
         int tableIndex = 0;
 
         do
         {
-            cancellationToken.ThrowIfCancellationRequested();
             string tableName = tableIndex == 0 ? "Table" : $"Table{tableIndex}";
-            data.Load(reader, LoadOption.PreserveChanges, tableName);
+            DataTable table = new(tableName);
+
+            foreach (DbColumn column in await reader.GetColumnSchemaAsync(cancellationToken).ConfigureAwait(false))
+                table.Columns.Add(column.ColumnName, column.DataType ?? typeof(string));
+
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                object[] values = new object[reader.FieldCount];
+                reader.GetValues(values);
+                table.LoadDataRow(values, true);
+            }
+
+            data.Tables.Add(table);
             tableIndex++;
         }
-        while (!reader.IsClosed);
+        while (await reader.NextResultAsync(cancellationToken).ConfigureAwait(false));
 
         return data;
     }

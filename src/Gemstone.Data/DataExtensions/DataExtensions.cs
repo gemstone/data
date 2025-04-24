@@ -134,7 +134,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int ExecuteNonQuery(this DbConnection connection, string sql, params object[] parameters)
+    public static int ExecuteNonQuery(this DbConnection connection, string sql, params object?[] parameters)
     {
         return connection.ExecuteNonQuery(DefaultTimeoutDuration, sql, parameters);
     }
@@ -148,7 +148,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int ExecuteNonQuery(this DbConnection connection, int timeout, string sql, params object[] parameters)
+    public static int ExecuteNonQuery(this DbConnection connection, int timeout, string sql, params object?[] parameters)
     {
         using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
@@ -166,7 +166,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<int> ExecuteNonQueryAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<int> ExecuteNonQueryAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return connection.ExecuteNonQueryAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
     }
@@ -181,7 +181,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<int> ExecuteNonQueryAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static async Task<int> ExecuteNonQueryAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         await using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
@@ -198,7 +198,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int ExecuteNonQuery(this DbCommand command, string sql, params object[] parameters)
+    public static int ExecuteNonQuery(this DbCommand command, string sql, params object?[] parameters)
     {
         return command.ExecuteNonQuery(DefaultTimeoutDuration, sql, parameters);
     }
@@ -212,7 +212,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int ExecuteNonQuery(this DbCommand command, int timeout, string sql, params object[] parameters)
+    public static int ExecuteNonQuery(this DbCommand command, int timeout, string sql, params object?[] parameters)
     {
         command.CommandTimeout = timeout;
         command.Parameters.Clear();
@@ -230,7 +230,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<int> ExecuteNonQueryAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<int> ExecuteNonQueryAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return command.ExecuteNonQueryAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
     }
@@ -245,7 +245,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The number of rows affected.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<int> ExecuteNonQueryAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<int> ExecuteNonQueryAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         command.CommandTimeout = timeout;
         command.Parameters.Clear();
@@ -266,7 +266,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static (DbDataReader, DbCommand) ExecuteReader(this DbConnection connection, string sql, params object[] parameters)
+    public static (DbDataReader, DbCommand) ExecuteReader(this DbConnection connection, string sql, params object?[] parameters)
     {
         return connection.ExecuteReader(DefaultTimeoutDuration, sql, CommandBehavior.Default, parameters);
     }
@@ -280,7 +280,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static (DbDataReader, DbCommand) ExecuteReader(this DbConnection connection, int timeout, string sql, params object[] parameters)
+    public static (DbDataReader, DbCommand) ExecuteReader(this DbConnection connection, int timeout, string sql, params object?[] parameters)
     {
         return connection.ExecuteReader(timeout, sql, CommandBehavior.Default, parameters);
     }
@@ -295,7 +295,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static (DbDataReader, DbCommand) ExecuteReader(this DbConnection connection, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
+    public static (DbDataReader, DbCommand) ExecuteReader(this DbConnection connection, int timeout, string sql, CommandBehavior behavior, params object?[] parameters)
     {
         DbCommand? command = null;
         DbDataReader? reader = null;
@@ -323,7 +323,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return connection.ExecuteReaderAsync(DefaultTimeoutDuration, sql, CommandBehavior.Default, cancellationToken, parameters);
     }
@@ -338,7 +338,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return connection.ExecuteReaderAsync(timeout, sql, CommandBehavior.Default, cancellationToken, parameters);
     }
@@ -354,7 +354,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object and its associated command.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(this DbConnection connection, int timeout, string sql, CommandBehavior behavior, CancellationToken cancellationToken, params object[] parameters)
+    public static (Task<DbDataReader>, DbCommand) ExecuteReaderAsync(this DbConnection connection, int timeout, string sql, CommandBehavior behavior, CancellationToken cancellationToken, params object?[] parameters)
     {
         DbCommand? command = null;
         DbDataReader? reader = null;
@@ -381,7 +381,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DbDataReader ExecuteReader(this DbCommand command, string sql, params object[] parameters)
+    public static DbDataReader ExecuteReader(this DbCommand command, string sql, params object?[] parameters)
     {
         return command.ExecuteReader(DefaultTimeoutDuration, sql, CommandBehavior.Default, parameters);
     }
@@ -395,7 +395,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DbDataReader ExecuteReader(this DbCommand command, int timeout, string sql, params object[] parameters)
+    public static DbDataReader ExecuteReader(this DbCommand command, int timeout, string sql, params object?[] parameters)
     {
         return command.ExecuteReader(timeout, sql, CommandBehavior.Default, parameters);
     }
@@ -410,7 +410,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DbDataReader ExecuteReader(this DbCommand command, int timeout, string sql, CommandBehavior behavior, params object[] parameters)
+    public static DbDataReader ExecuteReader(this DbCommand command, int timeout, string sql, CommandBehavior behavior, params object?[] parameters)
     {
         command.CommandTimeout = timeout;
         command.Parameters.Clear();
@@ -428,7 +428,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DbDataReader> ExecuteReaderAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<DbDataReader> ExecuteReaderAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return command.ExecuteReaderAsync(DefaultTimeoutDuration, sql, CommandBehavior.Default, cancellationToken, parameters);
     }
@@ -443,7 +443,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DbDataReader> ExecuteReaderAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<DbDataReader> ExecuteReaderAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return command.ExecuteReaderAsync(timeout, sql, CommandBehavior.Default, cancellationToken, parameters);
     }
@@ -459,7 +459,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DbDataReader"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DbDataReader> ExecuteReaderAsync(this DbCommand command, int timeout, string sql, CommandBehavior behavior, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<DbDataReader> ExecuteReaderAsync(this DbCommand command, int timeout, string sql, CommandBehavior behavior, CancellationToken cancellationToken, params object?[] parameters)
     {
         command.CommandTimeout = timeout;
         command.Parameters.Clear();
@@ -481,7 +481,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static object? ExecuteScalar(this DbConnection connection, string sql, params object[] parameters)
+    public static object? ExecuteScalar(this DbConnection connection, string sql, params object?[] parameters)
     {
         return connection.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
     }
@@ -496,7 +496,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static object? ExecuteScalar(this DbConnection connection, int timeout, string sql, params object[] parameters)
+    public static object? ExecuteScalar(this DbConnection connection, int timeout, string sql, params object?[] parameters)
     {
         using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
@@ -515,7 +515,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<object?> ExecuteScalarAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<object?> ExecuteScalarAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return connection.ExecuteScalarAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
     }
@@ -531,7 +531,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<object?> ExecuteScalarAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static async Task<object?> ExecuteScalarAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         await using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
 
@@ -549,7 +549,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static object? ExecuteScalar(this DbCommand command, string sql, params object[] parameters)
+    public static object? ExecuteScalar(this DbCommand command, string sql, params object?[] parameters)
     {
         return command.ExecuteScalar(DefaultTimeoutDuration, sql, parameters);
     }
@@ -564,7 +564,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static object? ExecuteScalar(this DbCommand command, int timeout, string sql, params object[] parameters)
+    public static object? ExecuteScalar(this DbCommand command, int timeout, string sql, params object?[] parameters)
     {
         command.CommandTimeout = timeout;
         command.Parameters.Clear();
@@ -583,7 +583,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<object?> ExecuteScalarAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<object?> ExecuteScalarAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return command.ExecuteScalarAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
     }
@@ -599,7 +599,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Value in the first column of the first row in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<object?> ExecuteScalarAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<object?> ExecuteScalarAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         command.CommandTimeout = timeout;
         command.Parameters.Clear();
@@ -789,7 +789,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataRow RetrieveRow(this DbConnection connection, string sql, params object[] parameters)
+    public static DataRow RetrieveRow(this DbConnection connection, string sql, params object?[] parameters)
     {
         return connection.RetrieveRow(DefaultTimeoutDuration, sql, parameters);
     }
@@ -803,7 +803,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataRow RetrieveRow(this DbConnection connection, int timeout, string sql, params object[] parameters)
+    public static DataRow RetrieveRow(this DbConnection connection, int timeout, string sql, params object?[] parameters)
     {
         DataTable dataTable = connection.RetrieveData(timeout, sql, parameters);
 
@@ -822,7 +822,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DataRow> RetrieveRowAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<DataRow> RetrieveRowAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return connection.RetrieveRowAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
     }
@@ -837,7 +837,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<DataRow> RetrieveRowAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static async Task<DataRow> RetrieveRowAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         DataTable dataTable = await connection.RetrieveDataAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false);
 
@@ -855,7 +855,7 @@ public static class DataExtensions
     /// <param name="row">The first <see cref="DataRow"/> in the result set, or <c>null</c>.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static bool TryRetrieveRow(this DbConnection connection, string sql, out DataRow? row, params object[] parameters)
+    public static bool TryRetrieveRow(this DbConnection connection, string sql, out DataRow? row, params object?[] parameters)
     {
         return connection.TryRetrieveRow(sql, DefaultTimeoutDuration, out row, parameters);
     }
@@ -869,7 +869,7 @@ public static class DataExtensions
     /// <param name="row">The first <see cref="DataRow"/> in the result set, or <c>null</c>.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static bool TryRetrieveRow(this DbConnection connection, string sql, int timeout, out DataRow? row, params object[] parameters)
+    public static bool TryRetrieveRow(this DbConnection connection, string sql, int timeout, out DataRow? row, params object?[] parameters)
     {
         DataTable dataTable = connection.RetrieveData(sql, timeout, parameters);
 
@@ -891,7 +891,7 @@ public static class DataExtensions
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Tuple of first <see cref="DataRow"/> in the result set (can be <c>null</c>) and a flag that determines if retrieve was successful.</returns>
-    public static Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return connection.TryRetrieveRowAsync(sql, DefaultTimeoutDuration, cancellationToken, parameters);
     }
@@ -905,7 +905,7 @@ public static class DataExtensions
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Tuple of first <see cref="DataRow"/> in the result set (can be <c>null</c>) and a flag that determines if retrieve was successful.</returns>
-    public static async Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbConnection connection, string sql, int timeout, CancellationToken cancellationToken, params object[] parameters)
+    public static async Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbConnection connection, string sql, int timeout, CancellationToken cancellationToken, params object?[] parameters)
     {
         DataTable dataTable = await connection.RetrieveDataAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false);
         return dataTable.Rows.Count == 0 ? (null, false) : (dataTable.Rows[0], true);
@@ -919,7 +919,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataRow RetrieveRow(this DbCommand command, string sql, params object[] parameters)
+    public static DataRow RetrieveRow(this DbCommand command, string sql, params object?[] parameters)
     {
         return command.RetrieveRow(DefaultTimeoutDuration, sql, parameters);
     }
@@ -933,7 +933,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataRow RetrieveRow(this DbCommand command, int timeout, string sql, params object[] parameters)
+    public static DataRow RetrieveRow(this DbCommand command, int timeout, string sql, params object?[] parameters)
     {
         DataTable dataTable = command.RetrieveData(timeout, sql, parameters);
 
@@ -952,7 +952,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DataRow> RetrieveRowAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<DataRow> RetrieveRowAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return command.RetrieveRowAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
     }
@@ -967,7 +967,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<DataRow> RetrieveRowAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static async Task<DataRow> RetrieveRowAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         DataTable dataTable = await command.RetrieveDataAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false);
 
@@ -985,7 +985,7 @@ public static class DataExtensions
     /// <param name="row">The first <see cref="DataRow"/> in the result set, or <c>null</c>.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static bool TryRetrieveRow(this DbCommand command, string sql, out DataRow? row, params object[] parameters)
+    public static bool TryRetrieveRow(this DbCommand command, string sql, out DataRow? row, params object?[] parameters)
     {
         return command.TryRetrieveRow(sql, DefaultTimeoutDuration, out row, parameters);
     }
@@ -999,7 +999,7 @@ public static class DataExtensions
     /// <param name="row">The first <see cref="DataRow"/> in the result set, or <c>null</c>.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>The first <see cref="DataRow"/> in the result set.</returns>
-    public static bool TryRetrieveRow(this DbCommand command, string sql, int timeout, out DataRow? row, params object[] parameters)
+    public static bool TryRetrieveRow(this DbCommand command, string sql, int timeout, out DataRow? row, params object?[] parameters)
     {
         DataTable dataTable = command.RetrieveData(sql, timeout, parameters);
 
@@ -1021,7 +1021,7 @@ public static class DataExtensions
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Tuple of first <see cref="DataRow"/> in the result set (can be <c>null</c>) and a flag that determines if retrieve was successful.</returns>
-    public static Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return command.TryRetrieveRowAsync(sql, DefaultTimeoutDuration, cancellationToken, parameters);
     }
@@ -1035,7 +1035,7 @@ public static class DataExtensions
     /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>Tuple of first <see cref="DataRow"/> in the result set (can be <c>null</c>) and a flag that determines if retrieve was successful.</returns>
-    public static async Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbCommand command, string sql, int timeout, CancellationToken cancellationToken, params object[] parameters)
+    public static async Task<(DataRow? row, bool)> TryRetrieveRowAsync(this DbCommand command, string sql, int timeout, CancellationToken cancellationToken, params object?[] parameters)
     {
         DataTable dataTable = await command.RetrieveDataAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false);
         return dataTable.Rows.Count == 0 ? (null, false) : (dataTable.Rows[0], true);
@@ -1054,7 +1054,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataTable RetrieveData(this DbConnection connection, string sql, params object[] parameters)
+    public static DataTable RetrieveData(this DbConnection connection, string sql, params object?[] parameters)
     {
         return connection.RetrieveData(DefaultTimeoutDuration, sql, parameters);
     }
@@ -1069,7 +1069,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataTable RetrieveData(this DbConnection connection, int timeout, string sql, params object[] parameters)
+    public static DataTable RetrieveData(this DbConnection connection, int timeout, string sql, params object?[] parameters)
     {
         return connection.RetrieveDataSet(timeout, sql, parameters).Tables[0];
     }
@@ -1084,7 +1084,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DataTable> RetrieveDataAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<DataTable> RetrieveDataAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return connection.RetrieveDataAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
     }
@@ -1100,7 +1100,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<DataTable> RetrieveDataAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static async Task<DataTable> RetrieveDataAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return (await connection.RetrieveDataSetAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false)).Tables[0];
     }
@@ -1114,7 +1114,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataTable RetrieveData(this DbCommand command, string sql, params object[] parameters)
+    public static DataTable RetrieveData(this DbCommand command, string sql, params object?[] parameters)
     {
         return command.RetrieveData(DefaultTimeoutDuration, sql, parameters);
     }
@@ -1129,7 +1129,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataTable RetrieveData(this DbCommand command, int timeout, string sql, params object[] parameters)
+    public static DataTable RetrieveData(this DbCommand command, int timeout, string sql, params object?[] parameters)
     {
         return command.RetrieveDataSet(timeout, sql, parameters).Tables[0];
     }
@@ -1144,7 +1144,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DataTable> RetrieveDataAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<DataTable> RetrieveDataAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return command.RetrieveDataAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
     }
@@ -1160,7 +1160,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataTable"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<DataTable> RetrieveDataAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static async Task<DataTable> RetrieveDataAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return (await command.RetrieveDataSetAsync(timeout, sql, cancellationToken, parameters).ConfigureAwait(false)).Tables[0];
     }
@@ -1178,7 +1178,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataSet RetrieveDataSet(this DbConnection connection, string sql, params object[] parameters)
+    public static DataSet RetrieveDataSet(this DbConnection connection, string sql, params object?[] parameters)
     {
         return connection.RetrieveDataSet(DefaultTimeoutDuration, sql, parameters);
     }
@@ -1193,7 +1193,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataSet RetrieveDataSet(this DbConnection connection, int timeout, string sql, params object[] parameters)
+    public static DataSet RetrieveDataSet(this DbConnection connection, int timeout, string sql, params object?[] parameters)
     {
         using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
         command.CommandTimeout = timeout;
@@ -1210,7 +1210,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DataSet> RetrieveDataSetAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<DataSet> RetrieveDataSetAsync(this DbConnection connection, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return connection.RetrieveDataSetAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
     }
@@ -1226,7 +1226,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<DataSet> RetrieveDataSetAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static async Task<DataSet> RetrieveDataSetAsync(this DbConnection connection, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         await using DbCommand command = connection.CreateParameterizedCommand(sql, parameters);
         command.CommandTimeout = timeout;
@@ -1242,7 +1242,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataSet RetrieveDataSet(this DbCommand command, string sql, params object[] parameters)
+    public static DataSet RetrieveDataSet(this DbCommand command, string sql, params object?[] parameters)
     {
         return command.RetrieveDataSet(DefaultTimeoutDuration, sql, parameters);
     }
@@ -1257,7 +1257,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static DataSet RetrieveDataSet(this DbCommand command, int timeout, string sql, params object[] parameters)
+    public static DataSet RetrieveDataSet(this DbCommand command, int timeout, string sql, params object?[] parameters)
     {
         command.CommandTimeout = timeout;
         command.Parameters.Clear();
@@ -1275,7 +1275,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<DataSet> RetrieveDataSetAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static Task<DataSet> RetrieveDataSetAsync(this DbCommand command, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         return command.RetrieveDataSetAsync(DefaultTimeoutDuration, sql, cancellationToken, parameters);
     }
@@ -1291,7 +1291,7 @@ public static class DataExtensions
     /// <param name="parameters">The parameter values to be used to fill in <see cref="DbParameter"/> parameters identified by '@' prefix in <paramref name="sql"/> expression.</param>
     /// <returns>A <see cref="DataSet"/> object.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<DataSet> RetrieveDataSetAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object[] parameters)
+    public static async Task<DataSet> RetrieveDataSetAsync(this DbCommand command, int timeout, string sql, CancellationToken cancellationToken, params object?[] parameters)
     {
         command.CommandTimeout = timeout;
         command.Parameters.Clear();
@@ -1567,7 +1567,7 @@ public static class DataExtensions
     /// <param name="command">The <see cref="SqlCommand"/> whose parameters are to be populated.</param>
     /// <param name="parameter1">The first parameter value to populate the <see cref="SqlCommand"/> parameters with.</param>
     /// <param name="parameters">The remaining parameter values to populate the <see cref="SqlCommand"/> parameters with.</param>
-    public static void PopulateParameters(this SqlCommand command, object? parameter1, params object[] parameters)
+    public static void PopulateParameters(this SqlCommand command, object? parameter1, params object?[] parameters)
     {
         command.PopulateParameters(new[] { parameter1 }.Concat(parameters).NullAsDBNull());
     }
@@ -1577,7 +1577,7 @@ public static class DataExtensions
     /// </summary>
     /// <param name="command">The <see cref="SqlCommand"/> whose parameters are to be populated.</param>
     /// <param name="parameters">The parameter values to populate the <see cref="SqlCommand"/> parameters with.</param>
-    public static void PopulateParameters(this SqlCommand command, object[] parameters)
+    public static void PopulateParameters(this SqlCommand command, object?[] parameters)
     {
         command.PopulateParameters(SqlCommandBuilder.DeriveParameters, parameters);
     }
@@ -1593,7 +1593,7 @@ public static class DataExtensions
     /// Number of <see cref="DbParameter"/> arguments in <see cref="DbCommand.CommandText"/> of this <paramref name="command"/>, identified by '@', do not match number of supplied parameter <paramref name="values"/> -or-
     /// You have supplied more <paramref name="values"/> than parameters listed for the stored procedure.
     /// </exception>
-    public static void PopulateParameters<TDbCommand>(this TDbCommand command, Action<TDbCommand> deriveParameters, object[]? values) where TDbCommand : DbCommand
+    public static void PopulateParameters<TDbCommand>(this TDbCommand command, Action<TDbCommand> deriveParameters, object?[]? values) where TDbCommand : DbCommand
     {
         if (values is null)
             return;
@@ -1688,19 +1688,19 @@ public static class DataExtensions
     /// </remarks>
     /// <returns>The fully populated parameterized command.</returns>
     /// <exception cref="ArgumentException">Number of <see cref="DbParameter"/> arguments in <paramref name="sql"/> expression, identified by '@', do not match number of supplied parameter <paramref name="values"/>.</exception>
-    public static void AddParametersWithValues(this DbCommand command, string sql, params object[] values)
+    public static void AddParametersWithValues(this DbCommand command, string sql, params object?[] values)
     {
         if (values.FirstOrDefault(value => value is DbParameter) is not null)
         {
             // Values are already parameters
-            foreach (object param in values)
-                command.Parameters.Add(param);
+            foreach (object? param in values)
+                command.Parameters.Add(param ?? DBNull.Value);
         }
         else
         {
             // Pick up all parameters that start with @ or : but skip keywords such as @@IDENTITY
             string[] tokens = sql.Split(' ', '(', ')', ',', '=')
-                .Where(token => token.StartsWith(":", StringComparison.Ordinal) || token.StartsWith("@", StringComparison.Ordinal) && !token.StartsWith("@@", StringComparison.Ordinal))
+                .Where(token => token.StartsWith(':') || token.StartsWith('@') && !token.StartsWith("@@", StringComparison.Ordinal))
                 .Distinct()
                 .Where(IsValidParameter)
                 .ToArray();
@@ -1713,7 +1713,7 @@ public static class DataExtensions
             foreach (string token in tokens)
             {
                 if (!command.Parameters.Contains(token))
-                    command.AddParameterWithValue(token, values[i++]);
+                    command.AddParameterWithValue(token, values[i++] ?? DBNull.Value);
             }
         }
 
@@ -1745,7 +1745,7 @@ public static class DataExtensions
     /// </remarks>
     /// <returns>The fully populated parameterized command.</returns>
     /// <exception cref="ArgumentException">Number of <see cref="DbParameter"/> arguments in <paramref name="sql"/> expression, identified by '@', do not match number of supplied parameter <paramref name="values"/>.</exception>
-    public static DbCommand CreateParameterizedCommand(this DbConnection connection, string sql, params object[] values)
+    public static DbCommand CreateParameterizedCommand(this DbConnection connection, string sql, params object?[] values)
     {
         DbCommand command = connection.CreateCommand();
 

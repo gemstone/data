@@ -1312,7 +1312,7 @@ public class Table : IComparable, IComparable<Table>
     /// <summary>
     /// Gets auto-increment field for the <see cref="Table"/>, if any.
     /// </summary>
-    public Field? AutoIncField => Fields.FirstOrDefault(field => field.AutoIncrement);
+    public Field? AutoIncField => Fields.FirstOrDefault(@field => @field.AutoIncrement);
 
     #endregion
 

@@ -35,6 +35,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -72,20 +73,20 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         #pragma warning restore 169, 414, 649, CS8618
     }
 
-    private class NullConnection : IDbConnection
+    private class NullConnection : DbConnection
     {
         [AllowNull]
-        public string ConnectionString { get; set; }
-        public int ConnectionTimeout { get; } = 0;
-        public string Database { get; } = null!;
-        public ConnectionState State { get; } = ConnectionState.Open;
-        public void Open() {}
-        public void Close() {}
-        public void Dispose() {}
-        public void ChangeDatabase(string databaseName) {}
-        public IDbCommand CreateCommand() => null!;
-        public IDbTransaction BeginTransaction() => null!;
-        public IDbTransaction BeginTransaction(IsolationLevel il) => null!;
+        public override string ConnectionString { get; set; }
+        public override int ConnectionTimeout => 0;
+        public override string Database => null!;
+        public override string DataSource => null!;
+        public override string ServerVersion => null!;
+        public override ConnectionState State => ConnectionState.Open;
+        public override void Open() {}
+        public override void Close() {}
+        protected override DbCommand CreateDbCommand() => null!;
+        protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel) => null!;
+        public override void ChangeDatabase(string databaseName) {}
     }
 
     private class IntermediateParameter : IDbDataParameter

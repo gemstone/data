@@ -86,6 +86,18 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
         {
             try
             {
+                if (m_operator.Equals("LIKE", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT LIKE", StringComparison.OrdinalIgnoreCase))
+                {
+                    SearchParameter = SearchParameter.Replace("*", tableOperations.WildcardChar);
+                }
+                else if (m_operator.Equals("IN", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT IN", StringComparison.OrdinalIgnoreCase))
+                {
+                    IEnumerable<string> values = SearchParameter
+                        .Split(',')
+                        .Select(value => $"'{value.Trim()}'");
+
+                    SearchParameter = string.Join(", ", values);
+                }
                 return transform(this);
             }
             catch

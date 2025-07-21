@@ -69,6 +69,7 @@
     
     <ProjectReference Include="..\..\..\configuration\src\Gemstone.Configuration\Gemstone.Configuration.csproj" Condition="'$(Configuration)'=='Development'" />
     <PackageReference Include="Gemstone.Configuration" Version="1.0.128" Condition="'$(Configuration)'!='Development'" />
+    <ProjectReference Include="..\..\..\diagnostics\src\Gemstone.Diagnostics\Gemstone.Diagnostics.csproj" />
 
     <ProjectReference Include="..\..\..\expressions\src\Gemstone.Expressions\Gemstone.Expressions.csproj" Condition="'$(Configuration)'=='Development'" />
     <PackageReference Include="Gemstone.Expressions" Version="1.0.128" Condition="'$(Configuration)'!='Development'" />

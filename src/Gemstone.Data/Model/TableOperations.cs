@@ -47,6 +47,7 @@ using System.Threading.Tasks;
 using Gemstone.Collections.CollectionExtensions;
 using Gemstone.Collections.IAsyncEnumerableExtensions;
 using Gemstone.Data.DataExtensions;
+using Gemstone.Diagnostics;
 using Gemstone.Expressions.Evaluator;
 using Gemstone.Expressions.Model;
 using Gemstone.Reflection.MemberInfoExtensions;
@@ -3268,7 +3269,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     public static Func<DataRow, T?> LoadRecordFunction()
     {
         using AdoDataConnection connection = new(null!, typeof(NullConnection));
-        return new TableOperations<T>(connection).LoadRecord;
+        return new TableOperations<T>(connection, ex => Logger.SwallowException(ex)).LoadRecord;
     }
 
     /// <summary>
@@ -3283,7 +3284,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     public static Func<T?> NewRecordFunction()
     {
         using AdoDataConnection connection = new(null!, typeof(NullConnection));
-        return new TableOperations<T>(connection).NewRecord;
+        return new TableOperations<T>(connection, ex => Logger.SwallowException(ex)).NewRecord;
     }
 
     /// <summary>

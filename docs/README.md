@@ -8,7 +8,7 @@ The Gemstone Data Library organizes all Gemstone functionality related to databa
 [![GitHub license](https://img.shields.io/github/license/gemstone/data?color=4CC61E)](https://github.com/gemstone/data/blob/master/LICENSE)
 [![Build status](https://ci.appveyor.com/api/projects/status/5wt0fjmv57wsne81?svg=true)](https://ci.appveyor.com/project/ritchiecarroll/data)
 ![CodeQL](https://github.com/gemstone/data/workflows/CodeQL/badge.svg)
-[![NuGet](https://buildstats.info/nuget/Gemstone.Data)](https://www.nuget.org/packages/Gemstone.Data#readme-body-tab)
+[![NuGet](https://img.shields.io/nuget/vpre/Gemstone.Data)](https://www.nuget.org/packages/Gemstone.Data#readme-body-tab)
 
 This library includes helpful data classes like the following:
 

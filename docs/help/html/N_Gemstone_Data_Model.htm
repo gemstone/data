@@ -8,9 +8,11 @@
             Defines an attribute that will allow setting DELETE function roles for a modeled table.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_EncryptDataAttribute.htm">EncryptDataAttribute</a></td><td>
             Defines an attribute that provides encryption of text field contents for a modeled table.
+            </td></tr><tr><td><a href="T_Gemstone_Data_Model_ExtensionAttributeBase.htm">ExtensionAttributeBase</a></td><td>
+            Base class for Attributes that are used to extend the functionality of <a href="T_Gemstone_Data_Model_TableOperations_1.htm">TableOperations<span id="LST264FA98E_0" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_1" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a>.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_FieldDataTypeAttribute.htm">FieldDataTypeAttribute</a></td><td>
             Defines an attribute that will request use of a specific data type on a modeled table field.
-            Typically only needed to enforce use of a specific <a href="https://docs.microsoft.com/dotnet/api/system.data.dbtype" target="_blank" rel="noopener noreferrer">DbType</a> for parameters.
+            Typically only needed to enforce use of a specific <span class="noLink">DbType</span> for parameters.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_FieldNameAttribute.htm">FieldNameAttribute</a></td><td>
             Defines an attribute that will allow a custom field name for a modeled table instead of using
             the property name.
@@ -19,7 +21,7 @@
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_NonRecordFieldAttribute.htm">NonRecordFieldAttribute</a></td><td>
             Defines an attribute that will mark a property to not be serialized as a record field.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_PageSizeAttribute.htm">PageSizeAttribute</a></td><td>
-            Defines an attribute that will allows a top number of results to be returned when queried
+            Defines an attribute that will allow a top number of results to be returned when queried
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_ParentKeyAttribute.htm">ParentKeyAttribute</a></td><td>
             Defines an attribute that will allow a foreign key in the model to point back to parent table 
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_PatchRolesAttribute.htm">PatchRolesAttribute</a></td><td>
@@ -28,7 +30,7 @@
             Defines an attribute that will allow setting POST function roles for a modeled table.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_PrimaryKeyAttribute.htm">PrimaryKeyAttribute</a></td><td>
             Defines an attribute that will mark a property as a primary key field for a modeled table.
-            </td></tr><tr><td><a href="T_Gemstone_Data_Model_RecordFilter_1.htm">RecordFilter<span id="LST264FA98E_0" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_1" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a></td><td>
+            </td></tr><tr><td><a href="T_Gemstone_Data_Model_RecordFilter_1.htm">RecordFilter<span id="LST264FA98E_2" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_3" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a></td><td>
             Defines a filter that can be applied to queries.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_RecordOperationAttribute.htm">RecordOperationAttribute</a></td><td>
             Defines an attribute that marks a method as a specific <a href="T_Gemstone_Data_Model_RecordOperation.htm">RecordOperation</a> for a modeled table.
@@ -36,23 +38,29 @@
             Defines a parameterized record restriction that can be applied to queries.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_RootQueryRestrictionAttribute.htm">RootQueryRestrictionAttribute</a></td><td>
             Defines an attribute that will mark a modeled table with a record restriction that applies
-            to all query functions for modeled <a href="T_Gemstone_Data_Model_TableOperations_1.htm">TableOperations<span id="LST264FA98E_2" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_3" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a>.
+            to all query functions for modeled <a href="T_Gemstone_Data_Model_TableOperations_1.htm">TableOperations<span id="LST264FA98E_4" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_5" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a>.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_SearchableAttribute.htm">SearchableAttribute</a></td><td>
             Defines an attribute that will mark additional fields in the database as searchable field.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_SearchExtensionAttribute.htm">SearchExtensionAttribute</a></td><td>
-            Defines an attribute that marks methods that are used to transform <a href="T_Gemstone_Data_Model_IRecordFilter.htm">IRecordFilter</a> into <a href="T_Gemstone_Data_Model_RecordRestriction.htm">RecordRestriction</a>.
+            Defines an attribute that marks static methods on a model that are used to transform
+            <a href="T_Gemstone_Data_Model_IRecordFilter.htm">IRecordFilter</a> into <a href="T_Gemstone_Data_Model_RecordRestriction.htm">RecordRestriction</a>.
+            </td></tr><tr><td><a href="T_Gemstone_Data_Model_SortExtensionAttribute.htm">SortExtensionAttribute</a></td><td>
+            Defines an attribute that marks static methods on a model that are used to transform a
+            field into more complex order by expression, e.g., a subquery, for sorting.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_TableNameAttribute.htm">TableNameAttribute</a></td><td>
             Defines an attribute that will allow a custom table name for a modeled table instead of using
             the class name.
-            </td></tr><tr><td><a href="T_Gemstone_Data_Model_TableOperations_1.htm">TableOperations<span id="LST264FA98E_4" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_5" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a></td><td>
+            </td></tr><tr><td><a href="T_Gemstone_Data_Model_TableOperations_1.htm">TableOperations<span id="LST264FA98E_6" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_7" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a></td><td>
             Defines database operations for a modeled table.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_UseEscapedNameAttribute.htm">UseEscapedNameAttribute</a></td><td>
             Defines an attribute that will request use of the escaped name of a modeled identifier, i.e.,
             a table or field name. Typically needed when identifier names are reserved SQL key words.
-            </td></tr></table></div><h2 class="quickLinkHeader"><span class="icon toggleSection" tabindex="0"><i class="fa fa-angle-down"></i></span>Interfaces</h2><div id="IDKCASection"><table id="interfaceList" class="table is-hoverable"><tr><td><a href="T_Gemstone_Data_Model_IRecordFilter.htm">IRecordFilter</a></td><td>
+            </td></tr><tr><td><a href="T_Gemstone_Data_Model_ValueLabel.htm">ValueLabel</a></td><td>
+            Defines a common model to hold a label and associated value.
+            </td></tr></table></div><h2 class="quickLinkHeader"><span class="icon toggleSection" tabindex="0"><i class="fa fa-angle-down"></i></span>Interfaces</h2><div id="IDLCASection"><table id="interfaceList" class="table is-hoverable"><tr><td><a href="T_Gemstone_Data_Model_IRecordFilter.htm">IRecordFilter</a></td><td>
             Defines an interface for a filter that can be applied to queries.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_ITableOperations.htm">ITableOperations</a></td><td>
-            Defines a common interface for implementations of <a href="T_Gemstone_Data_Model_TableOperations_1.htm">TableOperations<span id="LST264FA98E_6" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_7" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a>.
+            Defines a common interface for implementations of <a href="T_Gemstone_Data_Model_TableOperations_1.htm">TableOperations<span id="LST264FA98E_8" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_9" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a>.
             </td></tr></table></div><h2 class="quickLinkHeader"><span class="icon toggleSection" tabindex="0"><i class="fa fa-angle-down"></i></span>Enumerations</h2><div id="IDACASection"><table id="enumerationList" class="table is-hoverable"><tr><td><a href="T_Gemstone_Data_Model_AffixPosition.htm">AffixPosition</a></td><td>
             Locations for target expression amendment application.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_RecordOperation.htm">RecordOperation</a></td><td>

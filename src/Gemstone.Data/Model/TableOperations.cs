@@ -2565,9 +2565,27 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
         string[] fieldNames = GetNonPrimaryFieldNames().Where(fieldName => !excludedFieldsSet.Contains(fieldName)).ToArray();
 
-        return new RecordRestriction(
-            fieldNames.Select((fieldName, index) => $"{fieldName} = {{{index}}}").ToDelimitedString(" AND "),
-            fieldNames.Select(fieldName => GetFieldValue(record, fieldName)).ToArray());
+        List<string> predicates = new(fieldNames.Length);
+        List<object?> parameters = [];
+
+        foreach (string fieldName in fieldNames)
+        {
+            object? value = GetFieldValue(record, fieldName);
+
+            // Treat DBNull the same as null – use IS NULL and do not add a parameter
+            if (value is null or DBNull)
+            {
+                predicates.Add($"{fieldName} IS NULL");
+            }
+            else
+            {
+                int index = parameters.Count;
+                predicates.Add($"{fieldName} = {{{index}}}");
+                parameters.Add(value);
+            }
+        }
+
+        return new RecordRestriction(predicates.ToDelimitedString(" AND "), parameters.ToArray());
     }
 
     RecordRestriction ITableOperations.GetNonPrimaryFieldRecordRestriction(object value)

@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
@@ -2543,15 +2544,21 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// Gets a record restriction based on the non-primary key values of the specified <paramref name="record"/>.
     /// </summary>
     /// <param name="record">Record to retrieve non-primary key field values from.</param>
+    /// <param name="excludedFields">Set of field names to exclude from the restriction.</param>
     /// <returns>Record restriction based on the non-primary key values of the specified <paramref name="record"/>.</returns>
     /// <remarks>
     /// This will look up a newly added record when the primary key values are not yet defined searching all field values.
     /// If all fields do not represent a unique record, queries based on this restriction will return multiple records.
     /// Note that if the modeled table has fields that are known be unique, searching based on those fields is preferred.
     /// </remarks>
-    public RecordRestriction GetNonPrimaryFieldRecordRestriction(T record)
+    public RecordRestriction GetNonPrimaryFieldRecordRestriction(T record, IReadOnlySet<string>? excludedFields = null)
     {
-        string[] fieldNames = GetNonPrimaryFieldNames();
+        HashSet<string> excludedFieldsSet = new(s_excludedFields, StringComparer.OrdinalIgnoreCase); 
+
+        if (excludedFields is not null)
+            excludedFieldsSet.UnionWith(excludedFields);
+
+        string[] fieldNames = GetNonPrimaryFieldNames().Where(fieldName => !excludedFieldsSet.Contains(fieldName)).ToArray();
 
         return new RecordRestriction(
             fieldNames.Select((fieldName, index) => $"{fieldName} = {{{index}}}").ToDelimitedString(" AND "),
@@ -2965,6 +2972,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private static readonly HashSet<string> s_searchableFields;
     private static readonly (Regex, Func<IRecordFilter, RecordRestriction>)[] s_searchExtensions;
     private static readonly (Regex, Func<string, string>)[] s_sortExtensions;
+    private static readonly HashSet<string> s_excludedFields;
     private static TypeRegistry? s_typeRegistry;
 
     // Static Constructor
@@ -3189,6 +3197,17 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         // Resolve extensions methods for the modeled table
         s_searchExtensions = ResolveExtensionAttributes<SearchExtensionAttribute, IRecordFilter, RecordRestriction>(staticMethods);
         s_sortExtensions = ResolveExtensionAttributes<SortExtensionAttribute, string, string>(staticMethods);
+
+        s_excludedFields = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach ((string propertyName, PropertyInfo property) in s_properties)
+        {
+            if (!s_attributes.TryGetValue(property, out HashSet<Type>? attributes) || attributes.All(attribute => attribute != typeof(ExcludedFieldAttribute)))
+                continue;
+            
+            if (s_fieldNames.TryGetValue(propertyName, out string? fieldName))
+                s_excludedFields.Add(fieldName);
+        }
     }
 
     internal static bool IsSearchableField(string fieldName)

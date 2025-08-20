@@ -3378,7 +3378,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         // If any attribute has no database target type specified, then all database types are assumed
         if (fieldDataTypeAttributes.Any(attribute => attribute.TargetDatabaseType is null))
         {
-            databaseTypes = Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().ToArray();
+            databaseTypes = Enum.GetValues<DatabaseType>();
             defaultFieldDataType = fieldDataTypeAttributes.First(attribute => attribute.TargetDatabaseType is null).FieldDataType;
         }
         else
@@ -3410,7 +3410,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         if (useEscapedNameAttributes.Any(attribute => attribute.TargetDatabaseType is null))
         {
             allDatabasesTargeted = true;
-            databaseTypes = Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().ToArray();
+            databaseTypes = Enum.GetValues<DatabaseType>();
         }
         else
         {
@@ -3448,7 +3448,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             // If any attribute has no database target type specified, then all database types are assumed
             if (attribute.TargetDatabaseType is null)
             {
-                databaseTypes = Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().ToArray();
+                databaseTypes = Enum.GetValues<DatabaseType>();
                 expressionAmendments = untypedExpressionAmendments;
             }
             else

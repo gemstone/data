@@ -2543,7 +2543,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// Gets a record restriction based on the non-primary key values of the specified <paramref name="record"/>.
     /// </summary>
     /// <param name="record">Record to retrieve non-primary key field values from.</param>
-    /// <param name="excludedFields">Set of additional field names to exclude from the restriction, optional.</param>
+    /// <param name="excludedFields">Optional additional field names to exclude from the restriction.</param>
     /// <returns>Record restriction based on the non-primary key values of the specified <paramref name="record"/>.</returns>
     /// <remarks>
     /// <para>
@@ -2579,8 +2579,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             }
             else
             {
-                int index = parameters.Count;
-                predicates.Add($"{fieldName} = {{{index}}}");
+                predicates.Add($"{fieldName} = {{{parameters.Count}}}");
                 parameters.Add(value);
             }
         }
@@ -2588,12 +2587,12 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return new RecordRestriction(predicates.ToDelimitedString(" AND "), parameters.ToArray());
     }
 
-    RecordRestriction ITableOperations.GetNonPrimaryFieldRecordRestriction(object value)
+    RecordRestriction ITableOperations.GetNonPrimaryFieldRecordRestriction(object value, IEnumerable<string>? excludedFields)
     {
         if (value is not T record)
             throw new ArgumentException($"Cannot get non-primary key field restriction for record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
         
-        return GetNonPrimaryFieldRecordRestriction(record);
+        return GetNonPrimaryFieldRecordRestriction(record, excludedFields);
     }
 
     /// <inheritdoc/>

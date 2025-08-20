@@ -1402,8 +1402,9 @@ public interface ITableOperations
     /// Gets a record restriction based on the non-primary key values of the specified <paramref name="record"/>.
     /// </summary>
     /// <param name="record">Record to retrieve non-primary key field values from.</param>
+    /// <param name="excludedFields">Optional additional field names to exclude from the restriction.</param>
     /// <returns>Record restriction based on the non-primary key values of the specified <paramref name="record"/>.</returns>
-    public RecordRestriction GetNonPrimaryFieldRecordRestriction(object record);
+    public RecordRestriction GetNonPrimaryFieldRecordRestriction(object record, IEnumerable<string>? excludedFields = null);
 
     /// <summary>
     /// Gets the field names for the table; if <paramref name="escaped"/> is <c>true</c>, also includes any escaping as defined in model.

@@ -2551,7 +2551,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// If all fields do not represent a unique record, queries based on this restriction will return multiple records.
     /// Note that if the modeled table has fields that are known be unique, searching based on those fields is preferred.
     /// </remarks>
-    public RecordRestriction GetNonPrimaryFieldRecordRestriction(T record, IReadOnlySet<string>? excludedFields = null)
+    public RecordRestriction GetNonPrimaryFieldRecordRestriction(T record, IEnumerable<string>? excludedFields = null)
     {
         HashSet<string> excludedFieldsSet = new(s_excludedFields, StringComparer.OrdinalIgnoreCase); 
 

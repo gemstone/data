@@ -2543,12 +2543,18 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// Gets a record restriction based on the non-primary key values of the specified <paramref name="record"/>.
     /// </summary>
     /// <param name="record">Record to retrieve non-primary key field values from.</param>
-    /// <param name="excludedFields">Set of field names to exclude from the restriction.</param>
+    /// <param name="excludedFields">Set of additional field names to exclude from the restriction, optional.</param>
     /// <returns>Record restriction based on the non-primary key values of the specified <paramref name="record"/>.</returns>
     /// <remarks>
+    /// <para>
     /// This will look up a newly added record when the primary key values are not yet defined searching all field values.
     /// If all fields do not represent a unique record, queries based on this restriction will return multiple records.
     /// Note that if the modeled table has fields that are known be unique, searching based on those fields is preferred.
+    /// </para>
+    /// <para>
+    /// Any field modeled with <see cref="ExcludedFieldAttribute"/> will automatically be excluded from the restriction. The
+    /// <paramref name="excludedFields"/> parameter can be used to specify additional fields to exclude from the restriction.
+    /// </para>
     /// </remarks>
     public RecordRestriction GetNonPrimaryFieldRecordRestriction(T record, IEnumerable<string>? excludedFields = null)
     {

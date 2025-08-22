@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************
-//  AssignedClaim.cs - Gbtc
+//  ClaimGroupClaim.cs - Gbtc
 //
 //  Copyright © 2025, Grid Protection Alliance.  All Rights Reserved.
 //
@@ -26,27 +26,20 @@ using System.ComponentModel.DataAnnotations;
 using Gemstone.Expressions.Model;
 
 namespace Gemstone.Data.Model;
-
-public class AssignedClaim
+public class ClaimGroupClaim
 {
-
     [PrimaryKey(true)]
     public int ID { get; set; }
 
     /// <summary>
-    /// Type field.
+    /// ClaimGroupID field.
     /// </summary>
-    public string Type { get; set; }
+    public int ClaimGroupID { get; set; }
 
     /// <summary>
-    /// Value field.
+    /// AssignedClaimID field.
     /// </summary>
-    public string Value { get; set; }
-
-    /// <summary>
-    /// Description field.
-    /// </summary>
-    public string Description { get; set; }
+    public int AssignedClaimID { get; set; }
 
     /// <summary>
     /// Created on field.
@@ -78,3 +71,4 @@ public class AssignedClaim
     [UpdateValueExpression("UserInfo.CurrentUserID")]
     public string UpdatedBy { get; set; }
 }
+

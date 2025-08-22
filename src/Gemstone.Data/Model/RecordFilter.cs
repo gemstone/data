@@ -24,7 +24,6 @@
 // ReSharper disable RedundantCatchClause
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -43,6 +42,8 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
 
     // Fields
     private string m_operator = s_validOperators[0];
+    private object? m_searchParameter;
+    private PropertyInfo? m_modelProperty;
 
     #endregion
 
@@ -52,7 +53,17 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     public string FieldName { get; set; } = string.Empty;
 
     /// <inheritdoc/>
-    public required string SearchParameter { get; set; }
+    public required object? SearchParameter
+    {
+        get => m_searchParameter;
+        set
+        {
+            if (value is null)
+                m_searchParameter = DBNull.Value;
+            else
+                m_searchParameter = ModelProperty is null ? value : Common.TypeConvertFromString(value.ToString() ?? "", ModelProperty.PropertyType);
+        }
+    }
 
     /// <inheritdoc/>
     public string Operator
@@ -71,7 +82,7 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     public bool SupportsEncrypted => s_encryptedOperators.Contains(m_operator);
 
     /// <inheritdoc/>
-    public PropertyInfo? ModelProperty => typeof(T).GetProperty(FieldName);
+    public PropertyInfo? ModelProperty => m_modelProperty ??= typeof(T).GetProperty(FieldName);
 
     #endregion
 
@@ -86,61 +97,43 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
         {
             try
             {
-                if (m_operator.Equals("LIKE", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT LIKE", StringComparison.OrdinalIgnoreCase))
-                {
-                    SearchParameter = SearchParameter.Replace("*", tableOperations.WildcardChar);
-                }
-                else if (m_operator.Equals("IN", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT IN", StringComparison.OrdinalIgnoreCase))
-                {
-                    IEnumerable<string> values = SearchParameter
-                        .Split(',')
-                        .Select(value => $"'{value.Trim()}'");
-
-                    SearchParameter = string.Join(", ", values);
-                }
                 return transform(this);
             }
-            catch
-            {
-                // Fall through to normal search if not debugging
-            #if DEBUG
-                throw;
-            #endif
-            }
+            catch { }
         }
 
         if (ModelProperty is null && !TableOperations<T>.IsSearchableField(FieldName))
             throw new ArgumentException($"{FieldName} is not a valid field for {typeof(T).Name}");
 
-        if (string.IsNullOrEmpty(SearchParameter))
+        if (SearchParameter is not object?[] searchParameters)
+            searchParameters = SearchParameter is not null ? [SearchParameter] : [];
+
+        int parameterCount = searchParameters.Length;
+
+        if (parameterCount == 0)
             return new RecordRestriction($"{FieldName} {m_operator} NULL");
 
         // Convert search parameters to the interpreted value for the specified field, i.e., encrypting or
         // returning any intermediate IDbDataParameter value as needed:
-        string interpretedValue = tableOperations.GetInterpretedFieldValue(FieldName, SearchParameter) as string ?? string.Empty;
+        for (int i = 0; i < parameterCount; i++)
+        {
+            searchParameters[i] = tableOperations.GetInterpretedFieldValue(FieldName, searchParameters[i]);
 
-        if (m_operator.Equals("LIKE", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT LIKE", StringComparison.OrdinalIgnoreCase))
-        {
-            interpretedValue = string.IsNullOrEmpty(SearchParameter) ? tableOperations.WildcardChar : SearchParameter.Replace("*", tableOperations.WildcardChar);
-            interpretedValue = $"'{interpretedValue}'";
-        }
-        else if (m_operator.Equals("IN", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT IN", StringComparison.OrdinalIgnoreCase))
-        {
-            // Split the SearchParameter on commas, trim whitespace, and wrap each value in single quotes
-            IEnumerable<string> values = SearchParameter
-                .Split(',')
-                .Select(value => $"'{value.Trim()}'");
-
-            interpretedValue = string.Join(", ", values);
-        }
-        else
-        {
-            interpretedValue = $"'{interpretedValue}'";
+            if (s_wildCardOperator.Contains(m_operator, StringComparer.OrdinalIgnoreCase) && searchParameters[i] is string stringVal)
+            {
+                searchParameters[i] = stringVal.Replace("*", tableOperations.WildcardChar);
+            }
         }
 
-        return s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase) ? 
-            new RecordRestriction($"{FieldName} {m_operator} ({interpretedValue})") : 
-            new RecordRestriction($"{FieldName} {m_operator} {interpretedValue}");
+        if (!s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase))
+            return new RecordRestriction($"{FieldName} {m_operator} {{0}}", searchParameters);
+
+        string[] parameters = new string[parameterCount];
+
+        for (int i = 0; i < parameterCount; i++)
+            parameters[i] = $"{{{i}}}";
+
+        return new RecordRestriction($"{FieldName} {m_operator} ({string.Join(',', parameters)})", searchParameters);
     }
 
     #endregion
@@ -151,6 +144,6 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     private static readonly string[] s_validOperators = ["=", "<>", "<", ">", "IN", "NOT IN", "LIKE", "NOT LIKE", "<=", ">=", "IS", "IS NOT"];
     private static readonly string[] s_groupOperators = ["IN", "NOT IN"];
     private static readonly string[] s_encryptedOperators = ["IN", "NOT IN", "=", "<>", "IS", "IS NOT"];
-
+    private static readonly string[] s_wildCardOperator = ["NOT LIKE", "LIKE"];
     #endregion
 }

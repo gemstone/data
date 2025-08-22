@@ -45,7 +45,7 @@ public interface IRecordFilter
     /// <summary>
     /// Gets or sets the value to be searched.
     /// </summary>
-    string SearchParameter { get; set; }
+    object? SearchParameter { get; set; }
 
     /// <summary>
     /// Gets or sets the operator to be used for the search.
@@ -92,6 +92,6 @@ public interface IRecordFilter
     /// </summary>
     /// <param name="tableOperations">The <see cref="ITableOperations"/> that will be used to generate the restriction.</param>
     public RecordRestriction GenerateRestriction(ITableOperations tableOperations);
-        
+
     #endregion
 }

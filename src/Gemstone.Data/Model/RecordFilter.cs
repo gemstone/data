@@ -58,10 +58,27 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
         get => m_searchParameter;
         set
         {
-            if (value is null)
-                m_searchParameter = DBNull.Value;
-            else
-                m_searchParameter = ModelProperty is null ? value : Common.TypeConvertFromString(value.ToString() ?? "", ModelProperty.PropertyType);
+            switch (value)
+            {
+                case null:
+                    m_searchParameter = DBNull.Value;
+                    break;
+                case Array array:
+                    object?[] typedArray = new object[array.Length];
+
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        object? element = array.GetValue(i);
+                        object? typedElement = ModelProperty is null ? element : Common.TypeConvertFromString(element?.ToString() ?? "", ModelProperty.PropertyType);
+                        typedArray[i] = typedElement;
+                    }
+
+                    m_searchParameter = typedArray;
+                    break;
+                default:
+                    m_searchParameter = ModelProperty is null ? value : Common.TypeConvertFromString(value.ToString() ?? "", ModelProperty.PropertyType);
+                    break;
+            }
         }
     }
 

@@ -27,8 +27,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Gemstone.Diagnostics;
-using MathNet.Numerics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Gemstone.Data.Model;
 
@@ -45,8 +43,6 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
 
     // Fields
     private string m_operator = s_validOperators[0];
-    private object? m_searchParameter;
-    private PropertyInfo? m_modelProperty;
 
     #endregion
 
@@ -58,13 +54,13 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     /// <inheritdoc/>
     public required object? SearchParameter
     {
-        get => m_searchParameter;
+        get;
         set
         {
             switch (value)
             {
                 case null:
-                    m_searchParameter = DBNull.Value;
+                    field = DBNull.Value;
                     break;
                 case Array array:
                 {
@@ -77,14 +73,14 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                         typedArray[i] = typedElement;
                     }
 
-                    m_searchParameter = typedArray;
+                    field = typedArray;
                     break;
                 }
                 default:
                 {
                     if (ModelProperty is null)
                     {
-                        m_searchParameter = value;
+                        field = value;
                     }
                     else
                     {
@@ -95,7 +91,7 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                         {
                             string[] elements = image[1..^1].Split(',', StringSplitOptions.TrimEntries);
                             object?[] typedArray = new object[elements.Length];
-                            
+
                             for (int i = 0; i < elements.Length; i++)
                             {
                                 string element = elements[i];
@@ -103,14 +99,14 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                                 typedArray[i] = typedElement;
                             }
 
-                            m_searchParameter = typedArray;
-
+                            field = typedArray;
                         }
                         else
                         {
-                            m_searchParameter = Common.TypeConvertFromString(image, ModelProperty.PropertyType);
+                            field = Common.TypeConvertFromString(image, ModelProperty.PropertyType);
                         }
                     }
+
                     break;
                 }
             }
@@ -134,7 +130,7 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     public bool SupportsEncrypted => s_encryptedOperators.Contains(m_operator);
 
     /// <inheritdoc/>
-    public PropertyInfo? ModelProperty => m_modelProperty ??= typeof(T).GetProperty(FieldName);
+    public PropertyInfo? ModelProperty => field ??= typeof(T).GetProperty(FieldName);
 
     #endregion
 

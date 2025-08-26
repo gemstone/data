@@ -26,6 +26,8 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Gemstone.Diagnostics;
+using MathNet.Numerics;
 
 namespace Gemstone.Data.Model;
 
@@ -116,7 +118,10 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
             {
                 return transform(this);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Logger.SwallowException(ex, $"{nameof(RecordFilter<>)}.{nameof(GenerateRestriction)} transform operation");
+            }
         }
 
         if (ModelProperty is null && !TableOperations<T>.IsSearchableField(FieldName))

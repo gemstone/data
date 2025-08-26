@@ -28,6 +28,7 @@ using System.Linq;
 using System.Reflection;
 using Gemstone.Diagnostics;
 using MathNet.Numerics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Gemstone.Data.Model;
 
@@ -66,6 +67,7 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                     m_searchParameter = DBNull.Value;
                     break;
                 case Array array:
+                {
                     object?[] typedArray = new object[array.Length];
 
                     for (int i = 0; i < array.Length; i++)
@@ -77,9 +79,40 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
 
                     m_searchParameter = typedArray;
                     break;
+                }
                 default:
-                    m_searchParameter = ModelProperty is null ? value : Common.TypeConvertFromString(value.ToString() ?? "", ModelProperty.PropertyType);
+                {
+                    if (ModelProperty is null)
+                    {
+                        m_searchParameter = value;
+                    }
+                    else
+                    {
+                        string image = (value.ToString() ?? "").Trim();
+
+                        // Check for JSON formatted array
+                        if (image.StartsWith('[') && image.EndsWith(']'))
+                        {
+                            string[] elements = image[1..^1].Split(',', StringSplitOptions.TrimEntries);
+                            object?[] typedArray = new object[elements.Length];
+                            
+                            for (int i = 0; i < elements.Length; i++)
+                            {
+                                string element = elements[i];
+                                object? typedElement = ModelProperty is null ? element : Common.TypeConvertFromString(element, ModelProperty.PropertyType);
+                                typedArray[i] = typedElement;
+                            }
+
+                            m_searchParameter = typedArray;
+
+                        }
+                        else
+                        {
+                            m_searchParameter = Common.TypeConvertFromString(image, ModelProperty.PropertyType);
+                        }
+                    }
                     break;
+                }
             }
         }
     }

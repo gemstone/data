@@ -24,8 +24,10 @@
 // ReSharper disable RedundantCatchClause
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using Gemstone.Diagnostics;
 
 namespace Gemstone.Data.Model;
@@ -63,52 +65,65 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                     field = DBNull.Value;
                     break;
                 case Array array:
-                {
-                    object?[] typedArray = new object[array.Length];
-
-                    for (int i = 0; i < array.Length; i++)
                     {
-                        object? element = array.GetValue(i);
-                        object? typedElement = ModelProperty is null ? element : Common.TypeConvertFromString(element?.ToString() ?? "", ModelProperty.PropertyType);
-                        typedArray[i] = typedElement;
-                    }
+                        object?[] typedArray = new object[array.Length];
 
-                    field = typedArray;
-                    break;
-                }
-                default:
-                {
-                    if (ModelProperty is null)
-                    {
-                        field = value;
-                    }
-                    else
-                    {
-                        string image = (value.ToString() ?? "").Trim();
-
-                        // Check for JSON formatted array
-                        if (image.StartsWith('[') && image.EndsWith(']'))
+                        for (int i = 0; i < array.Length; i++)
                         {
-                            string[] elements = image[1..^1].Split(',', StringSplitOptions.TrimEntries);
-                            object?[] typedArray = new object[elements.Length];
+                            object? element = array.GetValue(i);
+                            object? typedElement = ModelProperty is null ? element : Common.TypeConvertFromString(element?.ToString() ?? "", ModelProperty.PropertyType);
+                            typedArray[i] = typedElement;
+                        }
 
-                            for (int i = 0; i < elements.Length; i++)
+                        field = typedArray;
+                        break;
+                    }
+                default:
+                    {
+                        if (ModelProperty is null)
+                        {
+                            //try to cast based on ValueKind
+                            if (value is JsonElement el)
                             {
-                                string element = elements[i];
-                                object? typedElement = ModelProperty is null ? element : Common.TypeConvertFromString(element, ModelProperty.PropertyType);
-                                typedArray[i] = typedElement;
+                                if (el.ValueKind == JsonValueKind.String)
+                                    field = el.GetString();
+                                else if (el.ValueKind == JsonValueKind.Number)
+                                    field = el.GetDouble();
+                                else if (el.ValueKind == JsonValueKind.True || el.ValueKind == JsonValueKind.False)
+                                    field = el.GetBoolean();
+                                else
+                                    field = el.ToString();
                             }
-
-                            field = typedArray;
+                            else
+                                field = value;
                         }
                         else
                         {
-                            field = Common.TypeConvertFromString(image, ModelProperty.PropertyType);
-                        }
-                    }
+                            string image = (value.ToString() ?? "").Trim();
 
-                    break;
-                }
+                            // Check for JSON formatted array
+                            if (image.StartsWith('[') && image.EndsWith(']'))
+                            {
+                                string[] elements = image[1..^1].Split(',', StringSplitOptions.TrimEntries);
+                                object?[] typedArray = new object[elements.Length];
+
+                                for (int i = 0; i < elements.Length; i++)
+                                {
+                                    string element = elements[i];
+                                    object? typedElement = ModelProperty is null ? element : Common.TypeConvertFromString(element, ModelProperty.PropertyType);
+                                    typedArray[i] = typedElement;
+                                }
+
+                                field = typedArray;
+                            }
+                            else
+                            {
+                                field = Common.TypeConvertFromString(image, ModelProperty.PropertyType);
+                            }
+                        }
+
+                        break;
+                    }
             }
         }
     }
@@ -132,6 +147,10 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     /// <inheritdoc/>
     public PropertyInfo? ModelProperty => field ??= typeof(T).GetProperty(FieldName);
 
+    /// <summary>
+    /// Gets the collection of supported wildcard operators.
+    /// </summary>
+    public static IReadOnlyCollection<string> WildCardOperators => s_wildCardOperators;
     #endregion
 
     #region [ Methods ]
@@ -170,7 +189,7 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
         {
             searchParameters[i] = tableOperations.GetInterpretedFieldValue(FieldName, searchParameters[i]);
 
-            if (s_wildCardOperator.Contains(m_operator, StringComparer.OrdinalIgnoreCase) && searchParameters[i] is string stringVal)
+            if (s_wildCardOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase) && searchParameters[i] is string stringVal)
             {
                 searchParameters[i] = stringVal.Replace("*", tableOperations.WildcardChar);
             }
@@ -195,6 +214,6 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     private static readonly string[] s_validOperators = ["=", "<>", "<", ">", "IN", "NOT IN", "LIKE", "NOT LIKE", "<=", ">=", "IS", "IS NOT"];
     private static readonly string[] s_groupOperators = ["IN", "NOT IN"];
     private static readonly string[] s_encryptedOperators = ["IN", "NOT IN", "=", "<>", "IS", "IS NOT"];
-    private static readonly string[] s_wildCardOperator = ["NOT LIKE", "LIKE"];
+    private static readonly string[] s_wildCardOperators = ["NOT LIKE", "LIKE"];
     #endregion
 }

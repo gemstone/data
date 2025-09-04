@@ -27,6 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
+using Gemstone.Diagnostics;
 
 namespace Gemstone.Data.Model;
 
@@ -52,7 +54,79 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     public string FieldName { get; set; } = string.Empty;
 
     /// <inheritdoc/>
-    public required string SearchParameter { get; set; }
+    public required object? SearchParameter
+    {
+        get;
+        set
+        {
+            switch (value)
+            {
+                case null:
+                    field = DBNull.Value;
+                    break;
+                case Array array:
+                    {
+                        object?[] typedArray = new object[array.Length];
+
+                        for (int i = 0; i < array.Length; i++)
+                        {
+                            object? element = array.GetValue(i);
+                            object? typedElement = ModelProperty is null ? element : Common.TypeConvertFromString(element?.ToString() ?? "", ModelProperty.PropertyType);
+                            typedArray[i] = typedElement;
+                        }
+
+                        field = typedArray;
+                        break;
+                    }
+                default:
+                    {
+                        if (ModelProperty is null)
+                        {
+                            //try to cast based on ValueKind
+                            if (value is JsonElement el)
+                            {
+                                if (el.ValueKind == JsonValueKind.String)
+                                    field = el.GetString();
+                                else if (el.ValueKind == JsonValueKind.Number)
+                                    field = el.GetDouble();
+                                else if (el.ValueKind == JsonValueKind.True || el.ValueKind == JsonValueKind.False)
+                                    field = el.GetBoolean();
+                                else
+                                    field = el.ToString();
+                            }
+                            else
+                                field = value;
+                        }
+                        else
+                        {
+                            string image = (value.ToString() ?? "").Trim();
+
+                            // Check for JSON formatted array
+                            if (image.StartsWith('[') && image.EndsWith(']'))
+                            {
+                                string[] elements = image[1..^1].Split(',', StringSplitOptions.TrimEntries);
+                                object?[] typedArray = new object[elements.Length];
+
+                                for (int i = 0; i < elements.Length; i++)
+                                {
+                                    string element = elements[i];
+                                    object? typedElement = ModelProperty is null ? element : Common.TypeConvertFromString(element, ModelProperty.PropertyType);
+                                    typedArray[i] = typedElement;
+                                }
+
+                                field = typedArray;
+                            }
+                            else
+                            {
+                                field = Common.TypeConvertFromString(image, ModelProperty.PropertyType);
+                            }
+                        }
+
+                        break;
+                    }
+            }
+        }
+    }
 
     /// <inheritdoc/>
     public string Operator
@@ -71,8 +145,12 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     public bool SupportsEncrypted => s_encryptedOperators.Contains(m_operator);
 
     /// <inheritdoc/>
-    public PropertyInfo? ModelProperty => typeof(T).GetProperty(FieldName);
+    public PropertyInfo? ModelProperty => field ??= typeof(T).GetProperty(FieldName);
 
+    /// <summary>
+    /// Gets the collection of supported wildcard operators.
+    /// </summary>
+    public static IReadOnlyCollection<string> WildCardOperators => s_wildCardOperators;
     #endregion
 
     #region [ Methods ]
@@ -86,61 +164,46 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
         {
             try
             {
-                if (m_operator.Equals("LIKE", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT LIKE", StringComparison.OrdinalIgnoreCase))
-                {
-                    SearchParameter = SearchParameter.Replace("*", tableOperations.WildcardChar);
-                }
-                else if (m_operator.Equals("IN", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT IN", StringComparison.OrdinalIgnoreCase))
-                {
-                    IEnumerable<string> values = SearchParameter
-                        .Split(',')
-                        .Select(value => $"'{value.Trim()}'");
-
-                    SearchParameter = string.Join(", ", values);
-                }
                 return transform(this);
             }
-            catch
+            catch (Exception ex)
             {
-                // Fall through to normal search if not debugging
-            #if DEBUG
-                throw;
-            #endif
+                Logger.SwallowException(ex, $"{nameof(RecordFilter<>)}.{nameof(GenerateRestriction)} transform operation");
             }
         }
 
         if (ModelProperty is null && !TableOperations<T>.IsSearchableField(FieldName))
             throw new ArgumentException($"{FieldName} is not a valid field for {typeof(T).Name}");
 
-        if (string.IsNullOrEmpty(SearchParameter))
+        if (SearchParameter is not object?[] searchParameters)
+            searchParameters = SearchParameter is not null ? [SearchParameter] : [];
+
+        int parameterCount = searchParameters.Length;
+
+        if (parameterCount == 0)
             return new RecordRestriction($"{FieldName} {m_operator} NULL");
 
         // Convert search parameters to the interpreted value for the specified field, i.e., encrypting or
         // returning any intermediate IDbDataParameter value as needed:
-        string interpretedValue = tableOperations.GetInterpretedFieldValue(FieldName, SearchParameter) as string ?? string.Empty;
+        for (int i = 0; i < parameterCount; i++)
+        {
+            searchParameters[i] = tableOperations.GetInterpretedFieldValue(FieldName, searchParameters[i]);
 
-        if (m_operator.Equals("LIKE", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT LIKE", StringComparison.OrdinalIgnoreCase))
-        {
-            interpretedValue = string.IsNullOrEmpty(SearchParameter) ? tableOperations.WildcardChar : SearchParameter.Replace("*", tableOperations.WildcardChar);
-            interpretedValue = $"'{interpretedValue}'";
-        }
-        else if (m_operator.Equals("IN", StringComparison.OrdinalIgnoreCase) || m_operator.Equals("NOT IN", StringComparison.OrdinalIgnoreCase))
-        {
-            // Split the SearchParameter on commas, trim whitespace, and wrap each value in single quotes
-            IEnumerable<string> values = SearchParameter
-                .Split(',')
-                .Select(value => $"'{value.Trim()}'");
-
-            interpretedValue = string.Join(", ", values);
-        }
-        else
-        {
-            interpretedValue = $"'{interpretedValue}'";
+            if (s_wildCardOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase) && searchParameters[i] is string stringVal)
+            {
+                searchParameters[i] = stringVal.Replace("*", tableOperations.WildcardChar);
+            }
         }
 
-        return s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase) ? 
-            new RecordRestriction($"{FieldName} {m_operator} ({interpretedValue})") : 
-            new RecordRestriction($"{FieldName} {m_operator} {interpretedValue}");
+        if (!s_groupOperators.Contains(m_operator, StringComparer.OrdinalIgnoreCase))
+            return new RecordRestriction($"{FieldName} {m_operator} {{0}}", searchParameters);
+
+        string[] parameters = new string[parameterCount];
+
+        for (int i = 0; i < parameterCount; i++)
+            parameters[i] = $"{{{i}}}";
+
+        return new RecordRestriction($"{FieldName} {m_operator} ({string.Join(',', parameters)})", searchParameters);
     }
 
     #endregion
@@ -151,6 +214,6 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     private static readonly string[] s_validOperators = ["=", "<>", "<", ">", "IN", "NOT IN", "LIKE", "NOT LIKE", "<=", ">=", "IS", "IS NOT"];
     private static readonly string[] s_groupOperators = ["IN", "NOT IN"];
     private static readonly string[] s_encryptedOperators = ["IN", "NOT IN", "=", "<>", "IS", "IS NOT"];
-
+    private static readonly string[] s_wildCardOperators = ["NOT LIKE", "LIKE"];
     #endregion
 }

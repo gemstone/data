@@ -2543,27 +2543,56 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// Gets a record restriction based on the non-primary key values of the specified <paramref name="record"/>.
     /// </summary>
     /// <param name="record">Record to retrieve non-primary key field values from.</param>
+    /// <param name="excludedFields">Optional additional field names to exclude from the restriction.</param>
     /// <returns>Record restriction based on the non-primary key values of the specified <paramref name="record"/>.</returns>
     /// <remarks>
+    /// <para>
     /// This will look up a newly added record when the primary key values are not yet defined searching all field values.
     /// If all fields do not represent a unique record, queries based on this restriction will return multiple records.
     /// Note that if the modeled table has fields that are known be unique, searching based on those fields is preferred.
+    /// </para>
+    /// <para>
+    /// Any field modeled with <see cref="ExcludedFieldAttribute"/> will automatically be excluded from the restriction. The
+    /// <paramref name="excludedFields"/> parameter can be used to specify additional fields to exclude from the restriction.
+    /// </para>
     /// </remarks>
-    public RecordRestriction GetNonPrimaryFieldRecordRestriction(T record)
+    public RecordRestriction GetNonPrimaryFieldRecordRestriction(T record, IEnumerable<string>? excludedFields = null)
     {
-        string[] fieldNames = GetNonPrimaryFieldNames();
+        HashSet<string> excludedFieldsSet = new(s_excludedFields, StringComparer.OrdinalIgnoreCase); 
 
-        return new RecordRestriction(
-            fieldNames.Select((fieldName, index) => $"{fieldName} = {{{index}}}").ToDelimitedString(" AND "),
-            fieldNames.Select(fieldName => GetFieldValue(record, fieldName)).ToArray());
+        if (excludedFields is not null)
+            excludedFieldsSet.UnionWith(excludedFields);
+
+        string[] fieldNames = GetNonPrimaryFieldNames().Where(fieldName => !excludedFieldsSet.Contains(fieldName)).ToArray();
+
+        List<string> predicates = new(fieldNames.Length);
+        List<object?> parameters = [];
+
+        foreach (string fieldName in fieldNames)
+        {
+            object? value = GetFieldValue(record, fieldName);
+
+            // Treat DBNull the same as null – use IS NULL and do not add a parameter
+            if (value is null or DBNull)
+            {
+                predicates.Add($"{fieldName} IS NULL");
+            }
+            else
+            {
+                predicates.Add($"{fieldName} = {{{parameters.Count}}}");
+                parameters.Add(value);
+            }
+        }
+
+        return new RecordRestriction(predicates.ToDelimitedString(" AND "), parameters.ToArray());
     }
 
-    RecordRestriction ITableOperations.GetNonPrimaryFieldRecordRestriction(object value)
+    RecordRestriction ITableOperations.GetNonPrimaryFieldRecordRestriction(object value, IEnumerable<string>? excludedFields)
     {
         if (value is not T record)
             throw new ArgumentException($"Cannot get non-primary key field restriction for record of type \"{value?.GetType().Name ?? "null"}\", expected \"{typeof(T).Name}\"", nameof(value));
         
-        return GetNonPrimaryFieldRecordRestriction(record);
+        return GetNonPrimaryFieldRecordRestriction(record, excludedFields);
     }
 
     /// <inheritdoc/>
@@ -2965,6 +2994,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private static readonly HashSet<string> s_searchableFields;
     private static readonly (Regex, Func<IRecordFilter, RecordRestriction>)[] s_searchExtensions;
     private static readonly (Regex, Func<string, string>)[] s_sortExtensions;
+    private static readonly HashSet<string> s_excludedFields;
     private static TypeRegistry? s_typeRegistry;
 
     // Static Constructor
@@ -3189,6 +3219,17 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         // Resolve extensions methods for the modeled table
         s_searchExtensions = ResolveExtensionAttributes<SearchExtensionAttribute, IRecordFilter, RecordRestriction>(staticMethods);
         s_sortExtensions = ResolveExtensionAttributes<SortExtensionAttribute, string, string>(staticMethods);
+
+        s_excludedFields = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach ((string propertyName, PropertyInfo property) in s_properties)
+        {
+            if (!s_attributes.TryGetValue(property, out HashSet<Type>? attributes) || attributes.All(attribute => attribute != typeof(ExcludedFieldAttribute)))
+                continue;
+            
+            if (s_fieldNames.TryGetValue(propertyName, out string? fieldName))
+                s_excludedFields.Add(fieldName);
+        }
     }
 
     internal static bool IsSearchableField(string fieldName)
@@ -3336,7 +3377,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         // If any attribute has no database target type specified, then all database types are assumed
         if (fieldDataTypeAttributes.Any(attribute => attribute.TargetDatabaseType is null))
         {
-            databaseTypes = Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().ToArray();
+            databaseTypes = Enum.GetValues<DatabaseType>();
             defaultFieldDataType = fieldDataTypeAttributes.First(attribute => attribute.TargetDatabaseType is null).FieldDataType;
         }
         else
@@ -3368,7 +3409,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         if (useEscapedNameAttributes.Any(attribute => attribute.TargetDatabaseType is null))
         {
             allDatabasesTargeted = true;
-            databaseTypes = Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().ToArray();
+            databaseTypes = Enum.GetValues<DatabaseType>();
         }
         else
         {
@@ -3406,7 +3447,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
             // If any attribute has no database target type specified, then all database types are assumed
             if (attribute.TargetDatabaseType is null)
             {
-                databaseTypes = Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().ToArray();
+                databaseTypes = Enum.GetValues<DatabaseType>();
                 expressionAmendments = untypedExpressionAmendments;
             }
             else

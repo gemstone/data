@@ -3453,16 +3453,12 @@
             parameter to the attribute, e.g., <c>[AmendExpression("WITH (NOLOCK)", DatabaseType.SQLServer)]</c>, means the
             amendment text will only be applied to the specific database - however, the attribute allows multiple instances
             on the same identifier so you could specify that amendment application only be applied to two databases:
-            <code>
-            [AmendExpression("AS T1", DatabaseType.SQLServer), AmendExpression("AS T1", DatabaseType.MySQL)]
-            </code>
+            <codeSnippetGroup><code language="cs" codeLanguage="CSharp" style="cs">[AmendExpression("AS T1", DatabaseType.SQLServer), AmendExpression("AS T1", DatabaseType.MySQL)]</code></codeSnippetGroup>
             Other parameters exist to fully customize target expression, set affix position and specify statement types:
-            <code>
-            [AmendExpression("TOP 200",
-                TargetExpression = TargetExpression.FieldList,
-                AffixPosition = AffixPosition.Prefix,
-                StatementTypes = StatementTypes.SelectSet)]
-            </code></para>
+            <codeSnippetGroup><code language="cs" codeLanguage="CSharp" style="cs">[AmendExpression("TOP 200",
+    TargetExpression = TargetExpression.FieldList,
+    AffixPosition = AffixPosition.Prefix,
+    StatementTypes = StatementTypes.SelectSet)]</code></codeSnippetGroup></para>
       </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.AmendExpressionAttribute.#ctor(System.String)">
@@ -3506,6 +3502,183 @@
     <member name="P:Gemstone.Data.Model.AmendExpressionAttribute.TargetExpression">
       <summary>
             Gets or sets target expression for amendment application; defaults to <see cref="F:Gemstone.Data.Model.TargetExpression.TableName" />.
+            </summary>
+    </member>
+    <member name="T:Gemstone.Data.Model.AssignedClaim">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>T:Gemstone.Data.Model.AssignedClaim</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.AssignedClaim.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Gemstone.Data.Model.AssignedClaim</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.AssignedClaim.CreatedBy">
+      <summary>
+            Created by field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.AssignedClaim.CreatedOn">
+      <summary>
+            Created on field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.AssignedClaim.Description">
+      <summary>
+            Description field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.AssignedClaim.ID">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:Gemstone.Data.Model.AssignedClaim.ID</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.AssignedClaim.Type">
+      <summary>
+            Type field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.AssignedClaim.UpdatedBy">
+      <summary>
+            Updated by field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.AssignedClaim.UpdatedOn">
+      <summary>
+            Updated on field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.AssignedClaim.Value">
+      <summary>
+            Value field.
+            </summary>
+    </member>
+    <member name="T:Gemstone.Data.Model.ClaimGroup">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>T:Gemstone.Data.Model.ClaimGroup</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.ClaimGroup.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Gemstone.Data.Model.ClaimGroup</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroup.CreatedBy">
+      <summary>
+            Created by field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroup.CreatedOn">
+      <summary>
+            Created on field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroup.ID">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:Gemstone.Data.Model.ClaimGroup.ID</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroup.Name">
+      <summary>
+            Name field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroup.UpdatedBy">
+      <summary>
+            Updated by field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroup.UpdatedOn">
+      <summary>
+            Updated on field.
+            </summary>
+    </member>
+    <member name="T:Gemstone.Data.Model.ClaimGroupClaim">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>T:Gemstone.Data.Model.ClaimGroupClaim</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.ClaimGroupClaim.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Gemstone.Data.Model.ClaimGroupClaim</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroupClaim.AssignedClaimID">
+      <summary>
+            AssignedClaimID field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroupClaim.ClaimGroupID">
+      <summary>
+            ClaimGroupID field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroupClaim.CreatedBy">
+      <summary>
+            Created by field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroupClaim.CreatedOn">
+      <summary>
+            Created on field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroupClaim.ID">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:Gemstone.Data.Model.ClaimGroupClaim.ID</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroupClaim.UpdatedBy">
+      <summary>
+            Updated by field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ClaimGroupClaim.UpdatedOn">
+      <summary>
+            Updated on field.
             </summary>
     </member>
     <member name="T:Gemstone.Data.Model.DefaultSortOrderAttribute">
@@ -3570,6 +3743,21 @@
             Gets reference name used to lookup encryption key and initialization vector;
             new keys will be created for reference if it does not exist.
             </summary>
+    </member>
+    <member name="T:Gemstone.Data.Model.ExcludedFieldAttribute">
+      <summary>
+            Defines an attribute that will mark a field as excluded from being processed
+            by non-primary field record restrictions.
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.ExcludedFieldAttribute.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Gemstone.Data.Model.ExcludedFieldAttribute</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="T:Gemstone.Data.Model.ExtensionAttributeBase">
       <summary>
@@ -4101,12 +4289,24 @@
             A field name will only be escaped if the model requested escaping with the <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />.
             </remarks>
     </member>
-    <member name="M:Gemstone.Data.Model.ITableOperations.GetNonPrimaryFieldRecordRestriction(System.Object)">
+    <member name="M:Gemstone.Data.Model.ITableOperations.GetNonPrimaryFieldRecordRestriction(System.Object,System.Collections.Generic.IEnumerable{System.String})">
       <summary>
             Gets a record restriction based on the non-primary key values of the specified <paramref name="record" />.
             </summary>
       <param name="record">Record to retrieve non-primary key field values from.</param>
+      <param name="excludedFields">Optional additional field names to exclude from the restriction.</param>
       <returns>Record restriction based on the non-primary key values of the specified <paramref name="record" />.</returns>
+      <remarks>
+        <para>
+            This will look up a newly added record when the primary key values are not yet defined searching all field values.
+            If all fields do not represent a unique record, queries based on this restriction will return multiple records.
+            Note that if the modeled table has fields that are known be unique, searching based on those fields is preferred.
+            </para>
+        <para>
+            Any field modeled with <see cref="T:Gemstone.Data.Model.ExcludedFieldAttribute" /> will automatically be excluded from the restriction. The
+            <paramref name="excludedFields" /> parameter can be used to specify additional fields to exclude from the restriction.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.ITableOperations.GetPageOfRecords(System.Object[],System.Int32,System.Int32)">
       <summary>
@@ -5270,6 +5470,75 @@
             Gets the wildcard character used for pattern matching within queries.
             </summary>
     </member>
+    <member name="T:Gemstone.Data.Model.MatchingClaim">
+      <summary>
+            Model for a matching claim from an authorization provider.
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.MatchingClaim.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Gemstone.Data.Model.MatchingClaim</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.MatchingClaim.AuthenticationProviderID">
+      <summary>
+            ID of the AuthenticationProvider
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.MatchingClaim.CreatedBy">
+      <summary>
+            Created by field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.MatchingClaim.CreatedOn">
+      <summary>
+            Created on field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.MatchingClaim.ID">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:Gemstone.Data.Model.MatchingClaim.ID</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.MatchingClaim.Type">
+      <summary>
+            Type field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.MatchingClaim.TypeDescription">
+      <summary>
+            Description of the Type used for UI labeling
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.MatchingClaim.UpdatedBy">
+      <summary>
+            Updated by field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.MatchingClaim.UpdatedOn">
+      <summary>
+            Updated on field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.MatchingClaim.Value">
+      <summary>
+            Value field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.MatchingClaim.ValueDescription">
+      <summary>
+            Description of the Value used for UI labeling
+            </summary>
+    </member>
     <member name="T:Gemstone.Data.Model.NonRecordFieldAttribute">
       <summary>
             Defines an attribute that will mark a property to not be serialized as a record field.
@@ -5372,6 +5641,65 @@
             Gets flag that determines if primary key field is an identity field.
             </summary>
     </member>
+    <member name="T:Gemstone.Data.Model.ProviderClaims">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>T:Gemstone.Data.Model.ProviderClaims</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.ProviderClaims.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Gemstone.Data.Model.ProviderClaims</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ProviderClaims.ClaimGroupID">
+      <summary>
+            ClaimGroupID field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ProviderClaims.CreatedBy">
+      <summary>
+            Created by field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ProviderClaims.CreatedOn">
+      <summary>
+            Created on field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ProviderClaims.ID">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:Gemstone.Data.Model.ProviderClaims.ID</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ProviderClaims.MatchingClaimID">
+      <summary>
+            MatchingClaimID field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ProviderClaims.UpdatedBy">
+      <summary>
+            Updated by field.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.ProviderClaims.UpdatedOn">
+      <summary>
+            Updated on field.
+            </summary>
+    </member>
     <member name="T:Gemstone.Data.Model.RecordFilter`1">
       <summary>
             Defines a filter that can be applied to queries.
@@ -5445,6 +5773,11 @@
     <member name="P:Gemstone.Data.Model.RecordFilter`1.SupportsEncrypted">
       <summary>
             Indicates whether this <see cref="T:Gemstone.Data.Model.IRecordFilter" /> will work on encrypted fields.
+            </summary>
+    </member>
+    <member name="P:Gemstone.Data.Model.RecordFilter`1.WildCardOperators">
+      <summary>
+            Gets the collection of supported wildcard operators.
             </summary>
     </member>
     <member name="T:Gemstone.Data.Model.RecordOperation">
@@ -5980,7 +6313,7 @@
       <remarks>
             The <paramref name="customTokens" /> can be used to apply run-time tokens to any defined <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> values,
             for example, given the following amendment expression applied to a modeled class:
-            <code language="cs">
+            <code>
             [AmendExpression("TOP {count}", 
                 TargetExpression = TargetExpression.FieldList,
                 AffixPosition = AffixPosition.Prefix,
@@ -6392,17 +6725,24 @@
             A field name will only be escaped if the model requested escaping with the <see cref="T:Gemstone.Data.Model.UseEscapedNameAttribute" />.
             </remarks>
     </member>
-    <member name="M:Gemstone.Data.Model.TableOperations`1.GetNonPrimaryFieldRecordRestriction(`0)">
+    <member name="M:Gemstone.Data.Model.TableOperations`1.GetNonPrimaryFieldRecordRestriction(`0,System.Collections.Generic.IEnumerable{System.String})">
       <summary>
             Gets a record restriction based on the non-primary key values of the specified <paramref name="record" />.
             </summary>
       <param name="record">Record to retrieve non-primary key field values from.</param>
+      <param name="excludedFields">Optional additional field names to exclude from the restriction.</param>
       <returns>Record restriction based on the non-primary key values of the specified <paramref name="record" />.</returns>
       <remarks>
+        <para>
             This will look up a newly added record when the primary key values are not yet defined searching all field values.
             If all fields do not represent a unique record, queries based on this restriction will return multiple records.
             Note that if the modeled table has fields that are known be unique, searching based on those fields is preferred.
-            </remarks>
+            </para>
+        <para>
+            Any field modeled with <see cref="T:Gemstone.Data.Model.ExcludedFieldAttribute" /> will automatically be excluded from the restriction. The
+            <paramref name="excludedFields" /> parameter can be used to specify additional fields to exclude from the restriction.
+            </para>
+      </remarks>
     </member>
     <member name="M:Gemstone.Data.Model.TableOperations`1.GetPageOfRecords(`0[],System.Int32,System.Int32)">
       <summary>

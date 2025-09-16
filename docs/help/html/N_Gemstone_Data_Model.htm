@@ -2,12 +2,15 @@
             Contains classes and attributes used for model based database access.
             </div><h2 class="quickLinkHeader"><span class="icon toggleSection" tabindex="0"><i class="fa fa-angle-down"></i></span>Classes</h2><div id="IDDCASection"><table id="classList" class="table is-hoverable"><tr><td><a href="T_Gemstone_Data_Model_AmendExpressionAttribute.htm">AmendExpressionAttribute</a></td><td>
             Defines an attribute that will request amendment of a table name or field list with the specified text.
-            </td></tr><tr><td><a href="T_Gemstone_Data_Model_DefaultSortOrderAttribute.htm">DefaultSortOrderAttribute</a></td><td>
+            </td></tr><tr><td><a href="T_Gemstone_Data_Model_AssignedClaim.htm">AssignedClaim</a></td><td> </td></tr><tr><td><a href="T_Gemstone_Data_Model_ClaimGroup.htm">ClaimGroup</a></td><td> </td></tr><tr><td><a href="T_Gemstone_Data_Model_ClaimGroupClaim.htm">ClaimGroupClaim</a></td><td> </td></tr><tr><td><a href="T_Gemstone_Data_Model_DefaultSortOrderAttribute.htm">DefaultSortOrderAttribute</a></td><td>
             Defines an attribute that will allow a default sort field in the model
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_DeleteRolesAttribute.htm">DeleteRolesAttribute</a></td><td>
             Defines an attribute that will allow setting DELETE function roles for a modeled table.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_EncryptDataAttribute.htm">EncryptDataAttribute</a></td><td>
             Defines an attribute that provides encryption of text field contents for a modeled table.
+            </td></tr><tr><td><a href="T_Gemstone_Data_Model_ExcludedFieldAttribute.htm">ExcludedFieldAttribute</a></td><td>
+            Defines an attribute that will mark a field as excluded from being processed
+            by non-primary field record restrictions.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_ExtensionAttributeBase.htm">ExtensionAttributeBase</a></td><td>
             Base class for Attributes that are used to extend the functionality of <a href="T_Gemstone_Data_Model_TableOperations_1.htm">TableOperations<span id="LST264FA98E_0" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_1" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a>.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_FieldDataTypeAttribute.htm">FieldDataTypeAttribute</a></td><td>
@@ -18,6 +21,8 @@
             the property name.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_GetRolesAttribute.htm">GetRolesAttribute</a></td><td>
             Defines an attribute that will allow setting GET function roles for a modeled table.
+            </td></tr><tr><td><a href="T_Gemstone_Data_Model_MatchingClaim.htm">MatchingClaim</a></td><td>
+            Model for a matching claim from an authorization provider.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_NonRecordFieldAttribute.htm">NonRecordFieldAttribute</a></td><td>
             Defines an attribute that will mark a property to not be serialized as a record field.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_PageSizeAttribute.htm">PageSizeAttribute</a></td><td>
@@ -30,7 +35,7 @@
             Defines an attribute that will allow setting POST function roles for a modeled table.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_PrimaryKeyAttribute.htm">PrimaryKeyAttribute</a></td><td>
             Defines an attribute that will mark a property as a primary key field for a modeled table.
-            </td></tr><tr><td><a href="T_Gemstone_Data_Model_RecordFilter_1.htm">RecordFilter<span id="LST264FA98E_2" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_3" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a></td><td>
+            </td></tr><tr><td><a href="T_Gemstone_Data_Model_ProviderClaims.htm">ProviderClaims</a></td><td> </td></tr><tr><td><a href="T_Gemstone_Data_Model_RecordFilter_1.htm">RecordFilter<span id="LST264FA98E_2" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_3" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a></td><td>
             Defines a filter that can be applied to queries.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_RecordOperationAttribute.htm">RecordOperationAttribute</a></td><td>
             Defines an attribute that marks a method as a specific <a href="T_Gemstone_Data_Model_RecordOperation.htm">RecordOperation</a> for a modeled table.
@@ -57,7 +62,7 @@
             a table or field name. Typically needed when identifier names are reserved SQL key words.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_ValueLabel.htm">ValueLabel</a></td><td>
             Defines a common model to hold a label and associated value.
-            </td></tr></table></div><h2 class="quickLinkHeader"><span class="icon toggleSection" tabindex="0"><i class="fa fa-angle-down"></i></span>Interfaces</h2><div id="IDLCASection"><table id="interfaceList" class="table is-hoverable"><tr><td><a href="T_Gemstone_Data_Model_IRecordFilter.htm">IRecordFilter</a></td><td>
+            </td></tr></table></div><h2 class="quickLinkHeader"><span class="icon toggleSection" tabindex="0"><i class="fa fa-angle-down"></i></span>Interfaces</h2><div id="IDPCASection"><table id="interfaceList" class="table is-hoverable"><tr><td><a href="T_Gemstone_Data_Model_IRecordFilter.htm">IRecordFilter</a></td><td>
             Defines an interface for a filter that can be applied to queries.
             </td></tr><tr><td><a href="T_Gemstone_Data_Model_ITableOperations.htm">ITableOperations</a></td><td>
             Defines a common interface for implementations of <a href="T_Gemstone_Data_Model_TableOperations_1.htm">TableOperations<span id="LST264FA98E_8" data-languageSpecificText="cs=&lt;|vb=(Of |cpp=&lt;|nu=(|fs=&lt;'"></span>T<span id="LST264FA98E_9" data-languageSpecificText="cs=&gt;|vb=)|cpp=&gt;|nu=)|fs=&gt;"></span></a>.

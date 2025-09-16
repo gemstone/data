@@ -104,7 +104,9 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                             // Check for JSON formatted array
                             if (image.StartsWith('[') && image.EndsWith(']'))
                             {
-                                string[] elements = image[1..^1].Split(',', StringSplitOptions.TrimEntries);
+                                using var doc = JsonDocument.Parse(image);
+                                string[] elements = [.. doc.RootElement.EnumerateArray().Select(e => e.GetString() ?? e.ToString())];
+
                                 object?[] typedArray = new object[elements.Length];
 
                                 for (int i = 0; i < elements.Length; i++)

@@ -83,39 +83,35 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                     }
                 default:
                     {
-                        if (ModelProperty is null)
+                        if (value is JsonElement el)
                         {
                             //try to cast based on ValueKind
-                            if (value is JsonElement el)
+                            if (el.ValueKind == JsonValueKind.String)
+                                field = el.GetString();
+                            else if (el.ValueKind == JsonValueKind.Number)
+                                field = el.GetDouble();
+                            else if (el.ValueKind == JsonValueKind.True || el.ValueKind == JsonValueKind.False)
+                                field = el.GetBoolean();
+                            else if (el.ValueKind == JsonValueKind.Array)
                             {
-                                if (el.ValueKind == JsonValueKind.String)
-                                    field = el.GetString();
-                                else if (el.ValueKind == JsonValueKind.Number)
-                                    field = el.GetDouble();
-                                else if (el.ValueKind == JsonValueKind.True || el.ValueKind == JsonValueKind.False)
-                                    field = el.GetBoolean();
-                                else if (el.ValueKind == JsonValueKind.Array)
-                                {
-                                    field = el.EnumerateArray()
-                                              .Select(e =>
-                                                  e.ValueKind switch
-                                                  {
-                                                      JsonValueKind.String => (object?)e.GetString(),
-                                                      JsonValueKind.Number => e.TryGetInt64(out var i64) ? i64 : e.GetDouble(),
-                                                      JsonValueKind.True => true,
-                                                      JsonValueKind.False => false,
-                                                      JsonValueKind.Null => DBNull.Value,
-                                                      _ => e.ToString()
-                                                  })
-                                              .ToArray();
-                                }
-                                else
-                                    field = el.ToString();
+                                field = el.EnumerateArray()
+                                          .Select(e =>
+                                              e.ValueKind switch
+                                              {
+                                                  JsonValueKind.String => (object?)e.GetString(),
+                                                  JsonValueKind.Number => e.TryGetInt64(out var i64) ? i64 : e.GetDouble(),
+                                                  JsonValueKind.True => true,
+                                                  JsonValueKind.False => false,
+                                                  JsonValueKind.Null => DBNull.Value,
+                                                  _ => e.ToString()
+                                              })
+                                          .ToArray();
                             }
                             else
-                                field = value;
+                                field = el.ToString();
                         }
-                        else
+                        //This isn't properly working at all times.
+                        else if (ModelProperty is not null)
                         {
                             string image = (value.ToString() ?? "").Trim();
 
@@ -140,6 +136,10 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                             {
                                 field = Common.TypeConvertFromString(image, ModelProperty.PropertyType);
                             }
+                        }
+                        else
+                        {
+                            field = value.ToString();
                         }
 
                         break;

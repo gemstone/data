@@ -86,7 +86,9 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                         if (value is JsonElement el)
                         {
                             //try to cast based on ValueKind
-                            if (el.ValueKind == JsonValueKind.String)
+                            if (el.ValueKind == JsonValueKind.String && ModelProperty is not null && ModelProperty.PropertyType == typeof(DateTime))
+                                field = Common.TypeConvertFromString(el.GetString() ?? "", typeof(DateTime));
+                            else if (el.ValueKind == JsonValueKind.String)
                                 field = el.GetString();
                             else if (el.ValueKind == JsonValueKind.Number)
                                 field = el.GetDouble();
@@ -94,6 +96,7 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                                 field = el.GetBoolean();
                             else if (el.ValueKind == JsonValueKind.Array)
                             {
+                                //This doesnt handle DateTimes
                                 field = el.EnumerateArray()
                                           .Select(e =>
                                               e.ValueKind switch

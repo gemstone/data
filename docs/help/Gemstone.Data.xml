@@ -3748,6 +3748,23 @@
             new keys will be created for reference if it does not exist.
             </summary>
     </member>
+    <member name="T:Gemstone.Data.Model.EventTypeAttribute">
+      <summary>
+            Defines an attribute that will mark a class as a JSON construct in <see cref="!:EventDetails" />
+            the property name.
+            </summary>
+    </member>
+    <member name="M:Gemstone.Data.Model.EventTypeAttribute.#ctor(System.String)">
+      <summary>
+            Creates a new <see cref="T:Gemstone.Data.Model.EventTypeAttribute" />.
+            </summary>
+      <param name="name">Name to use for database entry.</param>
+    </member>
+    <member name="P:Gemstone.Data.Model.EventTypeAttribute.Name">
+      <summary>
+            Gets the EventType name to use in the database.
+            </summary>
+    </member>
     <member name="T:Gemstone.Data.Model.ExcludedFieldAttribute">
       <summary>
             Defines an attribute that will mark a field as excluded from being processed

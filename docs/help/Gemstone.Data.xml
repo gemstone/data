@@ -27,7 +27,7 @@
                     DataProviderString = "AssemblyName=Oracle.ManagedDataAccess; ConnectionType=Oracle.ManagedDataAccess.Client.OracleConnection"
                     </description></item></list>
             Example configuration file that defines connection settings:
-            <code language="cs">
+            <code>
             &lt;?xml version="1.0" encoding="utf-8"?&gt;
             &lt;configuration&gt;
               &lt;configSections&gt;
@@ -3872,6 +3872,12 @@
             Gets field name to use for property.
             </summary>
     </member>
+    <member name="T:Gemstone.Data.Model.IEventType">
+      <summary>
+            Defines an interface that marks a class as a JSON construct in <see cref="!:EventDetails" />
+            the property name.
+            </summary>
+    </member>
     <member name="T:Gemstone.Data.Model.IRecordFilter">
       <summary>
             Defines an interface for a filter that can be applied to queries.
@@ -6334,7 +6340,7 @@
       <remarks>
             The <paramref name="customTokens" /> can be used to apply run-time tokens to any defined <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> values,
             for example, given the following amendment expression applied to a modeled class:
-            <code>
+            <code language="cs">
             [AmendExpression("TOP {count}", 
                 TargetExpression = TargetExpression.FieldList,
                 AffixPosition = AffixPosition.Prefix,

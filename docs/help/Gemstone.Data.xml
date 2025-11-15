@@ -6334,7 +6334,7 @@
       <remarks>
             The <paramref name="customTokens" /> can be used to apply run-time tokens to any defined <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> values,
             for example, given the following amendment expression applied to a modeled class:
-            <code>
+            <code language="cs">
             [AmendExpression("TOP {count}", 
                 TargetExpression = TargetExpression.FieldList,
                 AffixPosition = AffixPosition.Prefix,

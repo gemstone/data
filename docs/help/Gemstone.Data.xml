@@ -27,7 +27,7 @@
                     DataProviderString = "AssemblyName=Oracle.ManagedDataAccess; ConnectionType=Oracle.ManagedDataAccess.Client.OracleConnection"
                     </description></item></list>
             Example configuration file that defines connection settings:
-            <code>
+            <code language="cs">
             &lt;?xml version="1.0" encoding="utf-8"?&gt;
             &lt;configuration&gt;
               &lt;configSections&gt;

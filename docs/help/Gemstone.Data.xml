@@ -3453,7 +3453,7 @@
             parameter to the attribute, e.g., <c>[AmendExpression("WITH (NOLOCK)", DatabaseType.SQLServer)]</c>, means the
             amendment text will only be applied to the specific database - however, the attribute allows multiple instances
             on the same identifier so you could specify that amendment application only be applied to two databases:
-            <code>
+            <code language="cs">
             [AmendExpression("AS T1", DatabaseType.SQLServer), AmendExpression("AS T1", DatabaseType.MySQL)]
             </code>
             Other parameters exist to fully customize target expression, set affix position and specify statement types:

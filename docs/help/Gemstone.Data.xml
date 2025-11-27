@@ -3453,7 +3453,7 @@
             parameter to the attribute, e.g., <c>[AmendExpression("WITH (NOLOCK)", DatabaseType.SQLServer)]</c>, means the
             amendment text will only be applied to the specific database - however, the attribute allows multiple instances
             on the same identifier so you could specify that amendment application only be applied to two databases:
-            <code language="cs">
+            <code>
             [AmendExpression("AS T1", DatabaseType.SQLServer), AmendExpression("AS T1", DatabaseType.MySQL)]
             </code>
             Other parameters exist to fully customize target expression, set affix position and specify statement types:
@@ -6315,7 +6315,7 @@
         <para>
             The <paramref name="customTokens" /> can be used to apply run-time tokens to any defined <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> values,
             for example, given the following amendment expression applied to a modeled class:
-            <code>
+            <code language="cs">
             [AmendExpression("TOP {count}", 
                 TargetExpression = TargetExpression.FieldList,
                 AffixPosition = AffixPosition.Prefix,

@@ -395,7 +395,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     public DataTable? PrimaryKeyCache { get; set; }
 
     /// <inheritdoc/>
-    public RecordRestriction? RootQueryRestriction { get; init; }
+    public RecordRestriction? RootQueryRestriction { get; set; }
 
     /// <inheritdoc/>
     public bool ApplyRootQueryRestrictionToUpdates { get; init; }

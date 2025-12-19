@@ -138,7 +138,7 @@ public interface ITableOperations
     /// returned value so that the field value will be properly set prior to executing the database function.
     /// </para>
     /// </remarks>
-    RecordRestriction? RootQueryRestriction { get; init; }
+    RecordRestriction? RootQueryRestriction { get; set; }
 
     /// <summary>
     /// Gets or sets flag that determines if <see cref="RootQueryRestriction"/> should be applied to update operations.

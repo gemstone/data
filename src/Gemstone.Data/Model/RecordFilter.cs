@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Gemstone.Diagnostics;
 
 namespace Gemstone.Data.Model;
@@ -54,6 +55,8 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     public string FieldName { get; set; } = string.Empty;
 
     /// <inheritdoc/>
+    [JsonIgnore]
+    [Newtonsoft.Json.JsonIgnore]
     public PropertyInfo? ModelProperty => field ??= typeof(T).GetProperty(FieldName);
 
     /// <inheritdoc/>

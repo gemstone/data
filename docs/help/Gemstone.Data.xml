@@ -3453,7 +3453,7 @@
             parameter to the attribute, e.g., <c>[AmendExpression("WITH (NOLOCK)", DatabaseType.SQLServer)]</c>, means the
             amendment text will only be applied to the specific database - however, the attribute allows multiple instances
             on the same identifier so you could specify that amendment application only be applied to two databases:
-            <code>
+            <code language="cs">
             [AmendExpression("AS T1", DatabaseType.SQLServer), AmendExpression("AS T1", DatabaseType.MySQL)]
             </code>
             Other parameters exist to fully customize target expression, set affix position and specify statement types:
@@ -6340,17 +6340,13 @@
       <remarks>
             The <paramref name="customTokens" /> can be used to apply run-time tokens to any defined <see cref="T:Gemstone.Data.Model.AmendExpressionAttribute" /> values,
             for example, given the following amendment expression applied to a modeled class:
-            <code language="cs">
-            [AmendExpression("TOP {count}", 
-                TargetExpression = TargetExpression.FieldList,
-                AffixPosition = AffixPosition.Prefix,
-                StatementTypes = StatementTypes.SelectSet)]]
-            </code>
+            <codeSnippetGroup><code language="cs" codeLanguage="CSharp" style="cs">[AmendExpression("TOP {count}", 
+    TargetExpression = TargetExpression.FieldList,
+    AffixPosition = AffixPosition.Prefix,
+    StatementTypes = StatementTypes.SelectSet)]]</code></codeSnippetGroup>
             The <paramref name="customTokens" /> key/value pairs could be set as follows at run-time:
-            <code>
-            int count = 200;
-            customTokens = new[] { new KeyValuePair&lt;string, string&gt;("{count}", $"{count}") };
-            </code></remarks>
+            <codeSnippetGroup><code language="cs" codeLanguage="CSharp" style="cs">int count = 200;
+customTokens = new[] { new KeyValuePair&lt;string, string&gt;("{count}", $"{count}") };</code></codeSnippetGroup></remarks>
       <exception cref="T:System.ArgumentNullException">
         <paramref name="connection" /> cannot be <c>null</c>.</exception>
     </member>

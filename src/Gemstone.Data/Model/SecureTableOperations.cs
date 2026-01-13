@@ -73,15 +73,20 @@ public class SecureTableOperations<T> where T : class, new()
     /// <exception cref="InvalidOperationException"></exception>
     private static RecordRestriction? GetClaimRecordRestriction(ClaimsPrincipal principal)
     {
-        if (s_claimQueryRestrictionAttribute is null)
+        if (s_claimQueryRestrictionAttributes is null)
             return null;
-        
-        object[] claims = s_claimQueryRestrictionAttribute.Claims
-            .Select(claimKey => principal.FindFirst(claimKey) ?? throw new InvalidOperationException($"Unable to retrieve {claimKey} claim from user."))
-            .Select(claim => claim.Value)
-            .ToArray();
 
-        return new RecordRestriction(s_claimQueryRestrictionAttribute.FilterExpression, claims);
+        RecordRestriction? completeRestriction = null;
+        foreach(ClaimQueryRestrictionAttribute attribute in s_claimQueryRestrictionAttributes)
+        {
+            object[] claimValues = attribute.Claims
+                .Select(claimKey => principal.FindFirst(claimKey) ?? throw new InvalidOperationException($"Unable to retrieve {claimKey} claim from user."))
+                .Select(claim => claim.Value)
+                .ToArray();
+            completeRestriction += new RecordRestriction(attribute.FilterExpression, claimValues);
+        }
+
+        return completeRestriction;
     }
 
     /// <summary>
@@ -1147,11 +1152,12 @@ public class SecureTableOperations<T> where T : class, new()
 
     #region [ Static ]
 
-    private static readonly ClaimQueryRestrictionAttribute? s_claimQueryRestrictionAttribute;
+    private static readonly ClaimQueryRestrictionAttribute[]? s_claimQueryRestrictionAttributes;
 
     static SecureTableOperations()
     {
-        typeof(T).TryGetAttribute(out s_claimQueryRestrictionAttribute);
+        if (typeof(T).TryGetAttributes(out ClaimQueryRestrictionAttribute[]? claimAttributes))
+            s_claimQueryRestrictionAttributes = claimAttributes;
     }
 
     #endregion

@@ -27,29 +27,14 @@ using System.Data;
 namespace Gemstone.Data.Model;
 
 /// <summary>
-/// Defines an attribute that will mark a modeled table with a record restriction that applies
+/// Defines an attribute that will mark a modeled table static function as a method to create a <see cref="RecordRestriction"/>
 /// to secure query functions for a modeled <see cref="SecureTableOperations{T}"/>.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class)]
-public sealed class ClaimQueryRestrictionAttribute : Attribute
+/// <remarks>The static function should be a part of the modeled class, and have the footprint 
+/// <see cref="RecordRestriction"/> MethodName(<see langword="params"/> <see cref="object"/>[])</remarks>
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+public sealed class ClaimRestrictionAttribute : Attribute
 {
-    /// <summary>
-    /// Defines filter SQL expression for restriction as a composite format string - does not
-    /// include WHERE. When escaping is needed for field names, use standard ANSI quotes.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// Each indexed parameter, e.g., "{0}", in the composite format string will be converted into
-    /// query parameters where each of the corresponding values in the <see cref="Claims"/>
-    /// collection will be applied as <see cref="IDbDataParameter"/> values to an executed
-    /// <see cref="IDbCommand"/> query.
-    /// </para>
-    /// <para>
-    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
-    /// will be updated to reflect what is defined in the user model.
-    /// </para>
-    /// </remarks>
-    public readonly string FilterExpression;
 
     /// <summary>
     /// Defines claims which will be checked for parameter values
@@ -57,29 +42,11 @@ public sealed class ClaimQueryRestrictionAttribute : Attribute
     public readonly string[] Claims;
 
     /// <summary>
-    /// Creates a new parameterized <see cref="ClaimQueryRestrictionAttribute"/> with the specified
-    /// SQL filter expression and parameters.
+    /// Creates a new parameterized <see cref="ClaimRestrictionAttribute"/> with the specified claims.
     /// </summary>
-    /// <param name="filterExpression">
-    /// Filter SQL expression for restriction as a composite format string - does not include WHERE.
-    /// When escaping is needed for field names, use standard ANSI quotes.
-    /// </param>
-    /// <param name="claims">Claims to use for parameter values.</param>
-    /// <remarks>
-    /// <para>
-    /// Each indexed parameter, e.g., "{0}", in the composite format <paramref name="filterExpression"/>
-    /// will be converted into query parameters where each of the corresponding values in the
-    /// <paramref name="claims"/> collection will retrieved and applied as <see cref="IDbDataParameter"/>
-    /// values to an executed <see cref="IDbCommand"/> query.
-    /// </para>
-    /// <para>
-    /// If needed, field names that are escaped with standard ANSI quotes in the filter expression
-    /// will be updated to reflect what is defined in the user model.
-    /// </para>
-    /// </remarks>
-    public ClaimQueryRestrictionAttribute(string filterExpression, params string[] claims)
+    /// <param name="claims">Claims to use for parameter values. The order of parameters is in the same order as claims, grabbing as many values as each claim provides</param>
+    public ClaimRestrictionAttribute(params string[] claims)
     {
-        FilterExpression = filterExpression ?? throw new ArgumentNullException(nameof(filterExpression));
         Claims = claims ?? throw new ArgumentNullException(nameof(claims));
     }
 }

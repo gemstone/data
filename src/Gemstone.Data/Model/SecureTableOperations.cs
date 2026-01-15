@@ -25,12 +25,12 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Gemstone.Expressions.Model;
-using Gemstone.Reflection.MemberInfoExtensions;
 
 namespace Gemstone.Data.Model;
 
@@ -66,27 +66,17 @@ public class SecureTableOperations<T> where T : class, new()
     #region [ Methods ]
 
     /// <summary>
-    /// Transforms a <see cref="ClaimsPrincipal"/> into an equivalent <see cref="RecordRestriction"/>, as defined by the model's <see cref="ClaimQueryRestrictionAttribute"/>.
+    /// Transforms a <see cref="ClaimsPrincipal"/> into an equivalent <see cref="RecordRestriction"/>, as defined by the model's <see cref="ClaimRestrictionAttribute"/>.
     /// </summary>
     /// <param name="principal">Claims principal which is making the request.</param>
     /// <returns><see cref="RecordRestriction"/></returns>
     /// <exception cref="InvalidOperationException"></exception>
     private static RecordRestriction? GetClaimRecordRestriction(ClaimsPrincipal principal)
     {
-        if (s_claimQueryRestrictionAttributes is null)
+        if (!s_claimFunctions.Any())
             return null;
 
-        RecordRestriction? completeRestriction = null;
-        foreach(ClaimQueryRestrictionAttribute attribute in s_claimQueryRestrictionAttributes)
-        {
-            object[] claimValues = attribute.Claims
-                .Select(claimKey => principal.FindFirst(claimKey) ?? throw new InvalidOperationException($"Unable to retrieve {claimKey} claim from user."))
-                .Select(claim => claim.Value)
-                .ToArray();
-            completeRestriction += new RecordRestriction(attribute.FilterExpression, claimValues);
-        }
-
-        return completeRestriction;
+        return s_claimFunctions.Select(func => func(principal)).Aggregate((a,b) => a+b);
     }
 
     /// <summary>
@@ -1152,12 +1142,33 @@ public class SecureTableOperations<T> where T : class, new()
 
     #region [ Static ]
 
-    private static readonly ClaimQueryRestrictionAttribute[]? s_claimQueryRestrictionAttributes;
+    private static readonly IEnumerable<Func<ClaimsPrincipal, RecordRestriction>> s_claimFunctions;
 
     static SecureTableOperations()
     {
-        if (typeof(T).TryGetAttributes(out ClaimQueryRestrictionAttribute[]? claimAttributes))
-            s_claimQueryRestrictionAttributes = claimAttributes;
+        s_claimFunctions = typeof(T)
+            .GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .Select(method => new { Method = method, Attribute = method.GetCustomAttribute<ClaimRestrictionAttribute>() })
+            .Where(obj => obj.Attribute is not null)
+            .Select(obj => {
+                ParameterInfo[] parameters = obj.Method.GetParameters();
+                if (obj.Method.ReturnType != typeof(RecordRestriction) || parameters.Length != 1 || parameters[0].ParameterType != typeof(object[]))
+                    throw new InvalidOperationException(
+                        $"Method \"{obj.Method.Name}\" marked with \"{typeof(ClaimRestrictionAttribute).Name}\" in model \"{typeof(T).Name}\" has an invalid signature. " +
+                        $"Expected: public static {typeof(RecordRestriction).Name} Method(params {typeof(object[])} input)");
+
+                Func<ClaimsPrincipal, RecordRestriction> createRestriction = (principal) =>
+                {
+                    object[] claimValues = obj.Attribute.Claims
+                        .Select(claimKey => principal.FindAll(claimKey))
+                        .SelectMany(claims => claims.Select(claim => (object) claim.Value))
+                        .ToArray();
+
+                    return (RecordRestriction)obj.Method.Invoke(null, [claimValues]);
+                };
+
+                return createRestriction;
+            });
     }
 
     #endregion

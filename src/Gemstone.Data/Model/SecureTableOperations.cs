@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
@@ -40,10 +41,6 @@ namespace Gemstone.Data.Model;
 /// <typeparam name="T">Modeled table.</typeparam>
 public class SecureTableOperations<T> where T : class, new()
 {
-    /// <summary>
-    /// <see cref="TableOperations{T}"/> which performs DB operations.
-    /// </summary>
-    public TableOperations<T> BaseOperations { get; }
 
     /// <summary>
     /// Creates a new <see cref="SecureTableOperations{T}"/>
@@ -62,6 +59,147 @@ public class SecureTableOperations<T> where T : class, new()
     {
         BaseOperations = new(connection);
     }
+
+    #region [ Properties ]
+
+    /// <summary>
+    /// <see cref="TableOperations{T}"/> which performs DB operations.
+    /// </summary>
+    public TableOperations<T> BaseOperations { get; }
+
+    /// <summary>
+    /// Gets <see cref="AdoDataConnection"/> instance associated with this <see cref="TableOperations{T}"/> used for database operations.
+    /// </summary>
+    public AdoDataConnection Connection => BaseOperations.Connection;
+
+    /// <summary>
+    /// Gets the table name defined for the modeled table, includes any escaping as defined in model.
+    /// </summary>
+    public string TableName => BaseOperations.TableName;
+
+    /// <summary>
+    /// Gets the table name defined for the modeled table without any escape characters.
+    /// </summary>
+    /// <remarks>
+    /// A table name will only be escaped if the model requested escaping with the <see cref="UseEscapedNameAttribute"/>.
+    /// </remarks>
+    public string UnescapedTableName => BaseOperations.UnescapedTableName;
+
+    /// <summary>
+    /// Gets the wildcard character used for pattern matching within queries.
+    /// </summary>
+    public string WildcardChar => BaseOperations.WildcardChar;
+
+    /// <summary>
+    /// Gets flag that determines if modeled table has a primary key that is an identity field.
+    /// </summary>
+    public bool HasPrimaryKeyIdentityField => BaseOperations.HasPrimaryKeyIdentityField;
+
+    /// <summary>
+    /// Gets or sets delegate used to handle table operation exceptions.
+    /// </summary>
+    /// <remarks>
+    /// When exception handler is provided, table operations will not throw exceptions for database calls, any
+    /// encountered exceptions will be passed to handler for processing. Otherwise, exceptions will be thrown
+    /// on the call stack.
+    /// </remarks>
+    public Action<Exception>? ExceptionHandler => BaseOperations.ExceptionHandler;
+
+    /// <summary>
+    /// Gets or sets flag that determines if field names should be treated as case-sensitive. Defaults to <c>false</c>.
+    /// </summary>
+    /// <remarks>
+    /// In cases where modeled table fields have applied <see cref="UseEscapedNameAttribute"/>, this flag will be used
+    /// to properly update escaped field names that may be case-sensitive. For example, escaped field names in Oracle
+    /// are case-sensitive. This value is typically <c>false</c>.
+    /// </remarks>
+    public bool UseCaseSensitiveFieldNames => BaseOperations.UseCaseSensitiveFieldNames;
+
+    /// <summary>
+    /// Gets or sets primary key cache.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The <see cref="QueryRecords(ClaimsPrincipal, string?, bool, int, int, IRecordFilter[])"/> overloads that include paging parameters
+    /// cache the sorted and filtered primary keys of queried records between calls so that paging is fast and
+    /// efficient. Since the primary keys are cached, an instance of the <see cref="TableOperations{T}"/> should
+    /// exist per user session when using query functions that support pagination. In web based implementations,
+    /// the primary cache should be stored with user session state data and then restored between instances of
+    /// the <see cref="TableOperations{T}"/> that are created along with a connection that is opened per page.
+    /// </para>
+    /// <para>
+    /// The function <see cref="TableOperations{T}.ClearPrimaryKeyCache"/> should be called to manually clear cache when table
+    /// contents are known to have changed. Note that calls to any <see cref="DeleteRecord(ClaimsPrincipal, RecordRestriction?, bool?)"/> overload
+    /// will automatically clear any existing primary key cache.
+    /// </para>
+    /// <para>
+    /// Primary keys values are stored in data table without interpretation, i.e., in their raw form as queried
+    /// from the database. Primary key data in cache will be encrypted for models with primary key fields that
+    /// are marked with the <see cref="EncryptDataAttribute"/>
+    /// </para>
+    /// </remarks>
+    public DataTable? PrimaryKeyCache => BaseOperations.PrimaryKeyCache;
+
+    /// <summary>
+    /// Gets or sets root record restriction that applies to query table operations.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Defining a root query restriction creates a base query filter that gets applied to all query operations,
+    /// even when another restriction is applied - in this case the root restriction will be pre-pended to the
+    /// specified query, e.g.:
+    /// <code>
+    /// restriction = RootQueryRestriction + restriction;
+    /// </code>
+    /// A root query restriction is useful to apply a common state to the query operations, e.g., always
+    /// filtering records for a specific user or context.
+    /// </para>
+    /// <para>
+    /// A root query restriction can be manually assigned to a <see cref="TableOperations{T}"/> instance or
+    /// automatically assigned by marking a model with the <see cref="RootQueryRestrictionAttribute"/>.
+    /// </para>
+    /// <para>
+    /// If any of the <see cref="RecordRestriction.Parameters"/> reference a table field that is modeled with
+    /// either an <see cref="EncryptDataAttribute"/> or <see cref="FieldDataTypeAttribute"/>, then the function
+    /// <see cref="TableOperations{T}.GetInterpretedFieldValue"/> will need to be called, replacing the target parameter with the
+    /// returned value so that the field value will be properly set prior to executing the database function.
+    /// </para>
+    /// </remarks>
+    public RecordRestriction? RootQueryRestriction => BaseOperations.RootQueryRestriction;
+
+    /// <summary>
+    /// Gets or sets flag that determines if <see cref="RootQueryRestriction"/> should be applied to update operations.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// If <see cref="RootQueryRestriction"/> only references primary key fields, then this property value should be set
+    /// to <c>false</c> since default update operations for a modeled record already work against primary key fields.
+    /// </para>
+    /// <para>
+    /// This flag can be manually set per <see cref="TableOperations{T}"/> instance or handled automatically by marking
+    /// a model with the <see cref="RootQueryRestrictionAttribute"/> and assigning a value to the attribute property
+    /// <see cref="RootQueryRestrictionAttribute.ApplyToUpdates"/>.
+    /// </para>
+    /// </remarks>
+    public bool ApplyRootQueryRestrictionToUpdates => BaseOperations.ApplyRootQueryRestrictionToUpdates;
+
+    /// <summary>
+    /// Gets or sets flag that determines if <see cref="RootQueryRestriction"/> should be applied to delete operations.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// If <see cref="RootQueryRestriction"/> only references primary key fields, then this property value should be set
+    /// to <c>false</c> since default delete operations for a modeled record already work against primary key fields.
+    /// </para>
+    /// <para>
+    /// This flag can be manually set per <see cref="TableOperations{T}"/> instance or handled automatically by marking
+    /// a model with the <see cref="RootQueryRestrictionAttribute"/> and assigning a value to the attribute property
+    /// <see cref="RootQueryRestrictionAttribute.ApplyToDeletes"/>.
+    /// </para>
+    /// </remarks>
+    public bool ApplyRootQueryRestrictionToDeletes => BaseOperations.ApplyRootQueryRestrictionToDeletes;
+
+    #endregion
 
     #region [ Methods ]
 

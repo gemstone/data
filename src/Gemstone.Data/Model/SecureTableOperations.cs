@@ -794,6 +794,43 @@ public class SecureTableOperations<T> where T : class, new()
         BaseOperations.DeleteRecordAsync(restriction + GetClaimRecordRestriction(principal), cancellationToken, applyRootQueryRestriction);
 
     /// <summary>
+    /// Deletes the specified modeled table <paramref name="record"/> from the database.
+    /// </summary>
+    /// <param name="principal">Claims principal which is making the request.</param>
+    /// <param name="record">Record to delete.</param>
+    /// <returns>Number of rows affected.</returns>
+    public int DeleteRecord(ClaimsPrincipal principal, T record)
+    {
+        IEnumerable<string> whereElements = BaseOperations
+            .GetPrimaryKeyFieldNames(true)
+            .Select((primaryKeyField, index) => $"{primaryKeyField} = {index}");
+        RecordRestriction recordRestrict = new RecordRestriction(
+            string.Join(" AND ", whereElements),
+            BaseOperations.GetPrimaryKeys(record)
+        );
+        return DeleteRecord(principal, recordRestrict);
+    }
+
+    /// <summary>
+    /// Deletes the specified modeled table <paramref name="record"/> from the database.
+    /// </summary>
+    /// <param name="principal">Claims principal which is making the request.</param>
+    /// <param name="record">Record to delete.</param>
+    /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+    /// <returns>Number of rows affected.</returns>
+    public Task<int> DeleteRecordAsync(ClaimsPrincipal principal, T record, CancellationToken cancellationToken)
+    {
+        IEnumerable<string> whereElements = BaseOperations
+            .GetPrimaryKeyFieldNames(true)
+            .Select((primaryKeyField, index) => $"{primaryKeyField} = {index}");
+        RecordRestriction recordRestrict = new RecordRestriction(
+            string.Join(" AND ", whereElements),
+            BaseOperations.GetPrimaryKeys(record)
+        );
+        return DeleteRecordAsync(principal, recordRestrict, cancellationToken);
+    }
+
+    /// <summary>
     /// Deletes the records referenced by the specified SQL filter expression and parameters.
     /// </summary>
     /// <param name="principal">Claims principal which is making the request.</param>

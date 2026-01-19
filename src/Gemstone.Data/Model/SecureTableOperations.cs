@@ -66,6 +66,14 @@ public class SecureTableOperations<T> where T : class, new()
     #region [ Methods ]
 
     /// <summary>
+    /// Creates a new modeled record instance, applying any modeled default values as specified by a
+    /// <see cref="DefaultValueAttribute"/> or <see cref="DefaultValueExpressionAttribute"/> on the
+    /// model properties.
+    /// </summary>
+    /// <returns>New modeled record instance with any defined default values applied.</returns>
+    public T? NewRecord() => BaseOperations.NewRecord();
+
+    /// <summary>
     /// Transforms a <see cref="ClaimsPrincipal"/> into an equivalent <see cref="RecordRestriction"/>, as defined by the model's <see cref="ClaimRestrictionAttribute"/>.
     /// </summary>
     /// <param name="principal">Claims principal which is making the request.</param>

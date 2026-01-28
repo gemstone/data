@@ -949,7 +949,7 @@ public class SecureTableOperations<T> where T : class, new()
     {
         IEnumerable<string> whereElements = BaseOperations
             .GetPrimaryKeyFieldNames(true)
-            .Select((primaryKeyField, index) => $"{primaryKeyField} = {index}");
+            .Select((primaryKeyField, index) => $"{primaryKeyField} = {{{index}}}");
         RecordRestriction recordRestrict = new RecordRestriction(
             string.Join(" AND ", whereElements),
             BaseOperations.GetPrimaryKeys(record)
@@ -968,7 +968,7 @@ public class SecureTableOperations<T> where T : class, new()
     {
         IEnumerable<string> whereElements = BaseOperations
             .GetPrimaryKeyFieldNames(true)
-            .Select((primaryKeyField, index) => $"{primaryKeyField} = {index}");
+            .Select((primaryKeyField, index) => $"{primaryKeyField} = {{{index}}}");
         RecordRestriction recordRestrict = new RecordRestriction(
             string.Join(" AND ", whereElements),
             BaseOperations.GetPrimaryKeys(record)

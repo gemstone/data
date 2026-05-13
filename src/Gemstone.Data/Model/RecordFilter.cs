@@ -168,6 +168,8 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
     }
 
     /// <inheritdoc/>
+    [JsonIgnore]
+    [Newtonsoft.Json.JsonIgnore]
     public bool SupportsEncrypted => s_encryptedOperators.Contains(m_operator);
 
     /// <summary>

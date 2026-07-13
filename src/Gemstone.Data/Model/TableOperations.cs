@@ -38,6 +38,7 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -48,11 +49,11 @@ using Gemstone.Collections.CollectionExtensions;
 using Gemstone.Collections.IAsyncEnumerableExtensions;
 using Gemstone.Data.DataExtensions;
 using Gemstone.Diagnostics;
-using Gemstone.Expressions.Evaluator;
 using Gemstone.Expressions.Model;
 using Gemstone.Reflection.MemberInfoExtensions;
 using Gemstone.Security.Cryptography;
 using Gemstone.StringExtensions;
+using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Gemstone.Data.Model;
 
@@ -65,15 +66,6 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     #region [ Members ]
 
     // Nested Types
-    private class CurrentScope : ValueExpressionScopeBase<T>
-    {
-        // Define instance variables exposed to ValueExpressionAttributeBase expressions
-        #pragma warning disable 169, 414, 649, CS8618
-        public TableOperations<T> TableOperations;
-        public AdoDataConnection Connection;
-        #pragma warning restore 169, 414, 649, CS8618
-    }
-
     private class NullConnection : DbConnection
     {
         [AllowNull]
@@ -408,16 +400,65 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     #region [ Methods ]
 
     /// <summary>
-    /// Creates a new modeled record instance, applying any modeled default values as specified by a
-    /// <see cref="DefaultValueAttribute"/> or <see cref="DefaultValueExpressionAttribute"/> on the
-    /// model properties.
+    /// Creates a new modeled record instance and applies any modeled default values.
     /// </summary>
     /// <returns>New modeled record instance with any defined default values applied.</returns>
+    /// <remarks>
+    /// The base <see cref="TableOperations{T}"/> implementation creates a new <typeparamref name="T"/>
+    /// instance and applies only the constant values specified by any <see cref="DefaultValueAttribute"/>
+    /// on the model properties. Derived types, such as
+    /// <see cref="ExpressionTableOperations{T}"/>, may override this method to apply additional behavior,
+    /// e.g., evaluation of <see cref="DefaultValueExpressionAttribute"/> instances.
+    /// </remarks>
+    protected virtual T CreateRecordInstance()
+    {
+        T record = new();
+        s_applyDefaultValues(record);
+        return record;
+    }
+
+    /// <summary>
+    /// Applies any modeled default values to the specified <paramref name="record"/>.
+    /// </summary>
+    /// <param name="record">Record to update.</param>
+    /// <remarks>
+    /// The base <see cref="TableOperations{T}"/> implementation applies only the constant values specified
+    /// by any <see cref="DefaultValueAttribute"/> on the model properties. Derived types may override this
+    /// method to apply additional behavior, e.g., evaluation of <see cref="DefaultValueExpressionAttribute"/>
+    /// instances.
+    /// </remarks>
+    protected virtual void ApplyRecordDefaultValues(T record)
+    {
+        s_applyDefaultValues(record);
+    }
+
+    /// <summary>
+    /// Applies any modeled update values to the specified <paramref name="record"/>.
+    /// </summary>
+    /// <param name="record">Record to update.</param>
+    /// <remarks>
+    /// The base <see cref="TableOperations{T}"/> implementation performs no action since update value
+    /// expressions are not part of standard POCO behavior. Derived types may override this method to apply
+    /// additional behavior, e.g., evaluation of <see cref="UpdateValueExpressionAttribute"/> instances.
+    /// </remarks>
+    protected virtual void ApplyRecordUpdateValues(T record)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new modeled record instance, applying any modeled default values as specified by a
+    /// <see cref="DefaultValueAttribute"/> on the model properties.
+    /// </summary>
+    /// <returns>New modeled record instance with any defined default values applied.</returns>
+    /// <remarks>
+    /// To also apply <see cref="DefaultValueExpressionAttribute"/> values, use
+    /// <see cref="ExpressionTableOperations{T}"/>.
+    /// </remarks>
     public T? NewRecord()
     {
         try
         {
-            return s_createRecordInstance(new CurrentScope { TableOperations = this, Connection = Connection });
+            return CreateRecordInstance();
         }
         catch (Exception ex)
         {
@@ -437,15 +478,18 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
     /// <summary>
     /// Applies the default values on the specified modeled table <paramref name="record"/>
-    /// where any of the properties are marked with either <see cref="DefaultValueAttribute"/>
-    /// or <see cref="DefaultValueExpressionAttribute"/>.
+    /// where any of the properties are marked with a <see cref="DefaultValueAttribute"/>.
     /// </summary>
     /// <param name="record">Record to update.</param>
+    /// <remarks>
+    /// To also apply <see cref="DefaultValueExpressionAttribute"/> values, use
+    /// <see cref="ExpressionTableOperations{T}"/>.
+    /// </remarks>
     public void ApplyRecordDefaults(T record)
     {
         try
         {
-            s_applyRecordDefaults(new CurrentScope { Instance = record, TableOperations = this, Connection = Connection });
+            ApplyRecordDefaultValues(record);
         }
         catch (Exception ex)
         {
@@ -465,15 +509,18 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     }
 
     /// <summary>
-    /// Applies the update values on the specified modeled table <paramref name="record"/> where
-    /// any of the properties are marked with <see cref="UpdateValueExpressionAttribute"/>.
+    /// Applies the update values on the specified modeled table <paramref name="record"/>.
     /// </summary>
     /// <param name="record">Record to update.</param>
+    /// <remarks>
+    /// The base <see cref="TableOperations{T}"/> implementation performs no action. To apply
+    /// <see cref="UpdateValueExpressionAttribute"/> values, use <see cref="ExpressionTableOperations{T}"/>.
+    /// </remarks>
     public void ApplyRecordUpdates(T record)
     {
         try
         {
-            s_updateRecordInstance(new CurrentScope { Instance = record, TableOperations = this, Connection = Connection });
+            ApplyRecordUpdateValues(record);
         }
         catch (Exception ex)
         {
@@ -2136,7 +2183,7 @@ public class TableOperations<T> : ITableOperations where T : class, new()
 
         try
         {
-            s_updateRecordInstance(new CurrentScope { Instance = record, TableOperations = this, Connection = Connection });
+            ApplyRecordUpdateValues(record);
 
             if (RootQueryRestriction is not null && (applyRootQueryRestriction ?? ApplyRootQueryRestrictionToUpdates))
                 restriction = (RootQueryRestriction + restriction)!;
@@ -2986,16 +3033,13 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     private static readonly string s_deleteWhereSql;
     private static readonly string s_primaryKeyFields;
     private static readonly bool s_hasPrimaryKeyIdentityField;
-    private static readonly Func<CurrentScope, T> s_createRecordInstance;
-    private static readonly Action<CurrentScope> s_updateRecordInstance;
-    private static readonly Action<CurrentScope> s_applyRecordDefaults;
+    private static readonly Action<T> s_applyDefaultValues;
     private static readonly DataTable s_tableSchema;
     private static readonly HashSet<string> s_validFieldNames;
     private static readonly HashSet<string> s_searchableFields;
     private static readonly (Regex, Func<IRecordFilter, RecordRestriction>)[] s_searchExtensions;
     private static readonly (Regex, Func<string, string>)[] s_sortExtensions;
     private static readonly HashSet<string> s_excludedFields;
-    private static TypeRegistry? s_typeRegistry;
 
     // Static Constructor
     static TableOperations()
@@ -3168,14 +3212,11 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         s_updateProperties = updateProperties.ToArray();
         s_primaryKeyProperties = primaryKeyProperties.ToArray();
 
-        // Create an instance of modeled table to allow any static functionality to be initialized,
-        // such as registering any custom types or symbols that may be useful for value expressions
-        ValueExpressionParser<T>.InitializeType();
-
-        // Generate compiled "create new" and "update" record functions for modeled table
-        s_createRecordInstance = ValueExpressionParser<T>.CreateInstance<CurrentScope>(s_properties.Values, s_typeRegistry);
-        s_updateRecordInstance = ValueExpressionParser<T>.UpdateInstance<CurrentScope>(s_properties.Values, s_typeRegistry);
-        s_applyRecordDefaults = ValueExpressionParser<T>.ApplyDefaults<CurrentScope>(s_properties.Values, s_typeRegistry);
+        // Generate compiled function that applies any modeled "DefaultValueAttribute" constants to a record.
+        // Note: evaluation of attribute-based value expressions (DefaultValueExpressionAttribute /
+        // UpdateValueExpressionAttribute) is intentionally not handled here -- that behavior is opt-in via
+        // the derived "ExpressionTableOperations<T>" so the base type carries no type-registry dependency.
+        s_applyDefaultValues = BuildDefaultValueApplier();
 
         // Generate a data table to be used for schema operations
         s_tableSchema = new DataTable(s_tableName);
@@ -3232,6 +3273,46 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         }
     }
 
+    // Builds a compiled delegate that applies any modeled "DefaultValueAttribute" constant values to a record.
+    // This mirrors the constant-assignment semantics used for default values but, unlike the expression-based
+    // path, has no dependency on the Gemstone.Expressions type registry. Any error is deferred to invocation
+    // so an unrelated bad default value does not fail static initialization of the whole modeled table.
+    private static Action<T> BuildDefaultValueApplier()
+    {
+        try
+        {
+            ParameterExpression record = LinqExpression.Parameter(typeof(T), "record");
+            List<LinqExpression> assignments = [];
+
+            foreach (PropertyInfo property in s_properties.Values)
+            {
+                if (!property.TryGetAttribute(out DefaultValueAttribute? defaultValueAttribute))
+                    continue;
+
+                LinqExpression value = LinqExpression.Constant(defaultValueAttribute.Value, property.PropertyType);
+                assignments.Add(LinqExpression.Call(record, property.SetMethod!, value));
+            }
+
+            return assignments.Count == 0 ? 
+                static _ => { } : 
+                LinqExpression.Lambda<Action<T>>(LinqExpression.Block(assignments), record).Compile();
+        }
+        catch (Exception ex)
+        {
+            return _ => throw new ArgumentException($"Error evaluating \"{nameof(DefaultValueAttribute)}\" for a property of type \"{typeof(T).FullName}\": {ex.Message}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Gets the set of modeled record properties for type <typeparamref name="T"/>, i.e., the public
+    /// read/write properties that are not marked with <see cref="NonRecordFieldAttribute"/>.
+    /// </summary>
+    /// <remarks>
+    /// Exposed for derived types, such as <see cref="ExpressionTableOperations{T}"/>, that need to build
+    /// their own per-property behavior over the same property set used by the base table operations.
+    /// </remarks>
+    protected static IEnumerable<PropertyInfo> RecordProperties => s_properties.Values;
+
     internal static bool IsSearchableField(string fieldName)
     {
         return s_searchableFields.Contains(fieldName);
@@ -3280,23 +3361,6 @@ public class TableOperations<T> : ITableOperations where T : class, new()
         return null;
     }
 
-    // Static Properties
-
-    /// <summary>
-    /// Gets or sets <see cref="Gemstone.Expressions.Evaluator.TypeRegistry"/> instance used for evaluating encountered instances
-    /// of the <see cref="ValueExpressionAttributeBase"/> on modeled table properties.
-    /// </summary>
-    /// <remarks>
-    /// Accessing this property will create a unique type registry for the current type <typeparamref name="T"/> which
-    /// will initially contain the values found in the <see cref="ValueExpressionParser.DefaultTypeRegistry"/>
-    /// and can be augmented with custom types. Set to <c>null</c> to restore use of the default type registry.
-    /// </remarks>
-    public static TypeRegistry TypeRegistry
-    {
-        get => s_typeRegistry ??= ValueExpressionParser.DefaultTypeRegistry.Clone();
-        set => s_typeRegistry = value;
-    }
-
     // Static Methods
 
     /// <summary>
@@ -3320,7 +3384,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <remarks>
     /// This method is useful to create a new type <typeparamref name="T"/> instance when no data connection
     /// is available, applying any modeled default values as specified by a <see cref="DefaultValueAttribute"/>
-    /// or <see cref="DefaultValueExpressionAttribute"/> on the model properties.
+    /// on the model properties. To also apply <see cref="DefaultValueExpressionAttribute"/> values, use
+    /// <see cref="ExpressionTableOperations{T}"/>.
     /// </remarks>
     public static Func<T?> NewRecordFunction()
     {
@@ -3335,7 +3400,8 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <remarks>
     /// This method is useful to apply defaults values to an existing type <typeparamref name="T"/> instance when no data
     /// connection is available, applying any modeled default values as specified by a <see cref="DefaultValueAttribute"/>
-    /// or <see cref="DefaultValueExpressionAttribute"/> on the model properties.
+    /// on the model properties. To also apply <see cref="DefaultValueExpressionAttribute"/> values, use
+    /// <see cref="ExpressionTableOperations{T}"/>.
     /// </remarks>
     public static Action<T> ApplyRecordDefaultsFunction()
     {
@@ -3349,8 +3415,9 @@ public class TableOperations<T> : ITableOperations where T : class, new()
     /// <returns>Delegate for the <see cref="ApplyRecordUpdates"/> method.</returns>
     /// <remarks>
     /// This method is useful to apply update values to an existing type <typeparamref name="T"/> instance when no data
-    /// connection is available, applying any modeled update values as specified by instances of the
-    /// <see cref="UpdateValueExpressionAttribute"/> on the model properties.
+    /// connection is available. The base <see cref="TableOperations{T}"/> implementation performs no action; to apply
+    /// modeled update values as specified by instances of the <see cref="UpdateValueExpressionAttribute"/> on the
+    /// model properties, use <see cref="ExpressionTableOperations{T}"/>.
     /// </remarks>
     public static Action<T> ApplyRecordUpdatesFunction()
     {

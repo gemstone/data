@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Gemstone.Diagnostics;
+using Newtonsoft.Json.Linq;
 
 namespace Gemstone.Data.Model;
 
@@ -69,6 +70,12 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
             {
                 case null:
                     field = DBNull.Value;
+                    break;
+                case JArray array:
+                    field = array
+                        .Select(token => token is JValue value ? value.Value : token.ToString())
+                        .Select(element => ModelProperty is null ? element : Common.TypeConvertFromString(element?.ToString() ?? "", ModelProperty.PropertyType))
+                        .ToArray();
                     break;
                 case Array array:
                     {

@@ -84,13 +84,13 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                         field = typedArray;
                         break;
                     }
-                case Newtonsoft.Json.Linq.JArray array:
+                case Newtonsoft.Json.Linq.JArray jArray:
                     {
-                        object?[] typedArray = new object[array.Count];
+                        object?[] typedArray = new object[jArray.Count];
 
-                        for (int i = 0; i < array.Count; i++)
+                        for (int i = 0; i < jArray.Count; i++)
                         {
-                            object? element = array[i].ToObject<object>();
+                            object? element = jArray[i].ToObject<object>();
                             object? typedElement = ModelProperty is null ? element : Common.TypeConvertFromString(element?.ToString() ?? "", ModelProperty.PropertyType);
                             typedArray[i] = typedElement;
                         }

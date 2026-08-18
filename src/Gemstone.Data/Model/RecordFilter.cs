@@ -84,6 +84,20 @@ public class RecordFilter<T> : IRecordFilter where T : class, new()
                         field = typedArray;
                         break;
                     }
+                case Newtonsoft.Json.Linq.JArray jArray:
+                    {
+                        object?[] typedArray = new object[jArray.Count];
+
+                        for (int i = 0; i < jArray.Count; i++)
+                        {
+                            object? element = jArray[i].ToObject<object>();
+                            object? typedElement = ModelProperty is null ? element : Common.TypeConvertFromString(element?.ToString() ?? "", ModelProperty.PropertyType);
+                            typedArray[i] = typedElement;
+                        }
+
+                        field = typedArray;
+                        break;
+                    }
                 default:
                     {
                         if (value is JsonElement el)

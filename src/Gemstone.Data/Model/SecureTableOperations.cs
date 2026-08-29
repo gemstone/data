@@ -57,7 +57,7 @@ public class SecureTableOperations<T> where T : class, new()
     /// <param name="connection"><see cref="AdoDataConnection"/> db to create secure operations to.</param>
     public SecureTableOperations(AdoDataConnection connection)
     {
-        BaseOperations = new(connection);
+        BaseOperations = new ExpressionTableOperations<T>(connection);
     }
 
     #region [ Properties ]

@@ -1181,11 +1181,14 @@ public class AdoDataConnection : IAsyncDisposable, IDisposable
             if (!reader.HasRows)
                 yield break;
 
+            // Clone schema so concurrent callers sharing the same schema instance do not share row storage
+            DataTable table = schema.Clone();
+
             while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                DataRow row = schema.NewRow();
+                DataRow row = table.NewRow();
 
-                foreach (DataColumn col in schema.Columns)
+                foreach (DataColumn col in table.Columns)
                     row[col.ColumnName] = reader[col.ColumnName];
 
                 yield return row;
